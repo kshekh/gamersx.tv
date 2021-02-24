@@ -2,9 +2,13 @@
     "devDependencies": {
         "@symfony/stimulus-bridge": "^2.0.0",
         "@symfony/webpack-encore": "^1.0.0",
+        "autoprefixer": "^10.2.4",
         "core-js": "^3.0.0",
+        "postcss": "^8.2.6",
+        "postcss-loader": "^5.0.0",
         "regenerator-runtime": "^0.13.2",
         "stimulus": "^2.0.0",
+        "tailwindcss": "^2.0.3",
         "vue": "^2.5",
         "vue-loader": "^15",
         "vue-template-compiler": "^2.6.12",
@@ -12,6 +16,9 @@
     },
     "license": "UNLICENSED",
     "private": true,
+    "browserslist": [
+        "defaults"
+    ],
     "scripts": {
         "dev-server": "encore dev-server",
         "dev": "encore dev",
