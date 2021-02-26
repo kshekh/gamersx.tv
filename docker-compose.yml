@@ -7,7 +7,6 @@ services:
         uid: 1000
       context: ./docker-compose/symfony/
       dockerfile: Dockerfile
-    image: symfony
     container_name: gamersx-php
     volumes:
       - ./:/var/www
