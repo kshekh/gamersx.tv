@@ -2,9 +2,9 @@
 
 {% block body %}
 <div class="container">
-<div id="app">
-<app></app>
-</div>
+    <div id="app" data-settings="{{ settings | json_encode }}">
+    <app></app>
+    </div>
 </div>
 {% endblock %}
 

@@ -1,14 +1,29 @@
 <template>
   <div class="container text-center mx-auto">
-    <p>This is an example of a basic components in {{ framework }}</p>
+    <div class="container flex-col">
+      <div class="w-16"
+        v-for="row in settings.rows">
+        <home-row
+          v-bind:settings="row"
+        ></home-row>
+      </div>
+    </div>
   </div>
 </template>
 <script>
-module.exports = {
+import HomeRow from './layout/HomeRow.vue';
+
+export default {
+  components: {
+    'home-row': HomeRow
+  },
   data: function()  {
     return {
-      framework: "VueJs"
+      settings: {},
     }
+  },
+  mounted: function() {
+    this.settings = JSON.parse(this.$el.parentNode.dataset['settings']);
   }
 }
 </script>
