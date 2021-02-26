@@ -19,26 +19,26 @@ class HomeController extends AbstractController
                     'name' => 'Featured',
                     'itemsType' => 'streamer',
                     'items' => [
-                        'pokimane',
-                        'broxh_',
+                        'pokimane', // 44445592
+                        'broxh_', // 105533253
                     ]
                 ], [
                     'name' => 'Games',
                     'itemsType' => 'game',
                     'items' => [
-                        'League of Legends',
-                        'Fortnite',
-                        'Valorant',
-                        'Call of Duty',
-                        'Just Chatting',
+                        'League of Legends', // 21779
+                        'Fortnite', // 509663
+                        'Valorant', // 516575
+                        'Call of Duty', // 512710
+                        'Just Chatting', // 509658
                     ],
                 ], [
                     'name' => 'Pros',
                     'itemsType' => 'streamer',
                     'items' => [
-                        'Closer',
-                        '100thieves',
-                        'LCS',
+                        'Closer', // 160677372
+                        '100thieves', // 195450890
+                        'LCS', // 124420521
                     ]
                 ]
             ]

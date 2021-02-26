@@ -1,7 +1,7 @@
 <template>
 	<div class="w-auto p-4 bg-indigo-500 rounded-md">
 		<iframe
-			:src="'https://player.twitch.tv/?channel=' + name + '&parent=localhost&muted=true'"
+			:src="'https://player.twitch.tv/?channel=' + channel + '&parent=localhost&muted=true'"
 			height="300"
 			width="540"
 			allowfullscreen="false">
@@ -13,7 +13,7 @@
 export default {
 	name: 'IFrameEmbed',
 	props: {
-		'name': {
+		'channel': {
 			required: true,
 			type: String
 		}

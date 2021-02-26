@@ -5,7 +5,7 @@
       <div v-for="item in items">
         <div v-if="itemsType == 'streamer'">
           <i-frame-embed
-            v-bind:name="item"
+            v-bind:channel="item"
           ></i-frame-embed>
         </div>
         <div v-else>{{ item }}</div>
