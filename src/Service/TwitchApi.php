@@ -70,6 +70,7 @@ class TwitchApi
 
     }
 
+    /*
     public function getEmbedSettings($itemType, $id)
     {
         $settings = [
@@ -89,4 +90,5 @@ class TwitchApi
 
         return $settings;
     }
+     */
 }

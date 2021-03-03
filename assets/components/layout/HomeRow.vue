@@ -3,12 +3,13 @@
     <h1>{{ name }}</h1>
     <div class="flex flex-row space-x-10">
       <div v-for="item in items">
-        <div v-if="itemsType == 'streamer'">
+        <div>
+        <!-- <div v&#45;if="itemsType == 'streamer'"> -->
           <i-frame-embed
             v-bind:channel="item"
           ></i-frame-embed>
         </div>
-        <div v-else>{{ item }}</div>
+        <!-- <div v&#45;else>{{ item }}</div> -->
       </div>
     </div>
   </div>
