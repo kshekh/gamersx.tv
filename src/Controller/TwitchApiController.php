@@ -40,11 +40,20 @@ class TwitchApiController extends AbstractController
     }
 
     /**
-     * @Route("/broadcast/{gameId}", name="broadcast")
+     * @Route("/stream/streamer/{id}", name="streamerStream")
      */
-    public function getTopBroadcast(TwitchApi $twitch, $gameId)
+    public function getLiveBroadcast(TwitchApi $twitch, $id)
     {
-        $result = $twitch->getTopLiveBroadcastForGame($gameId);
+        $result = $twitch->getStreamForStreamer($id);
+        return $this->json($result->toArray());
+    }
+
+    /**
+     * @Route("/stream/game/{id}", name="gamerStream")
+     */
+    public function getTopBroadcast(TwitchApi $twitch, $id)
+    {
+        $result = $twitch->getTopLiveBroadcastForGame($id);
         return $this->json($result->toArray());
     }
 }
