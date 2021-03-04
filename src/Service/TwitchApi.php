@@ -49,12 +49,11 @@ class TwitchApi
         ]);
     }
 
-    public function getTopLiveBroadcastForGame($gameId)
+    public function getTopLiveBroadcastsForGames($gameIds)
     {
         return $this->client->request('GET', '/helix/streams', [
             'query' => [
-                'game_id' => $gameId,
-                'first' => 1
+                'game_id' => $gameIds
             ]
         ]);
     }
@@ -64,7 +63,6 @@ class TwitchApi
         return $this->client->request('GET', '/helix/streams', [
             'query' => [
                 'user_id' => $streamerId,
-                // 'first' => 1
             ]
         ]);
 

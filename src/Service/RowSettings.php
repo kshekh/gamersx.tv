@@ -10,27 +10,58 @@ class RowSettings
                 [
                     'name' => 'Featured',
                     'itemsType' => 'streamer',
+                    'sort' => 'desc',
+                    'display' => 'showEmbeds',
                     'items' => [
-                        'pokimane', // 44445592
-                        'broxh_', // 105533253
+                        [
+                            'id' => 44445592,
+                            'label' => 'pokimane',
+                        ], [
+                            'id' => 105533253,
+                            'label' => 'brokh_',
+                        ]
                     ]
                 ], [
                     'name' => 'Games',
                     'itemsType' => 'game',
+                    'sort' => 'desc',
+                    'display' => 'showFirstEmbed',
+                    'linkType' => 'gamersx',
                     'items' => [
-                        21779, // League of Legends
-                        33214, // 'Fortnite'
-                        516575, // 'Valorant', // 516575
-                        512710, // 'Call of Duty', // 512710
-                        509658, // 'Just Chatting', // 509658
+                        [
+                            'id' => 21779,
+                            'label' => 'League of Legends',
+                        ], [
+                            'id' => 33214,
+                            'label' => 'Fortnite',
+                        ], [
+                            'id' => 516575,
+                            'label' => 'Valorant',
+                        ], [
+                            'id' => 512710,
+                            'label' => 'Call of Duty',
+                        ], [
+                            'id' => 509658,
+                            'label' => 'Just Chatting',
+                        ]
                     ],
                 ], [
                     'name' => 'Pros',
                     'itemsType' => 'streamer',
+                    'sort' => 'desc',
+                    'display' => 'showFirstEmbed',
+                    'linkType' => 'gamersx',
                     'items' => [
-                        'Closer', // 160677372
-                        '100thieves', // 195450890
-                        'LCS', // 124420521
+                        [
+                            'id' => 160677372,
+                            'label' => 'Closer',
+                        ], [
+                            'id' => 195450890,
+                            'label' => '100thieves',
+                        ], [
+                            'id' => 124420521,
+                            'label' => 'LCS',
+                        ]
                     ]
                 ]
             ]
