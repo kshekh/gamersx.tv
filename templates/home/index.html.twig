@@ -1,11 +1,14 @@
 {% extends 'base.html.twig' %}
 
+{% block javascripts %}
+{{ parent() }}
+{{ encore_entry_script_tags('home') }}
+{% endblock %}
+
 {% block body %}
 <div class="container">
-    <div id="app" data-settings="{{ settings | json_encode }}">
-    <app></app>
+    <div id="app-home" data-settings="{{ settings | json_encode }}">
+        <home></home>
     </div>
 </div>
 {% endblock %}
-
-

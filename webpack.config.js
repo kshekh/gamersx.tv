@@ -22,6 +22,15 @@ Encore
      */
     .addEntry('app', './assets/app.js')
 
+     /*
+      * Vue Apps
+      *
+      * Each of these is an entrypoint for a different Vue app
+      */
+    .addEntry('home', './assets/js/home.js')
+    .addEntry('game', './assets/js/game.js')
+    .addEntry('streamer', './assets/js/streamer.js')
+
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')
 
