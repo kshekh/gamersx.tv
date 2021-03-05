@@ -1,38 +1,27 @@
 <template>
   <div class="container text-center mx-auto">
-    <h1>{{ name }}</h1>
+    <h1>{{ settings.label}}</h1>
     <div class="flex flex-row space-x-10">
-      <div v-for="item in items">
-        <div>
-        <!-- <div v&#45;if="itemsType == 'streamer'"> -->
-          <i-frame-embed
-            v-bind:channel="item"
-          ></i-frame-embed>
-        </div>
-        <!-- <div v&#45;else>{{ item }}</div> -->
+      <div v-for="channel in settings.channels">
+        <channel
+          v-bind="channel"
+        ></channel>
       </div>
     </div>
-  </div>
+</div>
 </template>
 <script>
-import IFrameEmbed from '../embeds/IFrameEmbed.vue'
+import Channel from './Channel.vue'
 
 export default {
   name: 'HomeRow',
   components: {
-    'IFrameEmbed': IFrameEmbed
+    'Channel': Channel,
   },
   props: {
     settings: {
       type: Object,
       required: true,
-      default: function() {
-        return {
-          'name': '',
-          'itemsType': '',
-          'items': []
-        }
-      }
     }
   },
   computed: {

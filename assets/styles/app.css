@@ -5,3 +5,13 @@
 body {
     background-color: lightgray;
 }
+
+div.profile-pic {
+    height: 332px;
+    width: 332px;
+}
+
+div.box-art {
+    height: 332px;
+    width: 257px;
+}

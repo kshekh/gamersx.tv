@@ -95,29 +95,35 @@ class HomeController extends AbstractController
                             'channel' => FALSE,
                             'showEmbed' => FALSE,
                             'image' => $info['profile_image_url'],
+                            'imageType' => 'profile',
                             'link' => '/streamer/'.$info['id'],
                         ];
                     } elseif ($row['itemsType'] === 'game') {
-                       if ($embed && $info['id'] === $first) {
-                        continue;
-                       }
+                        if ($embed && $info['id'] === $first) {
+                            continue;
+                        }
                         $channels[] = [
                             'channel' => FALSE,
                             'showEmbed' => FALSE,
                             'image' => $info['box_art_url'],
+                            'imageType' => 'boxArt',
                             'link' => '/game/'.$info['id'],
                         ];
 
                     }
                 }
             }
+
+            // Don't try to process these objects into JSON
             unset($row['broadcastRequests']);
             unset($row['infoRequests']);
             $row['channels'] = $channels;
         }
 
         return $this->render('home/index.html.twig', [
-            'settings' => $rowChannels
+            'settings' => [
+                'rows' => $rowChannels
+            ]
         ]);
     }
 
