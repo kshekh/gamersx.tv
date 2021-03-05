@@ -1,7 +1,7 @@
 <template>
   <div class="container text-center mx-auto">
     <h1>{{ settings.label}}</h1>
-    <div class="flex flex-row space-x-10">
+    <div class="home-row flex flex-row space-x-10">
       <div v-for="channel in settings.channels">
         <channel
           v-bind="channel"
