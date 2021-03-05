@@ -1,5 +1,6 @@
 <template>
 	<div class="w-auto p-4 bg-indigo-500 rounded-md">
+    <!-- TODO: replace parent with the environment's URL -->
 		<iframe
 			:src="'https://player.twitch.tv/?channel=' + channel + '&parent=localhost&muted=true'"
 			height="300"

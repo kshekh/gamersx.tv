@@ -9,9 +9,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class StreamerController extends AbstractController
 {
     /**
-     * @Route("/streamer", name="streamer")
+     * @Route("/streamer/{id}", name="streamer")
      */
-    public function index(): Response
+    public function index($id): Response
     {
         return $this->render('streamer/index.html.twig', [
             'controller_name' => 'StreamerController',
