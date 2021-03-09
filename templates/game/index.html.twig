@@ -7,7 +7,7 @@
 
 {% block body %}
 <div class="container">
-    <div id="app-game" >
+    <div id="app-game" data-info="{{ info | json_encode }}">
         <game></game>
     </div>
 </div>
