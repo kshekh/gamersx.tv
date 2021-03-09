@@ -7,7 +7,7 @@
 
 {% block body %}
 <div class="container">
-    <div id="app-streamer" >
+    <div id="app-streamer" data-info="{{ info | json_encode }}">
         <streamer></streamer>
     </div>
 </div>
