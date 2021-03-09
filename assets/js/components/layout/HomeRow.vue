@@ -1,14 +1,14 @@
 <template>
   <div class="container text-center mx-auto">
-    <h1>{{ settings.label}}</h1>
-    <div class="home-row flex flex-row space-x-10">
+    <div class="text-2xl font-extrabold pl-12 pt-4 pb-2">{{ settings.label}}</div>
+    <div class="home-row flex flex-row pl-10 space-x-10">
       <div v-for="channel in settings.channels">
         <channel
           v-bind="channel"
         ></channel>
       </div>
     </div>
-</div>
+  </div>
 </template>
 <script>
 import Channel from './Channel.vue'
