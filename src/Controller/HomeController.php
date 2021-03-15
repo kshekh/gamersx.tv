@@ -14,30 +14,28 @@ class HomeController extends AbstractController
      */
     public function index(RowSettings $rows, TwitchApi $twitch)
     {
-        $settings = $rows->getSettings();
         $rowChannels = Array();
-
-        foreach ($settings->rows as $row) {
+        foreach ($rows->toEntities() as $row) {
             $thisRow = Array();
-            $thisRow['label'] = $row->title;
-            $thisRow['sort'] = $row->sort;
-            $thisRow['itemsType'] = $row->itemsType;
+            $thisRow['label'] = $row->getTitle();
+            $thisRow['sort'] = $row->getSort();
+            $thisRow['itemType'] = $row->getItemType();
 
             // Set up all the HttpClient and API requests concurrently
-            if ($row->itemsType === 'streamer') {
-                $streamerIds = array_map(function ($item) use ($twitch){
-                    return $item->id;
-                }, $row->items);
+            if ($row->getItemType() === 'streamer') {
+                $streamerIds = $row->getItems()->map( function ($item) {
+                    return $item->getTwitchId();
+                })->toArray();
 
                 $channels = $twitch->getStreamerInfo($streamerIds);
                 $broadcasts = $twitch->getStreamForStreamer($streamerIds);
                 $thisRow['infoRequests'] = $channels;
                 $thisRow['broadcastRequests'] = $broadcasts;
 
-            } elseif ($row->itemsType === 'game') {
-                $gameIds = array_map(function ($item) {
-                    return $item->id;
-                }, $row->items);
+            } elseif ($row->getItemType() === 'game') {
+                $gameIds = $row->getItems()->map( function ($item) {
+                    return $item->getTwitchId();
+                })->toArray();
 
                 $channels = $twitch->getGameInfo($gameIds);
                 $broadcasts = $twitch->getTopLiveBroadcastsForGames($gameIds);
@@ -61,9 +59,9 @@ class HomeController extends AbstractController
                 // Nobody is online right now. No embeds at all.
             } else {
                 $embed = $broadcast[0];
-                if ($row['itemsType'] === 'streamer') {
+                if ($row['itemType'] === 'streamer') {
                     $first = $embed['user_id'];
-                } elseif ($row['itemsType'] === 'game') {
+                } elseif ($row['itemType'] === 'game') {
                     $first = $embed['game_id'];
                 }
 
@@ -76,7 +74,7 @@ class HomeController extends AbstractController
             }
 
             foreach($infos as $info) {
-                if ($row['itemsType'] === 'streamer') {
+                if ($row['itemType'] === 'streamer') {
                     if ($embed && $info['id'] == $first) {
                         continue;
                     }
@@ -87,7 +85,7 @@ class HomeController extends AbstractController
                         'imageType' => 'profile',
                         'link' => '/streamer/'.$info['id'],
                     ];
-                } elseif ($row['itemsType'] === 'game') {
+                } elseif ($row['itemType'] === 'game') {
                     if ($embed && $info['id'] === $first) {
                         continue;
                     }

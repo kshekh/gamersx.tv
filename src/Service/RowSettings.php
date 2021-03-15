@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use App\Entity\HomeRow;
+use App\Entity\HomeRowItem;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Opis\JsonSchema\{ Validator, ValidationResult, ValidationError, Schema };
 
@@ -14,7 +16,35 @@ class RowSettings
         $this->params = $params;
     }
 
-    public function getSettings() {
+    public function toEntities() {
+        $rows = [];
+        $settings = $this->getSettingsFromJsonFile();
+
+        foreach ($settings->rows as $settingsRow) {
+            $homeRow = new HomeRow();
+
+            $homeRow->setTitle($settingsRow->title);
+            $homeRow->setSort($settingsRow->sort);
+            $homeRow->setItemType($settingsRow->itemType);
+
+            foreach ($settingsRow->items as $settingsItem) {
+                $homeRowItem = new HomeRowItem();
+                $homeRowItem->setTwitchId($settingsItem->twitchId);
+                $homeRowItem->setShowArt($settingsItem->showArt);
+                $homeRowItem->setOfflineDisplayType($settingsItem->offlineDisplayType);
+                $homeRowItem->setLinkType($settingsItem->linkType);
+
+                $homeRowItem->setHomeRow($homeRow);
+                $homeRow->addItem($homeRowItem);
+            }
+
+            $rows[] = $homeRow;
+        }
+
+        return $rows;
+    }
+
+    public function getSettingsFromJsonFile() {
         // Read in the JSON File and Schema
         $settingsFile = $this->params->get("app.row_settings");
         $schemaFile = $this->params->get("app.row_settings_schema");

@@ -12,7 +12,7 @@
             "title": "Rows",
             "items": {
                 "type": "object",
-                "required": ["title", "itemsType", "items"],
+                "required": ["title", "itemType", "items"],
                 "properties": {
                     "title": {
                         "type": "string",
@@ -26,7 +26,7 @@
                         "default": "desc",
                         "pattern": "^(asc|desc)$"
                     },
-                    "itemsType": {
+                    "itemType": {
                         "type": "string",
                         "title": "Row Type",
                         "description": "Whether the row displays streamers or games",
@@ -38,9 +38,9 @@
                         "description": "The items to show in this row",
                         "items": {
                             "type": "object",
-                            "required": ["id"],
+                            "required": ["twitchId"],
                             "properties": {
-                                "id": {
+                                "twitchId": {
                                     "type": "string",
                                     "label": "Item ID",
                                     "description": "The Twitch API game or stream ID"

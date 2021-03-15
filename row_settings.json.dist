@@ -3,61 +3,61 @@
         {
             "title": "Featured",
             "sort": "desc",
-            "itemsType": "streamer",
+            "itemType": "streamer",
             "items": [
                 {
-                    "id": "43201452"
+                    "twitchId": "43201452"
                 },
                 {
-                    "id": "22510310"
+                    "twitchId": "22510310"
                 }
             ]
         },
         {
             "title": "Games",
-            "itemsType": "game",
+            "itemType": "game",
             "sort": "desc",
             "linkType": "gamersx",
             "items": [
                 {
-                    "id": "21779",
+                    "twitchId": "21779",
                     "showArt": false
                 },
                 {
-                    "id": "33214"
+                    "twitchId": "33214"
                 },
                 {
-                    "id": "516575"
+                    "twitchId": "516575"
                 },
                 {
-                    "id": "512710"
+                    "twitchId": "512710"
                 },
                 {
-                    "id": "509658"
+                    "twitchId": "509658"
                 }
             ]
         },
         {
             "title": "Pros",
             "sort": "desc",
-            "itemsType": "streamer",
+            "itemType": "streamer",
             "linkType": "gamersx",
             "items": [
                 {
-                    "id": "44445592"
+                    "twitchId": "44445592"
                 },
                 {
-                    "id": "105533253"
+                    "twitchId": "105533253"
                 },
                 {
-                    "id": "160677372",
+                    "twitchId": "160677372",
                     "showArt": false
                 },
                 {
-                    "id": "195450890"
+                    "twitchId": "195450890"
                 },
                 {
-                    "id": "124420521"
+                    "twitchId": "124420521"
                 }
             ]
         }

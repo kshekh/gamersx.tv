@@ -24,17 +24,6 @@ export default {
       required: true,
     }
   },
-  computed: {
-    name: function() {
-      return this.settings.name;
-    },
-    items: function() {
-      return this.settings.items;
-    },
-    itemsType: function() {
-      return this.settings.itemsType;
-    }
-  },
   data: function()  {
     return {
       framework : "VueJs"
