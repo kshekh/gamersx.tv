@@ -1,0 +1,67 @@
+{
+    "title": "HomeRow Settings",
+    "description": "The settings for GamersX Home Row",
+
+    "type": "object",
+    "required": [
+        "rows"
+    ],
+    "properties": {
+        "rows": {
+            "type": "array",
+            "title": "Rows",
+            "items": {
+                "type": "object",
+                "required": ["name", "itemsType", "items"],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "title": "Name",
+                        "description": "Text label for the Row"
+                    },
+                    "itemsType": {
+                        "type": "string",
+                        "title": "Row Type",
+                        "description": "Whether the row displays streamers or games",
+                        "pattern": "^(game|streamer|popular)$"
+                    },
+                    "sort": {
+                        "type": "string",
+                        "title": "Sort",
+                        "description": "How to sort the embeds in this row",
+                        "default": "desc",
+                        "pattern": "^(asc|desc)$"
+                    },
+                    "display": {
+                        "type": "string",
+                        "title": "Display",
+                        "description": "Whether this row shows embeds always, sometimes, etc.",
+                        "default": "showFirstEmbed",
+                        "pattern": "^(showEmbeds|showFirstEmbed)$"
+                    },
+                    "items": {
+                        "type": "array",
+                        "title": "Row Items",
+                        "description": "The items to show in this row",
+                        "items": {
+                            "type": "object",
+                            "required": ["id", "label"],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "label": "Item ID",
+                                    "description": "The Twitch API game or stream ID"
+                                },
+                                "label": {
+                                    "type": "string",
+                                    "label": "Item Label",
+                                    "description": "The game or channel name"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
