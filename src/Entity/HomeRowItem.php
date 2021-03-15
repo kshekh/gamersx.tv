@@ -18,18 +18,18 @@ class HomeRowItem
     private $id;
 
     /**
-     * The item's ID in the Twitch API
-     *
-     * @ORM\Column(type="string", length=32)
-     */
-    private $itemId;
-
-    /**
      * The index of the item in the HomeRow
      *
      * @ORM\Column(type="smallint")
      */
     private $sortIndex;
+
+    /**
+     * The item's ID in the Twitch API
+     *
+     * @ORM\Column(type="string", length=32)
+     */
+    private $twitchId;
 
     /**
      * Whether to show box/profile art for this item
@@ -38,12 +38,20 @@ class HomeRowItem
      */
     private $showArt;
 
+    const OFFLINE_DISPLAY_ART = 'art';
+    const OFFLINE_DISPLAY_STREAM = 'stream';
+    const OFFLINE_DISPLAY_NONE = 'none';
     /**
-     * Whether to show an embedded stream for this item
-     *
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="string", length=32)
      */
-    private $showStream;
+    private $offlineDisplayType;
+
+    const LINK_TYPE_GAMERSX = 'gamersx';
+    const LINK_TYPE_TWITCH = 'twitch';
+    /**
+     * @ORM\Column(type="string", length=32)
+     */
+    private $linkType;
 
     /**
      * The Home Row this item belongs to
@@ -54,21 +62,17 @@ class HomeRowItem
     private $homeRow;
 
 
+    /**
+     * Gets the item's type from the parent row
+     */
+    public function getItemType(): ?string
+    {
+        return $this->getHomeRow()->itemType;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getItemId(): ?string
-    {
-        return $this->itemId;
-    }
-
-    public function setItemId(string $itemId): self
-    {
-        $this->itemId = $itemId;
-
-        return $this;
     }
 
     public function getSortIndex(): ?int
@@ -79,6 +83,18 @@ class HomeRowItem
     public function setSortIndex(int $sortIndex): self
     {
         $this->sortIndex = $sortIndex;
+
+        return $this;
+    }
+
+    public function getTwitchId(): ?string
+    {
+        return $this->twitchId;
+    }
+
+    public function setTwitchId(string $twitchId): self
+    {
+        $this->twitchId = $twitchId;
 
         return $this;
     }
@@ -95,14 +111,26 @@ class HomeRowItem
         return $this;
     }
 
-    public function getShowStream(): ?bool
+    public function getOfflineDisplayType(): ?string
     {
-        return $this->showStream;
+        return $this->offlineDisplayType;
     }
 
-    public function setShowStream(bool $showStream): self
+    public function setOfflineDisplayType(string $offlineDisplayType): self
     {
-        $this->showStream = $showStream;
+        $this->offlineDisplayType = $offlineDisplayType;
+
+        return $this;
+    }
+
+    public function getLinkType(): ?string
+    {
+        return $this->linkType;
+    }
+
+    public function setLinkType(string $linkType): self
+    {
+        $this->linkType = $linkType;
 
         return $this;
     }
@@ -117,11 +145,6 @@ class HomeRowItem
         $this->homeRow = $homeRow;
 
         return $this;
-    }
-
-    public function getItemType(): ?string
-    {
-        return $this->getHomeRow()->itemType;
     }
 
 }

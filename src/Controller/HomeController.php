@@ -19,9 +19,8 @@ class HomeController extends AbstractController
 
         foreach ($settings->rows as $row) {
             $thisRow = Array();
-            $thisRow['label'] = $row->name;
+            $thisRow['label'] = $row->title;
             $thisRow['sort'] = $row->sort;
-            $thisRow['display'] = $row->display;
             $thisRow['itemsType'] = $row->itemsType;
 
             // Set up all the HttpClient and API requests concurrently
@@ -54,63 +53,53 @@ class HomeController extends AbstractController
         // are thumbnails, etc
         foreach($rowChannels as &$row) {
             $channels = Array();
-            if ($row['display'] === 'showEmbeds') {
-                foreach($row['infoRequests']->toArray()['data'] as $streamer) {
-                    $channels[] = [
-                        'channel' => $streamer['login'],
-                        'showEmbed' => TRUE,
-                        'showImage' => FALSE,
-                        'link' => FALSE
-                    ];
+            $broadcast = $row['broadcastRequests']->toArray()['data'];
+            $infos = $row['infoRequests']->toArray()['data'];
+
+            if (count($broadcast) === 0) {
+                $embed = false;
+                // Nobody is online right now. No embeds at all.
+            } else {
+                $embed = $broadcast[0];
+                if ($row['itemsType'] === 'streamer') {
+                    $first = $embed['user_id'];
+                } elseif ($row['itemsType'] === 'game') {
+                    $first = $embed['game_id'];
                 }
-            } elseif ($row['display'] === 'showFirstEmbed') {
-                $broadcast = $row['broadcastRequests']->toArray()['data'];
-                $infos = $row['infoRequests']->toArray()['data'];
 
-                if (count($broadcast) === 0) {
-                    // Nobody is online right now. No embeds at all.
+                $channels[] = [
+                    'channel' => $embed['user_login'],
+                    'showEmbed' => TRUE,
+                    'showImage' => FALSE,
+                    'link' => FALSE
+                ];
+            }
 
-                } else {
-                    $embed = $broadcast[0];
-                    if ($row['itemsType'] === 'streamer') {
-                        $first = $embed['user_id'];
-                    } elseif ($row['itemsType'] === 'game') {
-                        $first = $embed['game_id'];
+            foreach($infos as $info) {
+                if ($row['itemsType'] === 'streamer') {
+                    if ($embed && $info['id'] == $first) {
+                        continue;
+                    }
+                    $channels[] = [
+                        'channel' => FALSE,
+                        'showEmbed' => FALSE,
+                        'image' => $info['profile_image_url'],
+                        'imageType' => 'profile',
+                        'link' => '/streamer/'.$info['id'],
+                    ];
+                } elseif ($row['itemsType'] === 'game') {
+                    if ($embed && $info['id'] === $first) {
+                        continue;
                     }
 
                     $channels[] = [
-                        'channel' => $embed['user_login'],
-                        'showEmbed' => TRUE,
-                        'showImage' => FALSE,
-                        'link' => FALSE
+                        'channel' => FALSE,
+                        'showEmbed' => FALSE,
+                        'image' => $info['box_art_url'],
+                        'imageType' => 'boxArt',
+                        'link' => '/game/'.$info['id'],
                     ];
-                }
 
-                foreach($infos as $info) {
-                    if ($row['itemsType'] === 'streamer') {
-                        if ($embed && $info['id'] == $first) {
-                            continue;
-                        }
-                        $channels[] = [
-                            'channel' => FALSE,
-                            'showEmbed' => FALSE,
-                            'image' => $info['profile_image_url'],
-                            'imageType' => 'profile',
-                            'link' => '/streamer/'.$info['id'],
-                        ];
-                    } elseif ($row['itemsType'] === 'game') {
-                        if ($embed && $info['id'] === $first) {
-                            continue;
-                        }
-                        $channels[] = [
-                            'channel' => FALSE,
-                            'showEmbed' => FALSE,
-                            'image' => $info['box_art_url'],
-                            'imageType' => 'boxArt',
-                            'link' => '/game/'.$info['id'],
-                        ];
-
-                    }
                 }
             }
 

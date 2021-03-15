@@ -12,18 +12,12 @@
             "title": "Rows",
             "items": {
                 "type": "object",
-                "required": ["name", "itemsType", "items"],
+                "required": ["title", "itemsType", "items"],
                 "properties": {
-                    "name": {
+                    "title": {
                         "type": "string",
-                        "title": "Name",
+                        "title": "Title",
                         "description": "Text label for the Row"
-                    },
-                    "itemsType": {
-                        "type": "string",
-                        "title": "Row Type",
-                        "description": "Whether the row displays streamers or games",
-                        "pattern": "^(game|streamer|popular)$"
                     },
                     "sort": {
                         "type": "string",
@@ -32,12 +26,11 @@
                         "default": "desc",
                         "pattern": "^(asc|desc)$"
                     },
-                    "display": {
+                    "itemsType": {
                         "type": "string",
-                        "title": "Display",
-                        "description": "Whether this row shows embeds always, sometimes, etc.",
-                        "default": "showFirstEmbed",
-                        "pattern": "^(showEmbeds|showFirstEmbed)$"
+                        "title": "Row Type",
+                        "description": "Whether the row displays streamers or games",
+                        "pattern": "^(game|streamer|popular)$"
                     },
                     "items": {
                         "type": "array",
@@ -45,17 +38,32 @@
                         "description": "The items to show in this row",
                         "items": {
                             "type": "object",
-                            "required": ["id", "label"],
+                            "required": ["id"],
                             "properties": {
                                 "id": {
                                     "type": "string",
                                     "label": "Item ID",
                                     "description": "The Twitch API game or stream ID"
                                 },
-                                "label": {
+                                "showArt": {
+                                    "type": "boolean",
+                                    "label": "Show Art",
+                                    "description": "Whether to show a static image before the embed",
+                                    "default": false
+                                },
+                                "offlineDisplayType": {
                                     "type": "string",
-                                    "label": "Item Label",
-                                    "description": "The game or channel name"
+                                    "label": "Offline Display",
+                                    "description": "What to show if the streamer is offline",
+                                    "default": "art",
+                                    "pattern": "$(art|stream|none)"
+                                },
+                                "linkType": {
+                                    "type": "string",
+                                    "label": "Link Type",
+                                    "description": "Whether the label links to twitch or gamersx.tv",
+                                    "pattern": "$(gamersx|twitch)^",
+                                    "default": "gamersx"
                                 }
                             }
                         }

@@ -1,68 +1,63 @@
 {
     "rows": [
         {
-            "name": "Featured",
-            "itemsType": "streamer",
+            "title": "Featured",
             "sort": "desc",
-            "display": "showEmbeds",
+            "itemsType": "streamer",
             "items": [
                 {
-                    "id": "44445592",
-                    "label": "pokimane"
+                    "id": "43201452"
                 },
                 {
-                    "id": "105533253",
-                    "label": "brokh_"
+                    "id": "22510310"
                 }
             ]
         },
         {
-            "name": "Games",
+            "title": "Games",
             "itemsType": "game",
             "sort": "desc",
-            "display": "showFirstEmbed",
             "linkType": "gamersx",
             "items": [
                 {
                     "id": "21779",
-                    "label": "League of Legends"
+                    "showArt": false
                 },
                 {
-                    "id": "33214",
-                    "label": "Fortnite"
+                    "id": "33214"
                 },
                 {
-                    "id": "516575",
-                    "label": "Valorant"
+                    "id": "516575"
                 },
                 {
-                    "id": "512710",
-                    "label": "Call of Duty"
+                    "id": "512710"
                 },
                 {
-                    "id": "509658",
-                    "label": "Just Chatting"
+                    "id": "509658"
                 }
             ]
         },
         {
-            "name": "Pros",
-            "itemsType": "streamer",
+            "title": "Pros",
             "sort": "desc",
-            "display": "showFirstEmbed",
+            "itemsType": "streamer",
             "linkType": "gamersx",
             "items": [
                 {
+                    "id": "44445592"
+                },
+                {
+                    "id": "105533253"
+                },
+                {
                     "id": "160677372",
-                    "label": "Closer"
+                    "showArt": false
                 },
                 {
-                    "id": "195450890",
-                    "label": "100thieves"
+                    "id": "195450890"
                 },
                 {
-                    "id": "124420521",
-                    "label": "LCS"
+                    "id": "124420521"
                 }
             ]
         }

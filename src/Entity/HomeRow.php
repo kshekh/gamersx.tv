@@ -40,11 +40,6 @@ class HomeRow
     private $itemType;
 
     /**
-     * @ORM\Column(type="boolean")
-     */
-    private $displayOffline;
-
-    /**
      * @ORM\OneToMany(targetEntity=HomeRowItem::class, mappedBy="homeRow", orphanRemoval=true)
      */
     private $items;
@@ -92,18 +87,6 @@ class HomeRow
     public function setItemType(string $itemType): self
     {
         $this->itemType = $itemType;
-
-        return $this;
-    }
-
-    public function getDisplayOffline(): ?bool
-    {
-        return $this->displayOffline;
-    }
-
-    public function setDisplayOffline(bool $displayOffline): self
-    {
-        $this->displayOffline = $displayOffline;
 
         return $this;
     }
