@@ -17,28 +17,28 @@ class HomeController extends AbstractController
         $settings = $rows->getSettings();
         $rowChannels = Array();
 
-        foreach ($settings['rows'] as $row) {
+        foreach ($settings->rows as $row) {
             $thisRow = Array();
-            $thisRow['label'] = $row['name'];
-            $thisRow['sort'] = $row['sort'];
-            $thisRow['display'] = $row['display'];
-            $thisRow['itemsType'] = $row['itemsType'];
+            $thisRow['label'] = $row->name;
+            $thisRow['sort'] = $row->sort;
+            $thisRow['display'] = $row->display;
+            $thisRow['itemsType'] = $row->itemsType;
 
             // Set up all the HttpClient and API requests concurrently
-            if ($row['itemsType'] === 'streamer') {
+            if ($row->itemsType === 'streamer') {
                 $streamerIds = array_map(function ($item) use ($twitch){
-                    return $item['id'];
-                }, $row['items']);
+                    return $item->id;
+                }, $row->items);
 
                 $channels = $twitch->getStreamerInfo($streamerIds);
                 $broadcasts = $twitch->getStreamForStreamer($streamerIds);
                 $thisRow['infoRequests'] = $channels;
                 $thisRow['broadcastRequests'] = $broadcasts;
 
-            } elseif ($row['itemsType'] === 'game') {
+            } elseif ($row->itemsType === 'game') {
                 $gameIds = array_map(function ($item) {
-                    return $item['id'];
-                }, $row['items']);
+                    return $item->id;
+                }, $row->items);
 
                 $channels = $twitch->getGameInfo($gameIds);
                 $broadcasts = $twitch->getTopLiveBroadcastsForGames($gameIds);

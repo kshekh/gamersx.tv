@@ -2,69 +2,42 @@
 
 namespace App\Service;
 
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Opis\JsonSchema\{ Validator, ValidationResult, ValidationError, Schema };
+
+
 class RowSettings
 {
-    public function getSettings() {
-        return [
-            'rows' => [
-                [
-                    'name' => 'Featured',
-                    'itemsType' => 'streamer',
-                    'sort' => 'desc',
-                    'display' => 'showEmbeds',
-                    'items' => [
-                        [
-                            'id' => 44445592,
-                            'label' => 'pokimane',
-                        ], [
-                            'id' => 105533253,
-                            'label' => 'brokh_',
-                        ]
-                    ]
-                ], [
-                    'name' => 'Games',
-                    'itemsType' => 'game',
-                    'sort' => 'desc',
-                    'display' => 'showFirstEmbed',
-                    'linkType' => 'gamersx',
-                    'items' => [
-                        [
-                            'id' => 21779,
-                            'label' => 'League of Legends',
-                        ], [
-                            'id' => 33214,
-                            'label' => 'Fortnite',
-                        ], [
-                            'id' => 516575,
-                            'label' => 'Valorant',
-                        ], [
-                            'id' => 512710,
-                            'label' => 'Call of Duty',
-                        ], [
-                            'id' => 509658,
-                            'label' => 'Just Chatting',
-                        ]
-                    ],
-                ], [
-                    'name' => 'Pros',
-                    'itemsType' => 'streamer',
-                    'sort' => 'desc',
-                    'display' => 'showFirstEmbed',
-                    'linkType' => 'gamersx',
-                    'items' => [
-                        [
-                            'id' => 160677372,
-                            'label' => 'Closer',
-                        ], [
-                            'id' => 195450890,
-                            'label' => '100thieves',
-                        ], [
-                            'id' => 124420521,
-                            'label' => 'LCS',
-                        ]
-                    ]
-                ]
-            ]
-        ];
+    private $params;
+
+    public function __construct(ParameterBagInterface $params) {
+        $this->params = $params;
     }
+
+    public function getSettings() {
+        // Read in the JSON File and Schema
+        $settingsFile = $this->params->get("app.row_settings");
+        $schemaFile = $this->params->get("app.row_settings_schema");
+
+        // Validate it
+        $data = json_decode(file_get_contents($settingsFile));
+        $schema = Schema::fromJsonString(file_get_contents($schemaFile));
+
+        $validator = new Validator();
+
+        $result = $validator->schemaValidation($data, $schema);
+        // Return as a PHP Array
+        if ($result->isValid()) {
+            return $data;
+        } else {
+            // /** @var ValidationError $error */
+            // $error = $result->getFirstError();
+            // echo '$data is invalid', PHP_EOL;
+            // echo "Error: ", $error->keyword(), PHP_EOL;
+            // echo json_encode($error->keywordArgs(), JSON_PRETTY_PRINT), PHP_EOL;
+            // dd($error);
+            return $result;
+        }
+    }
+
 }
