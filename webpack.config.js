@@ -7,11 +7,6 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
 }
 
 Encore
-    // copy the images from the /images folder
-    .copyFiles({
-        from: './assets/images'
-    })
-
     // directory where compiled assets will be stored
     .setOutputPath('public/build/')
     // public path used by the web server to access the output path
