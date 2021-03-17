@@ -30,6 +30,7 @@ Encore
     .addEntry('home', './assets/js/home.js')
     .addEntry('game', './assets/js/game.js')
     .addEntry('streamer', './assets/js/streamer.js')
+    .addEntry('file-upload', './assets/js/fileUpload.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')

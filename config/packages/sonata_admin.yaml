@@ -3,7 +3,17 @@ sonata_admin:
     title_logo: '/images/controller.png'
     dashboard:
         blocks:
-            - { type: sonata.admin.block.admin_list, position: left }
+            -
+                type: sonata.admin.block.admin_list
+                position: left
+
+            -
+                type: sonata.block.service.file_upload
+                position: right
+                settings:
+                    title: Upload new Home Row settings
+                    url: https://sonata-project.org/blog/archive.rss
+                    template: '/admin/file_upload_block.html.twig'
     options:
         legacy_twig_text_extension: false
 
