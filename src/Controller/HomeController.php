@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Service\TwitchApi;
 use App\Service\RowSettings;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,10 +13,15 @@ class HomeController extends AbstractController
     /**
      * @Route("/", name="index")
      */
-    public function index(RowSettings $rows, TwitchApi $twitch)
+    public function index(ParameterBagInterface $params,
+        RowSettings $settingsService, TwitchApi $twitch)
     {
+
+        $settingsFile = $params->get("app.row_settings");
+        $settings = $settingsService->getSettingsFromJsonFile($settingsFile);
+
         $rowChannels = Array();
-        foreach ($rows->toEntities() as $row) {
+        foreach ($settingsService->toEntities($settings) as $row) {
             $thisRow = Array();
             $thisRow['label'] = $row->getTitle();
             $thisRow['sort'] = $row->getSort();

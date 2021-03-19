@@ -6,19 +6,21 @@ use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Opis\JsonSchema\{ Validator, ValidationResult, ValidationError, Schema };
+use Symfony\Component\Filesystem\Filesystem;
 
 
 class RowSettings
 {
     private $params;
+    private $files;
 
-    public function __construct(ParameterBagInterface $params) {
+    public function __construct(Filesystem $files, ParameterBagInterface $params) {
         $this->params = $params;
+        $this->files = $files;
     }
 
-    public function toEntities() {
+    public function toEntities($settings) {
         $rows = [];
-        $settings = $this->getSettingsFromJsonFile();
 
         foreach ($settings->rows as $settingsRow) {
             $homeRow = new HomeRow();
@@ -44,9 +46,8 @@ class RowSettings
         return $rows;
     }
 
-    public function getSettingsFromJsonFile() {
+    public function getSettingsFromJsonFile($settingsFile) {
         // Read in the JSON File and Schema
-        $settingsFile = $this->params->get("app.row_settings");
         $schemaFile = $this->params->get("app.row_settings_schema");
 
         // Validate it
@@ -60,14 +61,17 @@ class RowSettings
         if ($result->isValid()) {
             return $data;
         } else {
-            // /** @var ValidationError $error */
-            // $error = $result->getFirstError();
-            // echo '$data is invalid', PHP_EOL;
-            // echo "Error: ", $error->keyword(), PHP_EOL;
-            // echo json_encode($error->keywordArgs(), JSON_PRETTY_PRINT), PHP_EOL;
-            // dd($error);
-            return $result;
+            $error = $result->getFirstError();
+            $message = "JSON Error: ". $error->keyword(). PHP_EOL.
+                json_encode($error->keywordArgs());
+            throw new \Exception($message);
         }
+    }
+
+    public function writeSettingsToJsonFile($rows) {
+        $settingsFile = $this->params->get("app.row_settings");
+        $contents = json_encode($rows, JSON_PRETTY_PRINT);
+        $this->files->dumpFile($settingsFile, $contents);
     }
 
 }
