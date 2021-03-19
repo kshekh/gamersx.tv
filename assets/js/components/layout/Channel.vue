@@ -1,18 +1,20 @@
 <template>
   <div>
     <div v-if="image">
-      <a v-if="link" :href="link">
-      <twitch-art
-        :imageType="imageType"
-        :src="image"
-      ></twitch-art>
-    </a>
+      <a :href="link">
+        <twitch-art
+          v-if="this.broadcast === null"
+          :imageType="imageType"
+          :src="image"
+        ></twitch-art>
+      </a>
     </div>
     <div v-if="channel">
       <i-frame-embed
         v-bind:channel="channel"
       ></i-frame-embed>
     </div>
+    <span>{{ title }}</span>
   </div>
 </template>
 <script>
@@ -40,12 +42,26 @@ export default {
     },
     link: function() {
       switch(this.rowType) {
-        case 'streamer': return '/game/' + this.info.id;
-        case 'game': return '/streamer/' + this.info.id;
+        case 'streamer': return '/streamer/' + this.info.id;
+        case 'game': return '/game/' + this.info.id;
+      }
+    },
+    channel: function() {
+      return this?.broadcast?.user_login;
+    },
+    title: function() {
+      if (this.broadcast) {
+        return this.broadcast.user_name + ' playing ' + this.broadcast.game_name;
+      } else {
+        switch(this.rowType) {
+          case 'streamer': return this.info.display_name;
+          case 'game': return this.info.name;
+        }
       }
     }
+
   },
-  props: [ 'info', 'broadcast', 'rowType', 'channel', 'showEmbed' ],
+  props: [ 'info', 'broadcast', 'rowType', 'sortIndex', 'showArt', 'offlineDisplayType', 'linkType' ],
 }
 </script>
 <style scoped>

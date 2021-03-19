@@ -92,8 +92,10 @@ class HomeController extends AbstractController
                     'info' => $info,
                     'broadcast' => $broadcast,
                     'rowType' => $item->getItemType(),
-                    'channel' => FALSE,
-                    'showEmbed' => FALSE,
+                    'sortIndex' => $item->getSortIndex(),
+                    'showArt' => $item->getShowArt(),
+                    'offlineDisplayType' => $item->getOfflineDisplayType(),
+                    'linkType' => $item->getLinkType(),
                 ];
             }
             $thisRow['channels'] = $channels;
