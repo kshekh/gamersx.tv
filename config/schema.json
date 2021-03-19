@@ -56,13 +56,13 @@
                                     "label": "Offline Display",
                                     "description": "What to show if the streamer is offline",
                                     "default": "art",
-                                    "pattern": "$(art|stream|none)"
+                                    "pattern": "^(art|stream|none)$"
                                 },
                                 "linkType": {
                                     "type": "string",
                                     "label": "Link Type",
                                     "description": "Whether the label links to twitch or gamersx.tv",
-                                    "pattern": "$(gamersx|twitch)^",
+                                    "pattern": "^(gamersx|twitch)$",
                                     "default": "gamersx"
                                 }
                             }
