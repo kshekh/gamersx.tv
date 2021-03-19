@@ -25,7 +25,27 @@ export default {
     'IFrameEmbed': IFrameEmbed,
     'TwitchArt': TwitchArt
   },
-  props: [ 'channel', 'image', 'imageType', 'link', 'showEmbed' ],
+  computed: {
+    imageType: function() {
+      switch(this.rowType) {
+        case 'streamer': return 'profile';
+        case 'game': return 'boxArt';
+      }
+    },
+    image: function() {
+      switch(this.rowType) {
+        case 'streamer': return this.info.profile_image_url;
+        case 'game': return this.info.box_art_url;
+      }
+    },
+    link: function() {
+      switch(this.rowType) {
+        case 'streamer': return '/game/' + this.info.id;
+        case 'game': return '/streamer/' + this.info.id;
+      }
+    }
+  },
+  props: [ 'info', 'broadcast', 'rowType', 'channel', 'showEmbed' ],
 }
 </script>
 <style scoped>

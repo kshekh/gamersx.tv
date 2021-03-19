@@ -11,6 +11,7 @@
   </div>
 </template>
 <script>
+import axios from 'axios';
 import HomeRow from './layout/HomeRow.vue';
 
 export default {
@@ -19,11 +20,17 @@ export default {
   },
   data: function()  {
     return {
-      settings: {},
+      settings: {
+        rows: []
+      },
     }
   },
   mounted: function() {
-    this.settings = JSON.parse(this.$el.parentNode.dataset['settings']);
+    axios
+      .get('/home/api')
+      .then(response => {
+        this.settings = response.data.settings;
+      });
   }
 }
 </script>

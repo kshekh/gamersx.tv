@@ -67,7 +67,7 @@ class HomeRowItem
      */
     public function getItemType(): ?string
     {
-        return $this->getHomeRow()->itemType;
+        return $this->getHomeRow()->getItemType();
     }
 
     public function getId(): ?int

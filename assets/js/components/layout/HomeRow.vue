@@ -1,6 +1,6 @@
 <template>
   <div class="container text-center mx-auto">
-    <div class="text-2xl font-extrabold pl-12 pt-4 pb-2">{{ settings.label}}</div>
+    <div class="text-2xl font-extrabold pl-12 pt-4 pb-2">{{ settings.title}}</div>
     <div class="home-row flex flex-row pl-10 space-x-10">
       <div v-for="channel in settings.channels">
         <channel
