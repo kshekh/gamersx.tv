@@ -1,21 +1,23 @@
 <template>
   <div>
-    <div v-if="showThumbnail">
-      <a :href="link">
-        <twitch-art
-          :imageType="imageType"
-          :src="image"
-        ></twitch-art>
-      </a>
+    <div class="flex flex-row bg-indigo-500 rounded-md">
+      <div v-if="showThumbnail">
+        <a :href="link">
+          <twitch-art
+            :imageType="imageType"
+            :src="image"
+          ></twitch-art>
+        </a>
+      </div>
+      <div v-if="showChannel">
+        <i-frame-embed
+          v-bind:channel="channel"
+        ></i-frame-embed>
+      </div>
     </div>
-    <div v-if="showChannel">
-      <i-frame-embed
-        v-bind:channel="channel"
-      ></i-frame-embed>
-    </div>
-    <div v-if="showThumbnail || showChannel" class="stream-label">
-    <a :href="link">
-      <span>{{ title }}</span>
+    <div>
+    <a class="flex flex-row items-start pl-4" :href="link">
+      <div>{{ title }}</div>
     </a>
   </div>
   </div>

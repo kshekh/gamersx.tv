@@ -1,5 +1,5 @@
 <template>
-	<div :class="imageClass" class="p-4 bg-indigo-500 rounded-md">
+	<div :class="imageClass" class="p-4" >
     <img :width="width" :height="height" :src="sizedUrl">
   </div>
 </template>

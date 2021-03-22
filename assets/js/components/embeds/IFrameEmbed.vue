@@ -1,5 +1,5 @@
 <template>
-	<div class="w-auto p-4 bg-indigo-500 rounded-md">
+	<div class="w-auto p-4">
 		<iframe
       :src="playerUrl"
 			height="300"
