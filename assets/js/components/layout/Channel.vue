@@ -14,7 +14,9 @@
         v-bind:channel="channel"
       ></i-frame-embed>
     </div>
-    <span>{{ title }}</span>
+    <a :href="link">
+      <span>{{ title }}</span>
+    </a>
   </div>
 </template>
 <script>
@@ -41,9 +43,17 @@ export default {
       }
     },
     link: function() {
-      switch(this.rowType) {
-        case 'streamer': return '/streamer/' + this.info.id;
-        case 'game': return '/game/' + this.info.id;
+      switch(this.linkType) {
+        case 'gamersx':
+          switch(this.rowType) {
+            case 'streamer': return '/streamer/' + this.info.id;
+            case 'game': return '/game/' + this.info.id;
+          }
+        case 'twitch':
+          switch(this.rowType) {
+            case 'streamer': return 'https://www.twitch.tv/' + this.info.login;
+            case 'game': return 'https://www.twitch.tv/directory/game/' + this.info.game_name;
+          }
       }
     },
     channel: function() {
