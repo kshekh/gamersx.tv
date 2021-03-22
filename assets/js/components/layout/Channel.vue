@@ -15,11 +15,14 @@
         ></i-frame-embed>
       </div>
     </div>
-    <div>
-    <a class="flex flex-row items-start pl-4" :href="link">
-      <div>{{ title }}</div>
+    <a :href="link">
+      <div class="flex flex-row justify-between pl-4">
+        <div class="text-left justify-self-start">{{ title }}</div>
+        <div class="text-right justify-self-end" v-if="showChannel && broadcast">
+          {{ broadcast.title }} ({{ broadcast.viewer_count}} viewers)
+        </div>
+      </div>
     </a>
-  </div>
   </div>
 </template>
 <script>
