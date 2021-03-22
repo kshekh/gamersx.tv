@@ -22,6 +22,7 @@ export default {
     playerUrl: function() {
       return 'https://player.twitch.tv/?channel=' + this.channel +
         '&parent=' + window.location.hostname +
+        '&autoplay=false' +
         '&muted=true'
       ;
     }
