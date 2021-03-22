@@ -20,7 +20,7 @@ class HomeRowItem
     /**
      * The index of the item in the HomeRow
      *
-     * @ORM\Column(type="smallint")
+     * @ORM\Column(type="smallint", nullable=true)
      */
     private $sortIndex;
 

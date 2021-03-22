@@ -29,12 +29,15 @@ class RowSettings
             $homeRow->setSort($settingsRow->sort);
             $homeRow->setItemType($settingsRow->itemType);
 
-            foreach ($settingsRow->items as $settingsItem) {
+            foreach ($settingsRow->items as $index => $settingsItem) {
                 $homeRowItem = new HomeRowItem();
                 $homeRowItem->setTwitchId($settingsItem->twitchId);
                 $homeRowItem->setShowArt($settingsItem->showArt);
                 $homeRowItem->setOfflineDisplayType($settingsItem->offlineDisplayType);
                 $homeRowItem->setLinkType($settingsItem->linkType);
+                if ($homeRow->getSort() === HomeRow::SORT_FIXED) {
+                    $homeRowItem->setSortIndex($index);
+                }
 
                 $homeRowItem->setHomeRow($homeRow);
                 $homeRow->addItem($homeRowItem);

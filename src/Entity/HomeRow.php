@@ -26,6 +26,7 @@ class HomeRow
 
     const SORT_ASC = 'asc';
     const SORT_DESC = 'desc';
+    const SORT_FIXED = 'fixed';
     /**
      * @ORM\Column(type="string", length=8)
      */

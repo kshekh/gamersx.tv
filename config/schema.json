@@ -24,7 +24,7 @@
                         "title": "Sort",
                         "description": "How to sort the embeds in this row",
                         "default": "desc",
-                        "pattern": "^(asc|desc)$"
+                        "pattern": "^(asc|desc|fixed)$"
                     },
                     "itemType": {
                         "type": "string",
