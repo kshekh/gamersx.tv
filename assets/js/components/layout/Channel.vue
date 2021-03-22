@@ -1,22 +1,23 @@
 <template>
   <div>
-    <div v-if="image">
+    <div v-if="showThumbnail">
       <a :href="link">
         <twitch-art
-          v-if="this.broadcast === null"
           :imageType="imageType"
           :src="image"
         ></twitch-art>
       </a>
     </div>
-    <div v-if="channel">
+    <div v-if="showChannel">
       <i-frame-embed
         v-bind:channel="channel"
       ></i-frame-embed>
     </div>
+    <div v-if="showThumbnail || showChannel" class="stream-label">
     <a :href="link">
       <span>{{ title }}</span>
     </a>
+  </div>
   </div>
 </template>
 <script>
@@ -71,7 +72,7 @@ export default {
     }
 
   },
-  props: [ 'info', 'broadcast', 'rowType', 'sortIndex', 'showArt', 'offlineDisplayType', 'linkType' ],
+  props: [ 'info', 'broadcast', 'rowType', 'sortIndex', 'showThumbnail', 'showChannel', 'showArt', 'offlineDisplayType', 'linkType' ],
 }
 </script>
 <style scoped>

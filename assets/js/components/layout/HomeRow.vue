@@ -4,7 +4,10 @@
     <div class="home-row flex flex-row pl-10 space-x-10">
       <div v-for="channel in settings.channels">
         <channel
+          v-if="showChannel(channel) || showThumbnail(channel)"
           v-bind="channel"
+          :showChannel = "showChannel(channel)"
+          :showThumbnail = "showThumbnail(channel)"
         ></channel>
       </div>
     </div>
@@ -29,6 +32,15 @@ export default {
       framework : "VueJs"
     }
   },
+  methods: {
+    showThumbnail: function(channel) {
+      return channel.showArt || (channel.broadcast === null && channel.offlineDisplayType === 'art');
+
+    },
+    showChannel: function(channel) {
+      return channel.broadcast != null || channel.offlineDisplayType == 'stream';
+    },
+  }
 }
 </script>
 <style scoped>
