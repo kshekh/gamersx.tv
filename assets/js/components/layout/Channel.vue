@@ -58,7 +58,11 @@ export default {
       }
     },
     channel: function() {
-      return this?.broadcast?.user_login;
+      if (this.broadcast !== null) {
+        return this.broadcast.user_login;
+      } else {
+        return this.info.login;
+      }
     },
     title: function() {
       if (this.broadcast) {
