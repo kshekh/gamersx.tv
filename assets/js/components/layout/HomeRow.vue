@@ -1,6 +1,6 @@
 <template>
-  <div class="container w-screen overflow-x-auto">
-    <div class="text-2xl text-left font-extrabold pl-12 pt-4 pb-2">{{ settings.title}}</div>
+  <div class="overflow-x-auto">
+    <div class="text-2xl text-left font-extrabold px-12 pt-4 pb-2">{{ settings.title}}</div>
     <div class="home-row flex flex-row space-x-10">
       <div v-for="channel in displayChannels">
         <channel

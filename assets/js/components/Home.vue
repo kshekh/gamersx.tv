@@ -1,7 +1,7 @@
 <template>
   <div class="container w-screen text-center mx-auto">
     <div class="container flex-col">
-      <div class="w-16"
+      <div
         v-for="row in settings.rows">
         <home-row
           v-bind:settings="row"
