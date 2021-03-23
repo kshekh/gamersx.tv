@@ -15,15 +15,13 @@
         ></i-frame-embed>
       </div>
     </div>
-    <a :href="link">
-      <div class="flex flex-row justify-between pl-4">
+    <div class="flex flex-row flex-wrap justify-between pl-4">
+      <a :href="link">
         <div class="text-left justify-self-start">{{ title }}</div>
-        <div class="text-right justify-self-end" v-if="showChannel && broadcast">
-          {{ broadcast.title }} ({{ broadcast.viewer_count}} viewers)
-        </div>
-      </div>
-    </a>
+      </a>
+    </div>
   </div>
+</div>
 </template>
 <script>
 import IFrameEmbed from '../embeds/IFrameEmbed.vue'
@@ -71,7 +69,8 @@ export default {
     },
     title: function() {
       if (this.broadcast) {
-        return this.broadcast.user_name + ' playing ' + this.broadcast.game_name;
+        return this.broadcast.user_name + ' playing ' + this.broadcast.game_name + ' for ' +
+          this.broadcast.viewer_count + ' viewers';
       } else {
         switch(this.rowType) {
           case 'streamer': return this.info.display_name;
