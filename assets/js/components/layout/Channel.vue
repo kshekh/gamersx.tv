@@ -10,9 +10,9 @@
         </a>
       </div>
       <div v-if="showChannel">
-        <i-frame-embed
+        <js-embed
           v-bind:channel="channel"
-        ></i-frame-embed>
+        ></js-embed>
       </div>
     </div>
     <div class="flex flex-row flex-wrap justify-between pl-4">
@@ -24,13 +24,13 @@
 </div>
 </template>
 <script>
-import IFrameEmbed from '../embeds/IFrameEmbed.vue'
+import JsEmbed from '../embeds/JsEmbed.vue'
 import TwitchArt from './TwitchArt.vue'
 
 export default {
   name: 'Channel',
   components: {
-    'IFrameEmbed': IFrameEmbed,
+    'JsEmbed': JsEmbed,
     'TwitchArt': TwitchArt
   },
   computed: {
