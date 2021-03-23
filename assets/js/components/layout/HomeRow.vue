@@ -1,7 +1,7 @@
 <template>
-  <div class="overflow-x-auto">
+  <div class="home-row">
     <div class="text-2xl text-left font-extrabold px-12 pt-4 pb-2">{{ settings.title}}</div>
-    <div class="home-row flex flex-row space-x-10">
+    <div class="flex flex-row overflow-x-auto space-x-10">
       <div v-for="channel in displayChannels">
         <channel
           v-bind="channel"

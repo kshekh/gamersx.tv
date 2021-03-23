@@ -56,7 +56,7 @@ export default {
         case 'twitch':
           switch(this.rowType) {
             case 'streamer': return 'https://www.twitch.tv/' + this.info.login;
-            case 'game': return 'https://www.twitch.tv/directory/game/' + this.info.game_name;
+            case 'game': return 'https://www.twitch.tv/directory/game/' + this.info.name;
           }
       }
     },
