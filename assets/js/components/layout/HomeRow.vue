@@ -1,8 +1,17 @@
 <template>
   <div class="home-row">
-    <div class="text-2xl text-left font-extrabold px-12 pt-4 pb-2">{{ settings.title}}</div>
-    <div class="flex flex-row overflow-x-auto space-x-10">
-      <div v-for="channel in displayChannels">
+    <div class="text-2xl text-left font-extrabold px-12 pt-4 pb-2">{{ settings.title}}
+      <div class="inline-flex">
+        <button @click="back()" class="bg-indigo-300 hover:bg-indigo-400 text-gray-800 font-bold p-2 rounded-l">
+          &lt;
+        </button>
+        <button @click="forward()" class="bg-indigo-300 hover:bg-indigo-400 text-gray-800 font-bold p-2 rounded-r">
+          &gt;
+        </button>
+      </div>
+    </div>
+    <div class="flex flex-row overflow-x-hidden space-x-10">
+      <div v-for="channel in rowChannels">
         <channel
           v-bind="channel"
           :showChannel = "showChannel(channel)"
@@ -28,20 +37,20 @@ export default {
   },
   data: function()  {
     return {
-      framework : "VueJs"
+      rowIndex: 0,
+      displayChannels: [],
     }
   },
   computed: {
-    displayChannels: function() {
-      let displayed = this.settings.channels.filter(function(channel) {
-        return this.showThumbnail(channel) || this.showChannel(channel);
-      }, this);
-      switch (this.settings.sort) {
-        case 'asc': return displayed.sort(this.sortChannelsAsc);
-        case 'desc': return displayed.sort(this.sortChannelsDesc);
-        case 'fixed': return displayed.sort(this.sortChannelsFixed);
+    rowChannels: function() {
+      if (this.rowIndex === 0) {
+        return this.displayChannels;
+      } else {
+        let back = this.displayChannels.slice(this.rowIndex, this.displayChannels.length);
+        let front = this.displayChannels.slice(0, this.rowIndex);
+        return back.concat(front);
       }
-    },
+    }
   },
   methods: {
     showThumbnail: function(channel) {
@@ -71,7 +80,31 @@ export default {
     // Sort by the given index
     sortChannelsFixed: function(first, second) {
       return first.sortIndex - second.sortIndex;
+    },
+    back: function() {
+      this.rowIndex = this.rowIndex - 1 % this.displayChannels.length;
+    },
+    forward: function() {
+      this.rowIndex = this.rowIndex + 1 % this.displayChannels.length;
     }
+  },
+  mounted: function() {
+    let displayed = this.settings.channels.filter(function(channel) {
+      return this.showThumbnail(channel) || this.showChannel(channel);
+    }, this);
+    switch (this.settings.sort) {
+      case 'asc':
+        displayed = displayed.sort(this.sortChannelsAsc);
+        break;
+      case 'fixed':
+        displayed = displayed.sort(this.sortChannelsFixed);
+        break;
+      case 'desc':
+      default:
+        displayed = displayed.sort(this.sortChannelsDesc);
+    }
+    this.rowIndex = 0;
+    this.displayChannels = displayed;
   }
 }
 </script>
