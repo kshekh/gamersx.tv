@@ -33,6 +33,11 @@ export default {
       });
   }
 }
+
+/** We use this a lot for scrolling because JS % is remainder, not modulo **/
+Number.prototype.mod = function(n) {
+  return ((this % n) + n) % n;
+}
 </script>
 <style scoped>
 </style>

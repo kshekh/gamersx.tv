@@ -1,6 +1,6 @@
 <template>
   <div class="home-row">
-    <div class="text-2xl text-left font-extrabold px-12 pt-4 pb-2">{{ settings.title}}
+    <div class="text-2xl text-left font-extrabold pl-22 px-12 pt-4 pb-2">{{ settings.title}}
       <div class="inline-flex">
         <button @click="back()" class="bg-indigo-300 hover:bg-indigo-400 text-gray-800 font-bold p-2 rounded-l">
           &lt;
@@ -10,8 +10,8 @@
         </button>
       </div>
     </div>
-    <div class="flex flex-row overflow-x-hidden space-x-10">
-      <div v-for="channel in rowChannels">
+    <div class="flex flex-row overflow-x-hidden">
+      <div ref="channelDivs" v-for="channel in displayChannels">
         <channel
           v-bind="channel"
           :showChannel = "showChannel(channel)"
@@ -39,17 +39,6 @@ export default {
     return {
       rowIndex: 0,
       displayChannels: [],
-    }
-  },
-  computed: {
-    rowChannels: function() {
-      if (this.rowIndex === 0) {
-        return this.displayChannels;
-      } else {
-        let back = this.displayChannels.slice(this.rowIndex, this.displayChannels.length);
-        let front = this.displayChannels.slice(0, this.rowIndex);
-        return back.concat(front);
-      }
     }
   },
   methods: {
@@ -82,10 +71,19 @@ export default {
       return first.sortIndex - second.sortIndex;
     },
     back: function() {
-      this.rowIndex = this.rowIndex - 1 % this.displayChannels.length;
+      this.rowIndex = (this.rowIndex - 1).mod(this.displayChannels.length);
+      this.reorder();
     },
     forward: function() {
-      this.rowIndex = this.rowIndex + 1 % this.displayChannels.length;
+      this.rowIndex = (this.rowIndex + 1).mod(this.displayChannels.length);
+      this.reorder();
+    },
+    reorder() {
+      for (let i = 0; i < this.$refs.channelDivs.length; i++) {
+        let j = (i - this.rowIndex).mod(this.$refs.channelDivs.length);
+        // Add one to j because flexbox order should start with 1, not 0
+        this.$refs.channelDivs[i].style.order = j + 1;
+      }
     }
   },
   mounted: function() {

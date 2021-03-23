@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="px-5">
     <div class="flex flex-row bg-indigo-500 rounded-md">
       <div v-if="showThumbnail">
         <a :href="link">
