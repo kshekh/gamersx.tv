@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Service\TwitchApi;
 use App\Service\RowSettings;
+use App\Entity\HomeRow;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,13 +23,12 @@ class HomeController extends AbstractController
     /**
      * @Route("/home/api", name="home_api")
      */
-    public function apiHome(RowSettings $settingsService, TwitchApi $twitch)
+    public function apiHome(RowSettings $settingsService, TwitchApi $twitch): Response
     {
-        $settingsFile = $this->getParameter("app.row_settings");
-        $settings = $settingsService->getSettingsFromJsonFile($settingsFile);
+        $rows = $this->getDoctrine()->getRepository(HomeRow::class)->findAll();
 
         $rowChannels = Array();
-        foreach ($settingsService->toEntities($settings) as $row) {
+        foreach ($rows as $row) {
             $thisRow = Array();
             $thisRow['title'] = $row->getTitle();
             $thisRow['sort'] = $row->getSort();
