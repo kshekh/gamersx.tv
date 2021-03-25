@@ -38,3 +38,17 @@ services:
             - '@twig'
         tags:
             - { name: sonata.block }
+
+    admin.home_row:
+        class: App\Admin\HomeRowAdmin
+        arguments: [~, App\Entity\HomeRow, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: home, label: Rows}
+        public: true
+
+    admin.home_row_item:
+        class: App\Admin\HomeRowItemAdmin
+        arguments: [~, App\Entity\HomeRowItem, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: home, label: Row Items}
+        public: true

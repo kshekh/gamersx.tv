@@ -2,6 +2,14 @@ sonata_admin:
     title: 'GamersX Admin'
     title_logo: '/images/controller.png'
     dashboard:
+        groups:
+            app.admin.group.home:
+                label: Home Page
+                items:
+                    - admin.home_row
+                    - admin.home_row_item
+            sonata_user: ~
+
         blocks:
             -
                 type: sonata.admin.block.admin_list
