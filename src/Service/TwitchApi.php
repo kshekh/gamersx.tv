@@ -68,6 +68,16 @@ class TwitchApi
 
     }
 
+    public function getPopularStreams()
+    {
+        return $this->client->request('GET', '/helix/streams', [
+            'query' => [
+                'first' => 100
+            ]
+        ]);
+
+    }
+
     /*
     public function getEmbedSettings($itemType, $id)
     {

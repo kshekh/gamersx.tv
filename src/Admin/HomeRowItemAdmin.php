@@ -6,8 +6,9 @@ namespace App\Admin;
 
 use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
+use App\Form\TwitchType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType, NumberType };
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -22,6 +23,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
     {
         $datagridMapper
             ->add('twitchId')
+            ->add('label')
             ->add('homeRow')
             ;
     }
@@ -30,10 +32,11 @@ final class HomeRowItemAdmin extends AbstractAdmin
     {
         $listMapper
             ->add('homeRow')
+            ->add('label')
+            ->add('twitchId')
             ->add('sortIndex', null, [
                 'editable' => TRUE,
             ])
-            ->add('twitchId')
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],
@@ -47,7 +50,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
     {
         $formMapper
             ->add('sortIndex')
-            ->add('twitchId')
+            ->add('twitch', TwitchType::class)
             ->add('showArt')
             ->add('offlineDisplayType', ChoiceType::class, [
                 'choices' => [
@@ -67,17 +70,20 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'choice_label' => 'title',
             ])
             ;
+
     }
 
     protected function configureShowFields(ShowMapper $showMapper): void
     {
         $showMapper
             ->add('id')
-            ->add('sortIndex')
             ->add('twitchId')
+            ->add('label')
+            ->add('sortIndex')
             ->add('showArt')
             ->add('offlineDisplayType')
             ->add('linkType')
             ;
     }
+
 }

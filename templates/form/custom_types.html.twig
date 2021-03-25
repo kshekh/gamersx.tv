@@ -1,0 +1,25 @@
+{% block twitch_row %}
+
+{{ encore_entry_script_tags('twitch-selector') }}
+
+
+<div class="box">
+    <div class="box-header">
+        <h3 class="box-title">Select a game or streamer</h3>
+    </div>
+
+    <div class="box-body">
+        {% for child in form.children|filter(child => not child.rendered) %}
+        <div class="form-group">
+            {{ form_label(child) }}
+            {{ form_widget(child) }}
+            {{ form_help(child) }}
+            {{ form_errors(child) }}
+        </div>
+        {% endfor %}
+        <div id="app-twitch-selector">
+            <twitch-selector></twitch-selector>
+        </div>
+    </div>
+</div>
+{% endblock %}

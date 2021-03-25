@@ -18,6 +18,11 @@ class HomeRowItem
     private $id;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $label;
+
+    /**
      * The index of the item in the HomeRow
      *
      * @ORM\Column(type="smallint", nullable=true)
@@ -67,7 +72,11 @@ class HomeRowItem
      */
     public function getItemType(): ?string
     {
-        return $this->getHomeRow()->getItemType();
+        if ($this->getHomeRow()) {
+            return $this->getHomeRow()->getItemType();
+        } else {
+            return null;
+        }
     }
 
     public function getId(): ?int
@@ -75,12 +84,24 @@ class HomeRowItem
         return $this->id;
     }
 
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(?string $label): self
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+
     public function getSortIndex(): ?int
     {
         return $this->sortIndex;
     }
 
-    public function setSortIndex(int $sortIndex): self
+    public function setSortIndex(?int $sortIndex): self
     {
         $this->sortIndex = $sortIndex;
 

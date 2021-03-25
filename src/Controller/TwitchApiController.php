@@ -56,4 +56,13 @@ class TwitchApiController extends AbstractController
         $result = $twitch->getTopLiveBroadcastForGame($id);
         return $this->json($result->toArray());
     }
+
+    /**
+     * @Route("/stream/popular", name="popularStreams")
+     */
+    public function getPopularStreams(TwitchApi $twitch)
+    {
+        $result = $twitch->getPopularStreams();
+        return $this->json($result->toArray());
+    }
 }
