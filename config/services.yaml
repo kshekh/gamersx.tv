@@ -12,7 +12,6 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
@@ -29,9 +28,6 @@ services:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
-
     sonata.block.service.file_upload:
         class: App\Service\FileUploadBlockService
         arguments:
@@ -45,6 +41,8 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, group: home, label: Rows}
         public: true
+        calls:
+            - ['addChild', ['@admin.home_row_item', 'homeRow']]
 
     admin.home_row_item:
         class: App\Admin\HomeRowItemAdmin

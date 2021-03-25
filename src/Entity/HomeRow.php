@@ -122,4 +122,13 @@ class HomeRow
         return $this;
     }
 
+    public function __toString(): string
+    {
+        if ($this->getTitle() && $this->getItemType()) {
+            return $this->getTitle() . ' (' . $this->getItemType() . ' row)';
+        } else {
+            return '';
+        }
+    }
+
 }

@@ -147,4 +147,13 @@ class HomeRowItem
         return $this;
     }
 
+    public function __toString(): string
+    {
+        if ($this->getTwitchId() && $this->getItemType()) {
+            return ucfirst($this->getItemType() . ' \'' . $this->getTwitchId()  . '\'');
+        } else {
+            return '';
+        }
+    }
+
 }
