@@ -170,10 +170,15 @@ class HomeRowItem
 
     public function __toString(): string
     {
-        if ($this->getTwitchId() && $this->getItemType()) {
-            return ucfirst($this->getItemType() . ' \'' . $this->getTwitchId()  . '\'');
+        if ($this->getLabel()) {
+            $label = $this->getLabel();
+        } else if ($this->getTwitchId()) {
+            $label = $this->getTwitchId();
+        }
+        if ($this->getItemType()) {
+            return ucfirst($this->getItemType() . ' \'' . $label. '\'');
         } else {
-            return '';
+            return $label;
         }
     }
 
