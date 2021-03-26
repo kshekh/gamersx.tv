@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Service\TwitchApi;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -13,11 +14,41 @@ use Symfony\Component\Routing\Annotation\Route;
 class TwitchApiController extends AbstractController
 {
     /**
-     * @Route("/query/{query}", name="query")
+     * @Route("/query/streamer/{query}", name="queryStreamer")
      */
-    public function query(TwitchApi $twitch, $query)
+    public function channelQuery(Request $request, TwitchApi $twitch, $query)
     {
-        $result = $twitch->getQueryResults($query);
+        $first = $request->get('first');
+        $before = $request->get('before');
+        $after = $request->get('after');
+
+        $result = $twitch->searchChannels($query, $first, $before, $after);
+        return $this->json($result->toArray());
+    }
+
+    /**
+     * @Route("/query/game/{query}", name="queryGame")
+     */
+    public function gameQuery(Request $request, TwitchApi $twitch, $query)
+    {
+        $first = $request->get('first');
+        $before = $request->get('before');
+        $after = $request->get('after');
+
+        $result = $twitch->searchGames($query, $first, $before, $after);
+        return $this->json($result->toArray());
+    }
+
+    /**
+     * @Route("/stream/popular/", name="popularStreams")
+     */
+    public function getPopularStreams(Request $request, TwitchApi $twitch)
+    {
+        $first = $request->get('first');
+        $before = $request->get('before');
+        $after = $request->get('after');
+
+        $result = $twitch->getPopularStreams($first, $before, $after);
         return $this->json($result->toArray());
     }
 
@@ -57,12 +88,4 @@ class TwitchApiController extends AbstractController
         return $this->json($result->toArray());
     }
 
-    /**
-     * @Route("/stream/popular", name="popularStreams")
-     */
-    public function getPopularStreams(TwitchApi $twitch)
-    {
-        $result = $twitch->getPopularStreams();
-        return $this->json($result->toArray());
-    }
 }

@@ -26,15 +26,18 @@
                 <div class="flex-grow max-w-xl">
                     <input id="query" class="w-full rounded-sm pl-4" type="text" placeholder="search"></input>
                 </div>
-                <div class="w-16 rounded-sm text-center bg-gray-600">
-                    <button type="button" onclick="quickSearch()">search</button>
+                <div class="w-32 rounded-sm text-center bg-gray-600">
+                    <button type="button" onclick="quickSearch('streamer')">search streamers</button>
+                </div>
+                <div class="w-32 rounded-sm text-center bg-gray-600">
+                    <button type="button" onclick="quickSearch('game')">search games</button>
                 </div>
             </div>
         </div>
         <script type="text/javascript">
-            var quickSearch = function() {
+            var quickSearch = function(searchType) {
                 let query = document.getElementById('query').value;
-                window.open('/api/query/' + query, '_query');
+                window.open('/api/query/' + searchType + '/' + query, '_query');
             }
         </script>
         {% endblock %}

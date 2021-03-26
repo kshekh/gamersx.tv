@@ -50,7 +50,6 @@ final class HomeRowItemAdmin extends AbstractAdmin
     {
         $formMapper
             ->add('sortIndex')
-            ->add('twitch', TwitchType::class)
             ->add('showArt')
             ->add('offlineDisplayType', ChoiceType::class, [
                 'choices' => [
@@ -68,7 +67,10 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('homeRow', EntityType::class, [
                 'class' => HomeRow::class,
                 'choice_label' => 'title',
+                'placeholder' => 'Choose a home row for this item',
+                'required' => true,
             ])
+            ->add('twitch', TwitchType::class)
             ;
 
     }

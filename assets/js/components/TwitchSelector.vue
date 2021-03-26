@@ -1,15 +1,27 @@
 <template>
   <div>
-    <table class="table table-bordered table-striped table-hover sonata-ba-list">
-      <tbody>
-        <tr v-for="stream in streams">
-          <td class="sonata-ba-list-field">
-            {{ stream.user_name }} playing {{ stream.game_name }} for {{ stream.viewer_count }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="form-group">
+      <label for="twitch-search">Search</label>
+      <input name="twitch-search" v-model="searchValue" type="search" placeholder="Enter a search term"></input>
+    <button @click="search()" type="button">Search</button>
+    <button @click="clearSearch()" type="button">Reset Results</button>
+    <button @click="moreResults('before')" type="button">Prev</button>
+    <button @click="moreResults('after')" type="button">Next</button>
+    <span>{{ message }}</span>
   </div>
+  <table class="table table-bordered table-striped table-hover sonata-ba-list">
+    <thead>
+      <tr class="sonata-ba-list-field-header">
+        <th v-for="header in headers" class="sonata-ba-list-field-header">{{ header }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="row in rows" @click="selectRow(row)">
+        <td v-for="field in row.fields" class="sonata-ba-list-field">{{ field }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 </div>
 </template>
 <script>
@@ -20,17 +32,149 @@ export default {
   },
   data: function()  {
     return {
-      streams: []
+      itemType: '',
+      headers: ['Streamer', 'Game', 'Viewers'],
+      message: null,
+      searchValue: null,
+      isSearching: false,
+      rows: [],
+      page: 15,
+      cursor: '',
     }
   },
   methods: {
-  },
-  mounted: function() {
-    axios
-      .get('/api/stream/popular')
-      .then(response => {
-        this.streams = response.data.data;
+    /* Clicking on a row writes to the Admin form */
+    selectRow: function(row) {
+      document.querySelector('input.twitch-id').value = row.id;
+      document.querySelector('input.twitch-label').value = row.label;
+    },
+    /* Clicking on the search button */
+    search: function() {
+      if (!this.isSearching) {
+        this.cursor = '';
+        this.isSearching = true;
+      }
+      this.moreResults();
+    },
+    /* Clearing search switches back to a popular search */
+    clearSearch: function() {
+      this.isSearching = false;
+      this.searchValue = null;
+      this.cursor = '';
+      this.moreResults();
+    },
+
+    /** == Call the API to get various kinds of results, then process them == **/
+    getSearchResults: function(params) {
+      if (this.itemType === 'game') {
+        this.callApi('/api/query/game/' + this.searchValue, params, this.processGameResults);
+      } else if (this.itemType === 'streamer') {
+        this.callApi('/api/query/streamer/' + this.searchValue, params, this.processStreamerResults);
+      }
+    },
+    getPopularResults: function(params) {
+      this.callApi('/api/stream/popular', params, this.processPopularResults);
+    },
+
+    getPagerParams: function(direction) {
+      let params = {
+        'first': this.page
+      }
+      if (this.cursor && direction === 'before') {
+        params['before'] = this.cursor;
+      } else if (this.cursor && direction === 'after') {
+        params['after'] = this.cursor;
+      }
+      return params;
+    },
+
+    moreResults(direction) {
+      this.message = null;
+      let params = this.getPagerParams(direction);
+      if (this.isSearching) {
+        this.getSearchResults(params);
+      }  else {
+        this.getPopularResults(params);
+      }
+    },
+
+    callApi(url, params, callback) {
+      axios
+        .get(url, { params: params })
+        .then(response => callback(response))
+    },
+
+    /** Callbacks used after getting data from the API **/
+    processGameResults(response) {
+      this.cursor = response.data.pagination.cursor;
+      this.headers = ['Id', 'Name'];
+      if (response.data.data === null) {
+        this.message = 'Sorry, no results for that query';
+        return;
+      }
+      this.rows = response.data.data.map(function(game) {
+        return {
+          fields: [
+            game.id,
+            game.name,
+          ],
+          id: game.id,
+          label: game.name,
+        };
       });
+    },
+    processStreamerResults(response) {
+      this.cursor = response.data.pagination.cursor;
+      if (response.data.data === null) {
+        this.message = 'Sorry, no results for that query';
+        return;
+      }
+      this.headers = ['Id', 'Name'];
+      this.rows = response.data.data.map(function(channel) {
+        return {
+          fields: [
+            channel.id,
+            channel.display_name,
+          ],
+          id: channel.id,
+          label: channel.display_name
+        };
+      });
+    },
+    processPopularResults(response) {
+      this.cursor = response.data.pagination.cursor;
+      if (response.data.data === null) {
+        this.message = 'Sorry, no results for that query';
+        return;
+      }
+      this.headers = ['Streamer', 'Game', 'Viewers'];
+      let itemType = this.itemType;
+      this.rows = response.data.data.map(function(stream) {
+        let row = {
+          fields: [
+            stream.user_name,
+            stream.game_name,
+            stream.viewer_count
+          ]
+        };
+        switch (itemType) {
+          case 'game':
+            row.id = stream.game_id;
+            row.label = stream.game_name;
+            break;
+          case 'streamer':
+            row.id = stream.user_id;
+            row.label = stream.user_name;
+            break;
+        }
+        return row;
+      });
+    },
+  },
+
+  mounted: function() {
+    this.itemType = this.$el.parentNode.dataset['itemType'];
+    this.moreResults();
   }
 }
 </script>

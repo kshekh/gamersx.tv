@@ -13,13 +13,41 @@ class TwitchApi
         $this->client = $twitch;
     }
 
-    public function getQueryResults($query)
+    public function searchChannels($query, $first=20, $before=null, $after=null)
     {
+        $queryParams = [
+            'first' => $first,
+            'query' => $query
+        ];
+
+        if ($before) {
+            $queryParams['before'] = $before;
+        } elseif ($after) {
+            $queryParams['after'] = $after;
+        }
+
         return $this->client->request('GET', '/helix/search/channels', [
-            'query' => [
-                'query' => $query
-            ]
+            'query' => $queryParams
         ]);
+    }
+
+    public function searchGames($query, $first=20, $before=null, $after=null)
+    {
+        $queryParams = [
+            'first' => $first,
+            'query' => $query
+        ];
+
+        if ($before) {
+            $queryParams['before'] = $before;
+        } elseif ($after) {
+            $queryParams['after'] = $after;
+        }
+
+        return $this->client->request('GET', '/helix/search/categories', [
+            'query' => $queryParams
+        ]);
+
     }
 
     public function getGameInfo($gameId)
@@ -68,35 +96,20 @@ class TwitchApi
 
     }
 
-    public function getPopularStreams()
+    public function getPopularStreams($first=20, $before=null, $after=null)
     {
+        $query = ['first' => $first];
+
+        if ($before) {
+            $query['before'] = $before;
+        } elseif ($after) {
+            $query['after'] = $after;
+        }
+
         return $this->client->request('GET', '/helix/streams', [
-            'query' => [
-                'first' => 100
-            ]
+            'query' => $query
         ]);
 
     }
 
-    /*
-    public function getEmbedSettings($itemType, $id)
-    {
-        $settings = [
-            'itemType' => $itemType,
-            'embed' => FALSE
-        ];
-
-        if ($itemType === 'streamer') {
-            $info = $this->getStreamerInfo($id);
-            $settings['channel'] = $info['user_name'];
-            $settings['img'] = $info['profile_image_url'];
-        } elseif ($itemType === 'game') {
-            $info = $this->getTopLiveBroadcastForGame($id);
-            $settings['channel'] = $info['user_name'];
-            $settings['img'] = $info['thumbnail_url'];
-        }
-
-        return $settings;
-    }
-     */
 }
