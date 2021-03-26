@@ -4,6 +4,7 @@
 
 
 <div class="box">
+    {% if value.itemType is not null%}
     <div class="box-header">
         <h3 class="box-title">Select a {{ value.itemType }}</h3>
     </div>
@@ -20,6 +21,11 @@
         <div id="app-twitch-selector" data-item-type="{{ value.itemType }}">
             <twitch-selector></twitch-selector>
         </div>
+    {% else %}
+    <div class="box-header">
+        <h3 class="box-title">You can only add an item through "Manage Items" on a home row</h3>
+    </div>
+    {% endif %}
     </div>
 </div>
 {% endblock %}
