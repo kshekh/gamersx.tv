@@ -9,13 +9,15 @@ export default {
 	name: 'JsEmbed',
 	props: {
 		'channel': {
-			required: true,
 			type: String
-		}
+    },
+    'video': {
+			type: String
+    }
   },
   computed: {
     playerId: function() {
-      return 'twitch-embed-' + this.channel;
+      return 'twitch-embed-' + (this.channel ?? this.video);
     }
   },
   data: function() {
@@ -30,6 +32,7 @@ export default {
       width: this.width,
       height: this.height,
       channel: this.channel,
+      video: this.video,
       layout: 'video',
       autoplay: false,
       muted: true,

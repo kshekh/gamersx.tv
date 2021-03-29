@@ -3,6 +3,7 @@
     <div class="container flex-col">
       <h2 class="pb-6 text-xl font-bold">Welcome to the Game Page for {{ info.name }} - (Game ID {{ info.id }})</h2>
       <div class="flex flex-row align-items-center justify-center space-x-4">
+        <div>
         <a :href="'https://www.twitch.tv/directory/game/' + info.name" target="_twitch">
           <twitch-art v-if="info.box_art_url"
             :imageType="'boxArt'"
@@ -10,10 +11,13 @@
           ></twitch-art>
           <p>View on Twitch</p>
         </a>
+      </div>
 
+      <div>
         <div class="w-auto p-4 bg-indigo-500 rounded-md">
           <p>This is where the most popular stream for {{ info.name }} will be.</p>
         </div>
+      </div>
       </div>
       <div class="border rounded mt-12">
         <button @click="show('featured')" type="button">

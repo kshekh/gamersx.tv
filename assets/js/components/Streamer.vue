@@ -3,16 +3,20 @@
     <div class="container flex-col">
       <h2 class="pb-6 text-xl font-bold">Welcome to the Streamer Page for {{ info.display_name }} - (Streamer ID {{ info.id }})</h2>
       <div class="flex flex-row align-items-center justify-center space-x-4">
-        <a :href="'https://www.twitch.tv/' + info.display_name" target="_twitch">
-          <twitch-art v-if="info.profile_image_url"
-            :imageType="'profile'"
-            :src="info.profile_image_url"
-          ></twitch-art>
-          <p>View on Twitch</p>
-        </a>
+        <div class="bg-indigo-500 rounded-md">
+          <a :href="'https://www.twitch.tv/' + info.display_name" target="_twitch">
+            <twitch-art v-if="info.profile_image_url"
+              :imageType="'profile'"
+              :src="info.profile_image_url"
+            ></twitch-art>
+            <p>View on Twitch</p>
+          </a>
+        </div>
 
         <div class="w-auto p-4 bg-indigo-500 rounded-md">
-          <p>This is where the broadcast for {{ info.display_name }} will be.</p>
+          <js-embed v-if="info.login"
+            v-bind:channel="info.login">
+          </js-embed>
         </div>
       </div>
       <div class="border rounded mt-12">
@@ -28,31 +32,39 @@
           Recent streams for {{ info.display_name }}
         </div>
         <div class="flex flex-row flex-grow flex-wrap justify-left p-8">
-          <div v-for="x in 8" class="rounded-md w-1/4 h-48 m-8 p-4 bg-indigo-500">This would be a VOD for {{ info.display_name }}</div>
-        </div>
-      </div>
-      <div v-if="displayTab === 'about'">
-          <div class="pt-6 font-bold text-xl">
-            Here is the Twitch API info for {{ info.display_name }}
+          <div v-for="vod in vods" class="rounded-md m-8 p-4 bg-indigo-500">
+            <js-embed
+              v-bind:video="vod.id">
+            </js-embed>
           </div>
-          <div class="flex flex-row flex-grow flex-wrap justify-center p-8">
-          <p class="bg-gray-200 rounded-md text-left text-xl">{{ info }}</p>
         </div>
       </div>
     </div>
+    <div v-if="displayTab === 'about'">
+      <div class="pt-6 font-bold text-xl">
+        <p class="rounded-md text-left text-xl">
+          {{ info.description ? info.description : 'This streamer hasn\'t added a description' }}
+        </p>
+      </div>
+    </div>
   </div>
+</div>
 </template>
 <script>
+import axios from 'axios';
 import TwitchArt from './layout/TwitchArt';
+import JsEmbed from './embeds/JsEmbed';
 
 export default {
   components: {
-    'TwitchArt': TwitchArt
+    'TwitchArt': TwitchArt,
+    'JsEmbed': JsEmbed
   },
   data: function()  {
     return {
       displayTab: 'recent',
-      info:{},
+      info: {},
+      vods: {},
       message: "Streams",
       numStreams: 8
     }
@@ -67,7 +79,13 @@ export default {
     }
   },
   mounted: function() {
-    this.info = JSON.parse(this.$el.parentNode.dataset['info']);
+    let dataUrl = this.$el.parentNode.dataset['url'];
+    axios
+      .get(dataUrl)
+      .then(response => {
+        this.info = response.data.info;
+        this.vods = response.data.vods;
+      });
     this.show('recent');
   }
 }
