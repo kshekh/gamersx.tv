@@ -15,39 +15,16 @@ class TwitchApi
 
     public function searchChannels($query, $first=20, $before=null, $after=null)
     {
-        $queryParams = [
-            'first' => $first,
+        return $this->getPaginatedQuery('/helix/search/channels', [
             'query' => $query
-        ];
-
-        if ($before) {
-            $queryParams['before'] = $before;
-        } elseif ($after) {
-            $queryParams['after'] = $after;
-        }
-
-        return $this->client->request('GET', '/helix/search/channels', [
-            'query' => $queryParams
-        ]);
+        ], $first, $before, $after);
     }
 
     public function searchGames($query, $first=20, $before=null, $after=null)
     {
-        $queryParams = [
-            'first' => $first,
+        return $this->getPaginatedQuery('/helix/search/categories', [
             'query' => $query
-        ];
-
-        if ($before) {
-            $queryParams['before'] = $before;
-        } elseif ($after) {
-            $queryParams['after'] = $after;
-        }
-
-        return $this->client->request('GET', '/helix/search/categories', [
-            'query' => $queryParams
-        ]);
-
+        ], $first, $before, $after);
     }
 
     public function getGameInfo($gameId)
@@ -68,20 +45,11 @@ class TwitchApi
         ]);
     }
 
-    public function getChannelInfo($streamerId)
-    {
-        return $this->client->request('GET', '/helix/channels', [
-            'query' => [
-                'broadcaster_id' => $streamerId
-            ]
-        ]);
-    }
-
-    public function getTopLiveBroadcastsForGames($gameIds)
+    public function getTopLiveBroadcastForGame($gameId)
     {
         return $this->client->request('GET', '/helix/streams', [
             'query' => [
-                'game_id' => $gameIds
+                'game_id' => $gameId
             ]
         ]);
     }
@@ -98,36 +66,32 @@ class TwitchApi
 
     public function getPopularStreams($first=20, $before=null, $after=null)
     {
-        $query = ['first' => $first];
-
-        if ($before) {
-            $query['before'] = $before;
-        } elseif ($after) {
-            $query['after'] = $after;
-        }
-
-        return $this->client->request('GET', '/helix/streams', [
-            'query' => $query
-        ]);
-
+        return $this->getPaginatedQuery('/helix/streams', [],
+            $first, $before, $after);
     }
 
     public function getVideosForStreamer($streamerId, $first=8, $before=null, $after=null)
     {
-        $query = [
+        return $this->getPaginatedQuery('/helix/videos', [
             'user_id' => $streamerId,
-            'first' => $first
-        ];
-
-        if ($before) {
-            $query['before'] = $before;
-        } elseif ($after) {
-            $query['after'] = $after;
-        }
-
-        return $this->client->request('GET', '/helix/videos', [
-            'query' => $query
-        ]);
+        ], $first, $before, $after);
     }
 
+    /**
+     * Helper method for API calls that use paginated queries
+     */
+    private function getPaginatedQuery($url, $queryParams, $first, $before, $after)
+    {
+        $query = ['first' => $first];
+
+        if ($before) {
+            $queryParams['before'] = $before;
+        } elseif ($after) {
+            $queryParams['after'] = $after;
+        }
+
+        return $this->client->request('GET', $url, [
+            'query' => $queryParams
+        ]);
+    }
 }
