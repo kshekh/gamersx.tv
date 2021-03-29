@@ -40,7 +40,7 @@ class TwitchApiController extends AbstractController
     }
 
     /**
-     * @Route("/stream/popular/", name="popularStreams")
+     * @Route("/stream/popular", name="popularStreams")
      */
     public function getPopularStreams(Request $request, TwitchApi $twitch)
     {
