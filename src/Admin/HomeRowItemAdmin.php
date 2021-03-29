@@ -65,6 +65,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 ]
             ])
             ->add('homeRow', EntityType::class, [
+                'disabled' => true,
                 'class' => HomeRow::class,
                 'choice_label' => 'title',
                 'placeholder' => 'Choose a home row for this item',
