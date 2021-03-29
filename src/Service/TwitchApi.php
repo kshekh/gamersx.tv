@@ -112,4 +112,22 @@ class TwitchApi
 
     }
 
+    public function getVideosForStreamer($streamerId, $first=8, $before=null, $after=null)
+    {
+        $query = [
+            'user_id' => $streamerId,
+            'first' => $first
+        ];
+
+        if ($before) {
+            $query['before'] = $before;
+        } elseif ($after) {
+            $query['after'] = $after;
+        }
+
+        return $this->client->request('GET', '/helix/videos', [
+            'query' => $query
+        ]);
+    }
+
 }
