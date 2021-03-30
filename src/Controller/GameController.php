@@ -14,9 +14,24 @@ class GameController extends AbstractController
      */
     public function index(TwitchApi $twitch, $id): Response
     {
-        $game = $twitch->getGameInfo($id);
         return $this->render('game/index.html.twig', [
-            'info' => $game->toArray()['data'][0]
+            'dataUrl' => $this->generateUrl('game_api', [
+                'id' => $id
+            ])
+        ]);
+    }
+
+    /**
+     * @Route("/game/{id}/api", name="game_api")
+     */
+    public function apiStreamer(TwitchApi $twitch, $id): Response
+    {
+        $game = $twitch->getGameInfo($id);
+        $streams = $twitch->getTopLiveBroadcastForGame($id, 5);
+
+        return $this->json([
+            'info' => $game->toArray()['data'][0],
+            'streams' => $streams->toArray()['data']
         ]);
     }
 }

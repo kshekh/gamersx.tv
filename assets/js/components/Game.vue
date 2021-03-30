@@ -4,20 +4,23 @@
       <h2 class="pb-6 text-xl font-bold">Welcome to the Game Page for {{ info.name }} - (Game ID {{ info.id }})</h2>
       <div class="flex flex-row align-items-center justify-center space-x-4">
         <div>
-        <a :href="'https://www.twitch.tv/directory/game/' + info.name" target="_twitch">
-          <twitch-art v-if="info.box_art_url"
-            :imageType="'boxArt'"
-            :src="info.box_art_url"
-          ></twitch-art>
-          <p>View on Twitch</p>
-        </a>
-      </div>
-
-      <div>
-        <div class="w-auto p-4 bg-indigo-500 rounded-md">
-          <p>This is where the most popular stream for {{ info.name }} will be.</p>
+          <a :href="'https://www.twitch.tv/directory/game/' + info.name" target="_twitch">
+            <twitch-art v-if="info.box_art_url"
+              :imageType="'boxArt'"
+              :src="info.box_art_url"
+            ></twitch-art>
+            <p>View on Twitch</p>
+          </a>
         </div>
-      </div>
+
+        <div>
+          <div class="w-auto p-4 bg-indigo-500 rounded-md">
+            <p>Most popular stream for {{ info.name }}</p>
+            <js-embed v-if="popular.user_login"
+              v-bind:channel="popular.user_login">
+            </js-embed>
+          </div>
+        </div>
       </div>
       <div class="border rounded mt-12">
         <button @click="show('featured')" type="button">
@@ -31,44 +34,54 @@
         <div class="pt-6 font-bold text-xl">
           {{ displayTab }} streams for {{ info.name }}
         </div>
-        <div class="flex flex-row flex-grow flex-wrap justify-center p-8">
-          <div v-for="x in numStreams" class="rounded-md w-1/3 h-96 m-8 p-4 bg-indigo-500">{{ message }}</div>
+        <div class="flex flex-row flex-grow flex-wrap justify-left p-8">
+          <div v-for="stream in streams" class="rounded-md m-8 p-4 bg-indigo-500">
+            <js-embed
+              v-bind:channel="stream.user_login">
+            </js-embed>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
+import axios from 'axios';
 import TwitchArt from './layout/TwitchArt';
+import JsEmbed from './embeds/JsEmbed';
 
 export default {
   components: {
-    'TwitchArt': TwitchArt
+    'TwitchArt': TwitchArt,
+    'JsEmbed': JsEmbed
   },
   data: function()  {
     return {
       displayTab: 'featured',
       info:{},
-      message: "Streams",
-      numStreams: 2
+      streams: {},
+      popular: {}
     }
   },
   methods: {
     show(showType) {
       if (showType === 'featured') {
         this.displayTab = 'Featured';
-        this.message = "This is a featured stream for " + this.info.name;
-        this.numStreams = 2;
       } else {
         this.displayTab = 'All';
-        this.message = "One of many streams for " + this.info.name;
-        this.numStreams = 4;
       }
     }
   },
   mounted: function() {
-    this.info = JSON.parse(this.$el.parentNode.dataset['info']);
-    this.show('featured');
+    let dataUrl = this.$el.parentNode.dataset['url'];
+    axios
+      .get(dataUrl)
+      .then(response => {
+        this.info = response.data.info;
+        this.popular = response.data.streams[0];
+        this.streams = response.data.streams.slice(1);
+      });
+    this.show('all');
   }
 }
 </script>
