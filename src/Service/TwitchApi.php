@@ -45,15 +45,6 @@ class TwitchApi
         ]);
     }
 
-    public function getTopLiveBroadcastForGame($gameId)
-    {
-        return $this->client->request('GET', '/helix/streams', [
-            'query' => [
-                'game_id' => $gameId
-            ]
-        ]);
-    }
-
     public function getStreamForStreamer($streamerId)
     {
         return $this->client->request('GET', '/helix/streams', [
@@ -70,6 +61,13 @@ class TwitchApi
             $first, $before, $after);
     }
 
+    public function getTopLiveBroadcastForGame($gameId, $first=1, $before=null, $after=null)
+    {
+        return $this->getPaginatedQuery('/helix/streams', [
+            'game_id' => $gameId
+        ], $first, $before, $after);
+    }
+
     public function getVideosForStreamer($streamerId, $first=8, $before=null, $after=null)
     {
         return $this->getPaginatedQuery('/helix/videos', [
@@ -82,7 +80,7 @@ class TwitchApi
      */
     private function getPaginatedQuery($url, $queryParams, $first, $before, $after)
     {
-        $query = ['first' => $first];
+        $queryParams['first'] = $first;
 
         if ($before) {
             $queryParams['before'] = $before;
