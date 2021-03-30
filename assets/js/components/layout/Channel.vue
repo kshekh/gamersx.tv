@@ -11,6 +11,7 @@
       </div>
       <div v-if="showChannel">
         <js-embed
+          v-bind:elementId="elementId"
           v-bind:channel="channel"
         ></js-embed>
       </div>
@@ -33,6 +34,7 @@ export default {
     'JsEmbed': JsEmbed,
     'TwitchArt': TwitchArt
   },
+  props: [ 'info', 'broadcast', 'rowType', 'rowName', 'sortIndex', 'showThumbnail', 'showChannel', 'showArt', 'offlineDisplayType', 'linkType' ],
   computed: {
     imageType: function() {
       switch(this.rowType) {
@@ -77,10 +79,29 @@ export default {
           case 'game': return this.info.name;
         }
       }
+    },
+    elementId: function() {
+      return this.slugify('twitch-embed-' + this.channel + '-' + this.rowName);
     }
-
   },
-  props: [ 'info', 'broadcast', 'rowType', 'sortIndex', 'showThumbnail', 'showChannel', 'showArt', 'offlineDisplayType', 'linkType' ],
+  methods: {
+    /* Used to prevent duplicate twitch-embed IDs.
+    From a public gist found via: https://mhagemann.medium.com/the-ultimate-way-to-slugify-a-url-string-in-javascript-b8e4a0d849e1 */
+    slugify: function(s) {
+      const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
+      const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz------'
+      const p = new RegExp(a.split('').join('|'), 'g')
+
+      return s.toString().toLowerCase()
+        .replace(/\s+/g, '-') // Replace spaces with -
+        .replace(p, c => b.charAt(a.indexOf(c))) // Replace special characters
+        .replace(/&/g, '-and-') // Replace & with 'and'
+        .replace(/[^\w\-]+/g, '') // Remove all non-word characters
+        .replace(/\-\-+/g, '-') // Replace multiple - with single -
+        .replace(/^-+/, '') // Trim - from start of text
+        .replace(/-+$/, '') // Trim - from end of text
+    },
+  }
 }
 </script>
 <style scoped>

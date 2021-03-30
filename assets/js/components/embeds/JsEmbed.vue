@@ -13,11 +13,14 @@ export default {
     },
     'video': {
 			type: String
+    },
+    'elementId': {
+      type: String
     }
   },
   computed: {
     playerId: function() {
-      return 'twitch-embed-' + (this.channel ?? this.video);
+      return this.elementId ? this.elementId : 'twitch-embed-' + (this.channel ?? this.video);
     }
   },
   data: function() {

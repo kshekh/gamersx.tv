@@ -92,6 +92,7 @@ class HomeController extends AbstractController
                     'info' => $info,
                     'broadcast' => $broadcast,
                     'rowType' => $item->getItemType(),
+                    'rowName' => $item->getHomeRow()->getTitle(),
                     'sortIndex' => $item->getSortIndex(),
                     'showArt' => $item->getShowArt(),
                     'offlineDisplayType' => $item->getOfflineDisplayType(),
