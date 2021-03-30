@@ -49,7 +49,7 @@ class HomeController extends AbstractController
                 })->toArray();
 
                 $infos = $twitch->getGameInfo($gameIds);
-                $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds);
+                $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, 60);
 
             }
 
