@@ -2,11 +2,11 @@
 
 {{ encore_entry_script_tags('twitch-selector') }}
 
-
+{% set searchType = value.itemType ?? form.searchType.vars.value %}
 <div class="box">
-    {% if value.itemType is not null%}
+    {% if searchType %}
     <div class="box-header">
-        <h3 class="box-title">Select a {{ value.itemType }}</h3>
+        <h3 class="box-title">Select a {{ searchType }}</h3>
     </div>
 
     <div class="box-body">
@@ -18,7 +18,7 @@
             {{ form_errors(child) }}
         </div>
         {% endfor %}
-        <div id="app-twitch-selector" data-item-type="{{ value.itemType }}">
+        <div id="app-twitch-selector" data-item-type="{{ searchType }}">
             <twitch-selector></twitch-selector>
         </div>
     {% else %}

@@ -49,6 +49,11 @@ class HomeRow
     private $itemSortType;
 
     /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $options = [];
+
+    /**
      * @ORM\OneToMany(targetEntity=HomeRowItem::class, mappedBy="homeRow", orphanRemoval=true)
      * @ORM\OrderBy({"sortIndex" = "ASC"})
      */
@@ -109,6 +114,18 @@ class HomeRow
     public function setItemSortType(string $itemSortType): self
     {
         $this->itemSortType = $itemSortType;
+
+        return $this;
+    }
+
+    public function getOptions(): ?array
+    {
+        return $this->options;
+    }
+
+    public function setOptions(?array $options): self
+    {
+        $this->options = $options;
 
         return $this;
     }

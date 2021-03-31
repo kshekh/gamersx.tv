@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Admin;
 
 use App\Entity\HomeRow;
+use App\Form\RowOptionsType;
 use Knp\Menu\ItemInterface as MenuItemInterface;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType, NumberType };
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -83,6 +85,7 @@ final class HomeRowAdmin extends AbstractAdmin
                     'Fixed Order' => HomeRow::SORT_FIXED,
                 ]
             ])
+            ->add('options', RowOptionsType::class)
             ;
     }
 
@@ -93,6 +96,7 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('sortIndex')
             ->add('itemType')
             ->add('itemSortType')
+            ->add('options')
             ;
     }
 }

@@ -71,7 +71,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'placeholder' => 'Choose a home row for this item',
                 'required' => true,
             ])
-            ->add('twitch', TwitchType::class)
+            ->add('twitch', TwitchType::class, [
+                'inherit_data' => true
+            ])
             ;
 
     }

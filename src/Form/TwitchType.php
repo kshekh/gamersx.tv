@@ -2,8 +2,8 @@
 
 namespace App\Form;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\{AbstractType, FormBuilderInterface};
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TwitchType extends AbstractType
@@ -18,13 +18,18 @@ class TwitchType extends AbstractType
                 'required' => false,
                 'attr' => ['readonly' => true, 'class' => 'twitch-label'],
             ])
+            ->add('searchType', HiddenType::class, [
+                'mapped' => false,
+                'data' => $options['searchType']
+            ])
             ;
+
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'inherit_data' => true,
+            'searchType' => null
         ]);
     }
 
