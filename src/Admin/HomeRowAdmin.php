@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Admin;
 
 use App\Entity\HomeRow;
-use App\Entity\HomeRowItem;
 use Knp\Menu\ItemInterface as MenuItemInterface;
 use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType, NumberType };
 use Sonata\AdminBundle\Admin\AdminInterface;
@@ -52,6 +51,9 @@ final class HomeRowAdmin extends AbstractAdmin
     {
         $listMapper
             ->add('title')
+            ->add('sortIndex', null, [
+                'editable' => TRUE,
+            ])
             ->add('itemType')
             ->add('_action', null, [
                 'actions' => [
@@ -66,29 +68,31 @@ final class HomeRowAdmin extends AbstractAdmin
     {
         $formMapper
             ->add('title')
-            ->add('sort', ChoiceType::class, [
+            ->add('sortIndex')
+            ->add('itemType', ChoiceType::class, [
+                'choices' => [
+                    'Games' => HomeRow::ITEM_TYPE_GAME,
+                    'Streamers' => HomeRow::ITEM_TYPE_STREAMER,
+                    'Popular' => HomeRow::ITEM_TYPE_POPULAR,
+                ]
+            ])
+            ->add('itemSortType', ChoiceType::class, [
                 'choices' => [
                     'Ascending Popularity' => HomeRow::SORT_ASC,
                     'Descending Popularity' => HomeRow::SORT_DESC,
                     'Fixed Order' => HomeRow::SORT_FIXED,
                 ]
             ])
-        ->add('itemType', ChoiceType::class, [
-            'choices' => [
-                'Games' => HomeRow::ITEM_TYPE_GAME,
-                'Streamers' => HomeRow::ITEM_TYPE_STREAMER,
-                'Popular' => HomeRow::ITEM_TYPE_POPULAR,
-            ]
-        ])
-        ;
+            ;
     }
 
     protected function configureShowFields(ShowMapper $showMapper): void
     {
         $showMapper
             ->add('title')
-            ->add('sort')
+            ->add('sortIndex')
             ->add('itemType')
+            ->add('itemSortType')
             ;
     }
 }

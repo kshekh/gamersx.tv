@@ -24,24 +24,33 @@ class HomeRow
      */
     private $title;
 
+    /**
+     * The index of the item in the HomeRow
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     */
+    private $sortIndex;
+
+    const ITEM_TYPE_GAME = 'game';
+    const ITEM_TYPE_STREAMER = 'streamer';
+    const ITEM_TYPE_POPULAR = 'popular';
+
+    /**
+     * @ORM\Column(type="string", length=32)
+     */
+    private $itemType;
+
     const SORT_ASC = 'asc';
     const SORT_DESC = 'desc';
     const SORT_FIXED = 'fixed';
     /**
      * @ORM\Column(type="string", length=8)
      */
-    private $sort;
-
-    const ITEM_TYPE_GAME = 'game';
-    const ITEM_TYPE_STREAMER = 'streamer';
-    const ITEM_TYPE_POPULAR = 'popular';
-    /**
-     * @ORM\Column(type="string", length=32)
-     */
-    private $itemType;
+    private $itemSortType;
 
     /**
      * @ORM\OneToMany(targetEntity=HomeRowItem::class, mappedBy="homeRow", orphanRemoval=true)
+     * @ORM\OrderBy({"sortIndex" = "ASC"})
      */
     private $items;
 
@@ -68,14 +77,14 @@ class HomeRow
         return $this;
     }
 
-    public function getSort(): ?string
+    public function getSortIndex(): ?int
     {
-        return $this->sort;
+        return $this->sortIndex;
     }
 
-    public function setSort(string $sort): self
+    public function setSortIndex(?int $sortIndex): self
     {
-        $this->sort = $sort;
+        $this->sortIndex = $sortIndex;
 
         return $this;
     }
@@ -88,6 +97,18 @@ class HomeRow
     public function setItemType(string $itemType): self
     {
         $this->itemType = $itemType;
+
+        return $this;
+    }
+
+    public function getItemSortType(): ?string
+    {
+        return $this->itemSortType;
+    }
+
+    public function setItemSortType(string $itemSortType): self
+    {
+        $this->itemSortType = $itemSortType;
 
         return $this;
     }

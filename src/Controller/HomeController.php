@@ -25,14 +25,16 @@ class HomeController extends AbstractController
      */
     public function apiHome(RowSettings $settingsService, TwitchApi $twitch): Response
     {
-        $rows = $this->getDoctrine()->getRepository(HomeRow::class)->findAll();
+        $rows = $this->getDoctrine()->getRepository(HomeRow::class)
+            ->findBy([], ['sortIndex' => 'ASC']);
 
         $rowChannels = Array();
         foreach ($rows as $row) {
             $thisRow = Array();
             $thisRow['title'] = $row->getTitle();
-            $thisRow['sort'] = $row->getSort();
+            $thisRow['sortIndex'] = $row->getSortIndex();
             $thisRow['itemType'] = $row->getItemType();
+            $thisRow['itemSortType'] = $row->getItemSortType();
 
             // Set up all the HttpClient and API requests concurrently
             if ($row->getItemType() === 'streamer') {
