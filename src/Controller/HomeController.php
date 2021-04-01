@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Service\TwitchApi;
 use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,58 +26,63 @@ class HomeController extends AbstractController
     /**
      * @Route("/home/api", name="home_api")
      */
-    public function apiHome(TwitchApi $twitch): Response
+    public function apiHome(TwitchApi $twitch, CacheInterface $gamersxCache): Response
     {
-        $rows = $this->getDoctrine()->getRepository(HomeRow::class)
-            ->findBy([], ['sortIndex' => 'ASC']);
+        $rowChannels = $gamersxCache->get('home', function (ItemInterface $item) use ($twitch) {
 
-        $rowChannels = Array();
-        foreach ($rows as $row) {
-            $thisRow = Array();
-            $thisRow['title'] = $row->getTitle();
-            $thisRow['sortIndex'] = $row->getSortIndex();
-            $thisRow['itemType'] = $row->getItemType();
-            $thisRow['itemSortType'] = $row->getItemSortType();
+            $rows = $this->getDoctrine()->getRepository(HomeRow::class)
+                ->findBy([], ['sortIndex' => 'ASC']);
 
-            // Set up all the HttpClient and API requests concurrently
-            if ($row->getItemType() === HomeRow::ITEM_TYPE_STREAMER) {
-                $streamerIds = $row->getItems()->map( function ($item) {
-                    return $item->getTwitchId();
-                })->toArray();
+            $rowChannels = Array();
+            foreach ($rows as $row) {
+                $thisRow = Array();
+                $thisRow['title'] = $row->getTitle();
+                $thisRow['sortIndex'] = $row->getSortIndex();
+                $thisRow['itemType'] = $row->getItemType();
+                $thisRow['itemSortType'] = $row->getItemSortType();
 
-                $infos = $twitch->getStreamerInfo($streamerIds);
-                $broadcasts = $twitch->getStreamForStreamer($streamerIds);
+                // Set up all the HttpClient and API requests concurrently
+                if ($row->getItemType() === HomeRow::ITEM_TYPE_STREAMER) {
+                    $streamerIds = $row->getItems()->map( function ($item) {
+                        return $item->getTwitchId();
+                    })->toArray();
 
-            } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_GAME) {
-                $gameIds = $row->getItems()->map( function ($item) {
-                    return $item->getTwitchId();
-                })->toArray();
+                    $infos = $twitch->getStreamerInfo($streamerIds);
+                    $broadcasts = $twitch->getStreamForStreamer($streamerIds);
 
-                $infos = $twitch->getGameInfo($gameIds);
-                $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, 60);
+                } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_GAME) {
+                    $gameIds = $row->getItems()->map( function ($item) {
+                        return $item->getTwitchId();
+                    })->toArray();
 
-            } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_POPULAR) {
-                $options = $row->getOptions();
-                $numEmbeds = $options['numEmbeds'];
-                $gameIds = $options['filter']['twitchId'];
+                    $infos = $twitch->getGameInfo($gameIds);
+                    $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, 60);
 
-                $infos = $twitch->getGameInfo($gameIds);
-                $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, $numEmbeds);
+                } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_POPULAR) {
+                    $options = $row->getOptions();
+                    $numEmbeds = $options['numEmbeds'];
+                    $gameIds = $options['filter']['twitchId'];
 
+                    $infos = $twitch->getGameInfo($gameIds);
+                    $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, $numEmbeds);
+
+                }
+
+                $infos = new ArrayCollection($infos->toArray()['data']);
+                $broadcasts = new ArrayCollection($broadcasts->toArray()['data']);
+
+                if (in_array($row->getItemType(), [HomeRow::ITEM_TYPE_GAME, HomeRow::ITEM_TYPE_STREAMER])) {
+                    $thisRow['channels'] = $this->getChannelsForRow($row, $infos, $broadcasts);
+
+                } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_POPULAR) {
+                    $thisRow['channels'] = $this->getChannelsForPopularRow($row, $infos, $broadcasts);
+                }
+
+                $rowChannels[] = $thisRow;
             }
 
-            $infos = new ArrayCollection($infos->toArray()['data']);
-            $broadcasts = new ArrayCollection($broadcasts->toArray()['data']);
-
-            if (in_array($row->getItemType(), [HomeRow::ITEM_TYPE_GAME, HomeRow::ITEM_TYPE_STREAMER])) {
-                $thisRow['channels'] = $this->getChannelsForRow($row, $infos, $broadcasts);
-
-            } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_POPULAR) {
-                $thisRow['channels'] = $this->getChannelsForPopularRow($row, $infos, $broadcasts);
-            }
-
-            $rowChannels[] = $thisRow;
-        }
+            return $rowChannels;
+        });
 
         return $this->json([
             'settings' => [

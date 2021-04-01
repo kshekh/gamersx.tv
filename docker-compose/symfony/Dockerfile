@@ -14,6 +14,10 @@ RUN apt-get update -y && apt-get install -y \
   zip \
   unzip
 
+RUN pecl install apcu \
+  && docker-php-ext-enable apcu \
+  && pecl clear-cache
+
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 

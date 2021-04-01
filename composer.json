@@ -19,6 +19,7 @@
         "sonata-project/user-bundle": "^4.11",
         "symfony/apache-pack": "^1.0",
         "symfony/asset": "*",
+        "symfony/cache": "4.4.*",
         "symfony/console": "*",
         "symfony/dotenv": "*",
         "symfony/expression-language": "*",
