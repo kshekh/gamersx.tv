@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Service\TwitchApi;
 use App\Entity\HomeRow;
+use App\Entity\HomeRowItem;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,7 +37,7 @@ class HomeController extends AbstractController
             $thisRow['itemSortType'] = $row->getItemSortType();
 
             // Set up all the HttpClient and API requests concurrently
-            if ($row->getItemType() === 'streamer') {
+            if ($row->getItemType() === HomeRow::ITEM_TYPE_STREAMER) {
                 $streamerIds = $row->getItems()->map( function ($item) {
                     return $item->getTwitchId();
                 })->toArray();
@@ -44,7 +45,7 @@ class HomeController extends AbstractController
                 $infos = $twitch->getStreamerInfo($streamerIds);
                 $broadcasts = $twitch->getStreamForStreamer($streamerIds);
 
-            } elseif ($row->getItemType() === 'game') {
+            } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_GAME) {
                 $gameIds = $row->getItems()->map( function ($item) {
                     return $item->getTwitchId();
                 })->toArray();
@@ -52,55 +53,26 @@ class HomeController extends AbstractController
                 $infos = $twitch->getGameInfo($gameIds);
                 $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, 60);
 
+            } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_POPULAR) {
+                $options = $row->getOptions();
+                $numEmbeds = $options['numEmbeds'];
+                $gameIds = $options['filter']['twitchId'];
+
+                $infos = $twitch->getGameInfo($gameIds);
+                $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, $numEmbeds);
+
             }
 
             $infos = new ArrayCollection($infos->toArray()['data']);
             $broadcasts = new ArrayCollection($broadcasts->toArray()['data']);
 
-            $channels = Array();
-            foreach ($row->getItems() as $item) {
-                $twitchId = $item->getTwitchId();
+            if (in_array($row->getItemType(), [HomeRow::ITEM_TYPE_GAME, HomeRow::ITEM_TYPE_STREAMER])) {
+                $thisRow['channels'] = $this->getChannelsForRow($row, $infos, $broadcasts);
 
-                $info = $infos->filter(function($info) use ($twitchId) {
-                    return $info['id'] === $twitchId;
-                })->first();
-
-                if ($item->getItemType() === 'streamer') {
-                    $image = $info['profile_image_url'];
-                    $imageType = 'profile';
-                    $link = '/streamer/'.$info['id'];
-
-                    $expr = new Comparison('user_id', '=', $twitchId);
-                } elseif ($item->getItemType() === 'game') {
-                    $image = $info['box_art_url'];
-                    $imageType = 'boxArt';
-                    $link = '/game/'.$info['id'];
-
-                    $expr = new Comparison('game_id', '=', $twitchId);
-                }
-
-                $criteria = new Criteria();
-                $criteria->where($expr)->getFirstResult();
-                $broadcast = $broadcasts->matching($criteria);
-
-                if (!$broadcast->isEmpty()) {
-                    $broadcast = $broadcast->first();
-                } else {
-                    $broadcast = NULL;
-                }
-
-                $channels[] = [
-                    'info' => $info,
-                    'broadcast' => $broadcast,
-                    'rowType' => $item->getItemType(),
-                    'rowName' => $item->getHomeRow()->getTitle(),
-                    'sortIndex' => $item->getSortIndex(),
-                    'showArt' => $item->getShowArt(),
-                    'offlineDisplayType' => $item->getOfflineDisplayType(),
-                    'linkType' => $item->getLinkType(),
-                ];
+            } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_POPULAR) {
+                $thisRow['channels'] = $this->getChannelsForPopularRow($row, $infos, $broadcasts);
             }
-            $thisRow['channels'] = $channels;
+
             $rowChannels[] = $thisRow;
         }
 
@@ -109,6 +81,71 @@ class HomeController extends AbstractController
                 'rows' => $rowChannels
             ]
         ]);
+    }
+
+    /**
+     * This helper function gets the Channel objects for rows with game or streamer tiles
+     */
+    private function getChannelsForRow($row, $infos, $broadcasts) {
+        $channels = Array();
+        foreach ($row->getItems() as $item) {
+            $twitchId = $item->getTwitchId();
+
+            $info = $infos->filter(function($info) use ($twitchId) {
+                return $info['id'] === $twitchId;
+            })->first();
+
+            if ($item->getItemType() === HomeRow::ITEM_TYPE_STREAMER) {
+                $expr = new Comparison('user_id', '=', $twitchId);
+            } elseif ($item->getItemType() === HomeRow::ITEM_TYPE_GAME || $item->getItemType === HomeRow::ITEM_TYPE_POPULAR) {
+                $expr = new Comparison('game_id', '=', $twitchId);
+            }
+
+            $criteria = new Criteria();
+            $criteria->where($expr)->getFirstResult();
+            $broadcast = $broadcasts->matching($criteria);
+
+            if (!$broadcast->isEmpty()) {
+                $broadcast = $broadcast->first();
+            } else {
+                $broadcast = NULL;
+            }
+
+            $channels[] = [
+                'info' => $info,
+                'broadcast' => $broadcast,
+                'rowType' => $row->getItemType(),
+                'rowName' => $row->getTitle(),
+                'sortIndex' => $item->getSortIndex(),
+                'showArt' => $item->getShowArt(),
+                'offlineDisplayType' => $item->getOfflineDisplayType(),
+                'linkType' => $item->getLinkType(),
+            ];
+        }
+
+        return $channels;
+
+    }
+
+    private function getChannelsForPopularRow($row, $infos, $broadcasts) {
+        $channels = Array();
+
+        $info = $infos->first();
+        foreach ($broadcasts as $i => $broadcast) {
+            $channels[] = [
+                'info' => $info,
+                'broadcast' => $broadcast,
+                'rowType' => 'popular',
+                'rowName' => $row->getTitle(),
+                'sortIndex' => $i,
+                'showArt' => false,
+                'offlineDisplayType' => HomeRowItem::OFFLINE_DISPLAY_NONE,
+                'linkType' => HomeRowItem::LINK_TYPE_GAMERSX,
+            ];
+
+        }
+
+        return $channels;
     }
 
 }
