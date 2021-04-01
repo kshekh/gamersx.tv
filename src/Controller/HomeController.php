@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use App\Service\TwitchApi;
@@ -84,7 +85,7 @@ class HomeController extends AbstractController
     }
 
     /**
-     * This helper function gets the Channel objects for rows with game or streamer tiles
+     * Helper function to get the channel objects for rows with game or streamer tiles
      */
     private function getChannelsForRow($row, $infos, $broadcasts) {
         $channels = Array();
@@ -95,14 +96,22 @@ class HomeController extends AbstractController
                 return $info['id'] === $twitchId;
             })->first();
 
+            $criteria = new Criteria();
+
             if ($item->getItemType() === HomeRow::ITEM_TYPE_STREAMER) {
-                $expr = new Comparison('user_id', '=', $twitchId);
-            } elseif ($item->getItemType() === HomeRow::ITEM_TYPE_GAME || $item->getItemType === HomeRow::ITEM_TYPE_POPULAR) {
-                $expr = new Comparison('game_id', '=', $twitchId);
+                $criteria->where(new Comparison('user_id', '=', $twitchId));
+
+                // If there is a game filter set on a Streamer Home Row, only
+                // show streamers as online if they are streaming that game
+                $options = $row->getOptions();
+                if ($options !== null && array_key_exists('filter', $options)) {
+                    $gameId = $options['filter']['twitchId'];
+                    $criteria->andWhere(new Comparison('game_id', '=', $gameId));
+                }
+            } elseif ($item->getItemType() === HomeRow::ITEM_TYPE_GAME) {
+                $criteria->where(new Comparison('game_id', '=', $twitchId));
             }
 
-            $criteria = new Criteria();
-            $criteria->where($expr)->getFirstResult();
             $broadcast = $broadcasts->matching($criteria);
 
             if (!$broadcast->isEmpty()) {
@@ -127,6 +136,10 @@ class HomeController extends AbstractController
 
     }
 
+    /**
+     * Helper function to push a number of live channels for a single game
+     * in the "Popular" Home Row
+     */
     private function getChannelsForPopularRow($row, $infos, $broadcasts) {
         $channels = Array();
 
