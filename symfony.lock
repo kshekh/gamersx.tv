@@ -26,6 +26,9 @@
     "doctrine/dbal": {
         "version": "2.12.1"
     },
+    "doctrine/deprecations": {
+        "version": "v0.5.3"
+    },
     "doctrine/doctrine-bundle": {
         "version": "2.0",
         "recipe": {
@@ -113,9 +116,6 @@
     },
     "nikic/php-parser": {
         "version": "v4.10.4"
-    },
-    "opis/json-schema": {
-        "version": "1.0.19"
     },
     "phpdocumentor/reflection-common": {
         "version": "2.2.0"

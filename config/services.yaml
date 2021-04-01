@@ -28,13 +28,6 @@ services:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
 
-    sonata.block.service.file_upload:
-        class: App\Service\FileUploadBlockService
-        arguments:
-            - '@twig'
-        tags:
-            - { name: sonata.block }
-
     admin.home_row:
         class: App\Admin\HomeRowAdmin
         arguments: [~, App\Entity\HomeRow, ~]

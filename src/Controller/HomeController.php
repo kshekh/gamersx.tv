@@ -2,7 +2,6 @@
 namespace App\Controller;
 
 use App\Service\TwitchApi;
-use App\Service\RowSettings;
 use App\Entity\HomeRow;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,7 +22,7 @@ class HomeController extends AbstractController
     /**
      * @Route("/home/api", name="home_api")
      */
-    public function apiHome(RowSettings $settingsService, TwitchApi $twitch): Response
+    public function apiHome(TwitchApi $twitch): Response
     {
         $rows = $this->getDoctrine()->getRepository(HomeRow::class)
             ->findBy([], ['sortIndex' => 'ASC']);
