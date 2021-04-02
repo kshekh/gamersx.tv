@@ -2,12 +2,12 @@
   <div @swiped-left="forward()" @swiped-right="back()" class="home-row">
     <div class="text-2xl text-left font-extrabold pl-22 px-12 pt-4 pb-2">{{ settings.title}}</div>
     <div class="flex flex-row justify-start items-center">
-      <div>
+      <div v-show="allowScrolling">
         <button @click="back()" class="bg-indigo-300 hover:bg-indigo-400 text-gray-800 font-bold p-2 rounded-sm">
           &lt;
         </button>
       </div>
-      <div class="flex flex-row mr-5 overflow-x-hidden">
+      <div ref="channelBox" class="flex flex-row mr-5 overflow-x-hidden">
         <div ref="channelDivs" v-for="channel in displayChannels">
           <channel
             v-bind="channel"
@@ -16,7 +16,7 @@
           ></channel>
         </div>
       </div>
-      <div>
+      <div v-show="allowScrolling">
         <button @click="forward()" class="bg-indigo-300 hover:bg-indigo-400 text-gray-800 font-bold p-2 rounded-sm">
           &gt;
         </button>
@@ -43,6 +43,7 @@ export default {
     return {
       rowIndex: 0,
       displayChannels: [],
+      allowScrolling: false,
     }
   },
   methods: {
@@ -107,6 +108,9 @@ export default {
     }
     this.rowIndex = 0;
     this.displayChannels = displayed;
+  },
+  updated: function() {
+    this.allowScrolling = this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
   }
 }
 </script>
