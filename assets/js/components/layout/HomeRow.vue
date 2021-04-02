@@ -1,5 +1,5 @@
 <template>
-  <div class="home-row">
+  <div @swiped-left="forward()" @swiped-right="back()" class="home-row">
     <div class="text-2xl text-left font-extrabold pl-22 px-12 pt-4 pb-2">{{ settings.title}}</div>
     <div class="flex flex-row justify-start items-center">
       <div>
@@ -26,6 +26,7 @@
 </template>
 <script>
 import Channel from './Channel.vue'
+require('swiped-events');
 
 export default {
   name: 'HomeRow',
