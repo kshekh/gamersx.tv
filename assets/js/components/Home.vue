@@ -1,5 +1,5 @@
 <template>
-  <div class="container w-screen text-center mx-auto">
+  <div class="container text-center mx-auto">
     <div class="container flex-col">
       <div
         v-for="row in settings.rows">

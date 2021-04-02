@@ -1,22 +1,25 @@
 <template>
   <div class="home-row">
-    <div class="text-2xl text-left font-extrabold pl-22 px-12 pt-4 pb-2">{{ settings.title}}
-      <div class="inline-flex">
-        <button @click="back()" class="bg-indigo-300 hover:bg-indigo-400 text-gray-800 font-bold p-2 rounded-l">
+    <div class="text-2xl text-left font-extrabold pl-22 px-12 pt-4 pb-2">{{ settings.title}}</div>
+    <div class="flex flex-row justify-start items-center">
+      <div>
+        <button @click="back()" class="bg-indigo-300 hover:bg-indigo-400 text-gray-800 font-bold p-2 rounded-sm">
           &lt;
         </button>
-        <button @click="forward()" class="bg-indigo-300 hover:bg-indigo-400 text-gray-800 font-bold p-2 rounded-r">
+      </div>
+      <div class="flex flex-row mr-5 overflow-x-hidden">
+        <div ref="channelDivs" v-for="channel in displayChannels">
+          <channel
+            v-bind="channel"
+            :showChannel = "showChannel(channel)"
+            :showThumbnail = "showThumbnail(channel)"
+          ></channel>
+        </div>
+      </div>
+      <div>
+        <button @click="forward()" class="bg-indigo-300 hover:bg-indigo-400 text-gray-800 font-bold p-2 rounded-sm">
           &gt;
         </button>
-      </div>
-    </div>
-    <div class="flex flex-row overflow-x-hidden">
-      <div ref="channelDivs" v-for="channel in displayChannels">
-        <channel
-          v-bind="channel"
-          :showChannel = "showChannel(channel)"
-          :showThumbnail = "showThumbnail(channel)"
-        ></channel>
       </div>
     </div>
   </div>
