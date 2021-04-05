@@ -1,6 +1,7 @@
 {% block twitch_row %}
 
 {{ encore_entry_script_tags('twitch-selector') }}
+{{ encore_entry_link_tags('twitch-selector') }}
 
 {% set searchType = value.itemType ?? form.searchType.vars.value %}
 <div class="box">

@@ -2,11 +2,13 @@
   <div>
     <div class="form-group">
       <label for="twitch-search">Search</label>
-      <input name="twitch-search" v-model="searchValue" type="search" placeholder="Enter a search term"></input>
-    <button @click="search()" type="button">Search</button>
-    <button @click="clearSearch()" type="button">Reset Results</button>
-    <button @click="moreResults('before')" type="button">Prev</button>
-    <button @click="moreResults('after')" type="button">Next</button>
+      <input name="twitch-search" class="form-control" v-model="searchValue" type="search" placeholder="Enter a search term"></input>
+    <div class="well well-small">
+      <button @click="search()" type="button" class="btn btn-small btn-primary">Search</button>
+      <button @click="clearSearch()" type="button" class="btn btn-small btn-primary">Reset Results</button>
+      <button @click="moreResults('before')" type="button" class="btn btn-small btn-primary">Prev</button>
+      <button @click="moreResults('after')" type="button" class="btn btn-small btn-primary">Next</button>
+    </div>
     <span>{{ message }}</span>
   </div>
   <table class="table table-bordered table-striped table-hover sonata-ba-list">
@@ -21,7 +23,6 @@
       </tr>
     </tbody>
   </table>
-</div>
 </div>
 </template>
 <script>
@@ -179,4 +180,7 @@ export default {
 }
 </script>
 <style scoped>
+tbody tr {
+  cursor: pointer;
+}
 </style>
