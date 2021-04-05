@@ -8,6 +8,10 @@ sonata_admin:
                 items:
                     - admin.home_row
                     - admin.home_row_item
+            app.admin.theme:
+                label: Themes
+                items:
+                    - admin.theme
             sonata_user: ~
 
     options:

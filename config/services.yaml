@@ -43,3 +43,10 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, group: home, label: Row Items}
         public: true
+
+    admin.theme:
+        class: App\Admin\ThemeAdmin
+        arguments: [~, App\Entity\Theme, App\Controller\ThemeAdminController]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: admin, label: Theme }
+        public: true
