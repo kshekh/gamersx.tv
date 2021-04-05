@@ -3,11 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\ThemeRepository;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=ThemeRepository::class)
+ * @ORM\Entity()
+ * @Vich\Uploadable
  */
 class Theme
 {
@@ -40,7 +42,9 @@ class Theme
     private $bannerImage;
 
     /**
-     * This is a non-persisted object to assist with saving
+     * @Vich\UploadableField(mapping="theme_banner", fileNameProperty="bannerImage")
+     *
+     * @var File|null
      */
     private $bannerImageFile;
 
@@ -51,7 +55,9 @@ class Theme
     private $embedBackground;
 
     /**
-     * This is a non-persisted object to assist with saving
+     * @Vich\UploadableField(mapping="theme_embed", fileNameProperty="embedBackground")
+     *
+     * @var File|null
      */
     private $embedBackgroundFile;
 
@@ -62,7 +68,9 @@ class Theme
     private $artBackground;
 
     /**
-     * This is a non-persisted object to assist with saving
+     * @Vich\UploadableField(mapping="theme_art", fileNameProperty="artBackground")
+     *
+     * @var File|null
      */
     private $artBackgroundFile;
 
@@ -119,12 +127,12 @@ class Theme
         return $this;
     }
 
-    public function getBannerImageFile(): ?UploadedFile
+    public function getBannerImageFile(): ?File
     {
         return $this->bannerImageFile;
     }
 
-    public function setBannerImageFile(?UploadedFile $bannerImageFile): self
+    public function setBannerImageFile(?File $bannerImageFile): self
     {
         $this->bannerImageFile = $bannerImageFile;
 
@@ -143,12 +151,12 @@ class Theme
         return $this;
     }
 
-    public function getEmbedBackgroundFile(): ?UploadedFile
+    public function getEmbedBackgroundFile(): ?File
     {
         return $this->embedBackgroundFile;
     }
 
-    public function setEmbedBackgroundFile(?UploadedFile $embedBackgroundFile): self
+    public function setEmbedBackgroundFile(?File $embedBackgroundFile): self
     {
         $this->embedBackgroundFile = $embedBackgroundFile;
 
@@ -167,12 +175,12 @@ class Theme
         return $this;
     }
 
-    public function getArtBackgroundFile(): ?UploadedFile
+    public function getArtBackgroundFile(): ?File
     {
         return $this->artBackgroundFile;
     }
 
-    public function setArtBackgroundFile(?UploadedFile $artBackgroundFile): self
+    public function setArtBackgroundFile(?File $artBackgroundFile): self
     {
         $this->artBackgroundFile = $artBackgroundFile;
 
