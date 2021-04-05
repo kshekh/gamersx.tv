@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ThemeRepository;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -20,7 +21,7 @@ class Theme
     /**
      * @ORM\Column(type="string", length=32)
      */
-    private $TwitchId;
+    private $twitchId;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -32,20 +33,38 @@ class Theme
      */
     private $itemType;
 
+    const IMAGE_TYPE_BANNER = 'banner';
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $hasBannerImage;
+    private $bannerImage;
 
     /**
-     * @ORM\Column(type="boolean")
+     * This is a non-persisted object to assist with saving
      */
-    private $hasArtBackground;
+    private $bannerImageFile;
+
+    const IMAGE_TYPE_EMBED_BACKGROUND = 'embed';
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $embedBackground;
 
     /**
-     * @ORM\Column(type="boolean")
+     * This is a non-persisted object to assist with saving
      */
-    private $hasEmbedBackground;
+    private $embedBackgroundFile;
+
+    const IMAGE_TYPE_ART_BACKGROUND = 'art';
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $artBackground;
+
+    /**
+     * This is a non-persisted object to assist with saving
+     */
+    private $artBackgroundFile;
 
     public function getId(): ?int
     {
@@ -54,12 +73,12 @@ class Theme
 
     public function getTwitchId(): ?string
     {
-        return $this->TwitchId;
+        return $this->twitchId;
     }
 
-    public function setTwitchId(string $TwitchId): self
+    public function setTwitchId(string $twitchId): self
     {
-        $this->TwitchId = $TwitchId;
+        $this->twitchId = $twitchId;
 
         return $this;
     }
@@ -88,38 +107,74 @@ class Theme
         return $this;
     }
 
-    public function getHasBannerImage(): ?bool
+    public function getBannerImage(): ?string
     {
-        return $this->hasBannerImage;
+        return $this->bannerImage;
     }
 
-    public function setHasBannerImage(bool $hasBannerImage): self
+    public function setBannerImage(?string $bannerImage): self
     {
-        $this->hasBannerImage = $hasBannerImage;
+        $this->bannerImage = $bannerImage;
 
         return $this;
     }
 
-    public function getHasArtBackground(): ?bool
+    public function getBannerImageFile(): ?UploadedFile
     {
-        return $this->hasArtBackground;
+        return $this->bannerImageFile;
     }
 
-    public function setHasArtBackground(bool $hasArtBackground): self
+    public function setBannerImageFile(?UploadedFile $bannerImageFile): self
     {
-        $this->hasArtBackground = $hasArtBackground;
+        $this->bannerImageFile = $bannerImageFile;
 
         return $this;
     }
 
-    public function getHasEmbedBackground(): ?bool
+    public function getEmbedBackground(): ?string
     {
-        return $this->hasEmbedBackground;
+        return $this->embedBackground;
     }
 
-    public function setHasEmbedBackground(bool $hasEmbedBackground): self
+    public function setEmbedBackground(?string $embedBackground): self
     {
-        $this->hasEmbedBackground = $hasEmbedBackground;
+        $this->embedBackground = $embedBackground;
+
+        return $this;
+    }
+
+    public function getEmbedBackgroundFile(): ?UploadedFile
+    {
+        return $this->embedBackgroundFile;
+    }
+
+    public function setEmbedBackgroundFile(?UploadedFile $embedBackgroundFile): self
+    {
+        $this->embedBackgroundFile = $embedBackgroundFile;
+
+        return $this;
+    }
+
+    public function getArtBackground(): ?string
+    {
+        return $this->artBackground;
+    }
+
+    public function setArtBackground(?string $artBackground): self
+    {
+        $this->artBackground = $artBackground;
+
+        return $this;
+    }
+
+    public function getArtBackgroundFile(): ?UploadedFile
+    {
+        return $this->artBackgroundFile;
+    }
+
+    public function setArtBackgroundFile(?UploadedFile $artBackgroundFile): self
+    {
+        $this->artBackgroundFile = $artBackgroundFile;
 
         return $this;
     }

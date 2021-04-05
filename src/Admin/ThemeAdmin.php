@@ -6,15 +6,23 @@ namespace App\Admin;
 
 use App\Form\TwitchType;
 use App\Entity\HomeRow;
+use App\Service\ThemeImageService;
 use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, FileType };
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 final class ThemeAdmin extends AbstractAdmin
 {
+    private $imageSvc;
+
+    public function setThemeImageService(ThemeImageService $service) {
+        $this->imageSvc = $service;
+    }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
     {
@@ -22,9 +30,9 @@ final class ThemeAdmin extends AbstractAdmin
             ->add('TwitchId')
             ->add('label')
             ->add('itemType')
-            ->add('hasBannerImage')
-            ->add('hasArtBackground')
-            ->add('hasEmbedBackground')
+            ->add('bannerImage')
+            ->add('artBackground')
+            ->add('embedBackground')
             ;
     }
 
@@ -34,9 +42,9 @@ final class ThemeAdmin extends AbstractAdmin
             ->add('TwitchId')
             ->add('label')
             ->add('itemType')
-            ->add('hasBannerImage')
-            ->add('hasArtBackground')
-            ->add('hasEmbedBackground')
+            ->add('bannerImage')
+            ->add('artBackground')
+            ->add('embedBackground')
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],
@@ -56,20 +64,18 @@ final class ThemeAdmin extends AbstractAdmin
                 ],
                 'required' => true
             ])
-            ->add('bannerImage', FileType::class, [
-                'mapped' => false,
+            ->add('bannerImageFile', FileType::class, [
                 'required' => false,
             ])
-            ->add('artBackground', FileType::class, [
-                'mapped' => false,
+            ->add('artBackgroundFile', FileType::class, [
                 'required' => false,
             ])
-            ->add('embedBackground', FileType::class, [
-                'mapped' => false,
+            ->add('embedBackgroundFile', FileType::class, [
                 'required' => false,
             ])
-            ->add('TwitchId', TwitchType::class, [
+            ->add('twitch', TwitchType::class, [
                 'searchType' => 'game',
+                'inherit_data' => true
             ])
             ;
     }
@@ -81,9 +87,21 @@ final class ThemeAdmin extends AbstractAdmin
             ->add('TwitchId')
             ->add('label')
             ->add('itemType')
-            ->add('hasBannerImage')
-            ->add('hasArtBackground')
-            ->add('hasEmbedBackground')
+            ->add('bannerImage')
+            ->add('artBackground')
+            ->add('embedBackground')
             ;
+    }
+
+    public function prePersist($theme): void
+    {
+        $this->imageSvc->setTheme($theme);
+
+        if ($theme->getBannerImageFile()) {
+            $theme->setBannerImage(
+                $this->imageSvc->upload('banner', $theme->getBannerImageFile())
+            );
+        }
+
     }
 }

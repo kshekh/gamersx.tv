@@ -4,8 +4,8 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    app.row_settings: '%kernel.project_dir%/var/row_settings.json'
-    app.row_settings_schema: '%kernel.project_dir%/config/schema.json'
+    app.theme_path: '%kernel.project_dir%/public/images/themes/'
+    app.theme_url: '/images/themes/'
 
 services:
     # default configuration for services in *this* file
@@ -46,7 +46,9 @@ services:
 
     admin.theme:
         class: App\Admin\ThemeAdmin
-        arguments: [~, App\Entity\Theme, App\Controller\ThemeAdminController]
+        arguments: [~, App\Entity\Theme, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, group: admin, label: Theme }
         public: true
+        calls:
+            - ['setThemeImageService', ['@App\Service\ThemeImageService']]
