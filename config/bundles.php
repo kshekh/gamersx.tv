@@ -24,4 +24,5 @@ return [
     Sonata\DatagridBundle\SonataDatagridBundle::class => ['all' => true],
     FOS\UserBundle\FOSUserBundle::class => ['all' => true],
     Sonata\UserBundle\SonataUserBundle::class => ['all' => true],
+    Vich\UploaderBundle\VichUploaderBundle::class => ['all' => true],
 ];
