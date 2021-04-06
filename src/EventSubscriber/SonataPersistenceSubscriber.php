@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\Admin\HomeRowAdmin;
 use App\Admin\HomeRowItemAdmin;
+use App\Admin\ThemeAdmin;
 use Sonata\AdminBundle\Event\PersistenceEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -20,7 +21,8 @@ class SonataPersistenceSubscriber implements EventSubscriberInterface
     public function clearCache(PersistenceEvent $event)
     {
         $admin = $event->getAdmin();
-        if ($admin instanceof HomeRowItemAdmin || $admin instanceof HomeRowAdmin) {
+        if ($admin instanceof HomeRowItemAdmin || $admin instanceof HomeRowAdmin ||
+                $admin instanceof ThemeAdmin ) {
             $this->gamersxCache->clear();
         }
     }

@@ -3,19 +3,19 @@ vich_uploader:
 
     mappings:
        theme_banner:
-           uri_prefix: /images/themes/
+           uri_prefix: /images/themes
            upload_destination: '%kernel.project_dir%/public/images/themes'
            namer:
                service: Vich\UploaderBundle\Naming\PropertyNamer
                options: { property: 'bannerImageSlug' }
        theme_embed:
-           uri_prefix: /images/themes/
+           uri_prefix: /images/themes
            upload_destination: '%kernel.project_dir%/public/images/themes'
            namer:
                service: Vich\UploaderBundle\Naming\PropertyNamer
                options: { property: 'embedBackgroundSlug' }
        theme_art:
-           uri_prefix: /images/themes/
+           uri_prefix: /images/themes
            upload_destination: '%kernel.project_dir%/public/images/themes'
            namer:
                service: Vich\UploaderBundle\Naming\PropertyNamer
