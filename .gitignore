@@ -1,5 +1,5 @@
-# Current Home Row settings file
-/var/row_settings.json
+# Saved theme files
+/public/images/themes/
 
 # Node artifact files
 node_modules/

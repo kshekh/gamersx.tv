@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Admin;
 
 use App\Form\TwitchType;
+use App\Entity\HomeRow;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -16,7 +18,6 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 
 final class ThemeAdmin extends AbstractAdmin
 {
-
     protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
     {
         $datagridMapper
@@ -38,7 +39,6 @@ final class ThemeAdmin extends AbstractAdmin
             ->add('bannerImage')
             ->add('artBackground')
             ->add('embedBackground')
-            ->add('_action', null, [
             ->add(ListMapper::NAME_ACTIONS, null, [
                 'actions' => [
                     'show' => [],
@@ -58,16 +58,18 @@ final class ThemeAdmin extends AbstractAdmin
                 ],
                 'required' => true
             ])
-            ->add('bannerImageFile', VichImageType::class)
-            ->add('embedBackgroundFile', VichImageType::class)
-            ->add('artBackgroundFile', VichImageType::class)
+            ->add('bannerImageFile', VichImageType::class, [
+                'required' => false,
+            ])
+            ->add('embedBackgroundFile', VichImageType::class, [
+                'required' => false,
+            ])
+            ->add('artBackgroundFile', VichImageType::class, [
+                'required' => false,
+            ])
             ->add('twitch', TwitchType::class, [
                 'searchType' => 'game',
                 'inherit_data' => true
-            ->add('itemType')
-            ->add('twitch', TwitchType::class, [
-                'inherit_data' => true,
-                'searchType' => 'game',
             ])
             ;
     }

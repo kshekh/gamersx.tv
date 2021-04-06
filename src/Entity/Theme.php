@@ -139,6 +139,11 @@ class Theme
         return $this;
     }
 
+    public function getBannerImageSlug(): ?string
+    {
+        return $this->getItemType().'-'.$this->getTwitchId().'-banner';
+    }
+
     public function getEmbedBackground(): ?string
     {
         return $this->embedBackground;
@@ -163,6 +168,11 @@ class Theme
         return $this;
     }
 
+    public function getEmbedBackgroundSlug(): ?string
+    {
+        return $this->getItemType().'-'.$this->getTwitchId().'-embedbg';
+    }
+
     public function getArtBackground(): ?string
     {
         return $this->artBackground;
@@ -185,6 +195,25 @@ class Theme
         $this->artBackgroundFile = $artBackgroundFile;
 
         return $this;
+    }
+
+    public function getArtBackgroundSlug(): ?string
+    {
+        return $this->getItemType().'-'.$this->getTwitchId().'-artbg';
+    }
+
+    public function __toString(): string
+    {
+        if ($this->getLabel()) {
+            $label = $this->getLabel();
+        } else if ($this->getTwitchId()) {
+            $label = $this->getTwitchId();
+        }
+        if ($this->getItemType()) {
+            return ucfirst('Theme for '.$this->getItemType() . ' \'' . $label. '\'');
+        } else {
+            return $label;
+        }
     }
 
 }
