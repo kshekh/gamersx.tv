@@ -6,7 +6,7 @@ use App\Repository\HomeRowItemRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=HomeRowItemRepository::class)
+ * @ORM\Entity()
  */
 class HomeRowItem
 {
