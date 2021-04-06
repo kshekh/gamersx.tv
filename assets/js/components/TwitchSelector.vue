@@ -1,29 +1,32 @@
 <template>
   <div>
     <div class="form-group">
-      <label for="twitch-search">Search</label>
-      <input name="twitch-search" class="form-control" v-model="searchValue" type="search" placeholder="Enter a search term"></input>
-    <div class="well well-small">
-      <button @click="search()" type="button" class="btn btn-small btn-primary">Search</button>
-      <button @click="clearSearch()" type="button" class="btn btn-small btn-primary">Reset Results</button>
-      <button @click="moreResults('before')" type="button" class="btn btn-small btn-primary">Prev</button>
-      <button @click="moreResults('after')" type="button" class="btn btn-small btn-primary">Next</button>
+      <input name="twitch-search" class="form-control" v-model="searchValue" type="search"
+        placeholder="Enter a search term or page through the most popular streams"></input>
+      <div class="well well-small">
+        <button @click="search()" type="button" class="btn btn-small btn-primary">Search</button>
+        <button @click="clear()" type="button" class="btn btn-small btn-primary">Clear Selected Item</button>
+        <button @click="moreResults('before')" type="button" class="btn btn-small btn-primary">Previous Results</button>
+        <button @click="moreResults('after')" type="button" class="btn btn-small btn-primary">Next Results</button>
+        <button @click="clearSearch()" type="button" class="btn btn-small btn-primary">Reset Results</button>
+      </div>
+      <div v-if="message" class="well well-small">
+        <span class="message">{{ message }}</span>
+      </div>
     </div>
-    <span>{{ message }}</span>
+    <table class="table table-bordered table-striped table-hover sonata-ba-list">
+      <thead>
+        <tr class="sonata-ba-list-field-header">
+          <th v-for="header in headers" class="sonata-ba-list-field-header">{{ header }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="row in rows" @click="selectRow(row)">
+          <td v-for="field in row.fields" class="sonata-ba-list-field">{{ field }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  <table class="table table-bordered table-striped table-hover sonata-ba-list">
-    <thead>
-      <tr class="sonata-ba-list-field-header">
-        <th v-for="header in headers" class="sonata-ba-list-field-header">{{ header }}</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="row in rows" @click="selectRow(row)">
-        <td v-for="field in row.fields" class="sonata-ba-list-field">{{ field }}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
 </template>
 <script>
 import axios from 'axios';
@@ -64,7 +67,11 @@ export default {
       this.cursor = '';
       this.moreResults();
     },
-
+    /* Remove the current selection */
+    clear: function() {
+      document.querySelector('input.twitch-id').value = null;
+      document.querySelector('input.twitch-label').value = null;
+    },
     /** == Call the API to get various kinds of results, then process them == **/
     getSearchResults: function(params) {
       if (this.itemType === 'game') {
@@ -171,10 +178,23 @@ export default {
         return row;
       });
     },
+    /* When selecting a new type, clear the values and search results */
+    changeItemType(item) {
+      this.clear();
+      this.itemType = item.val;
+      this.moreResults();
+    }
   },
-
   mounted: function() {
     this.itemType = this.$el.parentNode.dataset['itemType'];
+
+    /* Using the Sonata Select2 javascript hooks to update our itemType */
+    let selector = document.querySelector("[data-twitch-select='itemType']");
+    if (selector) {
+      this.itemType = $(selector).val();
+      $(selector).on('change.select2', this.changeItemType);
+    }
+
     this.moreResults();
   }
 }

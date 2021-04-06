@@ -13,12 +13,15 @@ class TwitchType extends AbstractType
         $builder
             ->add('twitchId', null, [
                 'attr' => ['readonly' => true, 'class' => 'twitch-id'],
+                'label' => 'Selected Twitch ID',
             ])
             ->add('label', null,  [
                 'required' => false,
                 'attr' => ['readonly' => true, 'class' => 'twitch-label'],
+                'label' => 'Selected Twitch Item\'s Label',
             ])
             ->add('searchType', HiddenType::class, [
+                'label' => false,
                 'mapped' => false,
                 'data' => $options['searchType']
             ])

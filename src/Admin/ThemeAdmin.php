@@ -56,6 +56,9 @@ final class ThemeAdmin extends AbstractAdmin
                     'Games' => HomeRow::ITEM_TYPE_GAME,
                     'Streamers' => HomeRow::ITEM_TYPE_STREAMER,
                 ],
+                'attr' => [
+                    'data-twitch-select' => 'itemType',
+                ],
                 'required' => true
             ])
             ->add('bannerImageFile', VichImageType::class, [
