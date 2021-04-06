@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ThemeRepository;
-use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\{ File, UploadedFile };
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -74,6 +74,14 @@ class Theme
      */
     private $artBackgroundFile;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * Need an updateable field as a fix for vich uploader bug
+     * https://github.com/dustin10/VichUploaderBundle/blob/master/docs/known_issues.md
+     */
+    private $updatedAt;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -136,6 +144,10 @@ class Theme
     {
         $this->bannerImageFile = $bannerImageFile;
 
+        if ($this->bannerImageFile instanceof UploadedFile) {
+            $this->updatedAt = new \DateTime('now');
+        }
+
         return $this;
     }
 
@@ -164,6 +176,9 @@ class Theme
     public function setEmbedBackgroundFile(?File $embedBackgroundFile): self
     {
         $this->embedBackgroundFile = $embedBackgroundFile;
+        if ($this->embedBackgroundFile instanceof UploadedFile) {
+            $this->updatedAt = new \DateTime('now');
+        }
 
         return $this;
     }
@@ -193,6 +208,9 @@ class Theme
     public function setArtBackgroundFile(?File $artBackgroundFile): self
     {
         $this->artBackgroundFile = $artBackgroundFile;
+        if ($this->artBackgroundFile instanceof UploadedFile) {
+            $this->updatedAt = new \DateTime('now');
+        }
 
         return $this;
     }
@@ -201,6 +219,19 @@ class Theme
     {
         return $this->getItemType().'-'.$this->getTwitchId().'-artbg';
     }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
 
     public function __toString(): string
     {
