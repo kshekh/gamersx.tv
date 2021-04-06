@@ -1,9 +1,12 @@
 <template>
   <div class="container text-center mx-auto">
-    <div class="container flex-col">
-      <h2 class="pb-6 text-xl font-bold">Welcome to the Game Page for {{ info.name }} - (Game ID {{ info.id }})</h2>
+    <div class="flex-col">
+      <div>
+        <h2 class="pb-6 text-xl font-bold">Welcome to the Game Page for {{ info.name }} - (Game ID {{ info.id }})</h2>
+      </div>
       <div class="flex flex-row align-items-center justify-center space-x-4">
-        <div>
+
+        <div v-bind:style="artBg" class="w-auto p-4">
           <a :href="'https://www.twitch.tv/directory/game/' + info.name" target="_twitch">
             <twitch-art v-if="info.box_art_url"
               :imageType="'boxArt'"
@@ -13,15 +16,18 @@
           </a>
         </div>
 
-        <div>
-          <div class="w-auto p-4 bg-indigo-500 rounded-md">
-            <p>Most popular stream for {{ info.name }}</p>
-            <js-embed v-if="popular.user_login"
-              v-bind:channel="popular.user_login">
-            </js-embed>
-          </div>
+        <div v-bind:style="embedBg" class="w-auto p-4">
+          <p>Most popular stream for {{ info.name }}</p>
+          <js-embed v-if="popular.user_login"
+            v-bind:channel="popular.user_login">
+          </js-embed>
         </div>
       </div>
+
+      <div class="inline-block align-middle" v-if="themeUrls.banner">
+        <img class="pt-8" :src="themeUrls.banner" />
+      </div>
+
       <div class="border rounded mt-12">
         <button @click="show('featured')" type="button">
           <span class="text-sm font-light pt-12 p-4">Featured</span>
@@ -60,7 +66,8 @@ export default {
       displayTab: 'featured',
       info:{},
       streams: {},
-      popular: {}
+      popular: {},
+      themeUrls: {}
     }
   },
   methods: {
@@ -72,6 +79,26 @@ export default {
       }
     }
   },
+  computed: {
+    embedBg: function() {
+      if (this.themeUrls.embedBg) {
+        return {
+          'backgroundImage': 'url(' + this.themeUrls.embedBg + ')',
+        };
+      } else {
+        return {};
+      }
+    },
+    artBg: function() {
+      if (this.themeUrls.artBg) {
+        return {
+          'backgroundImage': 'url(' + this.themeUrls.artBg + ')',
+        };
+      } else {
+        return {};
+      }
+    }
+  },
   mounted: function() {
     let dataUrl = this.$el.parentNode.dataset['url'];
     axios
@@ -80,6 +107,7 @@ export default {
         this.info = response.data.info;
         this.popular = response.data.streams[0];
         this.streams = response.data.streams.slice(1);
+        this.themeUrls = response.data.theme;
       });
     this.show('all');
   }
