@@ -3,7 +3,8 @@
     <div class="container flex-col">
       <h2 class="pb-6 text-xl font-bold">Welcome to the Streamer Page for {{ info.display_name }} - (Streamer ID {{ info.id }})</h2>
       <div class="flex flex-row align-items-center justify-center space-x-4">
-        <div class="bg-indigo-500 rounded-md">
+
+        <div v-bind:style="artBg" class="w-auto p-4">
           <a :href="'https://www.twitch.tv/' + info.display_name" target="_twitch">
             <twitch-art v-if="info.profile_image_url"
               :imageType="'profile'"
@@ -13,12 +14,18 @@
           </a>
         </div>
 
-        <div class="w-auto p-4 bg-indigo-500 rounded-md">
+        <div v-bind:style="embedBg" class="w-auto p-4">
           <js-embed v-if="info.login"
             v-bind:channel="info.login">
           </js-embed>
         </div>
+
       </div>
+
+      <div class="inline-block align-middle" v-if="themeUrls.banner">
+        <img class="pt-8" :src="themeUrls.banner" />
+      </div>
+
       <div class="border rounded mt-12">
         <button @click="show('recent')" type="button">
           <span class="text-sm font-light pt-12 p-4">Recent</span>
@@ -65,8 +72,7 @@ export default {
       displayTab: 'recent',
       info: {},
       vods: {},
-      message: "Streams",
-      numStreams: 8
+      themeUrls: {},
     }
   },
   methods: {
@@ -78,6 +84,26 @@ export default {
       }
     }
   },
+  computed: {
+    embedBg: function() {
+      if (this.themeUrls.embedBg) {
+        return {
+          'backgroundImage': 'url(' + this.themeUrls.embedBg + ')',
+        };
+      } else {
+        return {};
+      }
+    },
+    artBg: function() {
+      if (this.themeUrls.artBg) {
+        return {
+          'backgroundImage': 'url(' + this.themeUrls.artBg + ')',
+        };
+      } else {
+        return {};
+      }
+    }
+  },
   mounted: function() {
     let dataUrl = this.$el.parentNode.dataset['url'];
     axios
@@ -85,6 +111,7 @@ export default {
       .then(response => {
         this.info = response.data.info;
         this.vods = response.data.vods;
+        this.themeUrls = response.data.theme;
       });
     this.show('recent');
   }

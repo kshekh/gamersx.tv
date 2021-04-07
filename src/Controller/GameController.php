@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
-use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class GameController extends AbstractController
 {
@@ -29,14 +28,14 @@ class GameController extends AbstractController
     /**
      * @Route("/game/{id}/api", name="game_api")
      */
-    public function apiGame(TwitchApi $twitch, ThemeInfo $themeInfo,
+    public function apiGame(TwitchApi $twitch, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $id): Response
     {
         $gameInfo = $gamersxCache->get("game-${id}",
-            function (ItemInterface $item) use ($id, $twitch, $themeInfo) {
+            function (ItemInterface $item) use ($id, $twitch, $themeInfoService) {
                 $game = $twitch->getGameInfo($id);
                 $streams = $twitch->getTopLiveBroadcastForGame($id, 5);
-                $themeInfo = $themeInfo->getThemeInfo($id, HomeRow::ITEM_TYPE_GAME);
+                $themeInfo = $themeInfoService->getThemeInfo($id, HomeRow::ITEM_TYPE_GAME);
 
                 return [
                     'info' => $game->toArray()['data'][0],
