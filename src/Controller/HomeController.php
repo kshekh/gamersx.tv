@@ -15,6 +15,13 @@ use Doctrine\Common\Collections\Expr\Comparison;
 
 class HomeController extends AbstractController
 {
+    private $twitch;
+
+    public function __construct(TwitchApi $twitch)
+    {
+        $this->twitch = $twitch;
+    }
+
     /**
      * @Route("/", name="home")
      */
@@ -26,9 +33,9 @@ class HomeController extends AbstractController
     /**
      * @Route("/home/api", name="home_api")
      */
-    public function apiHome(TwitchApi $twitch, CacheInterface $gamersxCache): Response
+    public function apiHome(CacheInterface $gamersxCache): Response
     {
-        $rowChannels = $gamersxCache->get('home', function (ItemInterface $item) use ($twitch) {
+        $rowChannels = $gamersxCache->get('home', function (ItemInterface $item) {
 
             $rows = $this->getDoctrine()->getRepository(HomeRow::class)
                 ->findBy([], ['sortIndex' => 'ASC']);
@@ -47,24 +54,24 @@ class HomeController extends AbstractController
                         return $item->getTwitchId();
                     })->toArray();
 
-                    $infos = $twitch->getStreamerInfo($streamerIds);
-                    $broadcasts = $twitch->getStreamForStreamer($streamerIds);
+                    $infos = $this->twitch->getStreamerInfo($streamerIds);
+                    $broadcasts = $this->twitch->getStreamForStreamer($streamerIds);
 
                 } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_GAME) {
                     $gameIds = $row->getItems()->map( function ($item) {
                         return $item->getTwitchId();
                     })->toArray();
 
-                    $infos = $twitch->getGameInfo($gameIds);
-                    $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, 60);
+                    $infos = $this->twitch->getGameInfo($gameIds);
+                    $broadcasts = $this->twitch->getTopLiveBroadcastForGame($gameIds, 60);
 
                 } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_POPULAR) {
                     $options = $row->getOptions();
                     $numEmbeds = $options['numEmbeds'];
                     $gameIds = $options['filter']['twitchId'];
 
-                    $infos = $twitch->getGameInfo($gameIds);
-                    $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, $numEmbeds);
+                    $infos = $this->twitch->getGameInfo($gameIds);
+                    $broadcasts = $this->twitch->getTopLiveBroadcastForGame($gameIds, $numEmbeds);
 
                 }
 
@@ -123,6 +130,15 @@ class HomeController extends AbstractController
 
             if (!$broadcast->isEmpty()) {
                 $broadcast = $broadcast->first();
+            } elseif ($item->getItemType() === HomeRow::ITEM_TYPE_GAME) {
+                // If the broadcast is null for a game, double-check to make sure. This is unlikely and
+                // probably due to a high variance of popularity in grouped games.
+                $broadcast = $this->twitch->getTopLiveBroadcastForGame($twitchId)->toArray()['data'];
+                if (count($broadcast) > 0) {
+                    $broadcast = $broadcast[0];
+                } else {
+                    $broadcast = null;
+                }
             } else {
                 $broadcast = NULL;
             }
