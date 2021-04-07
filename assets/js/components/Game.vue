@@ -6,9 +6,12 @@
       </div>
       <div class="flex flex-row align-items-center justify-center space-x-4">
 
-        <div v-bind:style="artBg" class="w-auto p-4">
+        <div>
           <a :href="'https://www.twitch.tv/directory/game/' + info.name" target="_twitch">
-            <twitch-art v-if="info.box_art_url"
+            <div v-if="themeUrls.customArt" class="w-auto p-4" >
+              <img :width="225" :height="300" :src="themeUrls.customArt">
+            </div>
+            <twitch-art v-else-if="info.box_art_url"
               :imageType="'boxArt'"
               :src="info.box_art_url"
             ></twitch-art>
@@ -89,15 +92,6 @@ export default {
         return {};
       }
     },
-    artBg: function() {
-      if (this.themeUrls.artBg) {
-        return {
-          'backgroundImage': 'url(' + this.themeUrls.artBg + ')',
-        };
-      } else {
-        return {};
-      }
-    }
   },
   mounted: function() {
     let dataUrl = this.$el.parentNode.dataset['url'];

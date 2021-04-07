@@ -25,7 +25,7 @@ final class ThemeAdmin extends AbstractAdmin
             ->add('label')
             ->add('itemType')
             ->add('bannerImage')
-            ->add('artBackground')
+            ->add('customArt')
             ->add('embedBackground')
             ;
     }
@@ -37,7 +37,7 @@ final class ThemeAdmin extends AbstractAdmin
             ->add('label')
             ->add('itemType')
             ->add('bannerImage')
-            ->add('artBackground')
+            ->add('customArt')
             ->add('embedBackground')
             ->add(ListMapper::NAME_ACTIONS, null, [
                 'actions' => [
@@ -67,7 +67,7 @@ final class ThemeAdmin extends AbstractAdmin
             ->add('embedBackgroundFile', VichImageType::class, [
                 'required' => false,
             ])
-            ->add('artBackgroundFile', VichImageType::class, [
+            ->add('customArtFile', VichImageType::class, [
                 'required' => false,
             ])
             ->add('twitch', TwitchType::class, [
@@ -85,7 +85,7 @@ final class ThemeAdmin extends AbstractAdmin
             ->add('label')
             ->add('itemType')
             ->add('bannerImage')
-            ->add('artBackground')
+            ->add('customArt')
             ->add('embedBackground')
             ;
     }

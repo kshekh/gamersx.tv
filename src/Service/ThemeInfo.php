@@ -29,7 +29,7 @@ class ThemeInfo
         } else {
             return [
                 'banner' => $this->helper->asset($theme, 'bannerImageFile'),
-                'artBg' => $this->helper->asset($theme, 'artBackgroundFile'),
+                'customArt' => $this->helper->asset($theme, 'customArtFile'),
                 'embedBg' => $this->helper->asset($theme, 'embedBackgroundFile'),
             ];
         }

@@ -65,14 +65,14 @@ class Theme
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $artBackground;
+    private $customArt;
 
     /**
-     * @Vich\UploadableField(mapping="theme_art", fileNameProperty="artBackground")
+     * @Vich\UploadableField(mapping="theme_art", fileNameProperty="customArt")
      *
      * @var File|null
      */
-    private $artBackgroundFile;
+    private $customArtFile;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -188,36 +188,36 @@ class Theme
         return $this->getItemType().'-'.$this->getTwitchId().'-embedbg';
     }
 
-    public function getArtBackground(): ?string
+    public function getCustomArt(): ?string
     {
-        return $this->artBackground;
+        return $this->customArt;
     }
 
-    public function setArtBackground(?string $artBackground): self
+    public function setCustomArt(?string $customArt): self
     {
-        $this->artBackground = $artBackground;
+        $this->customArt = $customArt;
 
         return $this;
     }
 
-    public function getArtBackgroundFile(): ?File
+    public function getCustomArtFile(): ?File
     {
-        return $this->artBackgroundFile;
+        return $this->customArtFile;
     }
 
-    public function setArtBackgroundFile(?File $artBackgroundFile): self
+    public function setCustomArtFile(?File $customArtFile): self
     {
-        $this->artBackgroundFile = $artBackgroundFile;
-        if ($this->artBackgroundFile instanceof UploadedFile) {
+        $this->customArtFile = $customArtFile;
+        if ($this->customArtFile instanceof UploadedFile) {
             $this->updatedAt = new \DateTime('now');
         }
 
         return $this;
     }
 
-    public function getArtBackgroundSlug(): ?string
+    public function getCustomArtSlug(): ?string
     {
-        return $this->getItemType().'-'.$this->getTwitchId().'-artbg';
+        return $this->getItemType().'-'.$this->getTwitchId().'-customArt';
     }
 
     public function getUpdatedAt(): ?\DateTimeInterface

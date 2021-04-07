@@ -4,9 +4,12 @@
       <h2 class="pb-6 text-xl font-bold">Welcome to the Streamer Page for {{ info.display_name }} - (Streamer ID {{ info.id }})</h2>
       <div class="flex flex-row align-items-center justify-center space-x-4">
 
-        <div v-bind:style="artBg" class="w-auto p-4">
+        <div>
           <a :href="'https://www.twitch.tv/' + info.display_name" target="_twitch">
-            <twitch-art v-if="info.profile_image_url"
+            <div v-if="themeUrls.customArt" class="w-auto p-4" >
+              <img :width="300" :height="300" :src="themeUrls.customArt">
+            </div>
+            <twitch-art v-else-if="info.profile_image_url"
               :imageType="'profile'"
               :src="info.profile_image_url"
             ></twitch-art>
@@ -94,15 +97,6 @@ export default {
         return {};
       }
     },
-    artBg: function() {
-      if (this.themeUrls.artBg) {
-        return {
-          'backgroundImage': 'url(' + this.themeUrls.artBg + ')',
-        };
-      } else {
-        return {};
-      }
-    }
   },
   mounted: function() {
     let dataUrl = this.$el.parentNode.dataset['url'];

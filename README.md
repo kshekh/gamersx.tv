@@ -30,5 +30,5 @@ You can replace items on the "game" or "streamer" pages using themes. The best
 size for theme images in pixels, width x height:
 
 * Banner - 728x90 (a "leaderboard" ad)
-* Art Replacement - 300x400
+* Custom Art - streamer profiles are 300x300, box art 225x300
 * Embed Background - 700x400
