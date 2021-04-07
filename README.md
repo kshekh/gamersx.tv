@@ -1,4 +1,5 @@
-##Development
+## Development
+
 Using docker-compose, you can run containers for the app, vue, and the web server.
 
 Build the images to install necessary packages before running
@@ -18,7 +19,16 @@ Dependencies installed. You can run the project anytime with
 docker-compose up -d
 ```
 
-##Settings
-The settings file is located in var/row_settings.json. It's validated according
-to the JSON schema in schema.json.  There's a .dist file included in the root
-directory to use as a starting point.
+## Settings
+
+You can reach the settings admin via the /admin/ route. You must have a logon to
+continue.
+
+## Theme Images
+
+You can replace items on the "game" or "streamer" pages using themes. The best
+size for theme images in pixels, width x height:
+
+* Banner - 728x90 (a "leaderboard" ad)
+* Art Replacement - 300x400
+* Embed Background - 700x400
