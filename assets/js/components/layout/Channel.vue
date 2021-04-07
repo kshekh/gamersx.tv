@@ -1,5 +1,5 @@
 <template>
-  <div class="px-5">
+  <div class="transform transition-transform hover:scale-110 px-5">
     <div class="flex flex-row">
       <div v-if="showThumbnail">
         <a :href="link">

@@ -7,7 +7,7 @@
           &lt;
         </button>
       </div>
-      <div ref="channelBox" class="flex flex-row mr-5 overflow-x-hidden">
+      <div ref="channelBox" class="flex flex-row p-5 overflow-x-hidden">
         <div ref="channelDivs" v-for="channel in displayChannels">
           <channel
             v-bind="channel"
