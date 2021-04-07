@@ -1,6 +1,6 @@
 <template>
   <div class="container text-center mx-auto">
-    <div class="container flex-col">
+    <div class="container divide-y-4 divide-current my-4 flex-col">
       <div
         v-for="row in settings.rows">
         <home-row

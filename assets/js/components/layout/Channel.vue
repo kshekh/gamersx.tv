@@ -1,6 +1,6 @@
 <template>
   <div class="px-5">
-    <div class="flex flex-row bg-indigo-500 rounded-md">
+    <div class="flex flex-row">
       <div v-if="showThumbnail">
         <a :href="link">
           <twitch-art

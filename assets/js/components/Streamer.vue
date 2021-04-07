@@ -42,7 +42,7 @@
           Recent streams for {{ info.display_name }}
         </div>
         <div class="flex flex-row flex-grow flex-wrap justify-left p-8">
-          <div v-for="vod in vods" class="rounded-md m-8 p-4 bg-indigo-500">
+          <div v-for="vod in vods" class="rounded-md m-8 p-4">
             <js-embed
               v-bind:video="vod.id">
             </js-embed>

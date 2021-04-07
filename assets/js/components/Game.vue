@@ -44,7 +44,7 @@
           {{ displayTab }} streams for {{ info.name }}
         </div>
         <div class="flex flex-row flex-grow flex-wrap justify-left p-8">
-          <div v-for="stream in streams" class="rounded-md m-8 p-4 bg-indigo-500">
+          <div v-for="stream in streams" class="rounded-md m-8 p-4">
             <js-embed
               v-bind:channel="stream.user_login">
             </js-embed>

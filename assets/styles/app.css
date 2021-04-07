@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-    background-color: lightgray;
-}
-
 div.profile-pic {
     height: 332px;
     width: 332px;

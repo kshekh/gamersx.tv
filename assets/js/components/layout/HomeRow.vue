@@ -1,9 +1,9 @@
 <template>
-  <div @swiped-left="forward()" @swiped-right="back()" class="home-row">
-    <div class="text-2xl text-left font-extrabold pl-22 px-12 pt-4 pb-2">{{ settings.title}}</div>
+  <div @swiped-left="forward()" @swiped-right="back()" class="home-row p-6">
+    <div class="text-3xl text-left font-bold pl-22 px-12 pt-4 pb-2">{{ settings.title}}</div>
     <div class="flex flex-row justify-start items-center">
       <div v-show="allowScrolling">
-        <button @click="back()" class="bg-indigo-300 hover:bg-indigo-400 text-gray-800 font-bold p-2 rounded-sm">
+        <button @click="back()" class="bg-twitch hover:bg-indigo-400 text-gray-800 font-bold p-2 rounded-sm">
           &lt;
         </button>
       </div>
@@ -17,7 +17,7 @@
         </div>
       </div>
       <div v-show="allowScrolling">
-        <button @click="forward()" class="bg-indigo-300 hover:bg-indigo-400 text-gray-800 font-bold p-2 rounded-sm">
+        <button @click="forward()" class="bg-twitch hover:bg-indigo-400 text-gray-800 font-bold p-2 rounded-sm">
           &gt;
         </button>
       </div>
