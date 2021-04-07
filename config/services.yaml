@@ -6,6 +6,8 @@
 parameters:
     app.theme_path: '%kernel.project_dir%/public/images/themes/'
     app.theme_url: '/images/themes/'
+    app.twitch_secret: '%env(resolve:TWITCH_CLIENT_SECRET)%'
+    app.twitch_id: '%env(resolve:TWITCH_CLIENT_ID)%'
 
 services:
     # default configuration for services in *this* file
