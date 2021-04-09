@@ -20,7 +20,6 @@
         </div>
 
         <div v-bind:style="embedBg" class="w-auto p-4">
-          <p>Most popular stream for {{ info.name }}</p>
           <js-embed v-if="popular.user_login"
             v-bind:channel="popular.user_login">
           </js-embed>
