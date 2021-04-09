@@ -7,7 +7,7 @@ module.exports = {
     extend: {
       colors: {
         twitch: {
-          DEFAULT: '#6441a5'
+          DEFAULT: '#9146ff'
         }
       }
     },
