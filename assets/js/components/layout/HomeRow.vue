@@ -2,10 +2,8 @@
   <div @swiped-left="forward()" @swiped-right="back()" class="home-row p-6">
     <div class="text-3xl text-left font-bold pl-22 px-12 pt-4 pb-2">{{ settings.title}}</div>
     <div class="flex flex-row justify-start items-center">
-      <div class="w-2">
-        <button v-show="allowScrolling" @click="back()" class="bg-twitch hover:bg-indigo-400 text-gray-800 font-bold p-2 rounded-sm">
-          &lt;
-        </button>
+      <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="back()">
+        <img alt="cursor-left" class="cursor-pointer" v-show="allowScrolling" src="/images/left-arrow.png" />
       </div>
       <div ref="channelBox" class="flex flex-row p-5 overflow-x-hidden">
         <div ref="channelDivs" v-for="channel in displayChannels">
@@ -16,10 +14,8 @@
           ></channel>
         </div>
       </div>
-      <div class="w-2">
-        <button v-show="allowScrolling" @click="forward()" class="bg-twitch hover:bg-indigo-400 text-gray-800 font-bold p-2 rounded-sm">
-          &gt;
-        </button>
+      <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="forward()">
+        <img alt="cursor-right" class="cursor-pointer" v-show="allowScrolling" src="/images/right-arrow.png" />
       </div>
     </div>
   </div>
