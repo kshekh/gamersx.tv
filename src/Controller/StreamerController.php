@@ -35,11 +35,15 @@ class StreamerController extends AbstractController
             function (ItemInterface $item) use ($id, $twitch, $themeInfoService) {
 
             $streamer = $twitch->getStreamerInfo($id);
+            $followers = $twitch->getFollowersForStreamer($id);
+            $broadcast = $twitch->getStreamForStreamer($id);
             $videos = $twitch->getVideosForStreamer($id);
             $themeInfo = $themeInfoService->getThemeInfo($id, HomeRow::ITEM_TYPE_STREAMER);
 
             return [
                 'info' => $streamer->toArray()['data'][0],
+                'followers' => $followers->toArray()['total'],
+                'broadcast' => $broadcast->toArray()['data'],
                 'vods' => $videos->toArray()['data'],
                 'theme' => $themeInfo
             ];

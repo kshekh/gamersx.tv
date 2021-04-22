@@ -1,11 +1,14 @@
 <template>
   <div class="container text-center mx-auto">
     <div class="container flex-col">
-      <h2 class="pb-6 text-xl font-bold">Welcome to the Streamer Page for {{ info.display_name }} - (Streamer ID {{ info.id }})</h2>
+      <div>
+        <h2 class="pb-6 text-4xl font-bold">{{ info.display_name }}</h2>
+      </div>
       <div class="flex flex-row align-items-center justify-center space-x-4">
 
         <div>
           <a :href="'https://www.twitch.tv/' + info.display_name" target="_twitch">
+            <div class="text-bold">@{{ info.display_name }}</div>
             <div v-if="themeUrls.customArt" class="w-auto p-4" >
               <img :width="300" :height="300" :src="themeUrls.customArt">
             </div>
@@ -13,7 +16,17 @@
               :imageType="'profile'"
               :src="info.profile_image_url"
             ></twitch-art>
-            <p>View on Twitch</p>
+            <div>
+              <span v-if="broadcast" class="text-gray-800 bg-red-400 p-1 rounded-sm">
+                Live
+              </span>
+              <span v-else="broadcast" class="text-gray-800 bg-gray-400 p-1 rounded-sm">
+                Offline
+              </span>
+              <span class="font-xl p-2">
+                {{ info.follower_count }} followers
+              </span >
+            </div>
           </a>
         </div>
 
@@ -21,44 +34,49 @@
           <js-embed v-if="info.login"
             v-bind:channel="info.login">
           </js-embed>
+          <div v-if="broadcast" class="flex flex-row items-center justify-between">
+            <div class="text-lg">{{ broadcast.title }}</div>
+            <div class="text-lg ml-auto">{{ broadcast.viewer_count }}</div>
+            <div class="pl-4"><img class="inline" src="/images/red-eye.png" ></div>
+            </div>
+          </div>
+
         </div>
 
-      </div>
-
-      <div class="inline-block align-middle" v-if="themeUrls.banner">
-        <img class="pt-8" :src="themeUrls.banner" />
-      </div>
-
-      <div class="border rounded mt-12">
-        <button @click="show('recent')" type="button">
-          <span class="text-sm font-light pt-12 p-4">Recent</span>
-        </button>
-        <button @click="show('about')" type="button">
-          <span class="text-sm font-light p-4">About</span>
-        </button>
-      </div>
-      <div v-if="displayTab === 'recent'">
-        <div class="pt-6 font-bold text-xl">
-          Recent streams for {{ info.display_name }}
+        <div class="inline-block align-middle" v-if="themeUrls.banner">
+          <img class="pt-8" :src="themeUrls.banner" />
         </div>
-        <div class="flex flex-row flex-grow flex-wrap justify-left p-8">
-          <div v-for="vod in vods" class="rounded-md m-8 p-4">
-            <js-embed
-              v-bind:video="vod.id">
-            </js-embed>
+
+        <div class="border rounded mt-12">
+          <button @click="show('recent')" type="button">
+            <span class="text-sm font-light pt-12 p-4">Recent</span>
+          </button>
+          <button @click="show('about')" type="button">
+            <span class="text-sm font-light p-4">About</span>
+          </button>
+        </div>
+        <div v-if="displayTab === 'recent'">
+          <div class="pt-6 font-bold text-xl">
+            Recent streams for {{ info.display_name }}
+          </div>
+          <div class="flex flex-row flex-grow flex-wrap justify-left p-8">
+            <div v-for="vod in vods" class="rounded-md m-8 p-4">
+              <js-embed
+                v-bind:video="vod.id">
+              </js-embed>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div v-if="displayTab === 'about'">
-      <div class="pt-6 font-bold text-xl">
-        <p class="rounded-md text-left text-xl">
-          {{ info.description ? info.description : 'This streamer hasn\'t added a description' }}
-        </p>
+      <div v-if="displayTab === 'about'">
+        <div class="pt-6 font-bold text-xl">
+          <p class="rounded-md text-left text-xl">
+            {{ info.description ? info.description : 'This streamer hasn\'t added a description' }}
+          </p>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </template>
 <script>
 import axios from 'axios';
@@ -74,7 +92,8 @@ export default {
     return {
       displayTab: 'recent',
       info: {},
-      vods: {},
+      vods: [],
+      broadcast: null,
       themeUrls: {},
     }
   },
@@ -104,6 +123,8 @@ export default {
       .get(dataUrl)
       .then(response => {
         this.info = response.data.info;
+        this.info.follower_count = response.data.followers;
+        this.broadcast = response.data.broadcast.length > 0 ? response.data.broadcast[0] : null;
         this.vods = response.data.vods;
         this.themeUrls = response.data.theme;
       });

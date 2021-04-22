@@ -2,7 +2,7 @@
   <div class="container text-center mx-auto">
     <div class="flex-col">
       <div>
-        <h2 class="pb-6 text-xl font-bold">Welcome to the Game Page for {{ info.name }} - (Game ID {{ info.id }})</h2>
+        <h2 class="pb-6 text-4xl font-bold">{{ info.name }}</h2>
       </div>
       <div class="flex flex-row align-items-center justify-center space-x-4">
 
@@ -15,7 +15,17 @@
               :imageType="'boxArt'"
               :src="info.box_art_url"
             ></twitch-art>
-            <p>View on Twitch</p>
+            <div>
+              <span v-if="popular" class="text-gray-800 bg-red-400 p-1 rounded-sm">
+                {{ info.streamers }} Live
+              </span>
+              <span v-else="popular" class="text-gray-800 bg-gray-400 p-1 rounded-sm">
+               No Streams
+              </span>
+              <span class="font-xl p-2">
+                {{ info.viewers }} watching
+              </span >
+            </div>
           </a>
         </div>
 
@@ -23,6 +33,11 @@
           <js-embed v-if="popular.user_login"
             v-bind:channel="popular.user_login">
           </js-embed>
+          <div class="flex flex-row items-center justify-between">
+            <div class="text-lg">{{ popular.title }}</div>
+            <div class="text-lg ml-auto">{{ popular.viewer_count }}</div>
+            <div class="pl-4"><img class="inline" src="/images/red-eye.png" ></div>
+          </div>
         </div>
       </div>
 
@@ -98,6 +113,8 @@ export default {
       .get(dataUrl)
       .then(response => {
         this.info = response.data.info;
+        this.info.streamers = response.data.streamers;
+        this.info.viewers = response.data.viewers;
         this.popular = response.data.streams[0];
         this.streams = response.data.streams.slice(1);
         this.themeUrls = response.data.theme;

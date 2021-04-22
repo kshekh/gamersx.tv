@@ -55,6 +55,16 @@ class TwitchApi
 
     }
 
+    public function getFollowersForStreamer($streamerId)
+    {
+        return $this->client->request('GET', '/helix/users/follows', [
+            'query' => [
+                'first' => 1,
+                'to_id' => $streamerId,
+            ]
+        ]);
+    }
+
     public function getPopularStreams($first=20, $before=null, $after=null)
     {
         return $this->getPaginatedQuery('/helix/streams', [],

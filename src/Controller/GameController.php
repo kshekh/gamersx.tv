@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Service\TwitchApi;
 use App\Service\ThemeInfo;
 use App\Entity\HomeRow;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,12 +35,25 @@ class GameController extends AbstractController
         $gameInfo = $gamersxCache->get("game-${id}",
             function (ItemInterface $item) use ($id, $twitch, $themeInfoService) {
                 $game = $twitch->getGameInfo($id);
-                $streams = $twitch->getTopLiveBroadcastForGame($id, 5);
                 $themeInfo = $themeInfoService->getThemeInfo($id, HomeRow::ITEM_TYPE_GAME);
+                $topFifty = $twitch->getTopLiveBroadcastForGame($id, 50)->toArray()['data'];
+
+                $streams =  array_slice($topFifty, 0, 5);
+                $totalStreamers = count($topFifty);
+                $totalViewers = array_reduce($topFifty, function($sum, $broadcast) {
+                    return $sum + $broadcast['viewer_count'];
+                }, 0);
+
+                if ($totalStreamers == 50) {
+                    $totalStreamers = "50+";
+                    $totalViewers = $totalViewers."+";
+                }
 
                 return [
                     'info' => $game->toArray()['data'][0],
-                    'streams' => $streams->toArray()['data'],
+                    'streams' => $streams,
+                    'viewers' => $totalViewers,
+                    'streamers' => $totalStreamers,
                     'theme' => $themeInfo
                 ];
             });
