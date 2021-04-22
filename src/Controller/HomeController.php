@@ -48,6 +48,13 @@ class HomeController extends AbstractController
                 $thisRow['itemType'] = $row->getItemType();
                 $thisRow['itemSortType'] = $row->getItemSortType();
 
+                $options = $row->getOptions();
+                if ($options !== null && array_key_exists('numEmbeds', $options)) {
+                    $numEmbeds = $options['numEmbeds'];
+                } else {
+                    $numEmbeds = null;
+                }
+
                 // Set up all the HttpClient and API requests concurrently
                 if ($row->getItemType() === HomeRow::ITEM_TYPE_STREAMER) {
                     $streamerIds = $row->getItems()->map( function ($item) {
@@ -66,8 +73,6 @@ class HomeController extends AbstractController
                     $broadcasts = $this->twitch->getTopLiveBroadcastForGame($gameIds, 60);
 
                 } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_POPULAR) {
-                    $options = $row->getOptions();
-                    $numEmbeds = $options['numEmbeds'];
                     $gameIds = $options['filter']['twitchId'];
 
                     $infos = $this->twitch->getGameInfo($gameIds);
@@ -79,11 +84,13 @@ class HomeController extends AbstractController
                 $broadcasts = new ArrayCollection($broadcasts->toArray()['data']);
 
                 if (in_array($row->getItemType(), [HomeRow::ITEM_TYPE_GAME, HomeRow::ITEM_TYPE_STREAMER])) {
-                    $thisRow['channels'] = $this->getChannelsForRow($row, $infos, $broadcasts);
+                    $channels = $this->getChannelsForRow($row, $infos, $broadcasts);
 
                 } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_POPULAR) {
-                    $thisRow['channels'] = $this->getChannelsForPopularRow($row, $infos, $broadcasts);
+                    $channels = $this->getChannelsForPopularRow($row, $infos, $broadcasts);
                 }
+
+                $thisRow['channels'] = array_slice($channels, 0, $numEmbeds);
 
                 $rowChannels[] = $thisRow;
             }
