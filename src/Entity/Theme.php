@@ -61,7 +61,7 @@ class Theme
      */
     private $embedBackgroundFile;
 
-    const IMAGE_TYPE_ART_BACKGROUND = 'art';
+    const IMAGE_TYPE_CUSTOM_ART = 'art';
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -73,6 +73,19 @@ class Theme
      * @var File|null
      */
     private $customArtFile;
+
+    const IMAGE_TYPE_ART_BACKGROUND = 'artBg';
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $artBackground;
+
+    /**
+     * @Vich\UploadableField(mapping="theme_art_background", fileNameProperty="artBackground")
+     *
+     * @var File|null
+     */
+    private $artBackgroundFile;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -220,12 +233,45 @@ class Theme
         return $this->getItemType().'-'.$this->getTwitchId().'-customArt';
     }
 
+    public function getArtBackground(): ?string
+    {
+        return $this->artBackground;
+    }
+
+    public function setArtBackground(?string $artBackground): self
+    {
+        $this->artBackground = $artBackground;
+
+        return $this;
+    }
+
+    public function getArtBackgroundFile(): ?File
+    {
+        return $this->artBackgroundFile;
+    }
+
+    public function setArtBackgroundFile(?File $artBackgroundFile): self
+    {
+        $this->artBackgroundFile = $artBackgroundFile;
+        if ($this->artBackgroundFile instanceof UploadedFile) {
+            $this->updatedAt = new \DateTime('now');
+        }
+
+        return $this;
+    }
+
+
+    public function getArtBackgroundSlug(): ?string
+    {
+        return $this->getItemType().'-'.$this->getTwitchId().'-artBg';
+    }
+
     public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
 

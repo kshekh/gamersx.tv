@@ -6,7 +6,7 @@
       </div>
       <div class="flex flex-row align-items-center justify-center space-x-4">
 
-        <div>
+        <div v-bind:style="artBg" class="w-auto p-4">
           <a :href="'https://www.twitch.tv/' + info.display_name" target="_twitch">
             <div class="text-bold">@{{ info.display_name }}</div>
             <div v-if="themeUrls.customArt" class="w-auto p-4" >
@@ -111,6 +111,15 @@ export default {
       if (this.themeUrls.embedBg) {
         return {
           'backgroundImage': 'url(' + this.themeUrls.embedBg + ')',
+        };
+      } else {
+        return {};
+      }
+    },
+    artBg: function() {
+      if (this.themeUrls.artBg) {
+        return {
+          'backgroundImage': 'url(' + this.themeUrls.artBg + ')',
         };
       } else {
         return {};
