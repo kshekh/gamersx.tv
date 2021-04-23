@@ -34,7 +34,7 @@ services:
         class: App\Admin\HomeRowAdmin
         arguments: [~, App\Entity\HomeRow, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, group: home, label: Rows}
+            - { name: sonata.admin, manager_type: orm, group: home, label: Rows }
         public: true
         calls:
             - ['addChild', ['@admin.home_row_item', 'homeRow']]
@@ -43,12 +43,12 @@ services:
         class: App\Admin\HomeRowItemAdmin
         arguments: [~, App\Entity\HomeRowItem, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, group: home, label: Row Items}
+            - { name: sonata.admin, manager_type: orm, group: home, label: Containers }
         public: true
 
     admin.theme:
         class: App\Admin\ThemeAdmin
         arguments: [~, App\Entity\Theme, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, group: admin, label: Theme }
+            - { name: sonata.admin, manager_type: orm, group: admin, label: Pages }
         public: true

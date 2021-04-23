@@ -4,13 +4,10 @@ sonata_admin:
     dashboard:
         groups:
             app.admin.group.home:
-                label: Home Page
+                label: Admin
                 items:
                     - admin.home_row
                     - admin.home_row_item
-            app.admin.theme:
-                label: Themes
-                items:
                     - admin.theme
             sonata_user: ~
 
