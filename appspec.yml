@@ -1,0 +1,12 @@
+version: 0.0
+os: linux
+
+files:
+  - source: ./
+    destination: /home/andrew/gamersx-deployed
+
+hooks:
+  ApplicationStart:
+    - location: scripts/start.sh
+  ApplicationStop:
+    - location: scripts/stop.sh
