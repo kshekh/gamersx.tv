@@ -14,6 +14,7 @@ use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\AdminBundle\Show\ShowMapper;
 
 final class HomeRowAdmin extends AbstractAdmin
@@ -62,6 +63,14 @@ final class HomeRowAdmin extends AbstractAdmin
                     'show' => [],
                     'edit' => [],
                     'delete' => [],
+                    'moveUp' => [
+                        'template' => 'CRUD/list__action_reorder.html.twig',
+                        'direction' => 'up'
+                    ],
+                    'moveDown' => [
+                        'template' => 'CRUD/list__action_reorder.html.twig',
+                        'direction' => 'down'
+                    ],
                 ],
             ]);
     }
@@ -98,5 +107,12 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('itemSortType')
             ->add('options')
             ;
+    }
+
+
+    protected function configureRoutes(RouteCollectionInterface $collection): void
+    {
+        $collection
+            ->add('reorder', $this->getRouterIdParameter().'/reorder');
     }
 }
