@@ -8,67 +8,34 @@
 
         <div class="navbar-left">
             {% block sonata_breadcrumb %}
-                <div class="hidden-xs">
-                    {% if _breadcrumb is not empty or action is defined %}
-                        <ol class="nav navbar-top-links breadcrumb">
-                            {% if _breadcrumb is empty %}
-                                {% if action is defined %}
-                                    {% for menu in breadcrumbs_builder.breadcrumbs(admin, action) %}
-                                        {%- set translation_domain = menu.extra('translation_domain', 'messages') -%}
-                                        {# We use method accessor instead of ".label" since `menu` implements `ArrayAccess` and could have a property called "label". #}
-                                        {%- set label = menu.getLabel() -%}
-                                        {%- if translation_domain is not same as(false) -%}
-                                            {%- set label = label|trans(menu.extra('translation_params', {}), translation_domain) -%}
-                                        {%- endif -%}
-
-                                        {% if not loop.last %}
-                                            <li>
-                                                {% if menu.uri is not empty %}
-                                                    <a href="{{ menu.uri }}">
-                                                        {% if menu.extra('safe_label', true) %}
-                                                            {{- label|raw -}}
-                                                        {% else %}
-                                                            {{- label|u.truncate(100, '...') -}}
-                                                        {% endif %}
-                                                    </a>
-                                                {% else %}
-                                                    <span>{{ label|u.truncate(100, '...') }}</span>
-                                                {% endif %}
-                                            </li>
-                                        {% else %}
-                                            <li class="active"><span>{{ label|u.truncate(100, '...') }}</span></li>
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endif %}
-                            {% else %}
-                                {{ _breadcrumb|raw }}
-                            {% endif %}
-                        </ol>
-                    {% endif %}
-                </div>
+             {{ parent() }}
             {% endblock sonata_breadcrumb %}
         </div>
 
         {% block sonata_top_nav_menu %}
             {% if app.user and is_granted(sonata_config.getOption('role_admin')) %}
                 <div class="navbar-custom-menu">
+
                     <ul class="nav navbar-nav">
-                        {% block sonata_top_nav_menu_add_block %}
-                            <li class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <i class="fa fa-plus-square fa-fw" aria-hidden="true"></i> <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                </a>
-                                {% include get_global_template('add_block') %}
-                            </li>
-                        {% endblock %}
                         {% block sonata_top_nav_menu_user_block %}
                             <li class="dropdown user-menu">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <i class="fa fa-user fa-fw" aria-hidden="true"></i> <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                    Hello, {{ app.user.usernameCanonical }}<i class="fa fa-user fa-fw" aria-hidden="true"></i> <i class="fa fa-caret-down" aria-hidden="true"></i>
                                 </a>
                                 <ul class="dropdown-menu dropdown-user">
                                     {% include get_global_template('user_block') %}
                                 </ul>
+                            </li>
+                        {% endblock %}
+                        <li class=""><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li>
+                        <li class=""><a href="#"><i class="fa fa-question" aria-hidden="true"></i></a></li>
+                        <li class=""><a href="#"><i class="fa fa-expand" aria-hidden="true"></i></a></li>
+                        {% block sonata_top_nav_menu_add_block %}
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Create
+                                    <i class="fa fa-plus-square fa-fw" aria-hidden="true"></i> <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                </a>
+                                {% include get_global_template('add_block') %}
                             </li>
                         {% endblock %}
                     </ul>
