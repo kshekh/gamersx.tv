@@ -1,6 +1,9 @@
 sonata_admin:
     title: 'GamersX Admin'
     title_logo: '/images/controller.png'
+    templates:
+        layout: 'admin/standard_layout.html.twig'
+
     dashboard:
         groups:
             app.admin.group.home:
