@@ -110,6 +110,12 @@ final class HomeRowAdmin extends AbstractAdmin
     }
 
 
+    protected function configureDefaultSortValues(array &$sortValues): void
+    {
+        $sortValues['_sort_by'] = 'sortIndex';
+    }
+
+
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
         $collection
