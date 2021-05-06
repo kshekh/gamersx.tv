@@ -33,6 +33,7 @@ class HomeRow
 
     const ITEM_TYPE_GAME = 'game';
     const ITEM_TYPE_STREAMER = 'streamer';
+    const ITEM_TYPE_CHANNEL = 'channel';
     const ITEM_TYPE_POPULAR = 'popular';
 
     /**

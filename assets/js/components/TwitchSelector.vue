@@ -78,6 +78,8 @@ export default {
         this.callApi('/api/query/game/' + this.searchValue, params, this.processGameResults);
       } else if (this.itemType === 'streamer') {
         this.callApi('/api/query/streamer/' + this.searchValue, params, this.processStreamerResults);
+      } else if (this.itemType === 'channel') {
+        this.callApi('/api/query/channel/' + this.searchValue, params, this.processChannelResults);
       }
     },
     getPopularResults: function(params) {
@@ -146,6 +148,25 @@ export default {
           ],
           id: channel.id,
           label: channel.display_name
+        };
+      });
+    },
+    processChannelResults(response) {
+      this.cursor = '';
+      if (response.data === null) {
+        this.message = 'Sorry, no results for that query';
+        return;
+      }
+      this.headers = ['Id', 'Name', 'Description'];
+      this.rows = response.data.map(function(channel) {
+        return {
+          fields: [
+            channel.id.channelId,
+            channel.snippet.channelTitle,
+            channel.snippet.description,
+          ],
+          id: channel.id.channelId,
+          label: channel.snippet.channelTitle,
         };
       });
     },
