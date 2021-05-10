@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use Google_Client;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class YouTubeApi
 {
@@ -10,13 +11,19 @@ class YouTubeApi
 
     public function __construct(Google_Client $client)
     {
+        $cache = new FilesystemAdapter();
+        $client->setCache($cache);
         $this->service = new \Google_Service_YouTube($client);
     }
 
     public function getPopularStreams($first=20, $before=null, $after=null)
     {
-        return $this->getPaginatedQuery('/helix/streams', [],
-            $first, $before, $after);
+        $queryParams = [
+            'chart' => 'mostPopular',
+            'regionCode' => 'US',
+            'videoCategoryId' => '20'
+        ];
+        return $this->service->videos->listVideos('snippet', $queryParams);
     }
 
     public function searchChannels($query, $first=25, $before=null, $after=null)
@@ -28,6 +35,35 @@ class YouTubeApi
 
         return $this->getPaginatedQuery($queryParams, $first, $before, $after);
     }
+
+    public function getChannelInfo($channelIds)
+    {
+        if (is_array($channelIds)) {
+            $channelIds = implode(',', $channelIds);
+        }
+
+        $queryParams = [
+            'id' => $channelIds
+        ];
+
+        return $this->service->channels->listChannels('snippet', $queryParams);
+    }
+
+    public function getLiveChannel($channelId)
+    {
+        $queryParams = [
+            'channelId' => $channelId,
+            'eventType' => 'live',
+            'order' => 'viewCount',
+            'type' => 'video',
+            'videoCategoryId' => '20',
+            'maxResults' => 25,
+
+        ];
+
+        return $this->service->search->listSearch('snippet', $queryParams);
+    }
+
 
     /**
      * Helper method for API calls that use paginated queries

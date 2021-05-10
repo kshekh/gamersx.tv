@@ -108,6 +108,7 @@ final class HomeRowAdmin extends AbstractAdmin
                     'Games' => HomeRow::ITEM_TYPE_GAME,
                     'Streamers' => HomeRow::ITEM_TYPE_STREAMER,
                     'Channels' => HomeRow::ITEM_TYPE_CHANNEL,
+                    'YouTube' => HomeRow::ITEM_TYPE_YOUTUBE,
                     'Popular' => HomeRow::ITEM_TYPE_POPULAR,
                 ]
             ])

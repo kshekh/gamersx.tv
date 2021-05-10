@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\TwitchApi;
+use App\Service\YouTubeApi;
 use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -16,10 +17,12 @@ use Doctrine\Common\Collections\Expr\Comparison;
 class HomeController extends AbstractController
 {
     private $twitch;
+    private $youtube;
 
-    public function __construct(TwitchApi $twitch)
+    public function __construct(TwitchApi $twitch, YouTubeApi $youtube)
     {
         $this->twitch = $twitch;
+        $this->youtube = $youtube;
     }
 
     /**
@@ -78,16 +81,38 @@ class HomeController extends AbstractController
                     $infos = $this->twitch->getGameInfo($gameIds);
                     $broadcasts = $this->twitch->getTopLiveBroadcastForGame($gameIds, $numEmbeds);
 
+                } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_YOUTUBE) {
+                    $broadcasts = $this->youtube->getPopularStreams();
+                } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_CHANNEL) {
+                    $streamerIds = $row->getItems()->map( function ($item) {
+                        return $item->getTwitchId();
+                    })->toArray();
+
+                    $infos = new ArrayCollection($this->youtube->getChannelInfo($streamerIds)->getItems());
+                    $broadcasts = new ArrayCollection();
+                    $broadcastRequests = array_map(function($id) {
+                        return $this->youtube->getLiveChannel($id)->getItems();
+                    }, $streamerIds);
+                    foreach ($broadcastRequests as $broadcast) {
+                        if (!empty($broadcast)) {
+                            $broadcasts->add($broadcast[0]);
+                        }
+                    }
                 }
 
-                $infos = new ArrayCollection($infos->toArray()['data']);
-                $broadcasts = new ArrayCollection($broadcasts->toArray()['data']);
+                if (!in_array($row->getItemType(), [HomeRow::ITEM_TYPE_CHANNEL, HomeRow::ITEM_TYPE_YOUTUBE])) {
+                    $infos = new ArrayCollection($infos->toArray()['data']);
+                    $broadcasts = new ArrayCollection($broadcasts->toArray()['data']);
+                }
 
                 if (in_array($row->getItemType(), [HomeRow::ITEM_TYPE_GAME, HomeRow::ITEM_TYPE_STREAMER])) {
                     $channels = $this->getChannelsForRow($row, $infos, $broadcasts);
-
                 } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_POPULAR) {
                     $channels = $this->getChannelsForPopularRow($row, $infos, $broadcasts);
+                } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_CHANNEL) {
+                    $channels = $this->getChannelsForChannelRow($row, $infos, $broadcasts);
+                } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_YOUTUBE) {
+                    $channels = $this->getChannelsForYouTubeRow($row, $broadcasts);
                 }
 
                 $thisRow['channels'] = array_slice($channels, 0, $numEmbeds);
@@ -189,6 +214,89 @@ class HomeController extends AbstractController
         }
 
         return $channels;
+    }
+
+    /**
+     * Helper function to sort out YouTube channels
+     */
+    private function getChannelsForChannelRow($row, $infos, $broadcasts) {
+        $channels = Array();
+        foreach ($row->getItems() as $item) {
+            // Gotta rename that ID
+            $youtubeId = $item->getTwitchId();
+
+
+            $info = $infos->filter(function($info) use ($youtubeId) {
+                return $info->getId() === $youtubeId;
+            })->first();
+
+            $broadcast = $broadcasts->filter(function($broadcast) use ($youtubeId) {
+                return $broadcast->getSnippet()->getChannelId() === $youtubeId;
+            });
+
+            if (!$broadcast->isEmpty()) {
+                $broadcast = $broadcast->first();
+            } else {
+                $broadcast = NULL;
+            }
+
+            $snippet = $broadcast->getSnippet();
+            $channelInfo = [
+                'id' => $broadcast->getId()->getVideoId(),
+                'title' => $snippet->getTitle(),
+                'channelName' => $snippet->getChannelTitle(),
+                'thumbnails' => $snippet->getThumbnails()->getDefault(),
+            ];
+
+            $channel = [
+                'info' => $info,
+                'broadcast' => $channelInfo,
+                'rowType' => $row->getItemType(),
+                'rowName' => $row->getTitle(),
+                'sortIndex' => $item->getSortIndex(),
+                'showArt' => $item->getShowArt(),
+                'offlineDisplayType' => $item->getOfflineDisplayType(),
+                'linkType' => $item->getLinkType(),
+            ];
+
+            $channels[] = $channel;
+        }
+
+        return $channels;
+
+    }
+
+    /**
+     * Helper function to sort out popular YouTube channels
+     */
+    private function getChannelsForYouTubeRow($row, $broadcasts) {
+        $channels = Array();
+
+        foreach ($broadcasts->getItems() as $i => $broadcast) {
+            $snippet = $broadcast->getSnippet();
+            $channelInfo = [
+                'id' => $broadcast->getId(),
+                'title' => $snippet->getTitle(),
+                'channelName' => $snippet->getChannelTitle(),
+                'thumbnails' => $snippet->getThumbnails()->getStandard(),
+            ];
+
+            $channel = [
+                'rowType' => 'youtube',
+                'broadcast' => $channelInfo,
+                'sortIndex' => $i,
+                'rowName' => $row->getTitle(),
+                'showArt' => false,
+                'offlineDisplayType' => HomeRowItem::OFFLINE_DISPLAY_NONE,
+                'linkType' => HomeRowItem::LINK_TYPE_GAMERSX,
+            ];
+
+            $channels[] = $channel;
+
+        }
+
+        return $channels;
+
     }
 
 }

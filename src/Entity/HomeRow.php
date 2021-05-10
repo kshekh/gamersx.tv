@@ -35,6 +35,7 @@ class HomeRow
     const ITEM_TYPE_STREAMER = 'streamer';
     const ITEM_TYPE_CHANNEL = 'channel';
     const ITEM_TYPE_POPULAR = 'popular';
+    const ITEM_TYPE_YOUTUBE = 'youtube';
 
     /**
      * @ORM\Column(type="string", length=32)
