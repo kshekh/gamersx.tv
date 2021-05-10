@@ -16,9 +16,27 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\AdminBundle\Show\ShowMapper;
+use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 
 final class HomeRowAdmin extends AbstractAdmin
 {
+
+    public function createQuery($context = 'list'): ProxyQuery
+    {
+        /** @var ProxyQuery $query */
+        $query = parent::createQuery($context);
+
+        return $query
+            ->setSortOrder('ASC')
+            ->setSortBy([], ['fieldName' => 'sortIndex'])
+            ;
+    }
+
+    protected $datagridValues = array(
+        '_page' => 1,
+        '_sort_order' => 'ASC',
+        '_sort_by' => 'sortIndex'
+    );
 
     protected function configureTabMenu(MenuItemInterface $menu, $action,
         AdminInterface $childAdmin = null)
@@ -53,11 +71,16 @@ final class HomeRowAdmin extends AbstractAdmin
     protected function configureListFields(ListMapper $listMapper): void
     {
         $listMapper
-            ->add('title')
+            ->add('title', null, [
+                'sortable' => false
+            ])
             ->add('sortIndex', null, [
                 'editable' => TRUE,
+                'sortable' => false,
             ])
-            ->add('itemType')
+            ->add('itemType', null, [
+                'sortable' => false
+            ])
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],
@@ -108,13 +131,6 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('options')
             ;
     }
-
-
-    protected function configureDefaultSortValues(array &$sortValues): void
-    {
-        $sortValues['_sort_by'] = 'sortIndex';
-    }
-
 
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {

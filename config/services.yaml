@@ -41,7 +41,7 @@ services:
 
     admin.home_row_item:
         class: App\Admin\HomeRowItemAdmin
-        arguments: [~, App\Entity\HomeRowItem, ~]
+        arguments: [~, App\Entity\HomeRowItem, App\Controller\HomeRowItemAdminController ]
         tags:
             - { name: sonata.admin, manager_type: orm, group: home, label: Containers }
         public: true

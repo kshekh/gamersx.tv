@@ -2,16 +2,16 @@
 
 namespace App\Controller;
 
-use App\HomeRow;
+use App\HomeRowItem;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{ Request, Response, RedirectResponse };
 use Symfony\Component\Routing\Annotation\Route;
 use Sonata\AdminBundle\Controller\CRUDController;
 
-class HomeRowAdminController extends CRUDController
+class HomeRowItemAdminController extends CRUDController
 {
-    public function reorderAction(Request $request, $id): Response
+    public function reorderAction(Request $request, $id, $childId=null): Response
     {
         $object = $this->admin->getSubject();
         $direction = $request->get('direction');
@@ -20,23 +20,25 @@ class HomeRowAdminController extends CRUDController
             throw new NotFoundHttpException(sprintf('unable to find the object with id: %s', $id));
         }
 
-        $qb = $this->admin->getModelManager()->getEntityManager('App:HomeRow')
+        $qb = $this->admin->getModelManager()->getEntityManager('App:HomeRowItem')
             ->createQueryBuilder()
-            ->addSelect('hr')
-            ->from('App:HomeRow', 'hr');
+            ->addSelect('hri')
+            ->from('App:HomeRowItem', 'hri')
+            ->where('hri.homeRow = :rowId')
+            ->setParameter('rowId', $object->getHomeRow())
             ;
 
         if ($direction === 'down') {
-            $qb->where('hr.sortIndex >= :thisSort')
-                ->add('orderBy', 'hr.sortIndex ASC');
+            $qb->andWhere('hri.sortIndex >= :thisSort')
+                ->add('orderBy', 'hri.sortIndex ASC');
         } elseif ($direction === 'up') {
-            $qb->where('hr.sortIndex <= :thisSort')
-                ->add('orderBy', 'hr.sortIndex DESC');
+            $qb->andWhere('hri.sortIndex <= :thisSort')
+                ->add('orderBy', 'hri.sortIndex DESC');
         }
         $qb->setParameter('thisSort', $object->getSortIndex());
 
-
         $rows = $qb->getQuery()->getResult();
+
 
         if (count($rows) > 1) {
 
@@ -49,13 +51,13 @@ class HomeRowAdminController extends CRUDController
 
                     $row->setSortIndex($current);
                     $this->admin->getModelManager()->update($row);
-                    $this->addFlash('sonata_flash_success', "Swapped position for rows ".$object->getTitle()." and ".$row->getTitle());
+                    $this->addFlash('sonata_flash_success', "Swapped position for rows ".$object->getLabel()." and ".$row->getLabel());
                     break;
                 }
 
             }
         } else {
-            $this->addFlash('sonata_flash_error', "Moving ".$object->getTitle()." that way is not possible.");
+            $this->addFlash('sonata_flash_error', "Moving ".$object->getLabel()." that way is not possible.");
         }
 
         return new RedirectResponse(
