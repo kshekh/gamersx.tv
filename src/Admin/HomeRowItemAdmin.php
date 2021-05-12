@@ -6,7 +6,7 @@ namespace App\Admin;
 
 use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
-use App\Form\TwitchType;
+use App\Form\RowOptionsType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -43,6 +43,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
         $datagridMapper
             ->add('twitchId')
             ->add('label')
+            ->add('itemType')
             ->add('homeRow')
             ;
     }
@@ -56,7 +57,10 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('label', null, [
                 'sortable' => false,
             ])
-            ->add('twitchId', null, [
+            ->add('itemType', null, [
+                'sortable' => false
+            ])
+            ->add('containerizerOptions', null, [
                 'sortable' => false,
             ])
             ->add('sortIndex', null, [
@@ -84,6 +88,15 @@ final class HomeRowItemAdmin extends AbstractAdmin
     {
         $formMapper
             ->add('sortIndex')
+            ->add('itemType', ChoiceType::class, [
+                'choices' => [
+                    'Games' => HomeRowItem::TYPE_GAME,
+                    'Streamers' => HomeRowItem::TYPE_STREAMER,
+                    'Channels' => HomeRowItem::TYPE_CHANNEL,
+                    'YouTube' => HomeRowItem::TYPE_YOUTUBE,
+                    'Popular' => HomeRowItem::TYPE_POPULAR,
+                ]
+            ])
             ->add('showArt')
             ->add('offlineDisplayType', ChoiceType::class, [
                 'choices' => [
@@ -105,9 +118,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'placeholder' => 'Choose a home row for this item',
                 'required' => true,
             ])
-            ->add('twitch', TwitchType::class, [
-                'inherit_data' => true
-            ])
+            ->add('containerizerOptions', RowOptionsType::class)
             ;
 
     }
@@ -116,8 +127,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
     {
         $showMapper
             ->add('id')
-            ->add('twitchId')
+            ->add('containerizerOptions')
             ->add('label')
+            ->add('itemType')
             ->add('sortIndex')
             ->add('showArt')
             ->add('offlineDisplayType')

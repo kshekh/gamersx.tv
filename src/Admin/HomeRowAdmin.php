@@ -7,7 +7,6 @@ namespace App\Admin;
 use App\Entity\HomeRow;
 use App\Form\RowOptionsType;
 use Knp\Menu\ItemInterface as MenuItemInterface;
-use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType, NumberType };
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -64,7 +63,6 @@ final class HomeRowAdmin extends AbstractAdmin
     {
         $datagridMapper
             ->add('title')
-            ->add('itemType')
             ;
     }
 
@@ -77,9 +75,6 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('sortIndex', null, [
                 'editable' => TRUE,
                 'sortable' => false,
-            ])
-            ->add('itemType', null, [
-                'sortable' => false
             ])
             ->add('_action', null, [
                 'actions' => [
@@ -103,15 +98,6 @@ final class HomeRowAdmin extends AbstractAdmin
         $formMapper
             ->add('title')
             ->add('sortIndex')
-            ->add('itemType', ChoiceType::class, [
-                'choices' => [
-                    'Games' => HomeRow::ITEM_TYPE_GAME,
-                    'Streamers' => HomeRow::ITEM_TYPE_STREAMER,
-                    'Channels' => HomeRow::ITEM_TYPE_CHANNEL,
-                    'YouTube' => HomeRow::ITEM_TYPE_YOUTUBE,
-                    'Popular' => HomeRow::ITEM_TYPE_POPULAR,
-                ]
-            ])
             ->add('itemSortType', ChoiceType::class, [
                 'choices' => [
                     'Ascending Popularity' => HomeRow::SORT_ASC,
@@ -128,7 +114,6 @@ final class HomeRowAdmin extends AbstractAdmin
         $showMapper
             ->add('title')
             ->add('sortIndex')
-            ->add('itemType')
             ->add('itemSortType')
             ->add('options')
             ;

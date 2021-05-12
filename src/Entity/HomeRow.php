@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Repository\HomeRowRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -30,17 +29,6 @@ class HomeRow
      * @ORM\Column(type="smallint", nullable=true)
      */
     private $sortIndex;
-
-    const ITEM_TYPE_GAME = 'game';
-    const ITEM_TYPE_STREAMER = 'streamer';
-    const ITEM_TYPE_CHANNEL = 'channel';
-    const ITEM_TYPE_POPULAR = 'popular';
-    const ITEM_TYPE_YOUTUBE = 'youtube';
-
-    /**
-     * @ORM\Column(type="string", length=32)
-     */
-    private $itemType;
 
     const SORT_ASC = 'asc';
     const SORT_DESC = 'desc';
@@ -92,18 +80,6 @@ class HomeRow
     public function setSortIndex(?int $sortIndex): self
     {
         $this->sortIndex = $sortIndex;
-
-        return $this;
-    }
-
-    public function getItemType(): ?string
-    {
-        return $this->itemType;
-    }
-
-    public function setItemType(string $itemType): self
-    {
-        $this->itemType = $itemType;
 
         return $this;
     }
@@ -164,8 +140,8 @@ class HomeRow
 
     public function __toString(): string
     {
-        if ($this->getTitle() && $this->getItemType()) {
-            return $this->getTitle() . ' (' . $this->getItemType() . ' row)';
+        if ($this->getTitle()) {
+            return $this->getTitle();
         } else {
             return '';
         }

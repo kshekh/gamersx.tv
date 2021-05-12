@@ -29,15 +29,26 @@ class HomeRowItem
      */
     private $sortIndex;
 
-    /**
-     * The item's ID in the Twitch API
-     *
-     * @ORM\Column(type="string", length=32)
-     */
-    private $twitchId;
+    const TYPE_GAME = 'game';
+    const TYPE_STREAMER = 'streamer';
+    const TYPE_CHANNEL = 'channel';
+    const TYPE_POPULAR = 'popular';
+    const TYPE_YOUTUBE = 'youtube';
 
     /**
-     * Whether to show box/profile art for this item
+     * @ORM\Column(type="string", length=32)
+     */
+    private $itemType;
+
+    /**
+     * Options to be passed into Containerizer
+     *
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $containerizerOptions = [];
+
+    /**
+     * Whether to always show box/profile art for this item
      *
      * @ORM\Column(type="boolean")
      */
@@ -66,18 +77,6 @@ class HomeRowItem
      */
     private $homeRow;
 
-
-    /**
-     * Gets the item's type from the parent row
-     */
-    public function getItemType(): ?string
-    {
-        if ($this->getHomeRow()) {
-            return $this->getHomeRow()->getItemType();
-        } else {
-            return null;
-        }
-    }
 
     public function getId(): ?int
     {
@@ -108,14 +107,26 @@ class HomeRowItem
         return $this;
     }
 
-    public function getTwitchId(): ?string
+    public function getItemType(): ?string
     {
-        return $this->twitchId;
+        return $this->itemType;
     }
 
-    public function setTwitchId(string $twitchId): self
+    public function setItemType(string $itemType): self
     {
-        $this->twitchId = $twitchId;
+        $this->itemType = $itemType;
+
+        return $this;
+    }
+
+    public function getContainerizerOptions(): ?array
+    {
+        return $this->containerizerOptions;
+    }
+
+    public function setContainerizerOptions(?array $containerizerOptions): self
+    {
+        $this->containerizerOptions = $containerizerOptions;
 
         return $this;
     }
@@ -172,9 +183,10 @@ class HomeRowItem
     {
         if ($this->getLabel()) {
             $label = $this->getLabel();
-        } else if ($this->getTwitchId()) {
-            $label = $this->getTwitchId();
+        } else {
+            $label = '';
         }
+
         if ($this->getItemType()) {
             return ucfirst($this->getItemType() . ' \'' . $label. '\'');
         } else {

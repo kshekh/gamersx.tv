@@ -6,6 +6,8 @@ use App\Service\TwitchApi;
 use App\Service\YouTubeApi;
 use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
+use App\Containerizer\ContainerizerInterface;
+use App\Containerizer\ContainerizerFactory;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,14 +38,64 @@ class HomeController extends AbstractController
     /**
      * @Route("/home/api", name="home_api")
      */
-    public function apiHome(CacheInterface $gamersxCache): Response
+    public function apiHome(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
     {
-        $rowChannels = $gamersxCache->get('home', function (ItemInterface $item) {
+       $rowChannels = $gamersxCache->get('home', function (ItemInterface $item) use ($containerizer) {
+
+            $rows = $this->getDoctrine()->getRepository(HomeRow::class)
+                ->findBy([], ['sortIndex' => 'ASC']);
+
+
+            $rowChannels = Array();
+
+            foreach ($rows as $row) {
+                $thisRow = Array();
+                $thisRow['title'] = $row->getTitle();
+                $thisRow['sortIndex'] = $row->getSortIndex();
+                $thisRow['itemSortType'] = $row->getItemSortType();
+
+                $containers = Array();
+
+                foreach ($row->getItems() as $item) {
+                    $containerized = $containerizer($item);
+                    $containers = array_merge($containers, $containerized->getContainers());
+                }
+
+
+                $options = $row->getOptions();
+                if ($options !== null && array_key_exists('numEmbeds', $options)) {
+                    $numEmbeds = $options['numEmbeds'];
+                } else {
+                    $numEmbeds = null;
+                }
+
+                $thisRow['channels'] = array_slice($containers, 0, $numEmbeds);
+
+                $rowChannels[] = $thisRow;
+            }
+
+            return $rowChannels;
+        });
+
+        return $this->json([
+            'settings' => [
+                'rows' => $rowChannels
+            ]
+        ]);
+    }
+
+    /**
+     * @Route("/home/old_api", name="home_old_api")
+     */
+     public function oldApiHome(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
+        {
+        $rowChannels = $gamersxCache->get('home', function (ItemInterface $item) use ($containerizer) {
 
             $rows = $this->getDoctrine()->getRepository(HomeRow::class)
                 ->findBy([], ['sortIndex' => 'ASC']);
 
             $rowChannels = Array();
+
             foreach ($rows as $row) {
                 $thisRow = Array();
                 $thisRow['title'] = $row->getTitle();
@@ -59,7 +111,7 @@ class HomeController extends AbstractController
                 }
 
                 // Set up all the HttpClient and API requests concurrently
-                if ($row->getItemType() === HomeRow::ITEM_TYPE_STREAMER) {
+                if ($row->getItemType() === HomeRowItem::TYPE_STREAMER) {
                     $streamerIds = $row->getItems()->map( function ($item) {
                         return $item->getTwitchId();
                     })->toArray();
@@ -67,7 +119,7 @@ class HomeController extends AbstractController
                     $infos = $this->twitch->getStreamerInfo($streamerIds);
                     $broadcasts = $this->twitch->getStreamForStreamer($streamerIds);
 
-                } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_GAME) {
+                } elseif ($row->getItemType() === HomeRowItem::TYPE_GAME) {
                     $gameIds = $row->getItems()->map( function ($item) {
                         return $item->getTwitchId();
                     })->toArray();
@@ -75,15 +127,15 @@ class HomeController extends AbstractController
                     $infos = $this->twitch->getGameInfo($gameIds);
                     $broadcasts = $this->twitch->getTopLiveBroadcastForGame($gameIds, 60);
 
-                } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_POPULAR) {
+                } elseif ($row->getItemType() === HomeRowItem::TYPE_POPULAR) {
                     $gameIds = $options['filter']['twitchId'];
 
                     $infos = $this->twitch->getGameInfo($gameIds);
                     $broadcasts = $this->twitch->getTopLiveBroadcastForGame($gameIds, $numEmbeds);
 
-                } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_YOUTUBE) {
+                } elseif ($row->getItemType() === HomeRowItem::TYPE_YOUTUBE) {
                     $broadcasts = $this->youtube->getPopularStreams();
-                } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_CHANNEL) {
+                } elseif ($row->getItemType() === HomeRowItem::TYPE_CHANNEL) {
                     $streamerIds = $row->getItems()->map( function ($item) {
                         return $item->getTwitchId();
                     })->toArray();
@@ -100,18 +152,18 @@ class HomeController extends AbstractController
                     }
                 }
 
-                if (!in_array($row->getItemType(), [HomeRow::ITEM_TYPE_CHANNEL, HomeRow::ITEM_TYPE_YOUTUBE])) {
+                if (!in_array($row->getItemType(), [HomeRowItem::TYPE_CHANNEL, HomeRowItem::TYPE_YOUTUBE])) {
                     $infos = new ArrayCollection($infos->toArray()['data']);
                     $broadcasts = new ArrayCollection($broadcasts->toArray()['data']);
                 }
 
-                if (in_array($row->getItemType(), [HomeRow::ITEM_TYPE_GAME, HomeRow::ITEM_TYPE_STREAMER])) {
+                if (in_array($row->getItemType(), [HomeRowItem::TYPE_GAME, HomeRowItem::TYPE_STREAMER])) {
                     $channels = $this->getChannelsForRow($row, $infos, $broadcasts);
-                } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_POPULAR) {
+                } elseif ($row->getItemType() === HomeRowItem::TYPE_POPULAR) {
                     $channels = $this->getChannelsForPopularRow($row, $infos, $broadcasts);
-                } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_CHANNEL) {
+                } elseif ($row->getItemType() === HomeRowItem::TYPE_CHANNEL) {
                     $channels = $this->getChannelsForChannelRow($row, $infos, $broadcasts);
-                } elseif ($row->getItemType() === HomeRow::ITEM_TYPE_YOUTUBE) {
+                } elseif ($row->getItemType() === HomeRowItem::TYPE_YOUTUBE) {
                     $channels = $this->getChannelsForYouTubeRow($row, $broadcasts);
                 }
 
@@ -144,7 +196,7 @@ class HomeController extends AbstractController
 
             $criteria = new Criteria();
 
-            if ($item->getItemType() === HomeRow::ITEM_TYPE_STREAMER) {
+            if ($item->getItemType() === HomeRowItem::TYPE_STREAMER) {
                 $criteria->where(new Comparison('user_id', '=', $twitchId));
 
                 // If there is a game filter set on a Streamer Home Row, only
@@ -154,7 +206,7 @@ class HomeController extends AbstractController
                     $gameId = $options['filter']['twitchId'];
                     $criteria->andWhere(new Comparison('game_id', '=', $gameId));
                 }
-            } elseif ($item->getItemType() === HomeRow::ITEM_TYPE_GAME) {
+            } elseif ($item->getItemType() === HomeRowItem::TYPE_GAME) {
                 $criteria->where(new Comparison('game_id', '=', $twitchId));
             }
 
@@ -162,7 +214,7 @@ class HomeController extends AbstractController
 
             if (!$broadcast->isEmpty()) {
                 $broadcast = $broadcast->first();
-            } elseif ($item->getItemType() === HomeRow::ITEM_TYPE_GAME) {
+            } elseif ($item->getItemType() === HomeRowItem::TYPE_GAME) {
                 // If the broadcast is null for a game, double-check to make sure. This is unlikely and
                 // probably due to a high variance of popularity in grouped games.
                 $broadcast = $this->twitch->getTopLiveBroadcastForGame($twitchId)->toArray()['data'];
