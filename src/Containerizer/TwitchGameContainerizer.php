@@ -2,18 +2,21 @@
 
 namespace App\Containerizer;
 
+use App\Entity\HomeRow;
+use App\Entity\HomeRowItem;
 use Doctrine\Common\Collections\ArrayCollection;
 
-class TwitchGameContainerizer extends TwitchContainerizer implements ContainerizerInterface
+class TwitchGameContainerizer implements ContainerizerInterface
 {
-    public function getContainers(): Array
+    public static function getContainers(HomeRowItem $homeRowItem, $twitch): Array
     {
-        $gameIds = $this->homeRowItem->getContainerizerOptions()['filter']['twitchId'];
+        $options = $homeRowItem->getContainerizerOptions();
+        $gameIds = $options['topic']['topicId'];
 
-        $infos = $this->twitch->getGameInfo($gameIds);
+        $infos = $twitch->getGameInfo($gameIds);
         $infos = new ArrayCollection($infos->toArray()['data']);
 
-        $broadcasts = $this->twitch->getTopLiveBroadcastForGame($gameIds, 20);
+        $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, 20);
         $broadcasts = new ArrayCollection($broadcasts->toArray()['data']);
 
         $channels = Array();
@@ -25,11 +28,24 @@ class TwitchGameContainerizer extends TwitchContainerizer implements Containeriz
                 'broadcast' => $broadcast,
                 'rowType' => 'popular',
                 'sortIndex' => $i,
-                'showArt' => $this->homeRowItem->getShowArt(),
-                'offlineDisplayType' => $this->homeRowItem->getOfflineDisplayType(),
-                'linkType' => $this->homeRowItem->getLinkType(),
+                'showArt' => $homeRowItem->getShowArt(),
+                'offlineDisplayType' => $homeRowItem->getOfflineDisplayType(),
+                'linkType' => $homeRowItem->getLinkType(),
             ];
 
+        }
+
+        if (array_key_exists('itemSortType', $options)) {
+            $sort = $options['itemSortType'];
+            if ($sort === HomeRow::SORT_ASC) {
+                usort($channels, [ContainerSorter::class, 'sortAscendingPopularity']);
+            } elseif ($sort === HomeRow::SORT_DESC) {
+                usort($channels, [ContainerSorter::class, 'sortDescendingPopularity']);
+            }
+        }
+
+        if (array_key_exists('maxEmbeds', $options)) {
+            $channels = array_slice($channels, 0, $options['maxEmbeds']);
         }
 
         return $channels;

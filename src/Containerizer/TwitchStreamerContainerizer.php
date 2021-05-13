@@ -2,24 +2,27 @@
 
 namespace App\Containerizer;
 
-class TwitchStreamerContainerizer extends TwitchContainerizer implements ContainerizerInterface
-{
-    public function getContainers(): Array
-    {
-        $streamerId = $this->homeRowItem->getContainerizerOptions()['filter']['twitchId'];
+use App\Entity\HomeRowItem;
 
-        $info = $this->twitch->getStreamerInfo($streamerId)->toArray()['data'];
-        $broadcast = $this->twitch->getStreamForStreamer($streamerId)->toArray()['data'];
+class TwitchStreamerContainerizer implements ContainerizerInterface
+{
+    public static function getContainers(HomeRowItem $homeRowItem, $twitch): Array
+    {
+        $options = $homeRowItem->getContainerizerOptions();
+        $streamerId = $options['topic']['topicId'];
+
+        $info = $twitch->getStreamerInfo($streamerId)->toArray()['data'];
+        $broadcast = $twitch->getStreamForStreamer($streamerId)->toArray()['data'];
 
         return [
             [
                 'info' => $info[0],
                 'broadcast' => !empty($broadcast) ? $broadcast[0] : null,
                 'rowType' => 'popular',
-                'sortIndex' => $this->homeRowItem->getSortIndex(),
-                'showArt' => $this->homeRowItem->getShowArt(),
-                'offlineDisplayType' => $this->homeRowItem->getOfflineDisplayType(),
-                'linkType' => $this->homeRowItem->getLinkType(),
+                'sortIndex' => $homeRowItem->getSortIndex(),
+                'showArt' => $homeRowItem->getShowArt(),
+                'offlineDisplayType' => $homeRowItem->getOfflineDisplayType(),
+                'linkType' => $homeRowItem->getLinkType(),
             ]
         ];
     }

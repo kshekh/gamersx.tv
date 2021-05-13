@@ -59,7 +59,7 @@ final class ThemeAdmin extends AbstractAdmin
                     'Streamers' => HomeRow::ITEM_TYPE_STREAMER,
                 ],
                 'attr' => [
-                    'data-twitch-select' => 'itemType',
+                    'data-topic-select' => 'itemType',
                 ],
                 'required' => true
             ])

@@ -6,32 +6,32 @@ use App\Entity\HomeRowItem;
 use App\Service\TwitchApi;
 use App\Service\YouTubeApi;
 
-class  ContainerizerFactory
+class ContainerizerFactory
 {
     private $twitch;
     private $youtube;
+    private $containerizers;
 
-    public function __construct(TwitchApi $twitch, YouTubeApi $youtube)
+    public function __construct(TwitchApi $twitch, YouTubeApi $youtube, iterable $containerizers)
     {
         $this->twitch = $twitch;
         $this->youtube = $youtube;
+        $this->containerizers = $containerizers;
     }
 
-    public function __invoke($homeRowItem): ContainerizerInterface
+    public function __invoke($homeRowItem): array
     {
         switch($homeRowItem->getItemType()) {
         case HomeRowItem::TYPE_GAME:
-            return new TwitchGameContainerizer($homeRowItem, $this->twitch);
+            return TwitchGameContainerizer::getContainers($homeRowItem, $this->twitch);
         case HomeRowItem::TYPE_STREAMER:
-            return new TwitchStreamerContainerizer($homeRowItem, $this->twitch);
+            return TwitchStreamerContainerizer::getContainers($homeRowItem, $this->twitch);
         case HomeRowItem::TYPE_CHANNEL:
-            return new YouTubeChannelContainerizer($homeRowItem, $this->youtube);
-        case HomeRowItem::TYPE_POPULAR:
-            return new TwitchGameContainerizer($homeRowItem, $this->twitch);
+            return YouTubeChannelContainerizer::getContainers($homeRowItem, $this->youtube);
         case HomeRowItem::TYPE_YOUTUBE:
-            return new YouTubePopularContainerizer($homeRowItem, $this->twitch);
+            return YouTubePopularContainerizer::getContainers($homeRowItem, $this->youtube);
         default:
-            return NULL;
+            return Array();
         }
     }
 

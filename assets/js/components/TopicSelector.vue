@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="form-group">
-      <input name="twitch-search" class="form-control" v-model="searchValue" type="search"
+      <input name="topic-search" class="form-control" v-model="searchValue" type="search"
         placeholder="Enter a search term or page through the most popular streams"></input>
       <div class="well well-small">
         <button @click="search()" type="button" class="btn btn-small btn-primary">Search</button>
@@ -49,8 +49,8 @@ export default {
   methods: {
     /* Clicking on a row writes to the Admin form */
     selectRow: function(row) {
-      document.querySelector('input.twitch-id').value = row.id;
-      document.querySelector('input.twitch-label').value = row.label;
+      document.querySelector('input.topic-id').value = row.id;
+      document.querySelector('input.topic-label').value = row.label;
     },
     /* Clicking on the search button */
     search: function() {
@@ -69,8 +69,8 @@ export default {
     },
     /* Remove the current selection */
     clear: function() {
-      document.querySelector('input.twitch-id').value = null;
-      document.querySelector('input.twitch-label').value = null;
+      document.querySelector('input.topic-id').value = null;
+      document.querySelector('input.topic-label').value = null;
     },
     /** == Call the API to get various kinds of results, then process them == **/
     getSearchResults: function(params) {
@@ -210,7 +210,7 @@ export default {
     this.itemType = this.$el.parentNode.dataset['itemType'];
 
     /* Using the Sonata Select2 javascript hooks to update our itemType */
-    let selector = document.querySelector("[data-twitch-select='itemType']");
+    let selector = document.querySelector("[data-topic-select='itemType']");
     if (selector) {
       this.itemType = $(selector).val();
       $(selector).on('change.select2', this.changeItemType);

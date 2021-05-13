@@ -1,16 +1,18 @@
-{% block twitch_row %}
+{% block topic_row %}
 
-{{ encore_entry_script_tags('twitch-selector') }}
-{{ encore_entry_link_tags('twitch-selector') }}
+{{ encore_entry_script_tags('topic-selector') }}
+{{ encore_entry_link_tags('topic-selector') }}
 
 {% set searchType = value.itemType ?? form.searchType.vars.value %}
 <div class="box">
-    {% if searchType %}
     <div class="box-header">
-        <h3 class="box-title">Search Twitch</h3>
+        <h3 class="box-title">Search for a Topic</h3>
     </div>
 
     <div class="box-body">
+        <div id="app-topic-selector" data-item-type="{{ searchType }}">
+            <topic-selector></topic-selector>
+        </div>
         {% for child in form.children|filter(child => not child.rendered) %}
         <div class="form-group">
             {{ form_label(child) }}
@@ -19,14 +21,6 @@
             {{ form_errors(child) }}
         </div>
         {% endfor %}
-        <div id="app-twitch-selector" data-item-type="{{ searchType }}">
-            <twitch-selector></twitch-selector>
-        </div>
-    {% else %}
-    <div class="box-header">
-        <h3 class="box-title">You can only add an item through "Manage Items" on a home row</h3>
-    </div>
-    {% endif %}
     </div>
 </div>
 {% endblock %}

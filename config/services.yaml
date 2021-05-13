@@ -30,6 +30,17 @@ services:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
 
+    _instanceof:
+        App\Containerizer\ContainerizerInterface:
+            tags: ['gamersx.containerizer']
+
+    App\Containerizer\ContainerizerFactory:
+        arguments:
+            - '@App\Service\TwitchApi'
+            - '@App\Service\YouTubeApi'
+            - !tagged_iterator gamersx.containerizer
+
+
     admin.home_row:
         class: App\Admin\HomeRowAdmin
         arguments: [~, App\Entity\HomeRow, App\Controller\HomeRowAdminController ]

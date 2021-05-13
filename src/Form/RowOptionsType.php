@@ -16,7 +16,7 @@ class RowOptionsType extends AbstractType
                 'label' => 'Number of Embeds',
                 'required' => false,
             ])
-            ->add('filter', TwitchType::class, [
+            ->add('filter', TopicType::class, [
                 'searchType' => 'game',
                 'required' => false,
             ])
@@ -30,7 +30,7 @@ class RowOptionsType extends AbstractType
                     if ($valuesAsArray['numEmbeds'] === null) {
                         unset($valuesAsArray['numEmbeds']);
                     }
-                    if ($valuesAsArray['filter']['twitchId'] === null) {
+                    if ($valuesAsArray['filter']['topicId'] === null) {
                         unset($valuesAsArray['filter']);
                     }
                     if (!empty($valuesAsArray)) {

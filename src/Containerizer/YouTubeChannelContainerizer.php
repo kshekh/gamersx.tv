@@ -2,13 +2,15 @@
 
 namespace App\Containerizer;
 
-class YouTubeChannelContainerizer extends YouTubeContainerizer implements ContainerizerInterface
+class YouTubeChannelContainerizer implements ContainerizerInterface
 {
-    public function getContainers(): Array
+    public static function getContainers($homeRowItem, $youtube): Array
     {
-        $channelId = $this->homeRowItem->getContainerizerOptions()['filter']['twitchId'];
-        $info = $this->youtube->getChannelInfo($channelId)->getItems();
-        $broadcast = $this->youtube->getLiveChannel($channelId)->getItems();
+        $options = $homeRowItem->getContainerizerOptions();
+        $channelId = $options['topic']['topicId'];
+
+        $info = $youtube->getChannelInfo($channelId)->getItems();
+        $broadcast = $youtube->getLiveChannel($channelId)->getItems();
 
         if (!empty($broadcast)) {
             $broadcast = $broadcast[0];
@@ -27,12 +29,12 @@ class YouTubeChannelContainerizer extends YouTubeContainerizer implements Contai
             [
                 'info' => $info,
                 'broadcast' => $channelInfo,
-                'rowType' => $this->homeRowItem->getItemType(),
-                'rowName' => $this->homeRowItem->getHomeRow()->getTitle(),
-                'sortIndex' => $this->homeRowItem->getSortIndex(),
-                'showArt' => $this->homeRowItem->getShowArt(),
-                'offlineDisplayType' => $this->homeRowItem->getOfflineDisplayType(),
-                'linkType' => $this->homeRowItem->getLinkType(),
+                'rowType' => $homeRowItem->getItemType(),
+                'rowName' => $homeRowItem->getHomeRow()->getTitle(),
+                'sortIndex' => $homeRowItem->getSortIndex(),
+                'showArt' => $homeRowItem->getShowArt(),
+                'offlineDisplayType' => $homeRowItem->getOfflineDisplayType(),
+                'linkType' => $homeRowItem->getLinkType(),
             ]
         ];
     }

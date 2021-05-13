@@ -2,11 +2,13 @@
 
 namespace App\Containerizer;
 
-class YouTubePopularContainerizer extends YouTubeContainerizer implements ContainerizerInterface
+use App\Entity\HomeRowItem;
+
+class YouTubePopularContainerizer implements ContainerizerInterface
 {
-    public function getContainers(): Array
+    public static function getContainers($homeRowItem, $youtube): Array
     {
-        $broadcasts = $this->youtube->getPopularStreams();
+        $broadcasts = $youtube->getPopularStreams();
 
         $channels = Array();
 
@@ -23,7 +25,7 @@ class YouTubePopularContainerizer extends YouTubeContainerizer implements Contai
                 'rowType' => 'youtube',
                 'broadcast' => $channelInfo,
                 'sortIndex' => $i,
-                'rowName' => $row->getTitle(),
+                'rowName' => 'Popular YouTubers',
                 'showArt' => false,
                 'offlineDisplayType' => HomeRowItem::OFFLINE_DISPLAY_NONE,
                 'linkType' => HomeRowItem::LINK_TYPE_GAMERSX,

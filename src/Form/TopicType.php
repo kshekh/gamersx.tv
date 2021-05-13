@@ -2,28 +2,30 @@
 
 namespace App\Form;
 
+use App\Entity\HomeRowItem;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\{AbstractType, FormBuilderInterface};
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TwitchType extends AbstractType
+class TopicType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('twitchId', null, [
-                'attr' => ['readonly' => true, 'class' => 'twitch-id'],
-                'label' => 'Selected Twitch ID',
-            ])
-            ->add('label', null,  [
-                'required' => false,
-                'attr' => ['readonly' => true, 'class' => 'twitch-label'],
-                'label' => 'Selected Twitch Item\'s Label',
-            ])
             ->add('searchType', HiddenType::class, [
                 'label' => false,
                 'mapped' => false,
                 'data' => $options['searchType']
+            ])
+            ->add('topicId', null, [
+                'attr' => ['readonly' => true, 'class' => 'topic-id'],
+                'label' => 'Selected Topic ID',
+            ])
+            ->add('label', null,  [
+                'required' => false,
+                'attr' => ['readonly' => true, 'class' => 'topic-label'],
+                'label' => 'Selected Topic Item\'s Label',
             ])
             ;
 

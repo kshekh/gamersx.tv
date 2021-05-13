@@ -6,9 +6,10 @@ namespace App\Admin;
 
 use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
-use App\Form\RowOptionsType;
+use App\Form\ContainerizerOptionsType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType };
+use Symfony\Component\Form\CallbackTransformer;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -17,7 +18,6 @@ use Sonata\AdminBundle\Form\Type\ModelType;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
-
 final class HomeRowItemAdmin extends AbstractAdmin
 {
 
@@ -88,15 +88,6 @@ final class HomeRowItemAdmin extends AbstractAdmin
     {
         $formMapper
             ->add('sortIndex')
-            ->add('itemType', ChoiceType::class, [
-                'choices' => [
-                    'Games' => HomeRowItem::TYPE_GAME,
-                    'Streamers' => HomeRowItem::TYPE_STREAMER,
-                    'Channels' => HomeRowItem::TYPE_CHANNEL,
-                    'YouTube' => HomeRowItem::TYPE_YOUTUBE,
-                    'Popular' => HomeRowItem::TYPE_POPULAR,
-                ]
-            ])
             ->add('showArt')
             ->add('offlineDisplayType', ChoiceType::class, [
                 'choices' => [
@@ -118,7 +109,34 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'placeholder' => 'Choose a home row for this item',
                 'required' => true,
             ])
-            ->add('containerizerOptions', RowOptionsType::class)
+            ->add('itemType', ChoiceType::class, [
+                'choices' => [
+                    'Twitch - Games' => HomeRowItem::TYPE_GAME,
+                    'Twitch - Streamers' => HomeRowItem::TYPE_STREAMER,
+                    'YouTube - Channels' => HomeRowItem::TYPE_CHANNEL,
+                    'YouTube - Popular' => HomeRowItem::TYPE_YOUTUBE,
+                ],
+                'attr' => [
+                    'data-topic-select' => 'itemType',
+                ],
+                'required' => true
+            ])
+            ->add('containerizerOptions', ContainerizerOptionsType::class)
+            ->getFormBuilder()->addModelTransformer(new CallbackTransformer(
+                // Use the array in the form
+                function ($valuesAsArray) {
+                    return $valuesAsArray;
+                },
+                // Don't set empty values in the JSON later
+                function ($homeRowItem) {
+                    $options = $homeRowItem->getContainerizerOptions();
+                    if (array_key_exists('topic', $options) && array_key_exists('label', $options['topic'])) {
+                        $homeRowItem->setLabel($options['topic']['label']);
+                    };
+
+                    return $homeRowItem;
+                }
+            ))
             ;
 
     }
