@@ -7,16 +7,12 @@
       </div>
       <div ref="channelBox" class="flex flex-row p-5 overflow-x-hidden">
         <div ref="channelDivs" v-for="channel in displayChannels">
-          <channel v-if="['youtube', 'channel'].indexOf(settings.itemType) === -1"
+          <component
+            :is="channel.componentName"
             v-bind="channel"
             :showChannel = "showChannel(channel)"
             :showThumbnail = "showThumbnail(channel)"
-          ></channel>
-          <yt-channel v-else
-            v-bind="channel"
-            :showChannel = "showChannel(channel)"
-            :showThumbnail = "showThumbnail(channel)"
-          ></yt-channel>
+          ></component >
         </div>
       </div>
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="forward()">
@@ -26,16 +22,16 @@
   </div>
 </template>
 <script>
-import Channel from './Channel.vue'
-import YouTubeChannel from './YouTubeChannel.vue'
+import TwitchContainer from './TwitchContainer.vue'
+import YouTubeContainer from './YouTubeContainer.vue'
 
 require('swiped-events');
 
 export default {
   name: 'HomeRow',
   components: {
-    'Channel': Channel,
-    'yt-channel': YouTubeChannel,
+    'TwitchContainer': TwitchContainer,
+    'YouTubeContainer': YouTubeContainer,
   },
   props: {
     settings: {

@@ -31,6 +31,7 @@ class TwitchGameContainerizer implements ContainerizerInterface
                 'showArt' => $homeRowItem->getShowArt(),
                 'offlineDisplayType' => $homeRowItem->getOfflineDisplayType(),
                 'linkType' => $homeRowItem->getLinkType(),
+                'componentName' => 'TwitchContainer',
             ];
 
         }

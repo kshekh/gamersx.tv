@@ -3,17 +3,17 @@
     <div class="flex flex-row">
       <div v-if="showThumbnail">
         <a :href="link">
-          <twitch-art
+          <v-if="false" twitch-art
             :imageType="imageType"
             :src="image"
           ></twitch-art>
         </a>
       </div>
       <div v-if="showChannel">
-        <js-embed
+        <you-tube-embed
           v-bind:elementId="elementId"
-          v-bind:channel="channel"
-        ></js-embed>
+          v-bind:video="videoId"
+        ></you-tube-embed>
       </div>
     </div>
     <div class="flex flex-row flex-wrap justify-between pl-4">
@@ -25,63 +25,37 @@
 </div>
 </template>
 <script>
-import JsEmbed from '../embeds/JsEmbed.vue'
+import YouTubeEmbed from '../embeds/YouTubeEmbed.vue'
 import TwitchArt from './TwitchArt.vue'
 
 export default {
-  name: 'Channel',
+  name: 'YouTubeContainer',
   components: {
-    'JsEmbed': JsEmbed,
+    'YouTubeEmbed': YouTubeEmbed,
     'TwitchArt': TwitchArt
   },
   props: [ 'info', 'broadcast', 'rowType', 'rowName', 'sortIndex', 'showThumbnail', 'showChannel', 'showArt', 'offlineDisplayType', 'linkType' ],
   computed: {
     imageType: function() {
-      switch(this.rowType) {
-        case 'streamer': return 'profile';
-        case 'game': return 'boxArt';
-      }
+      return 'profile';
     },
     image: function() {
-      switch(this.rowType) {
-        case 'streamer': return this.info.profile_image_url;
-        case 'game': return this.info.box_art_url;
-      }
+      return this.broadcast.thumbnails.url;
     },
     link: function() {
-      switch(this.linkType) {
-        case 'gamersx':
-          switch(this.rowType) {
-            case 'streamer': return '/streamer/' + this.info.id;
-            case 'game': return '/game/' + this.info.id;
-          }
-        case 'twitch':
-          switch(this.rowType) {
-            case 'streamer': return 'https://www.twitch.tv/' + this.info.login;
-            case 'game': return 'https://www.twitch.tv/directory/game/' + this.info.name;
-          }
-      }
+      return 'http://youtube.com/watch?v=' + this.broadcast.id;
     },
     channel: function() {
-      if (this.broadcast !== null) {
-        return this.broadcast.user_login;
-      } else {
-        return this.info.login;
-      }
+      return this.broadcast.channelName;
+    },
+    videoId: function() {
+      return this.broadcast?.id?.videoId ?? this.broadcast.id
     },
     title: function() {
-      if (this.broadcast) {
-        return this.broadcast.user_name + ' playing ' + this.broadcast.game_name + ' for ' +
-          this.broadcast.viewer_count + ' viewers';
-      } else {
-        switch(this.rowType) {
-          case 'streamer': return this.info.display_name;
-          case 'game': return this.info.name;
-        }
-      }
+      return this.broadcast.title;
     },
     elementId: function() {
-      return this.slugify('twitch-embed-' + this.channel + '-' + this.rowName);
+      return this.slugify('youtube-embed-' + this.channel + '-' + this.rowName);
     }
   },
   methods: {

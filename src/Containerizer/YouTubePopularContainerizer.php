@@ -29,6 +29,7 @@ class YouTubePopularContainerizer implements ContainerizerInterface
                 'showArt' => false,
                 'offlineDisplayType' => HomeRowItem::OFFLINE_DISPLAY_NONE,
                 'linkType' => HomeRowItem::LINK_TYPE_GAMERSX,
+                'componentName' => 'YouTubeContainer',
             ];
 
             $channels[] = $channel;
