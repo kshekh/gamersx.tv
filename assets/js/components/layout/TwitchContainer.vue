@@ -8,10 +8,10 @@
           </div>
         </a>
       </div>
-      <div v-if="showChannel">
+      <div v-if="channelName">
         <js-embed
           v-bind:elementId="elementId"
-          v-bind:channel="channel"
+          v-bind:channel="channelName"
         ></js-embed>
       </div>
     </div>
@@ -33,28 +33,21 @@ export default {
     'JsEmbed': JsEmbed,
     'TwitchArt': TwitchArt
   },
-  props: [ 'info', 'broadcast', 'rowType', 'rowName', 'sortIndex', 'showChannel', 'image', 'link'],
+  props: [
+    'info',
+    'broadcast',
+    'title',
+    'itemType',
+    'channelName',
+    'rowName',
+    'sortIndex',
+    'image',
+    'link',
+    'componentName',
+  ],
   computed: {
-    channel: function() {
-      if (this.broadcast !== null) {
-        return this.broadcast.user_login;
-      } else {
-        return this.info.login;
-      }
-    },
-    title: function() {
-      if (this.broadcast) {
-        return this.broadcast.user_name + ' playing ' + this.broadcast.game_name + ' for ' +
-          this.broadcast.viewer_count + ' viewers';
-      } else {
-        switch(this.rowType) {
-          case 'streamer': return this.info.display_name;
-          case 'game': return this.info.name;
-        }
-      }
-    },
     elementId: function() {
-      return this.slugify('twitch-embed-' + this.channel + '-' + this.rowName);
+      return this.slugify('twitch-embed-' + this.channelName + '-' + this.rowName);
     }
   },
   methods: {

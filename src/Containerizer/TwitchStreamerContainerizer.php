@@ -15,6 +15,8 @@ class TwitchStreamerContainerizer implements ContainerizerInterface
         $broadcast = $twitch->getStreamForStreamer($streamerId)->toArray()['data'];
         $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
 
+        $rowName = $homeRowItem->getHomeRow()->getTitle();
+
         // No need for a container if we're not displaying and not online
         if (($homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_NONE) &&
             $broadcast === NULL) {
@@ -35,12 +37,14 @@ class TwitchStreamerContainerizer implements ContainerizerInterface
                 'width' => $imageWidth,
                 'height' => $imageHeight,
             ];
-
         }
 
         if ($broadcast !== NULL || $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_STREAM) {
-            // get the stream url
+            $channelName = $info['login'];
         }
+
+        $title = $broadcast === NULL ? $info['display_name'] : sprintf("%s playing %s for %d viewers",
+                $broadcast['user_name'], $broadcast['game_name'], $broadcast['viewer_count']);
 
         switch ($homeRowItem->getLinkType()) {
         case HomeRowItem::LINK_TYPE_GAMERSX:
@@ -56,11 +60,13 @@ class TwitchStreamerContainerizer implements ContainerizerInterface
         return [
             [
                 'info' => $info,
-                'broadcast' => !empty($broadcast) ? $broadcast[0] : NULL,
-                'rowType' => 'popular',
+                'broadcast' => $broadcast,
+                'title' => $title,
+                'itemType' => $homeRowItem->getItemType(),
+                'channelName' => $channelName ?? NULL,
+                'rowName' => $rowName,
                 'sortIndex' => $homeRowItem->getSortIndex(),
-                'image' => isset($image) ? $image : NULL,
-                'offlineDisplayType' => $homeRowItem->getOfflineDisplayType(),
+                'image' => $image ?? NULL,
                 'link' => $link,
                 'componentName' => 'TwitchContainer',
             ]

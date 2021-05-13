@@ -20,6 +20,8 @@ class TwitchGameContainerizer implements ContainerizerInterface
         $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, 20);
         $broadcasts = $broadcasts->toArray()['data'];
 
+        $rowName = $homeRowItem->getHomeRow()->getTitle();
+
         switch ($homeRowItem->getLinkType()) {
         case HomeRowItem::LINK_TYPE_GAMERSX:
             $link = '/game/'.$info['id'];
@@ -33,10 +35,16 @@ class TwitchGameContainerizer implements ContainerizerInterface
 
         $channels = Array();
         foreach ($broadcasts as $i => $broadcast) {
+            $title = sprintf("%s playing %s for %d viewers",
+                $broadcast['user_name'], $broadcast['game_name'], $broadcast['viewer_count']);
+
             $channels[] = [
                 'info' => $info,
                 'broadcast' => $broadcast,
-                'rowType' => 'popular',
+                'title' => $title,
+                'channelName' => $broadcast['user_login'],
+                'itemType' => $homeRowItem->getItemType(),
+                'rowName' => $rowName,
                 'sortIndex' => $i,
                 'image' => NULL,
                 'link' => $link,
