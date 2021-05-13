@@ -53,28 +53,6 @@ export default {
     showChannel: function(channel) {
       return channel.broadcast != null || channel.offlineDisplayType == 'stream';
     },
-    // Sort with the least popular first
-    sortChannelsAsc: function(first, second) {
-      return -1 * this.sortChannelsDesc(first, second);
-    },
-    // Sort with the most popular first
-    sortChannelsDesc: function(first, second) {
-      if (first.broadcast != null) {
-        if (second.broadcast === null) {
-          return -1 // only first is broadcasting
-        } else {
-          return second.broadcast.viewer_count - first.broadcast.viewer_count;
-        }
-      } else if (second.broadcast != null) {
-        return 1; //only second if broadcasting
-      } else { // nobody broadcasting
-        return second.info.view_count - first.info.view_count;
-      }
-    },
-    // Sort by the given index
-    sortChannelsFixed: function(first, second) {
-      return first.sortIndex - second.sortIndex;
-    },
     first: function() {
       this.rowIndex = 0;
       this.reorder();
@@ -99,17 +77,6 @@ export default {
     let displayed = this.settings.channels.filter(function(channel) {
       return this.showThumbnail(channel) || this.showChannel(channel);
     }, this);
-    switch (this.settings.sort) {
-      case 'asc':
-        displayed = displayed.sort(this.sortChannelsAsc);
-        break;
-      case 'fixed':
-        displayed = displayed.sort(this.sortChannelsFixed);
-        break;
-      case 'desc':
-      default:
-        displayed = displayed.sort(this.sortChannelsDesc);
-    }
     this.rowIndex = 0;
     this.displayChannels = displayed;
   },
