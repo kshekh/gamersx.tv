@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Service\TwitchApi;
 use App\Service\ThemeInfo;
-use App\Entity\HomeRow;
+use App\Entity\HomeRowItem;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,7 +35,7 @@ class GameController extends AbstractController
         $gameInfo = $gamersxCache->get("game-${id}",
             function (ItemInterface $item) use ($id, $twitch, $themeInfoService) {
                 $game = $twitch->getGameInfo($id);
-                $themeInfo = $themeInfoService->getThemeInfo($id, HomeRow::ITEM_TYPE_GAME);
+                $themeInfo = $themeInfoService->getThemeInfo($id, HomeRowItem::TYPE_GAME);
                 $topFifty = $twitch->getTopLiveBroadcastForGame($id, 50)->toArray()['data'];
 
                 $streams =  array_slice($topFifty, 0, 5);

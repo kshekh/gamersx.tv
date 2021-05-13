@@ -1,12 +1,11 @@
 <template>
   <div class="transform transition-transform hover:scale-110 px-5">
     <div class="flex flex-row">
-      <div v-if="showThumbnail">
+      <div v-if="">
         <a :href="link">
-          <twitch-art
-            :imageType="imageType"
-            :src="image"
-          ></twitch-art>
+          <div v-if="image" :class="image.class" class="p-4" >
+            <img :width="image.width" :height="image.height" :src="image.url">
+          </div>
         </a>
       </div>
       <div v-if="showChannel">
@@ -34,34 +33,8 @@ export default {
     'JsEmbed': JsEmbed,
     'TwitchArt': TwitchArt
   },
-  props: [ 'info', 'broadcast', 'rowType', 'rowName', 'sortIndex', 'showThumbnail', 'showChannel', 'showArt', 'offlineDisplayType', 'linkType' ],
+  props: [ 'info', 'broadcast', 'rowType', 'rowName', 'sortIndex', 'showChannel', 'image', 'link'],
   computed: {
-    imageType: function() {
-      switch(this.rowType) {
-        case 'streamer': return 'profile';
-        case 'game': return 'boxArt';
-      }
-    },
-    image: function() {
-      switch(this.rowType) {
-        case 'streamer': return this.info.profile_image_url;
-        case 'game': return this.info.box_art_url;
-      }
-    },
-    link: function() {
-      switch(this.linkType) {
-        case 'gamersx':
-          switch(this.rowType) {
-            case 'streamer': return '/streamer/' + this.info.id;
-            case 'game': return '/game/' + this.info.id;
-          }
-        case 'twitch':
-          switch(this.rowType) {
-            case 'streamer': return 'https://www.twitch.tv/' + this.info.login;
-            case 'game': return 'https://www.twitch.tv/directory/game/' + this.info.name;
-          }
-      }
-    },
     channel: function() {
       if (this.broadcast !== null) {
         return this.broadcast.user_login;

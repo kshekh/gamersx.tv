@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Service\TwitchApi;
 use App\Service\ThemeInfo;
-use App\Entity\HomeRow;
+use App\Entity\HomeRowItem;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -38,7 +38,7 @@ class StreamerController extends AbstractController
             $followers = $twitch->getFollowersForStreamer($id);
             $broadcast = $twitch->getStreamForStreamer($id);
             $videos = $twitch->getVideosForStreamer($id);
-            $themeInfo = $themeInfoService->getThemeInfo($id, HomeRow::ITEM_TYPE_STREAMER);
+            $themeInfo = $themeInfoService->getThemeInfo($id, HomeRowItem::TYPE_STREAMER);
 
             return [
                 'info' => $streamer->toArray()['data'][0],

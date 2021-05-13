@@ -14,26 +14,34 @@ class TwitchGameContainerizer implements ContainerizerInterface
         $gameIds = $options['topic']['topicId'];
 
         $infos = $twitch->getGameInfo($gameIds);
-        $infos = new ArrayCollection($infos->toArray()['data']);
+        $infos = $infos->toArray()['data'];
+        $info = $infos[0];
 
         $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, 20);
-        $broadcasts = new ArrayCollection($broadcasts->toArray()['data']);
+        $broadcasts = $broadcasts->toArray()['data'];
+
+        switch ($homeRowItem->getLinkType()) {
+        case HomeRowItem::LINK_TYPE_GAMERSX:
+            $link = '/game/'.$info['id'];
+            break;
+        case HomeRowItem::LINK_TYPE_TWITCH:
+            $link = 'https://www.twitch.tv/directory/game/'.$info['name'];
+            break;
+        default:
+            $link = '#';
+        }
 
         $channels = Array();
-
-        $info = $infos->first();
         foreach ($broadcasts as $i => $broadcast) {
             $channels[] = [
                 'info' => $info,
                 'broadcast' => $broadcast,
                 'rowType' => 'popular',
                 'sortIndex' => $i,
-                'showArt' => $homeRowItem->getShowArt(),
-                'offlineDisplayType' => $homeRowItem->getOfflineDisplayType(),
-                'linkType' => $homeRowItem->getLinkType(),
+                'image' => NULL,
+                'link' => $link,
                 'componentName' => 'TwitchContainer',
             ];
-
         }
 
         if (array_key_exists('itemSortType', $options)) {
@@ -47,6 +55,25 @@ class TwitchGameContainerizer implements ContainerizerInterface
 
         if (array_key_exists('maxEmbeds', $options)) {
             $channels = array_slice($channels, 0, $options['maxEmbeds']);
+        }
+
+        // If showArt is checked, add the art to the very first item
+        if ($homeRowItem->getShowArt() === TRUE) {
+            // Get the sized art link
+            $imageWidth = 225;
+            $imageHeight = 300;
+            $imageUrl = $info['box_art_url'];
+            $imageUrl = str_replace('{height}', $imageHeight, $imageUrl);
+            $imageUrl = str_replace('{width}', $imageWidth, $imageUrl);
+
+            $image = [
+                'url' => $imageUrl,
+                'class' => 'box-art',
+                'width' => $imageWidth,
+                'height' => $imageHeight,
+            ];
+
+            $channels[0]['image'] = $image;
         }
 
         return $channels;
