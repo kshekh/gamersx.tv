@@ -22,16 +22,14 @@
   </div>
 </template>
 <script>
-import TwitchContainer from './TwitchContainer.vue'
-import YouTubeContainer from './YouTubeContainer.vue'
+import EmbedContainer from './EmbedContainer.vue'
 
 require('swiped-events');
 
 export default {
   name: 'HomeRow',
   components: {
-    'TwitchContainer': TwitchContainer,
-    'YouTubeContainer': YouTubeContainer,
+    'EmbedContainer': EmbedContainer,
   },
   props: {
     settings: {

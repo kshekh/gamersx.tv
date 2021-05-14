@@ -48,7 +48,8 @@ class TwitchGameContainerizer implements ContainerizerInterface
                 'sortIndex' => $i,
                 'image' => NULL,
                 'link' => $link,
-                'componentName' => 'TwitchContainer',
+                'componentName' => 'EmbedContainer',
+                'embedName' => 'TwitchEmbed',
             ];
         }
 

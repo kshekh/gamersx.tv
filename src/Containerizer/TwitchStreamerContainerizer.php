@@ -68,7 +68,8 @@ class TwitchStreamerContainerizer implements ContainerizerInterface
                 'sortIndex' => $homeRowItem->getSortIndex(),
                 'image' => $image ?? NULL,
                 'link' => $link,
-                'componentName' => 'TwitchContainer',
+                'componentName' => 'EmbedContainer',
+                'embedName' => 'TwitchEmbed',
             ]
         ];
     }

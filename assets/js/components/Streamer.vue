@@ -31,9 +31,9 @@
         </div>
 
         <div v-bind:style="embedBg" class="w-auto p-4">
-          <js-embed v-if="info.login"
+          <twitch-embed v-if="info.login"
             v-bind:channel="info.login">
-          </js-embed>
+          </twitch-embed>
           <div v-if="broadcast" class="flex flex-row items-center justify-between">
             <div class="text-lg">{{ broadcast.title }}</div>
             <div class="text-lg ml-auto">{{ broadcast.viewer_count }}</div>
@@ -61,9 +61,9 @@
           </div>
           <div class="flex flex-row flex-grow flex-wrap justify-left p-8">
             <div v-for="vod in vods" class="rounded-md m-8 p-4">
-              <js-embed
+              <twitch-embed
                 v-bind:video="vod.id">
-              </js-embed>
+              </twitch-embed>
             </div>
           </div>
         </div>
@@ -81,12 +81,12 @@
 <script>
 import axios from 'axios';
 import TwitchArt from './layout/TwitchArt';
-import JsEmbed from './embeds/JsEmbed';
+import TwitchEmbed from './embeds/TwitchEmbed';
 
 export default {
   components: {
     'TwitchArt': TwitchArt,
-    'JsEmbed': JsEmbed
+    'TwitchEmbed': TwitchEmbed
   },
   data: function()  {
     return {

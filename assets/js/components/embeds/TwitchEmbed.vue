@@ -6,7 +6,7 @@
 
 <script>
 export default {
-	name: 'JsEmbed',
+	name: 'TwitchEmbed',
 	props: {
 		'channel': {
 			type: String

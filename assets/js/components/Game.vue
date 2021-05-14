@@ -30,9 +30,9 @@
         </div>
 
         <div v-bind:style="embedBg" class="w-auto p-4">
-          <js-embed v-if="popular.user_login"
+          <twitch-embed v-if="popular.user_login"
             v-bind:channel="popular.user_login">
-          </js-embed>
+          </twitch-embed>
           <div class="flex flex-row items-center justify-between">
             <div class="text-lg">{{ popular.title }}</div>
             <div class="text-lg ml-auto">{{ popular.viewer_count }}</div>
@@ -59,9 +59,9 @@
         </div>
         <div class="flex flex-row flex-grow flex-wrap justify-left p-8">
           <div v-for="stream in streams" class="rounded-md m-8 p-4">
-            <js-embed
+            <twitch-embed
               v-bind:channel="stream.user_login">
-            </js-embed>
+            </twitch-embed>
           </div>
         </div>
       </div>
@@ -71,12 +71,12 @@
 <script>
 import axios from 'axios';
 import TwitchArt from './layout/TwitchArt';
-import JsEmbed from './embeds/JsEmbed';
+import TwitchEmbed from './embeds/TwitchEmbed';
 
 export default {
   components: {
     'TwitchArt': TwitchArt,
-    'JsEmbed': JsEmbed
+    'TwitchEmbed': TwitchEmbed
   },
   data: function()  {
     return {

@@ -9,10 +9,11 @@
         </a>
       </div>
       <div v-if="channelName">
-        <js-embed
+        <component
+          :is="embedName"
           v-bind:elementId="elementId"
           v-bind:channel="channelName"
-        ></js-embed>
+        ></component>
       </div>
     </div>
     <div class="flex flex-row flex-wrap justify-between pl-4">
@@ -24,26 +25,23 @@
 </div>
 </template>
 <script>
-import JsEmbed from '../embeds/JsEmbed.vue'
-import TwitchArt from './TwitchArt.vue'
+import TwitchEmbed from '../embeds/TwitchEmbed.vue'
+import YouTubeEmbed from '../embeds/YouTubeEmbed.vue'
 
 export default {
   name: 'TwitchContainer',
   components: {
-    'JsEmbed': JsEmbed,
-    'TwitchArt': TwitchArt
+    'TwitchEmbed': TwitchEmbed,
+    'YouTubeEmbed': YouTubeEmbed,
   },
   props: [
-    'info',
-    'broadcast',
     'title',
-    'itemType',
     'channelName',
     'rowName',
-    'sortIndex',
     'image',
     'link',
     'componentName',
+    'embedName',
   ],
   computed: {
     elementId: function() {
