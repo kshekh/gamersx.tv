@@ -32,8 +32,8 @@
 
         <div v-bind:style="embedBg" class="w-auto p-4">
           <twitch-embed v-if="info.login"
-            v-bind:channel="info.login">
-          </twitch-embed>
+            v-bind:embedData="{ elementId: 'twitch-embed-' + info.login, channel: info.login }"
+          ></twitch-embed>
           <div v-if="broadcast" class="flex flex-row items-center justify-between">
             <div class="text-lg">{{ broadcast.title }}</div>
             <div class="text-lg ml-auto">{{ broadcast.viewer_count }}</div>
@@ -62,8 +62,8 @@
           <div class="flex flex-row flex-grow flex-wrap justify-left p-8">
             <div v-for="vod in vods" class="rounded-md m-8 p-4">
               <twitch-embed
-                v-bind:video="vod.id">
-              </twitch-embed>
+                v-bind:embedData="{ elementId: 'twitch-embed-vod-' + vod.id, video: vod.id }"
+              ></twitch-embed>
             </div>
           </div>
         </div>

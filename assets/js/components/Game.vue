@@ -31,8 +31,8 @@
 
         <div v-bind:style="embedBg" class="w-auto p-4">
           <twitch-embed v-if="popular.user_login"
-            v-bind:channel="popular.user_login">
-          </twitch-embed>
+            v-bind:embedData="getEmbedData(popular)"
+          ></twitch-embed>
           <div class="flex flex-row items-center justify-between">
             <div class="text-lg">{{ popular.title }}</div>
             <div class="text-lg ml-auto">{{ popular.viewer_count }}</div>
@@ -60,8 +60,8 @@
         <div class="flex flex-row flex-grow flex-wrap justify-left p-8">
           <div v-for="stream in streams" class="rounded-md m-8 p-4">
             <twitch-embed
-              v-bind:channel="stream.user_login">
-            </twitch-embed>
+              v-bind:embedData="getEmbedData(stream)"
+            ></twitch-embed>
           </div>
         </div>
       </div>
@@ -94,6 +94,12 @@ export default {
       } else {
         this.displayTab = 'All';
       }
+    },
+    getEmbedData(stream) {
+      return {
+        channel: stream.user_login,
+        elementId: 'twitch-embed-' + stream.user_login,
+      };
     }
   },
   computed: {
