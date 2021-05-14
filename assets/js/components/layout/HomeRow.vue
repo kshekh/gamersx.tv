@@ -72,11 +72,7 @@ export default {
     }
   },
   mounted: function() {
-    let displayed = this.settings.channels.filter(function(channel) {
-      return this.showThumbnail(channel) || this.showChannel(channel);
-    }, this);
-    this.rowIndex = 0;
-    this.displayChannels = displayed;
+    this.displayChannels = this.settings.channels;
   },
   updated: function() {
     this.allowScrolling = this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;

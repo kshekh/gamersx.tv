@@ -1,6 +1,6 @@
 <template>
 	<div class="w-auto p-4">
-    <div :id="playerId"></div>
+    <div :id="embedData.elementId"></div>
 	</div>
 </template>
 
@@ -11,11 +11,6 @@ export default {
     embedData: Object,
     elementId: String,
   },
-  computed: {
-    playerId: function() {
-      return this.elementId ? this.elementId : 'youtube-embed-' + this.embedData.video;
-    }
-  },
   data: function() {
     return {
       height: 300,
@@ -24,7 +19,7 @@ export default {
     }
   },
   mounted: function() {
-    this.embed = new YT.Player(this.playerId, {
+    this.embed = new YT.Player(this.embedData.elementId, {
       width: this.width,
       height: this.height,
       videoId: this.embedData.video,

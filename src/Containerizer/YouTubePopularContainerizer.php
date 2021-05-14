@@ -14,25 +14,24 @@ class YouTubePopularContainerizer implements ContainerizerInterface
 
         foreach ($broadcasts->getItems() as $i => $broadcast) {
             $snippet = $broadcast->getSnippet();
-            $channelInfo = [
-                'id' => $broadcast->getId(),
-                'title' => $snippet->getTitle(),
-                'channelName' => $snippet->getChannelTitle(),
-                'thumbnails' => $snippet->getThumbnails()->getStandard(),
-            ];
+
+            $title = sprintf("%s - \"%s\"",
+                $snippet->getChannelTitle(), $snippet->getTitle());
 
             $channel = [
-                'info' => $channelInfo,
-                'broadcast' =>  $broadcast->getSnippet(),
-                'rowType' => 'youtube',
-                'title' => $snippet->getTitle(),
-                'showArt' => false,
-                'offlineDisplayType' => HomeRowItem::OFFLINE_DISPLAY_NONE,
-                'linkType' => HomeRowItem::LINK_TYPE_GAMERSX,
+                'info' => $snippet,
+                'broadcast' =>  $broadcast,
+                'title' => $title,
+                'itemType' => $homeRowItem->getItemType(),
+                'rowName' => $homeRowItem->getHomeRow()->getTitle(),
+                'sortIndex' => $homeRowItem->getSortIndex(),
+                'image' => NULL,
+                'link' => 'https://www.youtube.com/v/'.$broadcast->getId(),
                 'componentName' => 'EmbedContainer',
                 'embedName' => 'YouTubeEmbed',
                 'embedData' => [
                     'video' => $broadcast->getId(),
+                    'elementId' => 'embed-'.sha1($snippet->getTitle())
                 ]
             ];
 
