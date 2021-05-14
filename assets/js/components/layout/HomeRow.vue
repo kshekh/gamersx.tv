@@ -12,7 +12,7 @@
             v-bind="channel"
             :showChannel = "showChannel(channel)"
             :showThumbnail = "showThumbnail(channel)"
-          ></component >
+          ></component>
         </div>
       </div>
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="forward()">

@@ -42,7 +42,6 @@ class TwitchGameContainerizer implements ContainerizerInterface
                 'info' => $info,
                 'broadcast' => $broadcast,
                 'title' => $title,
-                'channelName' => $broadcast['user_login'],
                 'itemType' => $homeRowItem->getItemType(),
                 'rowName' => $rowName,
                 'sortIndex' => $i,
@@ -50,6 +49,10 @@ class TwitchGameContainerizer implements ContainerizerInterface
                 'link' => $link,
                 'componentName' => 'EmbedContainer',
                 'embedName' => 'TwitchEmbed',
+                'embedData' => [
+                    'channel' => $broadcast['user_login'],
+                    'elementId' => 'embed-'.sha1($title),
+                ],
             ];
         }
 

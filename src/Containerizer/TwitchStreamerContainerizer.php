@@ -17,6 +17,9 @@ class TwitchStreamerContainerizer implements ContainerizerInterface
 
         $rowName = $homeRowItem->getHomeRow()->getTitle();
 
+        $title = $broadcast === NULL ? $info['display_name'] : sprintf("%s playing %s for %d viewers",
+            $broadcast['user_name'], $broadcast['game_name'], $broadcast['viewer_count']);
+
         // No need for a container if we're not displaying and not online
         if (($homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_NONE) &&
             $broadcast === NULL) {
@@ -40,11 +43,14 @@ class TwitchStreamerContainerizer implements ContainerizerInterface
         }
 
         if ($broadcast !== NULL || $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_STREAM) {
-            $channelName = $info['login'];
+            $embedData = [
+                'channel' => $info['login'],
+                'elementId' => 'embed-'.sha1($title)
+            ];
+        } else {
+            $embedData = NULL;
         }
 
-        $title = $broadcast === NULL ? $info['display_name'] : sprintf("%s playing %s for %d viewers",
-                $broadcast['user_name'], $broadcast['game_name'], $broadcast['viewer_count']);
 
         switch ($homeRowItem->getLinkType()) {
         case HomeRowItem::LINK_TYPE_GAMERSX:
@@ -57,19 +63,20 @@ class TwitchStreamerContainerizer implements ContainerizerInterface
             $link = '#';
         }
 
+
         return [
             [
                 'info' => $info,
                 'broadcast' => $broadcast,
                 'title' => $title,
                 'itemType' => $homeRowItem->getItemType(),
-                'channelName' => $channelName ?? NULL,
                 'rowName' => $rowName,
                 'sortIndex' => $homeRowItem->getSortIndex(),
                 'image' => $image ?? NULL,
                 'link' => $link,
                 'componentName' => 'EmbedContainer',
                 'embedName' => 'TwitchEmbed',
+                'embedData' => $embedData,
             ]
         ];
     }

@@ -8,16 +8,12 @@
 export default {
 	name: 'YouTubeEmbed',
 	props: {
-    'video': {
-			type: String
-    },
-    'elementId': {
-      type: String
-    }
+    embedData: Object,
+    elementId: String,
   },
   computed: {
     playerId: function() {
-      return this.elementId ? this.elementId : 'youtube-embed-' + this.video;
+      return this.elementId ? this.elementId : 'youtube-embed-' + this.embedData.video;
     }
   },
   data: function() {
@@ -31,7 +27,7 @@ export default {
     this.embed = new YT.Player(this.playerId, {
       width: this.width,
       height: this.height,
-      videoId: this.video,
+      videoId: this.embedData.video,
       autoplay: false,
     });
   }

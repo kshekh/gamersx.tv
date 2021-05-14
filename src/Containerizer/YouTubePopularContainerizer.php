@@ -22,15 +22,18 @@ class YouTubePopularContainerizer implements ContainerizerInterface
             ];
 
             $channel = [
+                'info' => $channelInfo,
+                'broadcast' =>  $broadcast->getSnippet(),
                 'rowType' => 'youtube',
-                'broadcast' => $channelInfo,
-                'sortIndex' => $i,
-                'rowName' => 'Popular YouTubers',
+                'title' => $snippet->getTitle(),
                 'showArt' => false,
                 'offlineDisplayType' => HomeRowItem::OFFLINE_DISPLAY_NONE,
                 'linkType' => HomeRowItem::LINK_TYPE_GAMERSX,
                 'componentName' => 'EmbedContainer',
-                'embedName' => 'TwitchEmbed',
+                'embedName' => 'YouTubeEmbed',
+                'embedData' => [
+                    'video' => $broadcast->getId(),
+                ]
             ];
 
             $channels[] = $channel;

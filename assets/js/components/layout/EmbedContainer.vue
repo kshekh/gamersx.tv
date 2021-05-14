@@ -8,11 +8,10 @@
           </div>
         </a>
       </div>
-      <div v-if="channelName">
+      <div v-if="embedData">
         <component
           :is="embedName"
-          v-bind:elementId="elementId"
-          v-bind:channel="channelName"
+          v-bind:embedData="embedData"
         ></component>
       </div>
     </div>
@@ -42,30 +41,8 @@ export default {
     'link',
     'componentName',
     'embedName',
+    'embedData',
   ],
-  computed: {
-    elementId: function() {
-      return this.slugify('twitch-embed-' + this.channelName + '-' + this.rowName);
-    }
-  },
-  methods: {
-    /* Used to prevent duplicate twitch-embed IDs.
-    From a public gist found via: https://mhagemann.medium.com/the-ultimate-way-to-slugify-a-url-string-in-javascript-b8e4a0d849e1 */
-    slugify: function(s) {
-      const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
-      const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz------'
-      const p = new RegExp(a.split('').join('|'), 'g')
-
-      return s.toString().toLowerCase()
-        .replace(/\s+/g, '-') // Replace spaces with -
-        .replace(p, c => b.charAt(a.indexOf(c))) // Replace special characters
-        .replace(/&/g, '-and-') // Replace & with 'and'
-        .replace(/[^\w\-]+/g, '') // Remove all non-word characters
-        .replace(/\-\-+/g, '-') // Replace multiple - with single -
-        .replace(/^-+/, '') // Trim - from start of text
-        .replace(/-+$/, '') // Trim - from end of text
-    },
-  }
 }
 </script>
 <style scoped>

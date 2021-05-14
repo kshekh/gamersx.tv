@@ -1,6 +1,6 @@
 <template>
 	<div class="w-auto p-4">
-    <div :id="playerId"></div>
+    <div :id="embedData.elementId"></div>
 	</div>
 </template>
 
@@ -8,20 +8,7 @@
 export default {
 	name: 'TwitchEmbed',
 	props: {
-		'channel': {
-			type: String
-    },
-    'video': {
-			type: String
-    },
-    'elementId': {
-      type: String
-    }
-  },
-  computed: {
-    playerId: function() {
-      return this.elementId ? this.elementId : 'twitch-embed-' + (this.channel ?? this.video);
-    }
+    embedData: Object,
   },
   data: function() {
     return {
@@ -31,11 +18,11 @@ export default {
     }
   },
   mounted: function() {
-    this.embed = new Twitch.Embed(this.playerId, {
+    this.embed = new Twitch.Embed(this.embedData.elementId, {
       width: this.width,
       height: this.height,
-      channel: this.channel,
-      video: this.video,
+      channel: this.embedData.channel,
+      video: this.embedData.video,
       layout: 'video',
       autoplay: false,
       muted: true,
