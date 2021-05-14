@@ -26,7 +26,7 @@ class TwitchGameContainerizer implements ContainerizerInterface
         case HomeRowItem::LINK_TYPE_GAMERSX:
             $link = '/game/'.$info['id'];
             break;
-        case HomeRowItem::LINK_TYPE_TWITCH:
+        case HomeRowItem::LINK_TYPE_EXTERNAL:
             $link = 'https://www.twitch.tv/directory/game/'.$info['name'];
             break;
         default:

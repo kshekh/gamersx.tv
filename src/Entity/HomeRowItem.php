@@ -63,7 +63,7 @@ class HomeRowItem
     private $offlineDisplayType;
 
     const LINK_TYPE_GAMERSX = 'gamersx';
-    const LINK_TYPE_TWITCH = 'twitch';
+    const LINK_TYPE_EXTERNAL = 'external';
     /**
      * @ORM\Column(type="string", length=32)
      */

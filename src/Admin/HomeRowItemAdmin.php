@@ -99,7 +99,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('linkType', ChoiceType::class, [
                 'choices' => [
                     'GamersX Link' => HomeRowItem::LINK_TYPE_GAMERSX,
-                    'Twitch Link' => HomeRowItem::LINK_TYPE_TWITCH,
+                    'Twitch Link' => HomeRowItem::LINK_TYPE_EXTERNAL,
                 ]
             ])
             ->add('homeRow', EntityType::class, [

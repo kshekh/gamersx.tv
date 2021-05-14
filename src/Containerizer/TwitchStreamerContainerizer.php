@@ -56,7 +56,7 @@ class TwitchStreamerContainerizer implements ContainerizerInterface
         case HomeRowItem::LINK_TYPE_GAMERSX:
             $link = '/streamer/'.$info['id'];
             break;
-        case HomeRowItem::LINK_TYPE_TWITCH:
+        case HomeRowItem::LINK_TYPE_EXTERNAL:
             $link = 'https://www.twitch.tv/'.$info['login'];
             break;
         default:
