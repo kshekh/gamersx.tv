@@ -4,13 +4,23 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 
-class TwitchStreamerContainerizer implements ContainerizerInterface
+class TwitchStreamerContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
-    public static function getContainers(HomeRowItem $homeRowItem, $twitch): Array
-    {
-        $options = $homeRowItem->getContainerizerOptions();
-        $streamerId = $options['topic']['topicId'];
+    private $homeRowItem;
+    private $twitch;
 
+    public function __construct(HomeRowItem $homeRowItem, $twitch)
+    {
+        $this->homeRowItem = $homeRowItem;
+        $this->twitch = $twitch;
+    }
+
+    public function getContainers(): Array
+    {
+        $homeRowItem = $this->homeRowItem;
+        $twitch = $this->twitch;
+
+        $streamerId = $homeRowItem->getTopic()['topicId'];
         $info = $twitch->getStreamerInfo($streamerId)->toArray()['data'][0];
         $broadcast = $twitch->getStreamForStreamer($streamerId)->toArray()['data'];
         $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
@@ -64,20 +74,32 @@ class TwitchStreamerContainerizer implements ContainerizerInterface
         }
 
 
-        return [
+        $channels = [
             [
                 'info' => $info,
                 'broadcast' => $broadcast,
+                'showLive' => $broadcast !== NULL,
+                'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
+                'viewedCount' => $info['view_count'],
                 'title' => $title,
                 'itemType' => $homeRowItem->getItemType(),
                 'rowName' => $rowName,
                 'sortIndex' => $homeRowItem->getSortIndex(),
                 'image' => $image ?? NULL,
+                'showImage' => $image === NULL,
                 'link' => $link,
                 'componentName' => 'EmbedContainer',
                 'embedName' => 'TwitchEmbed',
                 'embedData' => $embedData,
             ]
         ];
+
+        $this->items = $channels;
+        $this->options = $homeRowItem->getSortAndTrimOptions();
+
+        $this->sort();
+        $this->trim();
+
+        return $this->items;
     }
 }

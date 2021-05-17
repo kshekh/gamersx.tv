@@ -6,7 +6,8 @@ namespace App\Admin;
 
 use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
-use App\Form\ContainerizerOptionsType;
+use App\Form\TopicType;
+use App\Form\SortAndTrimOptionsType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType };
 use Symfony\Component\Form\CallbackTransformer;
@@ -60,7 +61,10 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('itemType', null, [
                 'sortable' => false
             ])
-            ->add('containerizerOptions', null, [
+            ->add('topic', null, [
+                'sortable' => false,
+            ])
+            ->add('sortAndTrimOptions', null, [
                 'sortable' => false,
             ])
             ->add('sortIndex', null, [
@@ -121,7 +125,11 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 ],
                 'required' => true
             ])
-            ->add('containerizerOptions', ContainerizerOptionsType::class)
+            ->add('topic', TopicType::class)
+            ->add('sortAndTrimOptions', SortAndTrimOptionsType::class, [
+                'label' => 'Sort and Trim Options',
+                'required' => false,
+            ])
             ->getFormBuilder()->addModelTransformer(new CallbackTransformer(
                 // Use the array in the form
                 function ($valuesAsArray) {
@@ -129,9 +137,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 },
                 // Don't set empty values in the JSON later
                 function ($homeRowItem) {
-                    $options = $homeRowItem->getContainerizerOptions();
-                    if (array_key_exists('topic', $options) && array_key_exists('label', $options['topic'])) {
-                        $homeRowItem->setLabel($options['topic']['label']);
+                    $topic = $homeRowItem->getTopic();
+                    if (array_key_exists('label', $topic)) {
+                        $homeRowItem->setLabel($topic['label']);
                     };
 
                     return $homeRowItem;
@@ -145,7 +153,8 @@ final class HomeRowItemAdmin extends AbstractAdmin
     {
         $showMapper
             ->add('id')
-            ->add('containerizerOptions')
+            ->add('sortAndTrimOptions')
+            ->add('topic')
             ->add('label')
             ->add('itemType')
             ->add('sortIndex')

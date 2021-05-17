@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Admin;
 
 use App\Entity\HomeRow;
-use App\Form\RowOptionsType;
+use App\Form\SortAndTrimOptionsType;
 use Knp\Menu\ItemInterface as MenuItemInterface;
 use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType, NumberType };
 use Sonata\AdminBundle\Admin\AdminInterface;
@@ -73,7 +73,7 @@ final class HomeRowAdmin extends AbstractAdmin
                 'sortable' => false
             ])
             ->add('sortIndex', null, [
-                'editable' => TRUE,
+                'editable' => true,
                 'sortable' => false,
             ])
             ->add('_action', null, [
@@ -98,14 +98,10 @@ final class HomeRowAdmin extends AbstractAdmin
         $formMapper
             ->add('title')
             ->add('sortIndex')
-            ->add('itemSortType', ChoiceType::class, [
-                'choices' => [
-                    'Ascending Popularity' => HomeRow::SORT_ASC,
-                    'Descending Popularity' => HomeRow::SORT_DESC,
-                    'Fixed Order' => HomeRow::SORT_FIXED,
-                ]
+            ->add('options', SortAndTrimOptionsType::class, [
+                'label' => 'Sort and Trim Options',
+                'required' => false,
             ])
-            ->add('options', RowOptionsType::class)
             ;
     }
 
@@ -114,7 +110,6 @@ final class HomeRowAdmin extends AbstractAdmin
         $showMapper
             ->add('title')
             ->add('sortIndex')
-            ->add('itemSortType')
             ->add('options')
             ;
     }

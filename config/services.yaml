@@ -23,16 +23,13 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/Tests/'
+            - '../src/Containerizer/'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
     App\Controller\:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
-
-    _instanceof:
-        App\Containerizer\ContainerizerInterface:
-            tags: ['gamersx.containerizer']
 
     App\Containerizer\ContainerizerFactory:
         arguments:

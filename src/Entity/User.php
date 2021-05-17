@@ -17,4 +17,9 @@ class User extends BaseUser
      * @ORM\Column(type="integer")
      */
     protected $id;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 }

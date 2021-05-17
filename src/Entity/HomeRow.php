@@ -34,11 +34,6 @@ class HomeRow
     const SORT_DESC = 'desc';
     const SORT_FIXED = 'fixed';
     /**
-     * @ORM\Column(type="string", length=8)
-     */
-    private $itemSortType;
-
-    /**
      * @ORM\Column(type="json", nullable=true)
      */
     private $options = [];
@@ -80,18 +75,6 @@ class HomeRow
     public function setSortIndex(?int $sortIndex): self
     {
         $this->sortIndex = $sortIndex;
-
-        return $this;
-    }
-
-    public function getItemSortType(): ?string
-    {
-        return $this->itemSortType;
-    }
-
-    public function setItemSortType(string $itemSortType): self
-    {
-        $this->itemSortType = $itemSortType;
 
         return $this;
     }

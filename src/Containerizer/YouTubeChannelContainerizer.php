@@ -4,12 +4,23 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 
-class YouTubeChannelContainerizer implements ContainerizerInterface
+class YouTubeChannelContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
-    public static function getContainers($homeRowItem, $youtube): Array
+    private $homeRowItem;
+    private $youtube;
+
+    public function __construct(HomeRowItem $homeRowItem, $youtube)
     {
-        $options = $homeRowItem->getContainerizerOptions();
-        $channelId = $options['topic']['topicId'];
+        $this->homeRowItem = $homeRowItem;
+        $this->youtube = $youtube;
+    }
+
+    public function getContainers(): Array
+    {
+        $homeRowItem = $this->homeRowItem;
+        $youtube = $this->youtube;
+
+        $channelId = $homeRowItem->getTopic()['topicId'];
 
         $info = $youtube->getChannelInfo($channelId)->getItems();
         $info = $info[0];
@@ -62,7 +73,7 @@ class YouTubeChannelContainerizer implements ContainerizerInterface
             $embedData = NULL;
         }
 
-        return [
+        $channels = [
             [
                 'info' => $info,
                 'broadcast' => $broadcast,
@@ -77,6 +88,15 @@ class YouTubeChannelContainerizer implements ContainerizerInterface
                 'embedData' => $embedData,
             ]
         ];
+
+        $this->items = $channels;
+        $this->options = $homeRowItem->getSortAndTrimOptions();
+
+        $this->sort();
+        $this->trim();
+
+        return $this->items;
+        return $channels;
     }
 
 }

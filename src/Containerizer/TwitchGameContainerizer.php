@@ -2,16 +2,25 @@
 
 namespace App\Containerizer;
 
-use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
 use Doctrine\Common\Collections\ArrayCollection;
 
-class TwitchGameContainerizer implements ContainerizerInterface
+class TwitchGameContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
-    public static function getContainers(HomeRowItem $homeRowItem, $twitch): Array
+    private $homeRowItem;
+    private $twitch;
+
+    public function __construct(HomeRowItem $homeRowItem, $twitch)
     {
-        $options = $homeRowItem->getContainerizerOptions();
-        $gameIds = $options['topic']['topicId'];
+        $this->homeRowItem = $homeRowItem;
+        $this->twitch = $twitch;
+    }
+
+    public function getContainers(): Array
+    {
+        $homeRowItem = $this->homeRowItem;
+        $twitch = $this->twitch;
+        $gameIds = $homeRowItem->getTopic()['topicId'];
 
         $infos = $twitch->getGameInfo($gameIds);
         $infos = $infos->toArray()['data'];
@@ -41,11 +50,15 @@ class TwitchGameContainerizer implements ContainerizerInterface
             $channels[] = [
                 'info' => $info,
                 'broadcast' => $broadcast,
+                'showLive' => TRUE,
+                'liveViewerCount' => $broadcast['viewer_count'],
+                'viewedCount' => 0,
                 'title' => $title,
                 'itemType' => $homeRowItem->getItemType(),
                 'rowName' => $rowName,
                 'sortIndex' => $i,
                 'image' => NULL,
+                'showImage' => FALSE,
                 'link' => $link,
                 'componentName' => 'EmbedContainer',
                 'embedName' => 'TwitchEmbed',
@@ -54,19 +67,6 @@ class TwitchGameContainerizer implements ContainerizerInterface
                     'elementId' => 'embed-'.sha1($title),
                 ],
             ];
-        }
-
-        if (array_key_exists('itemSortType', $options)) {
-            $sort = $options['itemSortType'];
-            if ($sort === HomeRow::SORT_ASC) {
-                usort($channels, [ContainerSorter::class, 'sortAscendingPopularity']);
-            } elseif ($sort === HomeRow::SORT_DESC) {
-                usort($channels, [ContainerSorter::class, 'sortDescendingPopularity']);
-            }
-        }
-
-        if (array_key_exists('maxEmbeds', $options)) {
-            $channels = array_slice($channels, 0, $options['maxEmbeds']);
         }
 
         // If showArt is checked, add the art to the very first item
@@ -88,7 +88,13 @@ class TwitchGameContainerizer implements ContainerizerInterface
             $channels[0]['image'] = $image;
         }
 
-        return $channels;
+        $this->items = $channels;
+        $this->options = $homeRowItem->getSortAndTrimOptions();
+
+        $this->sort();
+        $this->trim();
+
+        return $this->items;
     }
 
 }

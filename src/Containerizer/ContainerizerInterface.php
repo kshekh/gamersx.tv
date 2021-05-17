@@ -6,5 +6,5 @@ use App\Entity\HomeRowItem;
 
 interface ContainerizerInterface
 {
-    public static function getContainers(HomeRowItem $homeRowItem, $service): Array;
+    public function getContainers(): Array;
 }

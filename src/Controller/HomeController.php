@@ -25,11 +25,10 @@ class HomeController extends AbstractController
      */
     public function apiHome(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
     {
-       $rowChannels = $gamersxCache->get('home', function (ItemInterface $item) use ($containerizer) {
+        $rowChannels = $gamersxCache->get('home', function (ItemInterface $item) use ($containerizer) {
 
             $rows = $this->getDoctrine()->getRepository(HomeRow::class)
                 ->findBy([], ['sortIndex' => 'ASC']);
-
 
             $rowChannels = Array();
 
@@ -37,23 +36,12 @@ class HomeController extends AbstractController
                 $thisRow = Array();
                 $thisRow['title'] = $row->getTitle();
                 $thisRow['sortIndex'] = $row->getSortIndex();
-                $thisRow['itemSortType'] = $row->getItemSortType();
 
                 $containers = Array();
 
-                foreach ($row->getItems() as $item) {
-                    $containerized = $containerizer($item, []);
-                    $containers = array_merge($containers, $containerized);
-                }
-
-                $options = $row->getOptions();
-                if ($options !== null && array_key_exists('numEmbeds', $options)) {
-                    $numEmbeds = $options['numEmbeds'];
-                } else {
-                    $numEmbeds = null;
-                }
-
-                $thisRow['channels'] = array_slice($containers, 0, $numEmbeds);
+                $containerized = $containerizer($row);
+                $channels = $containerized->getContainers();
+                $thisRow['channels'] = $channels;
 
                 $rowChannels[] = $thisRow;
             }

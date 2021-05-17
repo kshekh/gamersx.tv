@@ -5,18 +5,14 @@ namespace App\Form;
 use App\Entity\HomeRow;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
-use Symfony\Component\Form\Extension\Core\Type\{ NumberType, ChoiceType };
+use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, NumberType };
 use Symfony\Component\Form\FormBuilderInterface;
 
-class ContainerizerOptionsType extends AbstractType
+class SortAndTrimOptionsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('maxEmbeds', NumberType::class, [
-                'label' => 'Maximum Containers',
-                'required' => false,
-            ])
             ->add('itemSortType', ChoiceType::class, [
                 'choices' => [
                     'Ascending Popularity' => HomeRow::SORT_ASC,
@@ -24,8 +20,12 @@ class ContainerizerOptionsType extends AbstractType
                     'Fixed Order' => HomeRow::SORT_FIXED,
                 ]
             ])
-            ->add('topic', TopicType::class, [
-                'searchType' => 'game',
+            ->add('maxContainers', NumberType::class, [
+                'label' => 'Max Number of Containers',
+                'required' => false,
+            ])
+            ->add('maxLive', NumberType::class, [
+                'label' => 'Max Number of Live Embeds',
                 'required' => false,
             ])
             ->addModelTransformer(new CallbackTransformer(
@@ -35,14 +35,11 @@ class ContainerizerOptionsType extends AbstractType
                 },
                 // Don't set empty values in the JSON later
                 function ($valuesAsArray) {
-                    if ($valuesAsArray['maxEmbeds'] === null) {
-                        unset($valuesAsArray['maxEmbeds']);
+                    if ($valuesAsArray['maxContainers'] === null) {
+                        unset($valuesAsArray['maxContainers']);
                     }
-                    if ($valuesAsArray['itemSortType'] === null) {
-                        unset($valuesAsArray['itemSortType']);
-                    }
-                    if ($valuesAsArray['topic']['topicId'] === null) {
-                        unset($valuesAsArray['topic']);
+                    if ($valuesAsArray['maxLive'] === null) {
+                        unset($valuesAsArray['maxLive']);
                     }
                     if (!empty($valuesAsArray)) {
                         return $valuesAsArray;

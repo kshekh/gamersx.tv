@@ -4,10 +4,22 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 
-class YouTubePopularContainerizer implements ContainerizerInterface
+class YouTubePopularContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
-    public static function getContainers($homeRowItem, $youtube): Array
+    private $homeRowItem;
+    private $youtube;
+
+    public function __construct(HomeRowItem $homeRowItem, $youtube)
     {
+        $this->homeRowItem = $homeRowItem;
+        $this->youtube = $youtube;
+    }
+
+    public function getContainers(): Array
+    {
+        $homeRowItem = $this->homeRowItem;
+        $youtube = $this->youtube;
+
         $broadcasts = $youtube->getPopularStreams();
 
         $channels = Array();
@@ -37,6 +49,13 @@ class YouTubePopularContainerizer implements ContainerizerInterface
 
             $channels[] = $channel;
         }
+
+        $this->items = $channels;
+        $this->options = $homeRowItem->getSortAndTrimOptions();
+
+        $this->sort();
+        $this->trim();
+
         return $channels;
     }
 

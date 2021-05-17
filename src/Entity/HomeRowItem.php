@@ -43,9 +43,16 @@ class HomeRowItem
     /**
      * Options to be passed into Containerizer
      *
+     * @ORM\Column(type="json", nullable=false)
+     */
+    private $topic = [];
+
+    /**
+     * Options to be passed into Containerizer
+     *
      * @ORM\Column(type="json", nullable=true)
      */
-    private $containerizerOptions = [];
+    private $sortAndTrimOptions = [];
 
     /**
      * Whether to always show box/profile art for this item
@@ -76,7 +83,6 @@ class HomeRowItem
      * @ORM\JoinColumn(nullable=false)
      */
     private $homeRow;
-
 
     public function getId(): ?int
     {
@@ -119,18 +125,29 @@ class HomeRowItem
         return $this;
     }
 
-    public function getContainerizerOptions(): ?array
+    public function getTopic(): ?array
     {
-        return $this->containerizerOptions;
+        return $this->topic;
     }
 
-    public function setContainerizerOptions(?array $containerizerOptions): self
+    public function setTopic(?array $topic): self
     {
-        $this->containerizerOptions = $containerizerOptions;
+        $this->topic = $topic;
 
         return $this;
     }
 
+    public function getSortAndTrimOptions(): ?array
+    {
+        return $this->sortAndTrimOptions;
+    }
+
+    public function setSortAndTrimOptions(?array $sortAndTrimOptions): self
+    {
+        $this->sortAndTrimOptions = $sortAndTrimOptions;
+
+        return $this;
+    }
     public function getShowArt(): ?bool
     {
         return $this->showArt;
