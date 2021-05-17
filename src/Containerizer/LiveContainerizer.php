@@ -36,11 +36,11 @@ abstract class LiveContainerizer implements ContainerizerInterface
             $this->items = array_slice($this->items, 0, $this->options['maxContainers']);
         }
 
-        if (array_key_exists('maxEmbeds', $this->options)) {
-            $max = $this->options['maxEmbeds'];
-            foreach ($this->items as $i => $item) {
+        if (array_key_exists('maxLive', $this->options)) {
+            $max = $this->options['maxLive'];
+            foreach ($this->items as $i => &$item) {
                 if ($i >= $max) {
-                    $item['showLive'] = false;
+                    unset($this->items[$i]);
                 }
             }
         }
