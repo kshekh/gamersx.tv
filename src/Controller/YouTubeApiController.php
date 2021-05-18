@@ -27,4 +27,18 @@ class YouTubeApiController extends AbstractController
         return $this->json($result);
     }
 
+    /**
+     * @Route("/query/youtube/{query}", name="queryYoutube")
+     */
+    public function liveQuery(Request $request, YouTubeApi $youtube, $query)
+    {
+        $first = $request->get('first');
+        $before = $request->get('before');
+        $after = $request->get('after');
+
+        $result = $youtube->searchLiveChannels($query, $first, $before, $after);
+        // dd($result);
+        return $this->json($result);
+    }
+
 }

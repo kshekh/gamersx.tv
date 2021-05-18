@@ -31,7 +31,7 @@ class ContainerizerFactory
             case HomeRowItem::TYPE_CHANNEL:
                 return new YouTubeChannelContainerizer($toBeContainerized, $this->youtube);
             case HomeRowItem::TYPE_YOUTUBE:
-                return new YouTubePopularContainerizer($toBeContainerized, $this->youtube);
+                return new YouTubeQueryContainerizer($toBeContainerized, $this->youtube);
             default:
                 break;
             }

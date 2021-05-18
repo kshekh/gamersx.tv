@@ -49,8 +49,13 @@ export default {
   methods: {
     /* Clicking on a row writes to the Admin form */
     selectRow: function(row) {
-      document.querySelector('input.topic-id').value = row.id;
-      document.querySelector('input.topic-label').value = row.label;
+      if (this.itemType === 'youtube') {
+        document.querySelector('input.topic-id').value = this.searchValue;
+        document.querySelector('input.topic-label').value = 'YT: ' + this.searchValue;
+      } else {
+        document.querySelector('input.topic-id').value = row.id;
+        document.querySelector('input.topic-label').value = row.label;
+      }
     },
     /* Clicking on the search button */
     search: function() {
@@ -80,6 +85,8 @@ export default {
         this.callApi('/api/query/streamer/' + this.searchValue, params, this.processStreamerResults);
       } else if (this.itemType === 'channel') {
         this.callApi('/api/query/channel/' + this.searchValue, params, this.processChannelResults);
+      } else if (this.itemType === 'youtube') {
+        this.callApi('/api/query/youtube/' + this.searchValue, params, this.processYoutubeResults);
       }
     },
     getPopularResults: function(params) {
@@ -152,6 +159,25 @@ export default {
       });
     },
     processChannelResults(response) {
+      this.cursor = '';
+      if (response.data === null) {
+        this.message = 'Sorry, no results for that query';
+        return;
+      }
+      this.headers = ['Id', 'Name', 'Description'];
+      this.rows = response.data.map(function(channel) {
+        return {
+          fields: [
+            channel.id.channelId,
+            channel.snippet.channelTitle,
+            channel.snippet.description,
+          ],
+          id: channel.id.channelId,
+          label: channel.snippet.channelTitle,
+        };
+      });
+    },
+    processYoutubeResults(response) {
       this.cursor = '';
       if (response.data === null) {
         this.message = 'Sorry, no results for that query';

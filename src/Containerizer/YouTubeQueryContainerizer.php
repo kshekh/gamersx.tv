@@ -4,7 +4,7 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 
-class YouTubePopularContainerizer extends LiveContainerizer implements ContainerizerInterface
+class YouTubeQueryContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
     private $homeRowItem;
     private $youtube;
@@ -20,9 +20,17 @@ class YouTubePopularContainerizer extends LiveContainerizer implements Container
         $homeRowItem = $this->homeRowItem;
         $youtube = $this->youtube;
 
-        $broadcasts = $youtube->getPopularStreams();
+        $this->options = $homeRowItem->getSortAndTrimOptions();
+        if (array_key_exists('maxContainers', $this->options)) {
+            $max = $this->options['maxContainers'];
+        }
+        if (array_key_exists('maxLive', $this->options)) {
+            $max = $this->options['maxLive'];
+        }
 
-        $channels = Array();
+        $query = $homeRowItem->getTopic()['topicId'];
+
+        $broadcasts = $youtube->searchLiveChannels($query, $max, null, null);
 
         foreach ($broadcasts->getItems() as $i => $broadcast) {
             $snippet = $broadcast->getSnippet();
@@ -33,16 +41,28 @@ class YouTubePopularContainerizer extends LiveContainerizer implements Container
             $channel = [
                 'info' => $snippet,
                 'broadcast' =>  $broadcast,
-                'title' => $title,
+                'liveViewerCount' => 0,
+                'viewedCount' => 0,
+                'showOnline' => TRUE,
+                'onlineDisplay' => [
+                    'title' => $title,
+                    'showArt' => FALSE,
+                    'showEmbed' => TRUE,
+                ],
+                'offlineDisplay' => [
+                    'title' => $title,
+                    'showArt' => FALSE,
+                    'showEmbed' => FALSE,
+                ],
                 'itemType' => $homeRowItem->getItemType(),
                 'rowName' => $homeRowItem->getHomeRow()->getTitle(),
                 'sortIndex' => $homeRowItem->getSortIndex(),
                 'image' => NULL,
-                'link' => 'https://www.youtube.com/v/'.$broadcast->getId(),
+                'link' => 'https://www.youtube.com/v/'.$broadcast->getId()->getVideoId(),
                 'componentName' => 'EmbedContainer',
                 'embedName' => 'YouTubeEmbed',
                 'embedData' => [
-                    'video' => $broadcast->getId(),
+                    'video' => $broadcast->getId()->getVideoId(),
                     'elementId' => 'embed-'.sha1($snippet->getTitle())
                 ]
             ];
@@ -51,12 +71,11 @@ class YouTubePopularContainerizer extends LiveContainerizer implements Container
         }
 
         $this->items = $channels;
-        $this->options = $homeRowItem->getSortAndTrimOptions();
 
         $this->sort();
         $this->trim();
 
-        return $channels;
+        return $this->items;
     }
 
 }

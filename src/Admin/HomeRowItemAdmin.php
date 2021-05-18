@@ -103,7 +103,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('linkType', ChoiceType::class, [
                 'choices' => [
                     'GamersX Link' => HomeRowItem::LINK_TYPE_GAMERSX,
-                    'Twitch Link' => HomeRowItem::LINK_TYPE_EXTERNAL,
+                    'External Link' => HomeRowItem::LINK_TYPE_EXTERNAL,
                 ]
             ])
             ->add('homeRow', EntityType::class, [
@@ -115,10 +115,10 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ])
             ->add('itemType', ChoiceType::class, [
                 'choices' => [
-                    'Twitch - Games' => HomeRowItem::TYPE_GAME,
-                    'Twitch - Streamers' => HomeRowItem::TYPE_STREAMER,
-                    'YouTube - Channels' => HomeRowItem::TYPE_CHANNEL,
-                    'YouTube - Popular' => HomeRowItem::TYPE_YOUTUBE,
+                    'Twitch - Game' => HomeRowItem::TYPE_GAME,
+                    'Twitch - Streamer' => HomeRowItem::TYPE_STREAMER,
+                    'YouTube - Channel' => HomeRowItem::TYPE_CHANNEL,
+                    'YouTube - Query' => HomeRowItem::TYPE_YOUTUBE,
                 ],
                 'attr' => [
                     'data-topic-select' => 'itemType',

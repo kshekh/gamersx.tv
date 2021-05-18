@@ -64,6 +64,20 @@ class YouTubeApi
         return $this->service->search->listSearch('snippet', $queryParams);
     }
 
+    public function searchLiveChannels($query, $first, $before, $after)
+    {
+        $queryParams = [
+            'q' => $query,
+            'eventType' => 'live',
+            'order' => 'viewCount',
+            'type' => 'video',
+            'videoCategoryId' => '20',
+            'maxResults' => 25,
+
+        ];
+        return $this->getPaginatedQuery($queryParams, $first, $before, $after);
+    }
+
 
     /**
      * Helper method for API calls that use paginated queries

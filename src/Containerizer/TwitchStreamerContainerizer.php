@@ -25,8 +25,6 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
         $broadcast = $twitch->getStreamForStreamer($streamerId)->toArray()['data'];
         $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
 
-        $rowName = $homeRowItem->getHomeRow()->getTitle();
-
         $title = $broadcast === NULL ? $info['display_name'] : sprintf("%s playing %s for %d viewers",
             $broadcast['user_name'], $broadcast['game_name'], $broadcast['viewer_count']);
 
@@ -91,9 +89,8 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
                     'showArt' => $homeRowItem->getShowArt() || $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_ART,
                     'showEmbed' => $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_STREAM,
                 ],
-                'title' => $title,
                 'itemType' => $homeRowItem->getItemType(),
-                'rowName' => $rowName,
+                'rowName' => $homeRowItem->getHomeRow()->getTitle(),
                 'sortIndex' => $homeRowItem->getSortIndex(),
                 'image' => $image ?? NULL,
                 'showImage' => $image === NULL,
