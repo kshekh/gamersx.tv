@@ -9,9 +9,8 @@
         <div ref="channelDivs" v-for="channel in displayChannels">
           <component
             :is="channel.componentName"
+            v-if="showChannel(channel)"
             v-bind="channel"
-            :showChannel = "showChannel(channel)"
-            :showThumbnail = "showThumbnail(channel)"
           ></component>
         </div>
       </div>
@@ -45,11 +44,9 @@ export default {
     }
   },
   methods: {
-    showThumbnail: function(channel) {
-      return channel.showArt || (channel.broadcast === null && channel.offlineDisplayType === 'art');
-    },
     showChannel: function(channel) {
-      return channel.broadcast != null || channel.offlineDisplayType == 'stream';
+      return (channel.showOnline && (channel.onlineDisplay.showArt || channel.onlineDisplay.showEmbed)) ||
+        (!channel.showOnline && (channel.offlineDisplay.showArt || channel.offlineDisplay.showEmbed));
     },
     first: function() {
       this.rowIndex = 0;
@@ -72,7 +69,7 @@ export default {
     }
   },
   mounted: function() {
-    this.displayChannels = this.settings.channels;
+    this.displayChannels = this.settings.channels.filter(this.showChannel);
   },
   updated: function() {
     this.allowScrolling = this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;

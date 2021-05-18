@@ -52,7 +52,17 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
                 'broadcast' => $broadcast,
                 'liveViewerCount' => $broadcast['viewer_count'],
                 'viewedCount' => 0,
-                'title' => $title,
+                'showOnline' => TRUE,
+                'onlineDisplay' => [
+                    'title' => $title,
+                    'showArt' => FALSE,
+                    'showEmbed' => TRUE,
+                ],
+                'offlineDisplay' => [
+                    'title' => $info['name'],
+                    'showArt' => FALSE,
+                    'showEmbed' => FALSE,
+                ],
                 'itemType' => $homeRowItem->getItemType(),
                 'rowName' => $rowName,
                 'sortIndex' => $i,
@@ -67,6 +77,11 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
                 ],
             ];
         }
+
+        $this->items = $channels;
+        $this->options = $homeRowItem->getSortAndTrimOptions();
+
+        $this->sort();
 
         // If showArt is checked, add the art to the very first item
         if ($homeRowItem->getShowArt() === TRUE) {
@@ -84,13 +99,11 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
                 'height' => $imageHeight,
             ];
 
-            $channels[0]['image'] = $image;
+            $this->items[0]['image'] = $image;
+            $this->items[0]['onlineDisplay']['showArt'] = TRUE;
+            $this->items[0]['offlineDisplay']['showArt'] = TRUE;
         }
 
-        $this->items = $channels;
-        $this->options = $homeRowItem->getSortAndTrimOptions();
-
-        $this->sort();
         $this->trim();
 
         return $this->items;

@@ -19,7 +19,7 @@ class HomeRowContainerizer extends LiveContainerizer implements ContainerizerInt
         $containers = Array();
         $containerizer = $this->containerizer;
         foreach ($this->homeRow->getItems() as $item) {
-            $containerized = $containerizer($item, []);
+            $containerized = $containerizer($item);
             $containers = array_merge($containers, $containerized->getContainers());
         }
 

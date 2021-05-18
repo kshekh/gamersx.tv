@@ -38,11 +38,11 @@ abstract class LiveContainerizer implements ContainerizerInterface
 
         if (array_key_exists('maxLive', $this->options)) {
             $max = $this->options['maxLive'];
-            foreach ($this->items as $i => &$item) {
+            array_walk($this->items, function(&$value, $i) use ($max) {
                 if ($i >= $max) {
-                    unset($this->items[$i]);
+                    $value['showOnline'] = FALSE;
                 }
-            }
+            });
         }
 
         return $this->items;

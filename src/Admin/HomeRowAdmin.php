@@ -76,6 +76,10 @@ final class HomeRowAdmin extends AbstractAdmin
                 'editable' => true,
                 'sortable' => false,
             ])
+            ->add('options', null, [
+                'editable' => false,
+                'sortable' => false,
+            ])
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],

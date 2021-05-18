@@ -77,6 +77,19 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
             [
                 'info' => $info,
                 'broadcast' => $broadcast,
+                'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
+                'viewedCount' => $info['view_count'],
+                'showOnline' => TRUE,
+                'onlineDisplay' => [
+                    'title' => $title,
+                    'showArt' => $homeRowItem->getShowArt(),
+                    'showEmbed' => TRUE,
+                ],
+                'offlineDisplay' => [
+                    'title' => $info['login'],
+                    'showArt' => $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_ART,
+                    'showEmbed' => $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_STREAM,
+                ],
                 'title' => $title,
                 'itemType' => $homeRowItem->getItemType(),
                 'rowName' => $homeRowItem->getHomeRow()->getTitle(),
