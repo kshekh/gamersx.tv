@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, NumberType };
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\Positive;
 
 class SortAndTrimOptionsType extends AbstractType
 {
@@ -23,9 +24,11 @@ class SortAndTrimOptionsType extends AbstractType
             ->add('maxContainers', NumberType::class, [
                 'label' => 'Max Number of Containers',
                 'required' => false,
+                'constraints' => [new Positive()],
             ])
             ->add('maxLive', NumberType::class, [
                 'label' => 'Max Number of Live Embeds',
+                'constraints' => [new Positive()],
                 'required' => false,
             ])
             ->addModelTransformer(new CallbackTransformer(

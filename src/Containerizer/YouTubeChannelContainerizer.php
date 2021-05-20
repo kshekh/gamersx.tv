@@ -64,7 +64,7 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
             ];
         }
 
-        if ($broadcast !== NULL || $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_STREAM) {
+        if ($broadcast !== NULL) {
             $embedData = [
                 'video' => $broadcast->getId()->getVideoId(),
                 'elementId' => 'embed-'.sha1($title)
