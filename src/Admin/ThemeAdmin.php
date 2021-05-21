@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Admin;
 
-use App\Form\TwitchType;
-use App\Entity\HomeRow;
+use App\Form\TopicType;
+use App\Entity\HomeRowItem;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -21,7 +21,7 @@ final class ThemeAdmin extends AbstractAdmin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
     {
         $datagridMapper
-            ->add('twitchId')
+            ->add('topicId')
             ->add('label')
             ->add('itemType')
             ->add('bannerImage')
@@ -34,7 +34,7 @@ final class ThemeAdmin extends AbstractAdmin
     protected function configureListFields(ListMapper $listMapper): void
     {
         $listMapper
-            ->add('twitchId')
+            ->add('topicId')
             ->add('label')
             ->add('itemType')
             ->add('bannerImage')
@@ -55,8 +55,8 @@ final class ThemeAdmin extends AbstractAdmin
         $formMapper
             ->add('itemType', ChoiceType::class, [
                 'choices' => [
-                    'Games' => HomeRow::ITEM_TYPE_GAME,
-                    'Streamers' => HomeRow::ITEM_TYPE_STREAMER,
+                    'Games' => HomeRowItem::TYPE_GAME,
+                    'Streamers' => HomeRowItem::TYPE_STREAMER,
                 ],
                 'attr' => [
                     'data-topic-select' => 'itemType',
@@ -75,7 +75,7 @@ final class ThemeAdmin extends AbstractAdmin
             ->add('artBackgroundFile', VichImageType::class, [
                 'required' => false,
             ])
-            ->add('twitch', TwitchType::class, [
+            ->add('topic', TopicType::class, [
                 'searchType' => 'game',
                 'inherit_data' => true
             ])
@@ -86,7 +86,7 @@ final class ThemeAdmin extends AbstractAdmin
     {
         $showMapper
             ->add('id')
-            ->add('twitchId')
+            ->add('topicId')
             ->add('label')
             ->add('itemType')
             ->add('bannerImage')

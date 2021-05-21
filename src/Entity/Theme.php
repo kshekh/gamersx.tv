@@ -23,7 +23,7 @@ class Theme
     /**
      * @ORM\Column(type="string", length=32)
      */
-    private $twitchId;
+    private $topicId;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -100,14 +100,14 @@ class Theme
         return $this->id;
     }
 
-    public function getTwitchId(): ?string
+    public function getTopicId(): ?string
     {
-        return $this->twitchId;
+        return $this->topicId;
     }
 
-    public function setTwitchId(string $twitchId): self
+    public function setTopicId(string $topicId): self
     {
-        $this->twitchId = $twitchId;
+        $this->topicId = $topicId;
 
         return $this;
     }
@@ -166,7 +166,7 @@ class Theme
 
     public function getBannerImageSlug(): ?string
     {
-        return $this->getItemType().'-'.$this->getTwitchId().'-banner';
+        return $this->getItemType().'-'.$this->getTopicId().'-banner';
     }
 
     public function getEmbedBackground(): ?string
@@ -198,7 +198,7 @@ class Theme
 
     public function getEmbedBackgroundSlug(): ?string
     {
-        return $this->getItemType().'-'.$this->getTwitchId().'-embedbg';
+        return $this->getItemType().'-'.$this->getTopicId().'-embedbg';
     }
 
     public function getCustomArt(): ?string
@@ -230,7 +230,7 @@ class Theme
 
     public function getCustomArtSlug(): ?string
     {
-        return $this->getItemType().'-'.$this->getTwitchId().'-customArt';
+        return $this->getItemType().'-'.$this->getTopicId().'-customArt';
     }
 
     public function getArtBackground(): ?string
@@ -263,7 +263,7 @@ class Theme
 
     public function getArtBackgroundSlug(): ?string
     {
-        return $this->getItemType().'-'.$this->getTwitchId().'-artBg';
+        return $this->getItemType().'-'.$this->getTopicId().'-artBg';
     }
 
     public function getUpdatedAt(): ?\DateTimeInterface
@@ -283,8 +283,8 @@ class Theme
     {
         if ($this->getLabel()) {
             $label = $this->getLabel();
-        } else if ($this->getTwitchId()) {
-            $label = $this->getTwitchId();
+        } else if ($this->getTopicId()) {
+            $label = $this->getTopicId();
         }
         if ($this->getItemType()) {
             return ucfirst('Theme for '.$this->getItemType() . ' \'' . $label. '\'');
