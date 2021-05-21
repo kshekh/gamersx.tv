@@ -3,7 +3,6 @@
 namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class TwitchGameContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
@@ -23,10 +22,23 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
         $gameIds = $homeRowItem->getTopic()['topicId'];
 
         $infos = $twitch->getGameInfo($gameIds);
-        $infos = $infos->toArray()['data'];
-        $info = $infos[0];
+        if (200 !== $infos->getStatusCode()) {
+            $this->logger->error("Call to Twitch failed with ".$infos->getStatusCode());
+            unset($infos);
+            return Array();
+        }
 
         $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, 20);
+        if (200 !== $broadcasts->getStatusCode()) {
+            $this->logger->error("Call to Twitch failed with ".$broadcasts->getStatusCode());
+            unset($broadcasts);
+            return Array();
+        }
+
+        // Get the info for the game, use that for every game
+        $info = $infos->toArray()['data'][0];
+
+        // Get every broadcast
         $broadcasts = $broadcasts->toArray()['data'];
 
         $rowName = $homeRowItem->getHomeRow()->getTitle();

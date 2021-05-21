@@ -4,14 +4,20 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
+use Psr\Log\LoggerAwareInterface;
 
-abstract class LiveContainerizer implements ContainerizerInterface
+abstract class LiveContainerizer implements ContainerizerInterface, LoggerAwareInterface
 {
 
+    protected $logger;
     protected $items;
     protected $options;
 
     abstract public function getContainers(): Array;
+
+    public function setLogger(\Psr\Log\LoggerInterface $logger) {
+        $this->logger = $logger;
+    }
 
     protected function sort(): Array
     {
@@ -71,5 +77,6 @@ abstract class LiveContainerizer implements ContainerizerInterface
     protected static function sortByIndex($first, $second) {
         return $second['sortIndex'] - $first['sortIndex'];
     }
+
 
 }

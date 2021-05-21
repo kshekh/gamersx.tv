@@ -21,8 +21,23 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
         $twitch = $this->twitch;
 
         $streamerId = $homeRowItem->getTopic()['topicId'];
-        $info = $twitch->getStreamerInfo($streamerId)->toArray()['data'][0];
-        $broadcast = $twitch->getStreamForStreamer($streamerId)->toArray()['data'];
+
+        $info = $twitch->getStreamerInfo($streamerId);
+        if (200 !== $info->getStatusCode()) {
+            $this->logger->error("Call to Twitch failed with ".$info->getStatusCode());
+            unset($info);
+            return Array();
+        }
+
+        $broadcast = $twitch->getStreamForStreamer($streamerId);
+        if (200 !== $broadcast->getStatusCode()) {
+            $this->logger->error("Call to Twitch failed with ".$broadcast->getStatusCode());
+            unset($broadcast);
+            return Array();
+        }
+
+        $info = $info->toArray()['data'][0];
+        $broadcast = $broadcast->toArray()['data'];
         $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
 
         $title = $broadcast === NULL ? $info['display_name'] : sprintf("%s playing %s for %d viewers",

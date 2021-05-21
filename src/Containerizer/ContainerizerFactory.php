@@ -11,13 +11,14 @@ class ContainerizerFactory
 {
     private $twitch;
     private $youtube;
+    private $logger;
     private $containerizers;
 
-    public function __construct(TwitchApi $twitch, YouTubeApi $youtube, iterable $containerizers)
+    public function __construct(TwitchApi $twitch, YouTubeApi $youtube, \Psr\Log\LoggerInterface $logger)
     {
         $this->twitch = $twitch;
         $this->youtube = $youtube;
-        $this->containerizers = $containerizers;
+        $this->logger = $logger;
     }
 
     public function __invoke($toBeContainerized): ContainerizerInterface
@@ -25,16 +26,22 @@ class ContainerizerFactory
         if ($toBeContainerized instanceof HomeRowItem) {
             switch($toBeContainerized->getItemType()) {
             case HomeRowItem::TYPE_GAME:
-                return new TwitchGameContainerizer($toBeContainerized, $this->twitch);
+                $containerized = new TwitchGameContainerizer($toBeContainerized, $this->twitch);
+                break;
             case HomeRowItem::TYPE_STREAMER:
-                return new TwitchStreamerContainerizer($toBeContainerized, $this->twitch);
+                $containerized = new TwitchStreamerContainerizer($toBeContainerized, $this->twitch);
+                break;
             case HomeRowItem::TYPE_CHANNEL:
-                return new YouTubeChannelContainerizer($toBeContainerized, $this->youtube);
+                $containerized = new YouTubeChannelContainerizer($toBeContainerized, $this->youtube);
+                break;
             case HomeRowItem::TYPE_YOUTUBE:
-                return new YouTubeQueryContainerizer($toBeContainerized, $this->youtube);
+                $containerized = new YouTubeQueryContainerizer($toBeContainerized, $this->youtube);
+                break;
             default:
                 break;
             }
+            $containerized->setLogger($this->logger);
+            return $containerized;
         } elseif ($toBeContainerized instanceof HomeRow) {
             return new HomeRowContainerizer($toBeContainerized, $this);
         }

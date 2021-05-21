@@ -35,8 +35,8 @@ services:
         arguments:
             - '@App\Service\TwitchApi'
             - '@App\Service\YouTubeApi'
+            - '@logger'
             - !tagged_iterator gamersx.containerizer
-
 
     admin.home_row:
         class: App\Admin\HomeRowAdmin

@@ -30,7 +30,12 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
 
         $query = $homeRowItem->getTopic()['topicId'];
 
-        $broadcasts = $youtube->searchLiveChannels($query, $max, null, null);
+        try {
+            $broadcasts = $youtube->searchLiveChannels($query, $max, null, null);
+        } catch (\Exception $e) {
+            $this->logger->error("Call to YouTube failed with the message \"".$e->getErrors()[0]['message']."\"");
+            return Array();
+        }
 
         foreach ($broadcasts->getItems() as $i => $broadcast) {
             $snippet = $broadcast->getSnippet();

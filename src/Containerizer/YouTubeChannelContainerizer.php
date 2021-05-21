@@ -22,10 +22,15 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
 
         $channelId = $homeRowItem->getTopic()['topicId'];
 
-        $info = $youtube->getChannelInfo($channelId)->getItems();
-        $info = $info[0];
+        try {
+            $info = $youtube->getChannelInfo($channelId)->getItems();
+            $broadcast = $youtube->getLiveChannel($channelId)->getItems();
+        } catch (\Exception $e) {
+            $this->logger->error("Call to YouTube failed with the message \"".$e->getErrors()[0]['message']."\"");
+            return Array();
+        }
 
-        $broadcast = $youtube->getLiveChannel($channelId)->getItems();
+        $info = $info[0];
         $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
 
         // No need for a container if we're not displaying and not online
