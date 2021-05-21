@@ -21,7 +21,7 @@ class ThemeInfo
         $theme = $this->em->getRepository(Theme::class)
             ->findOneBy([
                 'itemType' => $itemType,
-                'twitchId' => $id
+                'topicId' => $id
             ]);
 
         if (!$theme) {

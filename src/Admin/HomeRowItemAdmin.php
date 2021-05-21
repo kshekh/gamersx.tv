@@ -42,7 +42,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
     {
         $datagridMapper
-            ->add('twitchId')
+            ->add('topicId')
             ->add('label')
             ->add('itemType')
             ->add('homeRow')

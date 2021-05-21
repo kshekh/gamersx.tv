@@ -35,7 +35,7 @@ class RefreshTwitchTokenCommand extends Command
     {
         $this
             ->setDescription(self::$defaultDescription)
-            ->addOption('twitchId', 'i', InputOption::VALUE_OPTIONAL, 'Your Client ID for your Twitch application')
+            ->addOption('topicId', 'i', InputOption::VALUE_OPTIONAL, 'Your Client ID for your Twitch application')
             ->addOption('twitchSecret', 's', InputOption::VALUE_OPTIONAL, 'Your Client Secret for your Twitch application')
             ->addOption('envFile', 'f', InputOption::VALUE_OPTIONAL, 'The .env.local file to rewrite the TWITCH_APP_TOKEN variable')
             ;
@@ -46,16 +46,16 @@ class RefreshTwitchTokenCommand extends Command
 
 
         $io = new SymfonyStyle($input, $output);
-        $argId = $input->getOption('twitchId');
+        $argId = $input->getOption('topicId');
         $argSecret = $input->getOption('twitchSecret');
         $argFile = $input->getOption('envFile');
 
-        $twitchId = $argId ?? $this->params->get('app.twitch_id');
+        $topicId = $argId ?? $this->params->get('app.twitch_id');
         $twitchSecret = $argSecret ?? $this->params->get('app.twitch_secret');
 
         $request = $this->client->request('POST', 'https://id.twitch.tv/oauth2/token', [
             'query' => [
-                'client_id' => $twitchId,
+                'client_id' => $topicId,
                 'client_secret' => $twitchSecret,
                 'grant_type' => 'client_credentials',
 
