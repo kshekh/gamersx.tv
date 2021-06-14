@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+Terms &amp; Conditions
+{% endblock %}
+
+{% block body %}
+<div class="container w-full mx-auto px-6 space-y-6">
+    <div class="text-4xl pt-6 text-red-600">GamersX Terms and Conditions</div>
+    <div>
+        <p class="text-xl">Coming Soon</p>
+    </div>
+    <div class="text-4xl pt-6 text-red-600">Use of Third-Party APIs</div>
+        <p class="text-xl">GamersX displays embedded videos using the YouTube API. By viewing those videos, you are bound to <a class="underline" href="https://www.youtube.com/t/terms" target="_terms">YouTube's Terms of Service</a> and are subject to <a class="underline" href="http://www.google.com/policies/privacy" target="_terms">Google's Privacy Policy</a>.</p>
+        <p class="text-xl">GamersX displays embedded videos using the Twitch API. By viewing those videos, you are bound to <a class="underline" href="https://www.twitch.tv/p/en/legal/terms-of-service/" target="_terms">Twitch's Terms of Service</a> and are subject to its <a class="underline" href="https://www.twitch.tv/p/en/legal/privacy-notice/" target="_terms">Privacy Policy</a>.</p>
+    <div class="underline">
+        <a href="{{ path('home') }}">
+            Return Home
+        </a>
+    </div>
+</div>
+{% endblock %}
