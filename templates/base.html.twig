@@ -25,7 +25,6 @@
                 <div>Channels</div>
                 <div>Gamers</div>
                 <div>Store</div>
-                <div><a href="{{ path('terms') }}">Terms</a></div>
                 <div class="flex-grow">
                     <input id="query" class="w-full rounded-sm pl-4" type="text" placeholder="search"></input>
                 </div>
@@ -36,5 +35,13 @@
         <div class="container w-full mx-auto px-6">
           {% block body %}{% endblock %}
         </div>
+        {% block footer %}
+        <div class="w-full p-6">
+            <div id="footer" class="flex flex-row justify-center space-x-4 h-16 text-base" >
+                <div>&copy; 2021 GamersX</div>
+                <div class="underline"><a href="{{ path('terms') }}">Terms and Conditions</a></div>
+            </div>
+        </div>
+        {% endblock %}
     </body>
 </html>
