@@ -28,7 +28,7 @@ import TwitchEmbed from '../embeds/TwitchEmbed.vue'
 import YouTubeEmbed from '../embeds/YouTubeEmbed.vue'
 
 export default {
-  name: 'TwitchContainer',
+  name: 'EmbedContainer',
   components: {
     'TwitchEmbed': TwitchEmbed,
     'YouTubeEmbed': YouTubeEmbed,

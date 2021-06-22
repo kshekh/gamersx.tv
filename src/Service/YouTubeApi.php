@@ -26,6 +26,21 @@ class YouTubeApi
         return $this->service->videos->listVideos('snippet', $queryParams);
     }
 
+
+    public function getPopularChannelVideos($channelId, $first=8, $before=null, $after=null)
+    {
+        $queryParams = [
+            'part' => 'snippet',
+            'channelId' => $channelId,
+            'order' => 'videoCount',
+            'videoCategoryId' => '20',
+            'type' => 'video',
+        ];
+
+        return $this->getPaginatedQuery($queryParams, $first, $before, $after);
+
+
+    }
     public function searchChannels($query, $first=25, $before=null, $after=null)
     {
         $queryParams = [
@@ -72,11 +87,21 @@ class YouTubeApi
             'order' => 'viewCount',
             'type' => 'video',
             'videoCategoryId' => '20',
-            'maxResults' => 25,
-
         ];
         return $this->getPaginatedQuery($queryParams, $first, $before, $after);
     }
+
+    public function searchPopularVideos($query, $first, $before, $after)
+    {
+        $queryParams = [
+            'q' => $query,
+            'order' => 'viewCount',
+            'type' => 'video',
+            'videoCategoryId' => '20',
+        ];
+        return $this->getPaginatedQuery($queryParams, $first, $before, $after);
+    }
+
 
 
     /**

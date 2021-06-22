@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block javascripts %}
+{{ parent() }}
+{{ encore_entry_script_tags('page') }}
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div id="app-page" data-url="{{ dataUrl }}">
+        <page></page>
+    </div>
+</div>
+{% endblock %}

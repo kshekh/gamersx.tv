@@ -28,6 +28,7 @@ Encore
       * Each of these is an entrypoint for a different Vue app
       */
     .addEntry('home', './assets/js/home.js')
+    .addEntry('page', './assets/js/page.js')
     .addEntry('game', './assets/js/game.js')
     .addEntry('streamer', './assets/js/streamer.js')
     .addEntry('topic-selector', './assets/js/topicSelector.js')
