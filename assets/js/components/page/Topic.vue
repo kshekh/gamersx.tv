@@ -15,7 +15,7 @@
             <img :width="image.width" :height="image.height" :src="image.url">
           </div>
           <div>
-            <span class="text-gray-800 bg-red-400 p-1 rounded-sm">
+            <span class="text-gray-800 bg-twitch p-1 rounded-sm">
               {{ title }}
             </span>
           </div>
@@ -28,9 +28,6 @@
           v-bind="embed"
         ></component>
 
-        <div class="flex flex-row items-center justify-between">
-          <div class="text-lg">{{ title }}</div>
-        </div>
       </div>
 
     </div>
