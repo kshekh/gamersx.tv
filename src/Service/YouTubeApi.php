@@ -79,7 +79,7 @@ class YouTubeApi
         return $this->service->search->listSearch('snippet', $queryParams);
     }
 
-    public function searchLiveChannels($query, $first, $before, $after)
+    public function searchLiveChannels($query, $first=25, $before=null, $after=null)
     {
         $queryParams = [
             'q' => $query,
@@ -91,7 +91,7 @@ class YouTubeApi
         return $this->getPaginatedQuery($queryParams, $first, $before, $after);
     }
 
-    public function searchPopularVideos($query, $first, $before, $after)
+    public function searchPopularVideos($query, $first=25, $before=null, $after=null)
     {
         $queryParams = [
             'q' => $query,

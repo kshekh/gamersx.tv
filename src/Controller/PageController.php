@@ -27,13 +27,13 @@ class PageController extends AbstractController
         ]);
     }
     /**
-     * @Route("/query/{id}", name="querty")
+     * @Route("/query/{query}", name="query")
      */
-    public function query(YouTubeApi $youtube, $id): Response
+    public function query(YouTubeApi $youtube, $query): Response
     {
         return $this->render('page/index.html.twig', [
             'dataUrl' => $this->generateUrl('query_api', [
-                'id' => $id
+                'query' => $query
             ])
         ]);
     }
@@ -60,29 +60,7 @@ class PageController extends AbstractController
                     'height' => $imageInfo->getHeight(),
                 ];
 
-                $embeds = array_map(function($embed) {
-                    $title = $embed->getSnippet()->getDescription();
-                    $embedData = [
-                        'video' => $embed->getId()->getVideoId(),
-                        'elementId' => 'embed-'.sha1($title)
-                    ];
-
-                    return [
-                        'componentName' => 'EmbedContainer',
-                        'embedName' => 'YouTubeEmbed',
-                        'showOnline' => TRUE,
-                        'onlineDisplay' => [
-                            'title' => $title,
-                            'showEmbed' => TRUE,
-                            'showArt' => TRUE,
-                        ],
-                        'offlineDisplay' => [],
-                        'image' => [],
-                        'link' => '',
-                        'embedData' => $embedData,
-                    ];
-
-                }, $topNine);
+                $embeds = array_map(array($this, 'youtubeResultToEmbedContainer'), $topNine);
 
                 return [
                     'topic' => [
@@ -113,27 +91,75 @@ class PageController extends AbstractController
     }
 
     /**
-     * @Route("/query/{id}/api", name="query_api")
+     * @Route("/query/{query}/api", name="query_api")
      */
-    public function apiquery(YouTubeApi $youtube, ThemeInfo $themeInfoService,
-        CacheInterface $gamersxCache, $id): Response
+    public function apiQuery(YouTubeApi $youtube, ThemeInfo $themeInfoService,
+        CacheInterface $gamersxCache, $query): Response
     {
-        $queryInfo = $gamersxCache->get("query-${id}",
-            function (ItemInterface $item) use ($id, $youtube, $themeInfoService) {
-                $query = $youtube->getqueryInfo($id)->getItems();
-                $themeInfo = $themeInfoService->getThemeInfo($id, HomeRowItem::TYPE_query);
-                $topNine = $youtube->getPopularqueryVideos($id, 9)->getItems();
+        $queryInfo = $gamersxCache->get("query-${query}",
+            function (ItemInterface $item) use ($query, $youtube, $themeInfoService) {
+                $themeInfo = $themeInfoService->getThemeInfo($query, HomeRowItem::TYPE_YOUTUBE);
+
+                $topEight = $youtube->searchPopularVideos($query, 8)->getItems();
+                $topEightEmbeds = array_map(array($this, 'youtubeResultToEmbedContainer'), $topEight);
+
+                $topLive = $youtube->searchLiveChannels($query)->getItems()[0];
+
+                $imageInfo = $topLive->getSnippet()->getThumbnails();
+                $imageInfo = $imageInfo->getMedium() ? $imageInfo->getMedium() : $imageInfo->getStandard();
+                $image = [
+                    'url' => $imageInfo->getUrl(),
+                    'class' => 'profile-pic',
+                    'width' => $imageInfo->getWidth(),
+                    'height' => $imageInfo->getHeight(),
+                ];
 
                 return [
-                    'info' => $query[0],
-                    'streams' => $topNine,
-                    // 'viewers' => $totalViewers,
-                    // 'streamers' => $totalStreamers,
-                    'theme' => $themeInfo
+                    'topic' => [
+                        'theme' => $themeInfo,
+                        'image' => $image,
+                        'title' => $topLive->getSnippet()->getTitle(),
+                        'embed' => $this->youtubeResultToEmbedContainer($topLive),
+                    ],
+                    'tabs' => [
+                        [
+                            'name' => 'Top Videos',
+                            'componentName' => 'EmbedTab',
+                            'data' => [
+                                'streams' => $topEightEmbeds,
+                            ],
+                        ], [
+                            'name' => 'Query Info',
+                            'componentName' => 'About',
+                            'data' => [
+                                'description' => 'These are YouTube\'s most popular gaming videos for '.$query,
+                            ]
+                        ]
+                    ],
                 ];
             });
 
         return $this->json($queryInfo);
+    }
+
+    private function youtubeResultToEmbedContainer($embed) {
+        return [
+            'componentName' => 'EmbedContainer',
+            'embedName' => 'YouTubeEmbed',
+            'showOnline' => TRUE,
+            'onlineDisplay' => [
+                'title' => $title = $embed->getSnippet()->getDescription(),
+                'showEmbed' => TRUE,
+                'showArt' => TRUE,
+            ],
+            'offlineDisplay' => [],
+            'image' => [],
+            'link' => '',
+            'embedData' => [
+                'video' => $embed->getId()->getVideoId(),
+                'elementId' => 'embed-'.sha1($title)
+            ]
+        ];
     }
 
 }
