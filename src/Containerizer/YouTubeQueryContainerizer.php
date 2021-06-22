@@ -37,6 +37,12 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
             return Array();
         }
 
+        if ($homeRowItem->getLinkType() === HomeRowItem::LINK_TYPE_GAMERSX) {
+            $link = '/query/'.$query;
+        } else {
+            $link = 'https://www.youtube.com/v/'.$broadcast->getId()->getVideoId();
+        }
+
         foreach ($broadcasts->getItems() as $i => $broadcast) {
             $snippet = $broadcast->getSnippet();
 
@@ -63,7 +69,7 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
                 'rowName' => $homeRowItem->getHomeRow()->getTitle(),
                 'sortIndex' => $homeRowItem->getSortIndex(),
                 'image' => NULL,
-                'link' => 'https://www.youtube.com/v/'.$broadcast->getId()->getVideoId(),
+                'link' => $link,
                 'componentName' => 'EmbedContainer',
                 'embedName' => 'YouTubeEmbed',
                 'embedData' => [

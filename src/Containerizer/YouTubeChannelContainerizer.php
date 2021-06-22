@@ -39,8 +39,6 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
             return Array();
         }
 
-        $rowName = $homeRowItem->getHomeRow()->getTitle();
-
         if ($broadcast === NULL) {
             $title = $info->getSnippet()->getTitle();
             if ($info->getSnippet()->getCustomURL() !== NULL) {
@@ -54,6 +52,9 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
             $link = 'https://www.youtube.com/v/'.$broadcast->getId()->getVideoId();
         }
 
+        if ($homeRowItem->getLinkType() === HomeRowItem::LINK_TYPE_GAMERSX) {
+            $link = '/channel/'.$info->getId();
+        }
 
         if (($broadcast === NULL && $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_ART) ||
             $homeRowItem->getShowArt() === TRUE) {
