@@ -48,33 +48,29 @@ class PageController extends AbstractController
             function (ItemInterface $item) use ($id, $youtube, $themeInfoService) {
                 $channel = $youtube->getChannelInfo($id)->getItems()[0];
                 $themeInfo = $themeInfoService->getThemeInfo($id, HomeRowItem::TYPE_CHANNEL);
-                $topNine = $youtube->getPopularChannelVideos($id, 9)->getItems();
 
-                $imageInfo = $channel->getSnippet()->getThumbnails();
-                $imageInfo = $imageInfo->getMedium() ? $imageInfo->getMedium() : $imageInfo->getStandard();
+                $broadcast = $youtube->getLiveChannel($id)->getItems();
+                if (count($broadcast) == 1) {
+                    $topicVideo = $broadcast[0];
+                } else {
+                    $topicVideo = $youtube->getRecentChannelVideos($id, 1)->getItems()[0];
+                }
 
-                $image = [
-                    'url' => $imageInfo->getUrl(),
-                    'class' => 'profile-pic',
-                    'width' => $imageInfo->getWidth(),
-                    'height' => $imageInfo->getHeight(),
-                ];
-
-                $embeds = array_map(array($this, 'youtubeResultToEmbedContainer'), $topNine);
+                $topEight = $youtube->getPopularChannelVideos($id, 8)->getItems();
 
                 return [
                     'topic' => [
                         'theme' => $themeInfo,
-                        'image' => $image,
+                        'image' => $this->youtubeChannelInfoToImage($channel),
                         'title' => $channel->getSnippet()->getTitle(),
-                        'embed' => $embeds[0],
+                        'embed' => $this->youtubeResultToEmbedContainer($topicVideo),
                     ],
                     'tabs' => [
                         [
                             'name' => 'Top Videos',
                             'componentName' => 'EmbedTab',
                             'data' => [
-                                'streams' => array_slice($embeds, 1, 8),
+                                'streams' => array_map(array($this, 'youtubeResultToEmbedContainer'), $topEight),
                             ],
                         ], [
                             'name' => 'About',
@@ -100,33 +96,50 @@ class PageController extends AbstractController
             function (ItemInterface $item) use ($query, $youtube, $themeInfoService) {
                 $themeInfo = $themeInfoService->getThemeInfo($query, HomeRowItem::TYPE_YOUTUBE);
 
-                $topEight = $youtube->searchPopularVideos($query, 8)->getItems();
-                $topEightEmbeds = array_map(array($this, 'youtubeResultToEmbedContainer'), $topEight);
+                // Get all of our YT info
+                $topLive = $youtube->searchLiveChannels($query, 1)->getItems();
+                $topFour = $youtube->searchPopularVideos($query, 4)->getItems();
 
-                $topLive = $youtube->searchLiveChannels($query)->getItems()[0];
+                $allResults = array_merge($topLive, $topFour);
 
-                $imageInfo = $topLive->getSnippet()->getThumbnails();
-                $imageInfo = $imageInfo->getMedium() ? $imageInfo->getMedium() : $imageInfo->getStandard();
-                $image = [
-                    'url' => $imageInfo->getUrl(),
-                    'class' => 'profile-pic',
-                    'width' => $imageInfo->getWidth(),
-                    'height' => $imageInfo->getHeight(),
-                ];
+                $channelIds = array_map(function($result) {
+                    return $result->getSnippet()->getChannelId();
+                }, $allResults);
+                $channelInfos = $youtube->getChannelInfo($channelIds)->getItems();
+
+                // Process the API results into embeds suitable for Vue templates
+                $embeds = Array();
+                foreach ($allResults as $result) {
+                    $embed = $this->youtubeResultToEmbedContainer($result);
+                    $embedInfo = array_filter($channelInfos, function($info) use ($result) {
+                        return $info->getId() === $result->getSnippet()->getChannelId();
+                    });
+                    if (count($embedInfo) == 1) {
+                        $info = array_values($embedInfo)[0];
+                        $embed['image'] = $this->youtubeChannelInfoToImage($info);
+                        $embed['onlineDisplay']['showArt'] = TRUE;
+                    }
+                    $embeds[] = $embed;
+                }
+
+                // Don't display art for the first (live) results, it's laid out differently with the theme
+                $topicImage = $embeds[0]['image'];
+                $embeds[0]['image'] = [];
+                $embeds[0]['onlineDisplay']['showArt'] = FALSE;
 
                 return [
                     'topic' => [
                         'theme' => $themeInfo,
-                        'image' => $image,
                         'title' => $query,
-                        'embed' => $this->youtubeResultToEmbedContainer($topLive),
+                        'image' => $topicImage,
+                        'embed' => $embeds[0],
                     ],
                     'tabs' => [
                         [
                             'name' => 'Top Videos',
                             'componentName' => 'EmbedTab',
                             'data' => [
-                                'streams' => $topEightEmbeds,
+                                'streams' => array_slice($embeds, 1, 4),
                             ],
                         ], [
                             'name' => 'Query Info',
@@ -143,14 +156,15 @@ class PageController extends AbstractController
     }
 
     private function youtubeResultToEmbedContainer($embed) {
+        $title = "<".$embed->getSnippet()->getChannelTitle() . "> " . $embed->getSnippet()->getDescription();
         return [
             'componentName' => 'EmbedContainer',
             'embedName' => 'YouTubeEmbed',
             'showOnline' => TRUE,
             'onlineDisplay' => [
-                'title' => $title = $embed->getSnippet()->getDescription(),
+                'title' => $title,
                 'showEmbed' => TRUE,
-                'showArt' => TRUE,
+                'showArt' => FALSE,
             ],
             'offlineDisplay' => [],
             'image' => [],
@@ -160,6 +174,18 @@ class PageController extends AbstractController
                 'elementId' => 'embed-'.sha1($title)
             ]
         ];
+    }
+
+    private function youtubeChannelInfoToImage($info) {
+        $imageInfo = $info->getSnippet()->getThumbnails();
+        $imageInfo = $imageInfo->getMedium() ? $imageInfo->getMedium() : $imageInfo->getStandard();
+        return [
+            'url' => $imageInfo->getUrl(),
+            'class' => 'profile-pic',
+            'width' => $imageInfo->getWidth(),
+            'height' => $imageInfo->getHeight(),
+        ];
+
     }
 
 }

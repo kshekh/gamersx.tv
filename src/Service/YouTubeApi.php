@@ -26,21 +26,45 @@ class YouTubeApi
         return $this->service->videos->listVideos('snippet', $queryParams);
     }
 
+    public function getLiveChannel($channelId)
+    {
+        $queryParams = [
+            'part' => 'snippet',
+            'channelId' => $channelId,
+            'eventType' => 'live',
+            'type' => 'video',
+            'videoCategoryId' => '20',
+        ];
+
+        return $this->getPaginatedQuery($queryParams, 1, null, null);
+    }
 
     public function getPopularChannelVideos($channelId, $first=8, $before=null, $after=null)
     {
         $queryParams = [
             'part' => 'snippet',
             'channelId' => $channelId,
-            'order' => 'videoCount',
+            'order' => 'viewCount',
             'videoCategoryId' => '20',
             'type' => 'video',
         ];
 
         return $this->getPaginatedQuery($queryParams, $first, $before, $after);
-
-
     }
+
+    public function getRecentChannelVideos($channelId, $first=8, $before=null, $after=null)
+    {
+        $queryParams = [
+            'part' => 'snippet',
+            'channelId' => $channelId,
+            'order' => 'date',
+            'videoCategoryId' => '20',
+            'type' => 'video',
+        ];
+
+        return $this->getPaginatedQuery($queryParams, $first, $before, $after);
+    }
+
     public function searchChannels($query, $first=25, $before=null, $after=null)
     {
         $queryParams = [
@@ -62,21 +86,6 @@ class YouTubeApi
         ];
 
         return $this->service->channels->listChannels('snippet', $queryParams);
-    }
-
-    public function getLiveChannel($channelId)
-    {
-        $queryParams = [
-            'channelId' => $channelId,
-            'eventType' => 'live',
-            'order' => 'viewCount',
-            'type' => 'video',
-            'videoCategoryId' => '20',
-            'maxResults' => 25,
-
-        ];
-
-        return $this->service->search->listSearch('snippet', $queryParams);
     }
 
     public function searchLiveChannels($query, $first=25, $before=null, $after=null)
