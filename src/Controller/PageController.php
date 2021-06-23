@@ -118,7 +118,7 @@ class PageController extends AbstractController
                     'topic' => [
                         'theme' => $themeInfo,
                         'image' => $image,
-                        'title' => $topLive->getSnippet()->getTitle(),
+                        'title' => $query,
                         'embed' => $this->youtubeResultToEmbedContainer($topLive),
                     ],
                     'tabs' => [

@@ -6,9 +6,10 @@
         v-bind="topicData"
       ></topic>
 
-      <div class="border rounded mt-12">
-        <button v-for="(tab, index) in tabs" @click="displayTab = index;" type="button">
-          <span class="text-sm font-light pt-12 p-4">{{ tab.name }}</span>
+      <div class="border-b-2 mt-12">
+        <button v-for="(tab, index) in tabs" @click="displayTab = index;" type="button"
+          v-bind:class="{ 'bg-twitch text-black': isActiveTab(index)  }" class="px-4 pt-4 pb-2 border-2 border-b-0 rounded-t-xl" >
+          <span class="text-lg font-light p-4">{{ tab.name }}</span>
         </button>
       </div>
 
@@ -42,6 +43,11 @@ export default {
       tabs: [],
       topicData: false,
       themeUrls: {},
+    }
+  },
+  methods: {
+    isActiveTab: function(tabIndex) {
+      return tabIndex == this.displayTab;
     }
   },
   mounted: function() {
