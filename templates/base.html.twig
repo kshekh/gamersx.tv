@@ -35,8 +35,11 @@
         <div class="container w-full mx-auto px-6">
           {% block body %}{% endblock %}
         </div>
+
+        <hr class="border-current pt-6">
         {% block footer %}
-        <div class="w-full p-6">
+
+        <div class="w-full">
             <div id="footer" class="flex flex-row justify-center space-x-4 h-16 text-base" >
                 <div>&copy; 2021 GamersX</div>
                 <div class="underline"><a href="{{ path('terms') }}">Terms and Conditions</a></div>

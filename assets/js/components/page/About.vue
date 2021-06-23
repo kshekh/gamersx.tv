@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-6 font-bold text-xl">
+  <div class="p-6 font-bold text-xl">
     <p class="rounded-md text-center text-xl">
       {{ description }}
     </p>
