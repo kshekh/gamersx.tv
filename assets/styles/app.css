@@ -11,3 +11,15 @@ div.box-art {
     height: 332px;
     width: 257px;
 }
+
+p {
+  padding-top: 1rem;
+}
+
+li {
+  padding-left: 2rem;
+}
+
+h2, h3, h4 {
+  padding-top: 2rem;
+}
