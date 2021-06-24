@@ -15,9 +15,9 @@
         ></component>
       </div>
     </div>
-    <div class="flex flex-row flex-wrap justify-between pl-4">
+    <div class="fixed inset-x-2">
       <a :href="link">
-        <div class="text-left justify-self-start">{{ showOnline ? onlineDisplay.title : offlineDisplay.title }}</div>
+        <div class="text-left">{{ showOnline ? onlineDisplay.title : offlineDisplay.title }}</div>
       </a>
     </div>
   </div>

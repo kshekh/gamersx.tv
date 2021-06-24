@@ -5,7 +5,7 @@
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="first()">
         <img alt="cursor-left" class="cursor-pointer" v-show="allowScrolling && (rowIndex > 0)" src="/images/left-arrow.png" />
       </div>
-      <div ref="channelBox" class="flex flex-row p-5 overflow-x-hidden">
+      <div ref="channelBox" class="flex flex-row p-5 overflow-hidden">
         <div ref="channelDivs" v-for="channel in displayChannels">
           <component
             :is="channel.componentName"
