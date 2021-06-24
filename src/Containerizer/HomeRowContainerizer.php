@@ -30,4 +30,15 @@ class HomeRowContainerizer extends LiveContainerizer implements ContainerizerInt
 
         return $this->items;
     }
+
+    protected function sort(): Array
+    {
+        if (array_key_exists('itemSortType', $this->options)) {
+            $sort = $this->options['itemSortType'];
+            if ($sort !== HomeRow::SORT_FIXED) {
+                $this->items = parent::sort();
+            }
+        }
+        return $this->items;
+    }
 }
