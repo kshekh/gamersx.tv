@@ -36,6 +36,7 @@ class HomeController extends AbstractController
                 $thisRow = Array();
                 $thisRow['title'] = $row->getTitle();
                 $thisRow['sortIndex'] = $row->getSortIndex();
+                $thisRow['componentName'] = $row->getLayout();
 
                 $containers = Array();
 

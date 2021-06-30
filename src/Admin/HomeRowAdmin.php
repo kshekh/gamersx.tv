@@ -76,6 +76,10 @@ final class HomeRowAdmin extends AbstractAdmin
                 'editable' => true,
                 'sortable' => false,
             ])
+            ->add('layout', null, [
+                'editable' => false,
+                'sortable' => false,
+            ])
             ->add('options', null, [
                 'editable' => false,
                 'sortable' => false,
@@ -102,6 +106,13 @@ final class HomeRowAdmin extends AbstractAdmin
         $formMapper
             ->add('title')
             ->add('sortIndex')
+            ->add('layout', ChoiceType::class, [
+                'choices' => [
+                    'Classic' => HomeRow::LAYOUT_CLASSIC,
+                    'Custom Art' => HomeRow::LAYOUT_CUSTOM_ART,
+                    'Numbered' => HomeRow::LAYOUT_NUMBERED,
+                ]
+            ])
             ->add('options', SortAndTrimOptionsType::class, [
                 'label' => 'Sort and Trim Options',
                 'required' => false,
@@ -114,6 +125,7 @@ final class HomeRowAdmin extends AbstractAdmin
         $showMapper
             ->add('title')
             ->add('sortIndex')
+            ->add('layout')
             ->add('options')
             ;
     }

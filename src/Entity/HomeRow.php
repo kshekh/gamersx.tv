@@ -30,6 +30,16 @@ class HomeRow
      */
     private $sortIndex;
 
+    const LAYOUT_CLASSIC = 'HomeRow';
+    const LAYOUT_CUSTOM_ART = 'CustomArtRow';
+    const LAYOUT_NUMBERED = 'NumberedRow';
+    /**
+     * The name of the vue component for this row
+     *
+     * @ORM\Column(type="string", length=32)
+     */
+    private $layout;
+
     const SORT_ASC = 'asc';
     const SORT_DESC = 'desc';
     const SORT_FIXED = 'fixed';
@@ -75,6 +85,18 @@ class HomeRow
     public function setSortIndex(?int $sortIndex): self
     {
         $this->sortIndex = $sortIndex;
+
+        return $this;
+    }
+
+    public function getLayout(): ?string
+    {
+        return $this->layout;
+    }
+
+    public function setLayout(string $layout): self
+    {
+        $this->layout = $layout;
 
         return $this;
     }

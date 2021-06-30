@@ -3,20 +3,21 @@
     <div class="container divide-y-4 divide-current my-4 flex-col">
       <div
         v-for="row in settings.rows">
-        <home-row
+        <component
+          :is="row.componentName"
           v-bind:settings="row"
-        ></home-row>
+        ></component>
       </div>
     </div>
   </div>
 </template>
 <script>
 import axios from 'axios';
-import HomeRow from './layout/HomeRow.vue';
+import HomeRow from './front/HomeRow.vue';
 
 export default {
   components: {
-    'home-row': HomeRow
+    'HomeRow': HomeRow
   },
   data: function()  {
     return {

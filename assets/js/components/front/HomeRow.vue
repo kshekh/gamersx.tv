@@ -21,7 +21,7 @@
   </div>
 </template>
 <script>
-import EmbedContainer from './EmbedContainer.vue'
+import EmbedContainer from '../layout/EmbedContainer.vue'
 
 require('swiped-events');
 
