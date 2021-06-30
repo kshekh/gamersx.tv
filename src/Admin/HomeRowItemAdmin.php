@@ -19,6 +19,8 @@ use Sonata\AdminBundle\Form\Type\ModelType;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
+use Vich\UploaderBundle\Form\Type\VichImageType;
+
 final class HomeRowItemAdmin extends AbstractAdmin
 {
 
@@ -92,7 +94,12 @@ final class HomeRowItemAdmin extends AbstractAdmin
     {
         $formMapper
             ->add('sortIndex')
-            ->add('showArt')
+            ->add('showArt', null, [
+                'label' => 'Show API Thumbnail'
+            ])
+            ->add('customArtFile', VichImageType::class, [
+                'required' => false,
+            ])
             ->add('offlineDisplayType', ChoiceType::class, [
                 'choices' => [
                     'Thumbnail' => HomeRowItem::OFFLINE_DISPLAY_ART,
@@ -159,6 +166,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('itemType')
             ->add('sortIndex')
             ->add('showArt')
+            ->add('customArt')
             ->add('offlineDisplayType')
             ->add('linkType')
             ;

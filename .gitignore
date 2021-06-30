@@ -1,5 +1,6 @@
-# Saved theme files
+# Saved theme and custom art files
 /public/images/themes/
+/public/images/items/
 
 # Node artifact files
 node_modules/

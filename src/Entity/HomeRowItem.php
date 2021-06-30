@@ -3,10 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\HomeRowItemRepository;
+use Symfony\Component\HttpFoundation\File\{ File, UploadedFile };
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
+ * @Vich\Uploadable
  */
 class HomeRowItem
 {
@@ -60,6 +63,18 @@ class HomeRowItem
      * @ORM\Column(type="boolean")
      */
     private $showArt;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $customArt;
+
+    /**
+     * @Vich\UploadableField(mapping="hri_art", fileNameProperty="customArt")
+     *
+     * @var File|null
+     */
+    private $customArtFile;
 
     const OFFLINE_DISPLAY_ART = 'art';
     const OFFLINE_DISPLAY_STREAM = 'stream';
@@ -158,6 +173,38 @@ class HomeRowItem
         $this->showArt = $showArt;
 
         return $this;
+    }
+
+    public function getCustomArt(): ?string
+    {
+        return $this->customArt;
+    }
+
+    public function setCustomArt(?string $customArt): self
+    {
+        $this->customArt = $customArt;
+
+        return $this;
+    }
+
+    public function getCustomArtFile(): ?File
+    {
+        return $this->customArtFile;
+    }
+
+    public function setCustomArtFile(?File $customArtFile): self
+    {
+        $this->customArtFile = $customArtFile;
+        if ($this->customArtFile instanceof UploadedFile) {
+            $this->updatedAt = new \DateTime('now');
+        }
+
+        return $this;
+    }
+
+    public function getCustomArtSlug(): ?string
+    {
+        return 'hri-'.$this->getId().'-customArt';
     }
 
     public function getOfflineDisplayType(): ?string
