@@ -6,18 +6,22 @@ use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
 use App\Service\TwitchApi;
 use App\Service\YouTubeApi;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class ContainerizerFactory
 {
     private $twitch;
     private $youtube;
     private $logger;
+    private $uploader;
     private $containerizers;
 
-    public function __construct(TwitchApi $twitch, YouTubeApi $youtube, \Psr\Log\LoggerInterface $logger)
+    public function __construct(TwitchApi $twitch, YouTubeApi $youtube, UploaderHelper $uploader,
+        \Psr\Log\LoggerInterface $logger)
     {
         $this->twitch = $twitch;
         $this->youtube = $youtube;
+        $this->uploader = $uploader;
         $this->logger = $logger;
     }
 
@@ -41,6 +45,7 @@ class ContainerizerFactory
                 break;
             }
             $containerized->setLogger($this->logger);
+            $containerized->setUploader($this->uploader);
             return $containerized;
         } elseif ($toBeContainerized instanceof HomeRow) {
             return new HomeRowContainerizer($toBeContainerized, $this);

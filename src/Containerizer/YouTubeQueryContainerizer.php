@@ -73,6 +73,7 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
                 'componentName' => 'EmbedContainer',
                 'embedName' => 'YouTubeEmbed',
                 'embedData' => [
+                    'overlay' => $this->uploader->asset($this->homeRowItem, 'customArtFile'),
                     'video' => $broadcast->getId()->getVideoId(),
                     'elementId' => 'embed-'.sha1($snippet->getTitle())
                 ]

@@ -35,6 +35,7 @@ services:
         arguments:
             - '@App\Service\TwitchApi'
             - '@App\Service\YouTubeApi'
+            - '@Vich\UploaderBundle\Templating\Helper\UploaderHelper'
             - '@logger'
             - !tagged_iterator gamersx.containerizer
 

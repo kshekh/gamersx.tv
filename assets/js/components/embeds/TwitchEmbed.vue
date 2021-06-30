@@ -1,6 +1,7 @@
 <template>
 	<div class="w-auto p-4">
-    <div :id="embedData.elementId"></div>
+    <img v-if="hasOverlay" alt="Embed's Custom Overlay" :src="embedData.overlay">
+    <div :id="embedData.elementId" v-bind:class="{ hidden: hasOverlay }"></div>
 	</div>
 </template>
 
@@ -9,6 +10,11 @@ export default {
 	name: 'TwitchEmbed',
 	props: {
     embedData: Object,
+  },
+  computed: {
+    hasOverlay: function() {
+      return this.embedData.overlay;
+    },
   },
   data: function() {
     return {

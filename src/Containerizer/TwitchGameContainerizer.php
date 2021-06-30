@@ -84,6 +84,7 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
                 'componentName' => 'EmbedContainer',
                 'embedName' => 'TwitchEmbed',
                 'embedData' => [
+                    'overlay' => $this->uploader->asset($this->homeRowItem, 'customArtFile'),
                     'channel' => $broadcast['user_login'],
                     'elementId' => 'embed-'.sha1($title),
                 ],

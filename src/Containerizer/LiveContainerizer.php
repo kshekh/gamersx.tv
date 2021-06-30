@@ -5,6 +5,7 @@ namespace App\Containerizer;
 use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
 use Psr\Log\LoggerAwareInterface;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 abstract class LiveContainerizer implements ContainerizerInterface, LoggerAwareInterface
 {
@@ -12,11 +13,16 @@ abstract class LiveContainerizer implements ContainerizerInterface, LoggerAwareI
     protected $logger;
     protected $items;
     protected $options;
+    protected $uploader;
 
     abstract public function getContainers(): Array;
 
     public function setLogger(\Psr\Log\LoggerInterface $logger) {
         $this->logger = $logger;
+    }
+
+    public function setUploader(UploaderHelper $uploader) {
+        $this->uploader = $uploader;
     }
 
     protected function sort(): Array

@@ -67,6 +67,7 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
 
         if ($broadcast !== NULL || $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_STREAM) {
             $embedData = [
+                'overlay' => $this->uploader->asset($this->homeRowItem, 'customArtFile'),
                 'channel' => $info['login'],
                 'elementId' => 'embed-'.sha1($title)
             ];

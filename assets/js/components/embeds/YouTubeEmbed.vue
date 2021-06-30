@@ -1,5 +1,6 @@
 <template>
   <div class="w-auto p-4">
+    <img v-if="hasOverlay" alt="Embed's Custom Overlay" :src="embedData.overlay">
     <div :id="embedData.elementId"></div>
   </div>
 </template>
@@ -18,6 +19,11 @@ export default {
       embed: {},
       isPlaying: false,
     }
+  },
+  computed: {
+    hasOverlay: function() {
+      return this.embedData.overlay;
+    },
   },
   methods: {
     playerStateChanged: function(e) {
