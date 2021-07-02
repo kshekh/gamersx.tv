@@ -1,27 +1,43 @@
 <template>
-	<div class="w-auto p-4">
-    <img v-if="hasOverlay" alt="Embed's Custom Overlay" :src="embedData.overlay">
-    <div :id="embedData.elementId" v-bind:class="{ hidden: hasOverlay }"></div>
-	</div>
+  <div :id="embedData.elementId"></div>
 </template>
 
 <script>
 export default {
-	name: 'TwitchEmbed',
-	props: {
+  name: 'TwitchEmbed',
+  props: {
     embedData: Object,
-  },
-  computed: {
-    hasOverlay: function() {
-      return this.embedData.overlay;
-    },
   },
   data: function() {
     return {
       height: 300,
       width: 540,
       embed: {},
+      embedPlaying: false,
     }
+  },
+  methods: {
+    startPlayer: function() {
+      if (!this.embedPlaying) {
+        this.embed.play();
+        this.embedPlaying = true;
+      }
+    },
+    stopPlayer: function() {
+      if (this.embedPlaying) {
+        this.embed.pause();
+        this.embedPlaying = false;
+      }
+    },
+    isPlaying: function() {
+      return this.embedPlaying;
+    },
+    setIsPlaying: function() {
+      this.embedPlaying = true;
+    },
+    setIsNotPlaying: function() {
+      this.embedPlaying = false;
+    },
   },
   mounted: function() {
     this.embed = new Twitch.Embed(this.embedData.elementId, {
@@ -34,6 +50,11 @@ export default {
       muted: true,
       parent: window.location.hostname
     });
+
+    this.embed.addEventListener(Twitch.Player.PLAY, this.setIsPlaying);
+    this.embed.addEventListener(Twitch.Player.PAUSE, this.setIsNotPlaying);
+    this.embed.addEventListener(Twitch.Player.ENDED, this.setIsNotPlaying);
+    this.embed.addEventListener(Twitch.Player.OFFLINE, this.setIsNotPlaying);
   }
 }
 </script>

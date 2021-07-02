@@ -3,13 +3,18 @@
 @tailwind utilities;
 
 div.profile-pic {
-    height: 332px;
-    width: 332px;
+  height: 332px;
+  width: 332px;
 }
 
 div.box-art {
-    height: 332px;
-    width: 257px;
+  height: 332px;
+  width: 257px;
+}
+
+div.embed-frame {
+  height: 300px;
+  width: 540px;
 }
 
 p {

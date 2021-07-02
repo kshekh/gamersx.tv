@@ -1,6 +1,5 @@
 <template>
-  <div class="w-auto p-4">
-    <img v-if="hasOverlay" alt="Embed's Custom Overlay" :src="embedData.overlay">
+  <div>
     <div :id="embedData.elementId"></div>
   </div>
 </template>
@@ -10,36 +9,40 @@ export default {
   name: 'YouTubeEmbed',
   props: {
     embedData: Object,
-    elementId: String,
   },
   data: function() {
     return {
       height: 300,
       width: 540,
       embed: {},
-      isPlaying: false,
+      embedPlaying: false,
     }
-  },
-  computed: {
-    hasOverlay: function() {
-      return this.embedData.overlay;
-    },
   },
   methods: {
     playerStateChanged: function(e) {
       if (e.data == YT.PlayerState.PAUSED) {
-        this.isPlaying = false;
+        this.embedPlaying = false;
       } else if (e.data == YT.PlayerState.PLAYING) {
         // Don't swap the order of these or you'll stop this embed, too
-        this.$root.$emit('yt-embed-playing');
-        this.isPlaying = true;
+        this.$root.$emit('yt-embed-playing', this.embedData.elementId);
+        this.embedPlaying = true;
       }
     },
-    stopPlayer: function() {
-      if (this.isPlaying) {
-        this.embed.pauseVideo();
-        this.isPlaying = false;
+    startPlayer: function() {
+      if (!this.embedPlaying) {
+        this.embed.mute();
+        this.embed.playVideo();
+        this.embedPlaying = true;
       }
+    },
+    stopPlayer: function(elementId) {
+      if (this.embedPlaying && !(elementId && this.embedData.elementId === elementId)) {
+        this.embed.pauseVideo();
+        this.embedPlaying = false;
+      }
+    },
+    isPlaying: function() {
+      return this.embedPlaying;
     },
   },
   mounted: function() {
