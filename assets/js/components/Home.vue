@@ -14,10 +14,12 @@
 <script>
 import axios from 'axios';
 import HomeRow from './front/HomeRow.vue';
+import CustomBgArtRow from './front/CustomBgArtRow.vue';
 
 export default {
   components: {
-    'HomeRow': HomeRow
+    'HomeRow': HomeRow,
+    'CustomBgArtRow': CustomBgArtRow,
   },
   data: function()  {
     return {

@@ -100,6 +100,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('customArtFile', VichImageType::class, [
                 'required' => false,
             ])
+            ->add('overlayArtFile', VichImageType::class, [
+                'required' => false,
+            ])
             ->add('offlineDisplayType', ChoiceType::class, [
                 'choices' => [
                     'Thumbnail' => HomeRowItem::OFFLINE_DISPLAY_ART,
@@ -167,6 +170,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('sortIndex')
             ->add('showArt')
             ->add('customArt')
+            ->add('overlayArt')
             ->add('offlineDisplayType')
             ->add('linkType')
             ;

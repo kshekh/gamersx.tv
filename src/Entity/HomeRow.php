@@ -31,7 +31,7 @@ class HomeRow
     private $sortIndex;
 
     const LAYOUT_CLASSIC = 'HomeRow';
-    const LAYOUT_CUSTOM_ART = 'CustomArtRow';
+    const LAYOUT_CUSTOM_BG_ART = 'CustomBgArtRow';
     const LAYOUT_NUMBERED = 'NumberedRow';
     /**
      * The name of the vue component for this row

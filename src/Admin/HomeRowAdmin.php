@@ -109,7 +109,7 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('layout', ChoiceType::class, [
                 'choices' => [
                     'Classic' => HomeRow::LAYOUT_CLASSIC,
-                    'Custom Art' => HomeRow::LAYOUT_CUSTOM_ART,
+                    'Custom Background' => HomeRow::LAYOUT_CUSTOM_BG_ART,
                     'Numbered' => HomeRow::LAYOUT_NUMBERED,
                 ]
             ])

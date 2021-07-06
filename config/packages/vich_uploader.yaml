@@ -26,9 +26,15 @@ vich_uploader:
            namer:
                service: Vich\UploaderBundle\Naming\PropertyNamer
                options: { property: 'artBackgroundSlug' }
-       hri_art:
+       hri_custom:
            uri_prefix: /images/items
            upload_destination: '%kernel.project_dir%/public/images/items'
            namer:
                service: Vich\UploaderBundle\Naming\PropertyNamer
                options: { property: 'customArtSlug' }
+       hri_overlay:
+           uri_prefix: /images/items
+           upload_destination: '%kernel.project_dir%/public/images/items'
+           namer:
+               service: Vich\UploaderBundle\Naming\PropertyNamer
+               options: { property: 'overlayArtSlug' }

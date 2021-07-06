@@ -83,7 +83,7 @@ export default {
         (!this.showOnline && this.offlineDisplay.showArt)
     },
     hasOverlay: function() {
-      return 'overlay' in this.embedData && this.embedData.overlay;
+      return this.embedData !== null && 'overlay' in this.embedData && this.embedData.overlay;
     },
   },
   mounted: function() {

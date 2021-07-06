@@ -69,11 +69,12 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
                 'rowName' => $homeRowItem->getHomeRow()->getTitle(),
                 'sortIndex' => $homeRowItem->getSortIndex(),
                 'image' => NULL,
+                'customArt' => $this->uploader->asset($this->homeRowItem, 'customArtFile'),
                 'link' => $link,
                 'componentName' => 'EmbedContainer',
                 'embedName' => 'YouTubeEmbed',
                 'embedData' => [
-                    'overlay' => $this->uploader->asset($this->homeRowItem, 'customArtFile'),
+                    'overlay' => $this->uploader->asset($this->homeRowItem, 'overlayArtFile'),
                     'video' => $broadcast->getId()->getVideoId(),
                     'elementId' => 'embed-'.sha1($snippet->getTitle())
                 ]

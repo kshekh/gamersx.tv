@@ -70,11 +70,23 @@ class HomeRowItem
     private $customArt;
 
     /**
-     * @Vich\UploadableField(mapping="hri_art", fileNameProperty="customArt")
+     * @Vich\UploadableField(mapping="hri_custom", fileNameProperty="customArt")
      *
      * @var File|null
      */
     private $customArtFile;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $overlayArt;
+
+    /**
+     * @Vich\UploadableField(mapping="hri_overlay", fileNameProperty="overlayArt")
+     *
+     * @var File|null
+     */
+    private $overlayArtFile;
 
     const OFFLINE_DISPLAY_ART = 'art';
     const OFFLINE_DISPLAY_STREAM = 'stream';
@@ -205,6 +217,38 @@ class HomeRowItem
     public function getCustomArtSlug(): ?string
     {
         return 'hri-'.$this->getId().'-customArt';
+    }
+
+    public function getOverlayArt(): ?string
+    {
+        return $this->overlayArt;
+    }
+
+    public function setOverlayArt(?string $overlayArt): self
+    {
+        $this->overlayArt = $overlayArt;
+
+        return $this;
+    }
+
+    public function getOverlayArtFile(): ?File
+    {
+        return $this->overlayArtFile;
+    }
+
+    public function setOverlayArtFile(?File $overlayArtFile): self
+    {
+        $this->overlayArtFile = $overlayArtFile;
+        if ($this->overlayArtFile instanceof UploadedFile) {
+            $this->updatedAt = new \DateTime('now');
+        }
+
+        return $this;
+    }
+
+    public function getOverlayArtSlug(): ?string
+    {
+        return 'hri-'.$this->getId().'-overlayArt';
     }
 
     public function getOfflineDisplayType(): ?string
