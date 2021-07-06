@@ -29,6 +29,10 @@ h2, h3, h4 {
   padding-top: 2rem;
 }
 
+div.custom-bg {
+  height: 80vh;
+}
+
 div.big-number {
   font-size: 20rem;
   line-height: 1;

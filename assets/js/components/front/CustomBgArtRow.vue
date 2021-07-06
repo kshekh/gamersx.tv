@@ -1,15 +1,10 @@
 <template>
-  <div class="w-full" v-bind:style="customBg">
-
-    <div @swiped-left="forward()" @swiped-right="back()" class="home-row bottom-0 p-6">
-      <div v-if="image" :class="image.class" class="p-4" >
-        <img :width="image.width" :height="image.height" :src="image.url">
+  <div v-bind:style="customBg" @swiped-left="forward()" @swiped-right="back()" class="home-row custom-bg relative">
+    <div class="text-3xl text-left font-bold pl-22 px-12 pt-4 pb-2">{{ settings.title}}</div>
+    <div class="flex flex-row justify-start items-center absolute inset-x-0 bottom-6">
+      <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="back()">
+        <img alt="cursor-left" class="cursor-pointer" src="/images/left-arrow.png" />
       </div>
-      <div class="text-3xl text-left font-bold pl-22 px-12 pt-4 pb-2">{{ settings.title}}</div>
-      <div class="flex flex-row justify-start items-center">
-        <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="back()">
-          <img alt="cursor-left" class="cursor-pointer" src="/images/left-arrow.png" />
-        </div>
       <div ref="channelBox" class="flex flex-row p-5 overflow-hidden">
         <div ref="channelDivs" v-for="channel in displayChannels">
           <component
@@ -25,7 +20,6 @@
 
     </div>
   </div>
-</div>
 </template>
 <script>
 import EmbedContainer from '../layout/EmbedContainer.vue'
