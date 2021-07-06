@@ -1,5 +1,5 @@
 <template>
-  <div class="transform transition-transform hover:scale-110 px-5">
+  <div class="transform transition-transform hover:scale-110 py-8 px-5">
     <div class="flex flex-row">
       <div v-if="showArt">
         <a :href="link">
@@ -9,7 +9,7 @@
         </a>
       </div>
       <div class="embed-frame" v-if="showEmbed && embedData">
-        <div class="w-auto p-4" v-on:mouseenter="mouseEntered" v-on:mouseleave="mouseLeft">
+        <div v-on:mouseenter="mouseEntered" v-on:mouseleave="mouseLeft">
           <img v-if="hasOverlay" v-show="displayOverlay" alt="Embed's Custom Overlay" :src="embedData.overlay">
           <component v-show="displayEmbed" ref="embed"
             :is="embedName"
