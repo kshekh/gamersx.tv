@@ -15,11 +15,13 @@
 import axios from 'axios';
 import HomeRow from './front/HomeRow.vue';
 import CustomBgArtRow from './front/CustomBgArtRow.vue';
+import NumberedRow from './front/NumberedRow.vue';
 
 export default {
   components: {
     'HomeRow': HomeRow,
     'CustomBgArtRow': CustomBgArtRow,
+    'NumberedRow': NumberedRow,
   },
   data: function()  {
     return {
