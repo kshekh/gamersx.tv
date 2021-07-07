@@ -31,6 +31,8 @@ h2, h3, h4 {
 
 div.custom-bg {
   height: 80vh;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 div.big-number {
