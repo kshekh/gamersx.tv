@@ -6,35 +6,29 @@ vich_uploader:
            uri_prefix: /images/themes
            upload_destination: '%kernel.project_dir%/public/images/themes'
            namer:
-               service: Vich\UploaderBundle\Naming\PropertyNamer
-               options: { property: 'bannerImageSlug' }
+               service: Vich\UploaderBundle\Naming\Base64Namer
        theme_embed:
            uri_prefix: /images/themes
            upload_destination: '%kernel.project_dir%/public/images/themes'
            namer:
-               service: Vich\UploaderBundle\Naming\PropertyNamer
-               options: { property: 'embedBackgroundSlug' }
+               service: Vich\UploaderBundle\Naming\Base64Namer
        theme_art:
            uri_prefix: /images/themes
            upload_destination: '%kernel.project_dir%/public/images/themes'
            namer:
-               service: Vich\UploaderBundle\Naming\PropertyNamer
-               options: { property: 'customArtSlug' }
+               service: Vich\UploaderBundle\Naming\Base64Namer
        theme_art_background:
            uri_prefix: /images/themes
            upload_destination: '%kernel.project_dir%/public/images/themes'
            namer:
-               service: Vich\UploaderBundle\Naming\PropertyNamer
-               options: { property: 'artBackgroundSlug' }
+               service: Vich\UploaderBundle\Naming\Base64Namer
        hri_custom:
            uri_prefix: /images/items
            upload_destination: '%kernel.project_dir%/public/images/items'
            namer:
-               service: Vich\UploaderBundle\Naming\PropertyNamer
-               options: { property: 'customArtSlug' }
+               service: Vich\UploaderBundle\Naming\Base64Namer
        hri_overlay:
            uri_prefix: /images/items
            upload_destination: '%kernel.project_dir%/public/images/items'
            namer:
-               service: Vich\UploaderBundle\Naming\PropertyNamer
-               options: { property: 'overlayArtSlug' }
+               service: Vich\UploaderBundle\Naming\Base64Namer

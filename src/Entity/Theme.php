@@ -164,11 +164,6 @@ class Theme
         return $this;
     }
 
-    public function getBannerImageSlug(): ?string
-    {
-        return $this->getItemType().'-'.$this->getTopicId().'-banner';
-    }
-
     public function getEmbedBackground(): ?string
     {
         return $this->embedBackground;
@@ -194,11 +189,6 @@ class Theme
         }
 
         return $this;
-    }
-
-    public function getEmbedBackgroundSlug(): ?string
-    {
-        return $this->getItemType().'-'.$this->getTopicId().'-embedbg';
     }
 
     public function getCustomArt(): ?string
@@ -228,11 +218,6 @@ class Theme
         return $this;
     }
 
-    public function getCustomArtSlug(): ?string
-    {
-        return $this->getItemType().'-'.$this->getTopicId().'-customArt';
-    }
-
     public function getArtBackground(): ?string
     {
         return $this->artBackground;
@@ -260,11 +245,6 @@ class Theme
         return $this;
     }
 
-
-    public function getArtBackgroundSlug(): ?string
-    {
-        return $this->getItemType().'-'.$this->getTopicId().'-artBg';
-    }
 
     public function getUpdatedAt(): ?\DateTimeInterface
     {

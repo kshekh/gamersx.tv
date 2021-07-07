@@ -214,11 +214,6 @@ class HomeRowItem
         return $this;
     }
 
-    public function getCustomArtSlug(): ?string
-    {
-        return 'hri-'.$this->getId().'-customArt';
-    }
-
     public function getOverlayArt(): ?string
     {
         return $this->overlayArt;
@@ -244,11 +239,6 @@ class HomeRowItem
         }
 
         return $this;
-    }
-
-    public function getOverlayArtSlug(): ?string
-    {
-        return 'hri-'.$this->getId().'-overlayArt';
     }
 
     public function getOfflineDisplayType(): ?string
