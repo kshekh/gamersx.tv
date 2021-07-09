@@ -9,7 +9,6 @@
         <div ref="channelDivs" v-for="channel in displayChannels">
           <component
             :is="channel.componentName"
-            v-if="showChannel(channel)"
             v-bind="channel"
           ></component>
         </div>

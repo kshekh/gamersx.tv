@@ -12,7 +12,6 @@
           </div>
           <component
             :is="channel.componentName"
-            v-if="showChannel(channel)"
             v-bind="channel"
           ></component>
         </div>

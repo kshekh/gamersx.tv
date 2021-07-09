@@ -6,10 +6,10 @@
         <img alt="cursor-left" class="cursor-pointer" src="/images/left-arrow.png" />
       </div>
       <div ref="channelBox" class="flex flex-row p-5 overflow-hidden">
-        <div ref="channelDivs" v-for="channel in displayChannels">
+        <div ref="channelDivs" v-for="(channel, index) in displayChannels">
           <component
             :is="channel.componentName"
-            v-if="showChannel(channel)"
+            v-show="index === rowIndex"
             v-bind="channel"
           ></component>
         </div>
