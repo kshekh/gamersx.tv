@@ -3,7 +3,7 @@
     <div class="text-3xl text-left font-bold pl-22 px-12 pt-4 pb-2">{{ settings.title}}</div>
     <div class="flex flex-row justify-start items-center absolute inset-x-0 bottom-6">
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="back()">
-        <img alt="cursor-left" class="cursor-pointer" src="/images/left-arrow.png" />
+        <img alt="cursor-left" class="cursor-pointer" v-show="displayChannels.length > 1" src="/images/left-arrow.png" />
       </div>
       <div ref="channelBox" class="flex flex-row p-5 overflow-hidden">
         <div ref="channelDivs" v-for="(channel, index) in displayChannels">
@@ -15,7 +15,7 @@
         </div>
       </div>
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="forward()">
-        <img alt="cursor-right" class="cursor-pointer" src="/images/right-arrow.png" />
+        <img alt="cursor-right" class="cursor-pointer" v-show="displayChannels.length > 1" src="/images/right-arrow.png" />
       </div>
 
     </div>
