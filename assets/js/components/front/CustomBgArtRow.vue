@@ -2,7 +2,7 @@
   <div v-bind:style="customBg" @swiped-left="forward()" @swiped-right="back()" class="home-row custom-bg relative">
     <div class="text-3xl text-left font-bold pl-22 px-12 pt-4 pb-2">{{ settings.title}}</div>
     <div class="flex flex-row justify-start items-center absolute inset-x-0 bottom-6">
-      <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="back()">
+      <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="first()">
         <img alt="cursor-left" class="cursor-pointer" v-show="displayChannels.length > 1 && rowIndex > 0" src="/images/left-arrow.png" />
       </div>
       <div ref="channelBox" class="flex flex-row p-5 overflow-hidden">
