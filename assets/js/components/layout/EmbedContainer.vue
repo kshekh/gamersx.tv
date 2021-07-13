@@ -1,5 +1,8 @@
 <template>
-  <div class="transform transition-transform hover:scale-110 py-8 px-5">
+  <div
+    class="transform transition-transform hover:scale-110 py-8 px-5"
+    v-on:mouseenter="displayTitle = true" v-on:mouseleave="displayTitle = false"
+  >
     <div class="flex flex-row">
       <div v-if="showArt">
         <a :href="link">
@@ -18,9 +21,9 @@
         </div>
       </div>
     </div>
-    <div class="fixed inset-x-2">
+    <div v-show="displayTitle" class="fixed inset-x-2">
       <a :href="link">
-        <div class="text-left">{{ showOnline ? onlineDisplay.title : offlineDisplay.title }}</div>
+        <div class="truncate text-left">{{ showOnline ? onlineDisplay.title : offlineDisplay.title }}</div>
       </a>
     </div>
   </div>
@@ -52,7 +55,8 @@ export default {
   data: function() {
     return {
       displayOverlay: true,
-      displayEmbed: false
+      displayEmbed: false,
+      displayTitle: false,
     };
   },
   methods: {
