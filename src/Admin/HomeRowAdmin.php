@@ -110,6 +110,7 @@ final class HomeRowAdmin extends AbstractAdmin
                 'choices' => [
                     'Classic' => HomeRow::LAYOUT_CLASSIC,
                     'Custom Background' => HomeRow::LAYOUT_CUSTOM_BG_ART,
+                    'Custom Vertical Frame' => HomeRow::LAYOUT_CUSTOM_FRAME_ART,
                     'Numbered' => HomeRow::LAYOUT_NUMBERED,
                 ]
             ])

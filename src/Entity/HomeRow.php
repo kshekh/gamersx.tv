@@ -32,6 +32,7 @@ class HomeRow
 
     const LAYOUT_CLASSIC = 'HomeRow';
     const LAYOUT_CUSTOM_BG_ART = 'CustomBgArtRow';
+    const LAYOUT_CUSTOM_FRAME_ART = 'CustomTallFrameArtRow';
     const LAYOUT_NUMBERED = 'NumberedRow';
     /**
      * The name of the vue component for this row

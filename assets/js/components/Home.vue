@@ -15,12 +15,14 @@
 import axios from 'axios';
 import HomeRow from './front/HomeRow.vue';
 import CustomBgArtRow from './front/CustomBgArtRow.vue';
+import CustomTallFrameArtRow from './front/CustomTallFrameArtRow.vue';
 import NumberedRow from './front/NumberedRow.vue';
 
 export default {
   components: {
     'HomeRow': HomeRow,
     'CustomBgArtRow': CustomBgArtRow,
+    'CustomTallFrameArtRow': CustomTallFrameArtRow,
     'NumberedRow': NumberedRow,
   },
   data: function()  {
