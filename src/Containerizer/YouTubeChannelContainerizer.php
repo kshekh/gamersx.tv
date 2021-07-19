@@ -74,7 +74,7 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
             $embedData = [
                 'overlay' => $this->uploader->asset($this->homeRowItem, 'overlayArtFile'),
                 'video' => $broadcast->getId()->getVideoId(),
-                'elementId' => 'embed-'.sha1($title)
+                'elementId' => uniqid('embed-'),
             ];
         } else {
             $embedData = NULL;

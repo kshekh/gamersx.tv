@@ -69,7 +69,7 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
             $embedData = [
                 'overlay' => $this->uploader->asset($this->homeRowItem, 'overlayArtFile'),
                 'channel' => $info['login'],
-                'elementId' => 'embed-'.sha1($title)
+                'elementId' => uniqid('embed-'),
             ];
         } else {
             $embedData = NULL;
