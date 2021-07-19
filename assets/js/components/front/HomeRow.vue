@@ -1,18 +1,16 @@
 <template>
   <div @swiped-left="forward()" @swiped-right="back()" class="home-row p-6">
     <div class="text-3xl text-left font-bold pl-22 px-12 pt-4 pb-2">{{ settings.title}}</div>
-    <div class="flex flex-row justify-start items-baseline">
+    <div class="flex flex-row justify-start items-center">
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="first()">
         <img alt="cursor-left" class="cursor-pointer" v-show="allowScrolling && (rowIndex > 0)" src="/images/left-arrow.png" />
       </div>
-      <div ref="channelBox" class="w-full flex flex-row p-5 overflow-hidden">
-        <div class="w-full" ref="channelDivs" v-for="channel in displayChannels">
-          <div v-bind:style="customBg(channel)" class="custom-bg relative" >
-            <component class="absolute bottom-6 inset-x-0"
-              :is="channel.componentName"
-              v-bind="channel"
-            ></component>
-          </div>
+      <div ref="channelBox" class="flex flex-row p-5 overflow-hidden">
+        <div ref="channelDivs" v-for="channel in displayChannels">
+          <component
+            :is="channel.componentName"
+            v-bind="channel"
+          ></component>
         </div>
       </div>
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="forward()">

@@ -34,6 +34,11 @@ div.custom-bg {
   background-repeat: no-repeat;
 }
 
+div.full-screen-art {
+  height: 70vh;
+  width: 100%;
+}
+
 div.tall-art {
   height: 70vh;
   width: 600px;

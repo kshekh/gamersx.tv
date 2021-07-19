@@ -1,5 +1,5 @@
 <template>
-  <div v-bind:style="customBg" @swiped-left="forward()" @swiped-right="back()" class="home-row custom-bg relative">
+  <div v-bind:style="customBg" @swiped-left="forward()" @swiped-right="back()" class="home-row custom-bg full-screen-art relative">
     <div class="text-3xl text-left font-bold pl-22 px-12 pt-4 pb-2">{{ settings.title}}</div>
     <div class="flex flex-row justify-center items-center absolute inset-x-0 bottom-6">
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="first()">
