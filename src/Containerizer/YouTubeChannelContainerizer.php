@@ -72,7 +72,6 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
 
         if ($broadcast !== NULL) {
             $embedData = [
-                'overlay' => $this->uploader->asset($this->homeRowItem, 'overlayArtFile'),
                 'video' => $broadcast->getId()->getVideoId(),
                 'elementId' => uniqid('embed-'),
             ];
@@ -91,16 +90,19 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
                     'title' => $title,
                     'showArt' => $homeRowItem->getShowArt(),
                     'showEmbed' => TRUE,
+                    'showOverlay' => TRUE,
                 ],
                 'offlineDisplay' => [
                     'title' => $info->getSnippet()->getTitle(),
                     'showArt' => $homeRowItem->getShowArt() || $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_ART,
                     'showEmbed' => $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_STREAM,
+                    'showOverlay' => $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_OVERLAY,
                 ],
                 'itemType' => $homeRowItem->getItemType(),
                 'rowName' => $homeRowItem->getHomeRow()->getTitle(),
                 'sortIndex' => $homeRowItem->getSortIndex(),
                 'image' => $image ?? NULL,
+                'overlay' => $this->uploader->asset($homeRowItem, 'overlayArtFile'),
                 'customArt' => $this->uploader->asset($homeRowItem, 'customArtFile'),
                 'link' => $link,
                 'componentName' => 'EmbedContainer',

@@ -106,6 +106,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('offlineDisplayType', ChoiceType::class, [
                 'choices' => [
                     'Thumbnail' => HomeRowItem::OFFLINE_DISPLAY_ART,
+                    'Overlay' => HomeRowItem::OFFLINE_DISPLAY_OVERLAY,
                     'Offline Stream Embed' => HomeRowItem::OFFLINE_DISPLAY_STREAM,
                     'Don\'t Show' => HomeRowItem::OFFLINE_DISPLAY_NONE,
                 ]

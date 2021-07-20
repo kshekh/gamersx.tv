@@ -89,6 +89,7 @@ class HomeRowItem
     private $overlayArtFile;
 
     const OFFLINE_DISPLAY_ART = 'art';
+    const OFFLINE_DISPLAY_OVERLAY = 'overlay';
     const OFFLINE_DISPLAY_STREAM = 'stream';
     const OFFLINE_DISPLAY_NONE = 'none';
     /**

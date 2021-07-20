@@ -1,9 +1,10 @@
 <template>
   <div
     class="transform transition-transform hover:scale-110 py-8 px-5"
-    v-on:mouseenter="displayTitle = true" v-on:mouseleave="displayTitle = false"
+    v-on:mouseenter="isTitleVisible = true" v-on:mouseleave="isTitleVisible = false"
   >
     <div class="flex flex-row">
+
       <div v-if="showArt">
         <a :href="link">
           <div v-if="image" :class="image.class" class="p-4" >
@@ -11,17 +12,27 @@
           </div>
         </a>
       </div>
+
+      <!-- Show the embed with overlay if there's an embed -->
       <div class="embed-frame" v-if="showEmbed && embedData">
         <div v-on:mouseenter="mouseEntered" v-on:mouseleave="mouseLeft">
-          <img v-if="hasOverlay" v-show="displayOverlay" alt="Embed's Custom Overlay" :src="embedData.overlay">
-          <component v-show="displayEmbed" ref="embed"
+          <img v-if="overlay" v-show="isOverlayVisible" alt="Embed's Custom Overlay" :src="overlay">
+          <component v-show="isEmbedVisible" ref="embed"
             :is="embedName"
             v-bind:embedData="embedData"
           ></component>
         </div>
       </div>
+
+      <!-- If there's only an overlay, show that instead with a link -->
+      <div class="embed-frame" v-else-if="showOverlay">
+        <a :href="link">
+          <img alt="Embed's Custom Overlay" :src="overlay">
+        </a>
+      </div>
+
     </div>
-    <div v-show="displayTitle" class="fixed inset-x-2">
+    <div v-show="isTitleVisible" class="fixed inset-x-2">
       <a :href="link">
         <div class="truncate text-left">{{ showOnline ? onlineDisplay.title : offlineDisplay.title }}</div>
       </a>
@@ -47,6 +58,7 @@ export default {
     'offlineDisplay',
     'rowName',
     'image',
+    'overlay',
     'link',
     'componentName',
     'embedName',
@@ -54,23 +66,23 @@ export default {
   ],
   data: function() {
     return {
-      displayOverlay: true,
-      displayEmbed: false,
-      displayTitle: false,
+      isOverlayVisible: true,
+      isEmbedVisible: false,
+      isTitleVisible: false,
     };
   },
   methods: {
     mouseEntered: function(e) {
-      if (this.hasOverlay) {
-        this.displayOverlay = false;
-        this.displayEmbed = true;
+      if (this.showOverlay) {
+        this.isOverlayVisible = false;
+        this.isEmbedVisible = true;
       }
       this.$refs.embed.startPlayer();
     },
     mouseLeft: function(e) {
-      if (this.hasOverlay) {
-        this.displayOverlay = true;
-        this.displayEmbed = false;
+      if (this.showOverlay) {
+        this.isOverlayVisible = true;
+        this.isEmbedVisible = false;
       }
       if (this.$refs.embed.isPlaying()) {
         this.$refs.embed.stopPlayer();
@@ -86,13 +98,15 @@ export default {
       return (this.showOnline && this.onlineDisplay.showArt) ||
         (!this.showOnline && this.offlineDisplay.showArt)
     },
-    hasOverlay: function() {
-      return this.embedData !== null && 'overlay' in this.embedData && this.embedData.overlay;
-    },
+    showOverlay: function() {
+      return this.overlay &&
+        ((this.showOnline && this.onlineDisplay.showOverlay) ||
+        (!this.showOnline && this.offlineDisplay.showOverlay));
+    }
   },
   mounted: function() {
-    this.displayOverlay = this.hasOverlay;
-    this.displayEmbed = !this.hasOverlay && this.showEmbed;
+    this.isOverlayVisible = this.showOverlay;
+    this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
   },
 }
 </script>

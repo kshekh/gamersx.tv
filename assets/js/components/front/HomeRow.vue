@@ -44,8 +44,8 @@ export default {
   },
   methods: {
     showChannel: function(channel) {
-      return (channel.showOnline && (channel.onlineDisplay.showArt || channel.onlineDisplay.showEmbed)) ||
-        (!channel.showOnline && (channel.offlineDisplay.showArt || channel.offlineDisplay.showEmbed));
+      return (channel.showOnline && (channel.onlineDisplay.showArt || channel.onlineDisplay.showEmbed || channel.onlineDisplay.showOverlay)) ||
+        (!channel.showOnline && (channel.offlineDisplay.showArt || channel.offlineDisplay.showEmbed || channel.offlineDisplay.showOverlay));
     },
     first: function() {
       this.rowIndex = 0;

@@ -67,7 +67,6 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
 
         if ($broadcast !== NULL || $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_STREAM) {
             $embedData = [
-                'overlay' => $this->uploader->asset($this->homeRowItem, 'overlayArtFile'),
                 'channel' => $info['login'],
                 'elementId' => uniqid('embed-'),
             ];
@@ -99,16 +98,19 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
                     'title' => $title,
                     'showArt' => $homeRowItem->getShowArt(),
                     'showEmbed' => TRUE,
+                    'showOverlay' => TRUE,
                 ],
                 'offlineDisplay' => [
                     'title' => $info['login'],
                     'showArt' => $homeRowItem->getShowArt() || $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_ART,
                     'showEmbed' => $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_STREAM,
+                    'showOverlay' => $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_OVERLAY,
                 ],
                 'itemType' => $homeRowItem->getItemType(),
                 'rowName' => $homeRowItem->getHomeRow()->getTitle(),
                 'sortIndex' => $homeRowItem->getSortIndex(),
                 'image' => $image ?? NULL,
+                'overlay' => $this->uploader->asset($homeRowItem, 'overlayArtFile'),
                 'customArt' => $this->uploader->asset($homeRowItem, 'customArtFile'),
                 'link' => $link,
                 'componentName' => 'EmbedContainer',
