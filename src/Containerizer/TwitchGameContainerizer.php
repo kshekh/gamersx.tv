@@ -50,6 +50,9 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
         case HomeRowItem::LINK_TYPE_EXTERNAL:
             $link = 'https://www.twitch.tv/directory/game/'.$info['name'];
             break;
+        case HomeRowItem::LINK_TYPE_CUSTOM:
+            $link = $homeRowItem->getCustomLink();
+            break;
         default:
             $link = '#';
         }

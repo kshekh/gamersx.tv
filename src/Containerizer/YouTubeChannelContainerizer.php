@@ -54,6 +54,8 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
 
         if ($homeRowItem->getLinkType() === HomeRowItem::LINK_TYPE_GAMERSX) {
             $link = '/channel/'.$info->getId();
+        } elseif ($homeRowItem->getLinkType() === HomeRowItem::LINK_TYPE_CUSTOM) {
+            $link = $homeRowItem->getCustomLink();
         }
 
         if (($broadcast === NULL && $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_ART) ||

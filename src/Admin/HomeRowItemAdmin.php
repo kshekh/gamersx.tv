@@ -115,7 +115,11 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'choices' => [
                     'GamersX Link' => HomeRowItem::LINK_TYPE_GAMERSX,
                     'External Link' => HomeRowItem::LINK_TYPE_EXTERNAL,
+                    'Custom Link' => HomeRowItem::LINK_TYPE_CUSTOM,
                 ]
+            ])
+            ->add('customLink', null, [
+                'required' => false,
             ])
             ->add('homeRow', EntityType::class, [
                 'class' => HomeRow::class,

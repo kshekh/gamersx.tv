@@ -46,6 +46,8 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
 
             if ($homeRowItem->getLinkType() === HomeRowItem::LINK_TYPE_GAMERSX) {
                 $link = '/query/'.$query;
+            } elseif ($homeRowItem->getLinkType() === HomeRowItem::LINK_TYPE_CUSTOM) {
+                $link = $homeRowItem->getCustomLink();
             } else {
                 $link = 'https://www.youtube.com/v/'.$broadcast->getId()->getVideoId();
             }

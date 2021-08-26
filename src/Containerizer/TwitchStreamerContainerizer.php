@@ -82,6 +82,9 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
         case HomeRowItem::LINK_TYPE_EXTERNAL:
             $link = 'https://www.twitch.tv/'.$info['login'];
             break;
+        case HomeRowItem::LINK_TYPE_CUSTOM:
+            $link = $homeRowItem->getCustomLink();
+            break;
         default:
             $link = '#';
         }

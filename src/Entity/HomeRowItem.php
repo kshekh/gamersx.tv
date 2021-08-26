@@ -99,6 +99,7 @@ class HomeRowItem
 
     const LINK_TYPE_GAMERSX = 'gamersx';
     const LINK_TYPE_EXTERNAL = 'external';
+    const LINK_TYPE_CUSTOM = 'custom';
     /**
      * @ORM\Column(type="string", length=32)
      */
@@ -111,6 +112,11 @@ class HomeRowItem
      * @ORM\JoinColumn(nullable=false)
      */
     private $homeRow;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $customLink;
 
     public function getId(): ?int
     {
@@ -262,6 +268,18 @@ class HomeRowItem
     public function setLinkType(string $linkType): self
     {
         $this->linkType = $linkType;
+
+        return $this;
+    }
+
+    public function getCustomLink(): ?string
+    {
+        return $this->customLink;
+    }
+
+    public function setCustomLink(?string $customLink): self
+    {
+        $this->customLink = $customLink;
 
         return $this;
     }
