@@ -44,7 +44,6 @@ final class HomeRowItemAdmin extends AbstractAdmin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
     {
         $datagridMapper
-            ->add('topicId')
             ->add('label')
             ->add('itemType')
             ->add('homeRow')
@@ -133,13 +132,16 @@ final class HomeRowItemAdmin extends AbstractAdmin
                     'Twitch - Streamer' => HomeRowItem::TYPE_STREAMER,
                     'YouTube - Channel' => HomeRowItem::TYPE_CHANNEL,
                     'YouTube - Query' => HomeRowItem::TYPE_YOUTUBE,
+                    'No Embed - Link Only' => HomeRowItem::TYPE_LINK,
                 ],
                 'attr' => [
                     'data-topic-select' => 'itemType',
                 ],
                 'required' => true
             ])
-            ->add('topic', TopicType::class)
+            ->add('topic', TopicType::class, [
+                'required' => false,
+            ])
             ->add('sortAndTrimOptions', SortAndTrimOptionsType::class, [
                 'label' => 'Sort and Trim Options',
                 'required' => false,
@@ -152,7 +154,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 // Don't set empty values in the JSON later
                 function ($homeRowItem) {
                     $topic = $homeRowItem->getTopic();
-                    if (array_key_exists('label', $topic)) {
+                    if ($topic && array_key_exists('label', $topic)) {
                         $homeRowItem->setLabel($topic['label']);
                     };
 

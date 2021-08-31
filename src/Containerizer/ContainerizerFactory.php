@@ -41,6 +41,9 @@ class ContainerizerFactory
             case HomeRowItem::TYPE_YOUTUBE:
                 $containerized = new YouTubeQueryContainerizer($toBeContainerized, $this->youtube);
                 break;
+            case HomeRowItem::TYPE_LINK:
+                $containerized = new NoEmbedContainer($toBeContainerized);
+                break;
             default:
                 break;
             }

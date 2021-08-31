@@ -21,6 +21,7 @@
 </template>
 <script>
 import EmbedContainer from '../layout/EmbedContainer.vue'
+import NoEmbedContainer from '../layout/NoEmbedContainer.vue'
 
 require('swiped-events');
 
@@ -28,6 +29,7 @@ export default {
   name: 'HomeRow',
   components: {
     'EmbedContainer': EmbedContainer,
+    'NoEmbedContainer': NoEmbedContainer,
   },
   props: {
     settings: {

@@ -37,7 +37,7 @@ class HomeRowItem
     const TYPE_CHANNEL = 'channel';
     const TYPE_POPULAR = 'popular';
     const TYPE_YOUTUBE = 'youtube';
-
+    const TYPE_LINK = 'link';
     /**
      * @ORM\Column(type="string", length=32)
      */
@@ -46,7 +46,7 @@ class HomeRowItem
     /**
      * Options to be passed into Containerizer
      *
-     * @ORM\Column(type="json", nullable=false)
+     * @ORM\Column(type="json", nullable=true)
      */
     private $topic = [];
 
