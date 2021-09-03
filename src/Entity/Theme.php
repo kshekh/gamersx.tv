@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Repository\ThemeRepository;
 use Symfony\Component\HttpFoundation\File\{ File, UploadedFile };
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\ORM\Mapping as ORM;

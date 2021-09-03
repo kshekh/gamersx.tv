@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Repository\HomeRowItemRepository;
+use App\Model\PartneredInterface;
 use Symfony\Component\HttpFoundation\File\{ File, UploadedFile };
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @Vich\Uploadable
  */
-class HomeRowItem
+class HomeRowItem implements PartneredInterface
 {
     /**
      * @ORM\Id
@@ -117,6 +117,11 @@ class HomeRowItem
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $customLink;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Partner::class, inversedBy="homeRowItems")
+     */
+    private $partner;
 
     public function getId(): ?int
     {
@@ -292,6 +297,18 @@ class HomeRowItem
     public function setHomeRow(?HomeRow $homeRow): self
     {
         $this->homeRow = $homeRow;
+
+        return $this;
+    }
+
+    public function getPartner(): ?Partner
+    {
+        return $this->partner;
+    }
+
+    public function setPartner(?Partner $partner): self
+    {
+        $this->partner = $partner;
 
         return $this;
     }

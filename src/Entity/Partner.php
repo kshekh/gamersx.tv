@@ -28,9 +28,21 @@ class Partner
      */
     private $partnerRoles;
 
+    /**
+     * @ORM\OneToMany(targetEntity=HomeRow::class, mappedBy="partner")
+     */
+    private $homeRows;
+
+    /**
+     * @ORM\OneToMany(targetEntity=HomeRowItem::class, mappedBy="partner")
+     */
+    private $homeRowItems;
+
     public function __construct()
     {
         $this->partnerRoles = new ArrayCollection();
+        $this->homeRows = new ArrayCollection();
+        $this->homeRowItems = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -87,6 +99,66 @@ class Partner
         } else {
             return '';
         }
+    }
+
+    /**
+     * @return Collection|HomeRow[]
+     */
+    public function getHomeRows(): Collection
+    {
+        return $this->homeRows;
+    }
+
+    public function addHomeRow(HomeRow $homeRow): self
+    {
+        if (!$this->homeRows->contains($homeRow)) {
+            $this->homeRows[] = $homeRow;
+            $homeRow->setPartner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHomeRow(HomeRow $homeRow): self
+    {
+        if ($this->homeRows->removeElement($homeRow)) {
+            // set the owning side to null (unless already changed)
+            if ($homeRow->getPartner() === $this) {
+                $homeRow->setPartner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|HomeRowItem[]
+     */
+    public function getHomeRowItems(): Collection
+    {
+        return $this->homeRowItems;
+    }
+
+    public function addHomeRowItem(HomeRowItem $homeRowItem): self
+    {
+        if (!$this->homeRowItems->contains($homeRowItem)) {
+            $this->homeRowItems[] = $homeRowItem;
+            $homeRowItem->setPartner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHomeRowItem(HomeRowItem $homeRowItem): self
+    {
+        if ($this->homeRowItems->removeElement($homeRowItem)) {
+            // set the owning side to null (unless already changed)
+            if ($homeRowItem->getPartner() === $this) {
+                $homeRowItem->setPartner(null);
+            }
+        }
+
+        return $this;
     }
 
 }

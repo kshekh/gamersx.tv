@@ -46,6 +46,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
         $datagridMapper
             ->add('label')
             ->add('itemType')
+            ->add('partner')
             ->add('homeRow')
             ;
     }
@@ -72,6 +73,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'editable' => TRUE,
                 'sortable' => false,
             ])
+            ->add('partner')
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],
@@ -120,6 +122,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('customLink', null, [
                 'required' => false,
             ])
+            ->add('partner')
             ->add('homeRow', EntityType::class, [
                 'class' => HomeRow::class,
                 'choice_label' => 'title',
@@ -179,6 +182,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('overlayArt')
             ->add('offlineDisplayType')
             ->add('linkType')
+            ->add('partner')
             ;
     }
 

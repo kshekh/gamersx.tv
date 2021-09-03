@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Model\PartneredInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -9,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  */
-class HomeRow
+class HomeRow implements PartneredInterface
 {
     /**
      * @ORM\Id
@@ -54,6 +55,11 @@ class HomeRow
      * @ORM\OrderBy({"sortIndex" = "ASC"})
      */
     private $items;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Partner::class, inversedBy="homeRows")
+     */
+    private $partner;
 
 
     public function __construct()
@@ -140,6 +146,18 @@ class HomeRow
                 $item->setHomeRow(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPartner(): ?Partner
+    {
+        return $this->partner;
+    }
+
+    public function setPartner(?Partner $partner): self
+    {
+        $this->partner = $partner;
 
         return $this;
     }

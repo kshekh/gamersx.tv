@@ -63,6 +63,7 @@ final class HomeRowAdmin extends AbstractAdmin
     {
         $datagridMapper
             ->add('title')
+            ->add('partner')
             ;
     }
 
@@ -80,6 +81,7 @@ final class HomeRowAdmin extends AbstractAdmin
                 'editable' => false,
                 'sortable' => false,
             ])
+            ->add('partner')
             ->add('options', null, [
                 'editable' => false,
                 'sortable' => false,
@@ -114,6 +116,7 @@ final class HomeRowAdmin extends AbstractAdmin
                     'Numbered' => HomeRow::LAYOUT_NUMBERED,
                 ]
             ])
+            ->add('partner')
             ->add('options', SortAndTrimOptionsType::class, [
                 'label' => 'Sort and Trim Options',
                 'required' => false,
@@ -127,6 +130,7 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('title')
             ->add('sortIndex')
             ->add('layout')
+            ->add('partner')
             ->add('options')
             ;
     }
