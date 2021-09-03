@@ -37,7 +37,6 @@ services:
             - '@App\Service\YouTubeApi'
             - '@Vich\UploaderBundle\Templating\Helper\UploaderHelper'
             - '@logger'
-            - !tagged_iterator gamersx.containerizer
 
     admin.home_row:
         class: App\Admin\HomeRowAdmin
