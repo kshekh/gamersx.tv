@@ -5,35 +5,49 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Sonata\UserBundle\Entity\BaseUser;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="fos_user__user")
+ * @ORM\Entity()
  */
-class User extends BaseUser
+class Partner
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    protected $id;
+    private $id;
 
     /**
-     * @ORM\OneToMany(targetEntity=PartnerRole::class, mappedBy="user", orphanRemoval=true)
+     * @ORM\Column(type="string", length=255)
+     */
+    private $name;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PartnerRole::class, mappedBy="partner")
      */
     private $partnerRoles;
 
     public function __construct()
     {
-        parent::__construct();
         $this->partnerRoles = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -48,7 +62,7 @@ class User extends BaseUser
     {
         if (!$this->partnerRoles->contains($partnerRole)) {
             $this->partnerRoles[] = $partnerRole;
-            $partnerRole->setUser($this);
+            $partnerRole->setPartner($this);
         }
 
         return $this;
@@ -58,11 +72,21 @@ class User extends BaseUser
     {
         if ($this->partnerRoles->removeElement($partnerRole)) {
             // set the owning side to null (unless already changed)
-            if ($partnerRole->getUser() === $this) {
-                $partnerRole->setUser(null);
+            if ($partnerRole->getPartner() === $this) {
+                $partnerRole->setPartner(null);
             }
         }
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        if ($this->getName()) {
+            return $this->getName();
+        } else {
+            return '';
+        }
+    }
+
 }

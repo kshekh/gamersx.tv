@@ -12,7 +12,12 @@ sonata_admin:
                     - admin.home_row
                     - admin.home_row_item
                     - admin.theme
-            sonata_user: ~
+            sonata_user:
+                label: Users and Partners
+                items:
+                    - sonata.user.admin.user
+                    - admin.partner
+                    - admin.partner_role
 
     options:
         legacy_twig_text_extension: false

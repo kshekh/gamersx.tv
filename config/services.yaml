@@ -61,3 +61,17 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, group: admin, label: Pages }
         public: true
+
+    admin.partner:
+        class: App\Admin\PartnerAdmin
+        arguments: [~, App\Entity\Partner, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: admin, label: Partners }
+        public: true
+
+    admin.partner_role:
+        class: App\Admin\PartnerRoleAdmin
+        arguments: [~, App\Entity\PartnerRole, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: admin, label: Partner Roles }
+        public: true
