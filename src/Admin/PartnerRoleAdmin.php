@@ -48,9 +48,9 @@ final class PartnerRoleAdmin extends AbstractAdmin
             ->add('partner')
             ->add('role', ChoiceType::class, [
                 'choices' => [
-                    'Admin' => PartnerRole::ROLE_ADMIN,
-                    'Editor' => PartnerRole::ROLE_EDITOR,
-                    'Ad-Only Editor' => PartnerRole::ROLE_AD_EDITOR,
+                    'Admin' => PartnerRole::ADMIN,
+                    'Editor' => PartnerRole::EDITOR,
+                    'Ad-Only Editor' => PartnerRole::AD_EDITOR,
                 ]
             ])
             ;

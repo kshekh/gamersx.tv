@@ -28,9 +28,9 @@ class PartnerRole
      */
     private $partner;
 
-    const ROLE_ADMIN = 'ROLE_ADMIN';
-    const ROLE_EDITOR = 'ROLE_EDITOR';
-    const ROLE_AD_EDITOR = 'ROLE_AD_EDITOR';
+    const ADMIN = 'ROLE_PARTNER_ADMIN';
+    const EDITOR = 'ROLE_PARTNER_EDITOR';
+    const AD_EDITOR = 'ROLE_PARTNER_AD_EDITOR';
     /**
      * @ORM\Column(type="string", length=255)
      */

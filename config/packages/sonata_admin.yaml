@@ -4,6 +4,12 @@ sonata_admin:
     templates:
         layout: 'admin/standard_layout.html.twig'
 
+    security:
+        handler: sonata.admin.security.handler.role
+
+        role_admin: ROLE_ADMIN
+        role_super_admin: ROLE_SUPER_ADMIN
+
     dashboard:
         groups:
             app.admin.group.home:
