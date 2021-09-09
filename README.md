@@ -19,6 +19,41 @@ Dependencies installed. You can run the project anytime with
 docker-compose up -d
 ```
 
+Now that your docker containers are up and running, you can set up the database
+and a user via the shell in the "app" container running PHP.
+```
+docker-compose exec app bash
+```
+
+Using this shell you can access the Symfony console to create / update your
+database, create users, etc.
+```
+bin/console doctrine:database:create
+bin/console doctrine:schema:update --force
+bin/console fos:user:create --super-admin
+```
+
+
+You'll also need to create an .env.local file with your Twitch and YouTube
+credentials.  You can either copy the whole .env file and edit the lines you
+want, or just put your credentials in the local file.
+
+### Troubleshooting
+If you have trouble with "Out of Memory" issues when dealing with composer or
+the cache-clearing it does after install, try increasing the PHP memory limit by
+using the memory_limit variable during that step.
+```
+docker-compose run app php -d memory_limit=-1 /usr/bin/composer install
+docker-compose run app php -d memory_limit=-1 bin/console cache:clear
+```
+
+If you're getting 404s on the "bundle" items, a broken composer install may have
+also stopped the assets install process.  Try running this command on the php
+containers to copy bundled assets in Symfony.
+```
+bin/console assets:install --symlink
+```
+
 ## Settings
 
 You can reach the settings admin via the /admin/ route. You must have a logon to
