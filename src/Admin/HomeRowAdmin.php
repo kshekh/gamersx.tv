@@ -140,4 +140,18 @@ final class HomeRowAdmin extends AbstractAdmin
         $collection
             ->add('reorder', $this->getRouterIdParameter().'/reorder');
     }
+
+    public function alterNewInstance(object $instance): void
+    {
+        $user = $this->getConfigurationPool()->getContainer()->get('security.token_storage')->getToken()->getUser();
+        $roles = $user->getPartnerRoles();
+
+        if (!$roles->isEmpty()) {
+            $partner = $roles->first()->getPartner();
+
+            if ($partner !== null) {
+                $instance->setPartner($partner);
+            }
+        }
+    }
 }
