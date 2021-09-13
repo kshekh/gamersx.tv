@@ -1,23 +1,21 @@
 <template>
-  <div v-bind:style="customBg" @swiped-left="forward()" @swiped-right="back()" class="home-row custom-bg full-screen-art relative">
+  <div @swiped-left="forward()" @swiped-right="back()" class="home-row p-6">
     <div class="text-3xl text-left font-bold pl-22 px-12 pt-4 pb-2">{{ settings.title}}</div>
-    <div class="flex flex-row justify-center items-center absolute inset-x-0 bottom-6">
+    <div class="flex flex-row justify-start items-center">
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="first()">
-        <img alt="cursor-left" class="cursor-pointer" v-show="displayChannels.length > 1 && rowIndex > 0" src="/images/left-arrow.png" />
+        <img alt="cursor-left" class="cursor-pointer" v-show="allowScrolling && (rowIndex > 0)" src="/images/left-arrow.png" />
       </div>
       <div ref="channelBox" class="flex flex-row p-5 overflow-hidden">
-        <div ref="channelDivs" v-for="(channel, index) in displayChannels">
+        <div ref="channelDivs" v-for="channel in displayChannels">
           <component
             :is="channel.componentName"
-            v-show="index === rowIndex"
             v-bind="channel"
           ></component>
         </div>
       </div>
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="forward()">
-        <img alt="cursor-right" class="cursor-pointer" v-show="displayChannels.length > 1" src="/images/right-arrow.png" />
+        <img alt="cursor-right" class="cursor-pointer" v-show="allowScrolling" src="/images/right-arrow.png" />
       </div>
-
     </div>
   </div>
 </template>
@@ -28,7 +26,7 @@ import NoEmbedContainer from '../layout/NoEmbedContainer.vue'
 require('swiped-events');
 
 export default {
-  name: 'CustomBgArtRow',
+  name: 'ClassicLg',
   components: {
     'EmbedContainer': EmbedContainer,
     'NoEmbedContainer': NoEmbedContainer,
@@ -43,19 +41,8 @@ export default {
     return {
       rowIndex: 0,
       displayChannels: [],
+      allowScrolling: false,
     }
-  },
-  computed: {
-    customBg: function() {
-      let selected = this.displayChannels[this.rowIndex];
-      if (selected && selected.customArt) {
-        return {
-          'backgroundImage': 'url(' + selected.customArt + ')',
-        };
-      } else {
-        return {};
-      }
-    },
   },
   methods: {
     showChannel: function(channel) {
@@ -64,10 +51,6 @@ export default {
     },
     first: function() {
       this.rowIndex = 0;
-      this.reorder();
-    },
-    back: function() {
-      this.rowIndex = (this.rowIndex - 1).mod(this.displayChannels.length);
       this.reorder();
     },
     forward: function() {
@@ -85,6 +68,9 @@ export default {
   mounted: function() {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
   },
+  updated: function() {
+    this.allowScrolling = this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
+  }
 }
 </script>
 <style scoped>

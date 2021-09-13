@@ -13,16 +13,16 @@
 </template>
 <script>
 import axios from 'axios';
-import HomeRow from './front/HomeRow.vue';
-import CustomBgArtRow from './front/CustomBgArtRow.vue';
-import CustomTallFrameArtRow from './front/CustomTallFrameArtRow.vue';
+import ClassicMd from './front/ClassicMd.vue';
+import FullWidthDescriptive from './front/FullWidthDescriptive.vue';
+import Parallax from './front/Parallax.vue';
 import NumberedRow from './front/NumberedRow.vue';
 
 export default {
   components: {
-    'HomeRow': HomeRow,
-    'CustomBgArtRow': CustomBgArtRow,
-    'CustomTallFrameArtRow': CustomTallFrameArtRow,
+    'ClassicMd': ClassicMd,
+    'FullWidthDescriptive': FullWidthDescriptive,
+    'Parallax': Parallax,
     'NumberedRow': NumberedRow,
   },
   data: function()  {

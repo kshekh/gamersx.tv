@@ -110,10 +110,13 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('sortIndex')
             ->add('layout', ChoiceType::class, [
                 'choices' => [
-                    'Classic' => HomeRow::LAYOUT_CLASSIC,
-                    'Custom Background' => HomeRow::LAYOUT_CUSTOM_BG_ART,
-                    'Custom Vertical Frame' => HomeRow::LAYOUT_CUSTOM_FRAME_ART,
-                    'Numbered' => HomeRow::LAYOUT_NUMBERED,
+                    'Classic Small' => 'ClassicSm',
+                    'Classic Medium' => 'ClassicMd',
+                    'Classic Large' => 'ClassicLg',
+                    'Full Width - Descriptive' => 'FullWidthDescriptive',
+                    'Full Width - Imagery' => 'FullWidthImagery',
+                    'Parallax' => 'Parallax',
+                    'Numbered' => 'Numbered',
                 ]
             ])
             ->add('partner')
