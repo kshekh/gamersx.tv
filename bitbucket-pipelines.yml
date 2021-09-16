@@ -1,66 +1,89 @@
 # vim: set shiftwidth=2 tabstop=2 softtabstop=-1 expandtab:
 image: atlassian/default-image:2
 
-pipelines:
-  custom:
-    deploy-to-ec2:
-      - step:
-          name: Webpack Build
-          image: node:12.22
-          services:
-            - docker
-          caches:
-            - docker
-            - node
-          script:
-            - yarn install
-            - yarn build-noprogress
-          artifacts:
-            - public/build/**
-
-      - step:
-          services:
-            - docker
-          caches:
-            - docker
-          name: Zip Repo
-          script:
-            - zip -r gamersx.zip *
-          artifacts:
-            - gamersx.zip
-
-      - step:
-          name: Upload to S3
-          services:
-            - docker
-          caches:
-            - docker
-          script:
-            - pipe: atlassian/aws-code-deploy:0.2.10
-              variables:
-                AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-                AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-                AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
-                COMMAND: 'upload'
-                APPLICATION_NAME: ${APPLICATION_NAME}
-                ZIP_FILE: 'gamersx.zip'
-
-      - step:
-          name: Deploy with CodeDeploy
-          deployment: production
-          services:
+definitions:
+  steps:
+    - step: &webpack
+        name: Webpack Build
+        image: node:12.22
+        services:
           - docker
-          script:
+        caches:
+          - docker
+          - node
+        script:
+          - yarn install
+          - yarn build-noprogress
+        artifacts:
+          - public/build/**
+
+    - step: &zip
+        services:
+          - docker
+        caches:
+          - docker
+        name: Zip Repo
+        script:
+          - zip -r gamersx.zip *
+        artifacts:
+          - gamersx.zip
+
+    - step: &upload
+        name: Upload to S3
+        services:
+          - docker
+        caches:
+          - docker
+        script:
           - pipe: atlassian/aws-code-deploy:0.2.10
             variables:
               AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
               AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
               AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
-              COMMAND: 'deploy'
+              COMMAND: 'upload'
               APPLICATION_NAME: ${APPLICATION_NAME}
-              DEPLOYMENT_GROUP: ${DEPLOYMENT_GROUP}
-              IGNORE_APPLICATION_STOP_FAILURES: 'true'
-              FILE_EXISTS_BEHAVIOR: 'OVERWRITE'
-              WAIT: 'false'
+              ZIP_FILE: 'gamersx.zip'
 
+    - step: &codedeploy
+        name: Deploy via CodeDeploy
+        deployment: null
+        services:
+        - docker
+        script:
+        - pipe: atlassian/aws-code-deploy:0.2.10
+          variables: &codedeploy_vars
+            COMMAND: 'deploy'
+            AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+            AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+            APPLICATION_NAME: ${APPLICATION_NAME}
+            DEPLOYMENT_GROUP: ${DEPLOYMENT_GROUP}
+            IGNORE_APPLICATION_STOP_FAILURES: 'true'
+            FILE_EXISTS_BEHAVIOR: 'OVERWRITE'
+            WAIT: 'false'
 
+pipelines:
+  branches:
+    main:
+      - step: *webpack
+      - step: *zip
+      - step: *upload
+      - step:
+          <<: *codedeploy
+          name: Deploy to Development
+          deployment: dev
+
+  tags:
+    'release-v*':
+      - step: *webpack
+      - step: *zip
+      - step: *upload
+      - parallel:
+        - step:
+            <<: *codedeploy
+            name: Deploy to Demo
+            deployment: demo
+        - step:
+            <<: *codedeploy
+            name: Deploy to Production
+            deployment: production

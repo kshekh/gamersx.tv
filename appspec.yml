@@ -3,14 +3,14 @@ os: linux
 
 files:
   - source: ./
-    destination: /var/www/gamersx/codedeploy
+    destination: /var/gamersx/codedeploy
 
 hooks:
   AfterInstall:
-    - location: scripts/install.sh
+    - location: deploy/scripts/install.sh
       runas: gamersx
 
 permissions:
-  - object: /var/www/gamersx/codedeploy
+  - object: /var/gamersx/codedeploy
     owner: gamersx
     group: gamersx

@@ -54,6 +54,20 @@ containers to copy bundled assets in Symfony.
 bin/console assets:install --symlink
 ```
 
+## Deployment
+
+The app is deployed using Amazon CodeDeploy via a BitBucket Pipeline. There are
+three environments on the server - "prod", "demo", and "dev".  Each is deployed
+to the EC2 instance by using codedeploy to push the latest code, and the
+install.sh script in the repo to copy to the right directory and link permanent
+files like .env files and the vendor and images directories.  Each BitBucket
+Deployment has a DEPLOYMENT_GROUP variable that matches up to an AWS Deployment
+Group.
+
+Every push to main is deployed to the dev server automatically.  To push to the
+demo and prod environments, tag a release with a version number, e.g.
+'release-v1.0'.
+
 ## Settings
 
 You can reach the settings admin via the /admin/ route. You must have a logon to
