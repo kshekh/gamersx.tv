@@ -68,6 +68,9 @@ Every push to main is deployed to the dev server automatically.  To push to the
 demo and prod environments, tag a release with a version number, e.g.
 'release-v1.0'.
 
+If you don't want to deploy to dev automatically, include [skip ci] in your
+commit's message.
+
 ## Settings
 
 You can reach the settings admin via the /admin/ route. You must have a logon to
