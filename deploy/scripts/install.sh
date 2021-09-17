@@ -32,6 +32,5 @@ ln -sf $ENV_DIR/items $DEPLOY_DIR/public/images
 
 ln -sf $ENV_DIR/cache $DEPLOY_DIR/var
 ln -sf $ENV_DIR/log $DEPLOY_DIR/var
-ln -sf $ENV_DIR/data.db $DEPLOY_DIR/var
 
 cd $DEPLOY_DIR && composer install
