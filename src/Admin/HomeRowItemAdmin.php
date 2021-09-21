@@ -75,7 +75,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'sortable' => false,
             ])
             ->add('partner')
-            ->add('isPublished')
+            ->add('isPublished', null, [
+                'sortable' => false
+            ])
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],
