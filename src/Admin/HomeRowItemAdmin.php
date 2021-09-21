@@ -48,6 +48,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('itemType')
             ->add('partner')
             ->add('homeRow')
+            ->add('isPublished')
             ;
     }
 
@@ -74,6 +75,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'sortable' => false,
             ])
             ->add('partner')
+            ->add('isPublished')
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],
@@ -149,6 +151,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'label' => 'Sort and Trim Options',
                 'required' => false,
             ])
+            ->add('isPublished')
             ->getFormBuilder()->addModelTransformer(new CallbackTransformer(
                 // Use the array in the form
                 function ($valuesAsArray) {
@@ -183,6 +186,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('offlineDisplayType')
             ->add('linkType')
             ->add('partner')
+            ->add('isPublished')
             ;
     }
 

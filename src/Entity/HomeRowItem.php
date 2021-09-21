@@ -123,6 +123,11 @@ class HomeRowItem implements PartneredInterface
      */
     private $partner;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isPublished;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -326,6 +331,18 @@ class HomeRowItem implements PartneredInterface
         } else {
             return $label;
         }
+    }
+
+    public function getIsPublished(): ?bool
+    {
+        return $this->isPublished;
+    }
+
+    public function setIsPublished(bool $isPublished): self
+    {
+        $this->isPublished = $isPublished;
+
+        return $this;
     }
 
 }

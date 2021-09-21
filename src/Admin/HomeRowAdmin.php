@@ -64,6 +64,7 @@ final class HomeRowAdmin extends AbstractAdmin
         $datagridMapper
             ->add('title')
             ->add('partner')
+            ->add('isPublished')
             ;
     }
 
@@ -86,6 +87,7 @@ final class HomeRowAdmin extends AbstractAdmin
                 'editable' => false,
                 'sortable' => false,
             ])
+            ->add('isPublished')
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],
@@ -124,6 +126,7 @@ final class HomeRowAdmin extends AbstractAdmin
                 'label' => 'Sort and Trim Options',
                 'required' => false,
             ])
+            ->add('isPublished')
             ;
     }
 
@@ -135,6 +138,7 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('layout')
             ->add('partner')
             ->add('options')
+            ->add('isPublished')
             ;
     }
 
