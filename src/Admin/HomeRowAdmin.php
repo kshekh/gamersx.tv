@@ -116,7 +116,7 @@ final class HomeRowAdmin extends AbstractAdmin
                     'Full Width - Descriptive' => 'FullWidthDescriptive',
                     'Full Width - Imagery' => 'FullWidthImagery',
                     'Parallax' => 'Parallax',
-                    'Numbered' => 'Numbered',
+                    'Numbered' => 'NumberedRow',
                 ]
             ])
             ->add('partner')
