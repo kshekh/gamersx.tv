@@ -57,6 +57,11 @@ class HomeRow implements PartneredInterface
      */
     private $partner;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isPublished;
+
 
     public function __construct()
     {
@@ -165,6 +170,18 @@ class HomeRow implements PartneredInterface
         } else {
             return '';
         }
+    }
+
+    public function getIsPublished(): ?bool
+    {
+        return $this->isPublished;
+    }
+
+    public function setIsPublished(bool $isPublished): self
+    {
+        $this->isPublished = $isPublished;
+
+        return $this;
     }
 
 }

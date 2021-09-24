@@ -109,7 +109,7 @@ class HomeRowItem implements PartneredInterface
      * The Home Row this item belongs to
      *
      * @ORM\ManyToOne(targetEntity=HomeRow::class, inversedBy="items")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn()
      */
     private $homeRow;
 
@@ -122,6 +122,11 @@ class HomeRowItem implements PartneredInterface
      * @ORM\ManyToOne(targetEntity=Partner::class, inversedBy="homeRowItems")
      */
     private $partner;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isPublished;
 
     public function getId(): ?int
     {
@@ -326,6 +331,18 @@ class HomeRowItem implements PartneredInterface
         } else {
             return $label;
         }
+    }
+
+    public function getIsPublished(): ?bool
+    {
+        return $this->isPublished;
+    }
+
+    public function setIsPublished(bool $isPublished): self
+    {
+        $this->isPublished = $isPublished;
+
+        return $this;
     }
 
 }

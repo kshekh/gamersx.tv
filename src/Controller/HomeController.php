@@ -28,11 +28,15 @@ class HomeController extends AbstractController
         $rowChannels = $gamersxCache->get('home', function (ItemInterface $item) use ($containerizer) {
 
             $rows = $this->getDoctrine()->getRepository(HomeRow::class)
-                ->findBy([], ['sortIndex' => 'ASC']);
+                ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
 
             $rowChannels = Array();
 
             foreach ($rows as $row) {
+                if ($row->getIsPublished() === FALSE) {
+                    continue;
+                }
+
                 $thisRow = Array();
                 $thisRow['title'] = $row->getTitle();
                 $thisRow['sortIndex'] = $row->getSortIndex();
