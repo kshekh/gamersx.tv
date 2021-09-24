@@ -31,19 +31,33 @@ export default {
     'Parallax': Parallax,
     'NumberedRow': NumberedRow,
   },
-  data: function()  {
+  data: function() {
     return {
       settings: {
         rows: []
       },
+      pollingApiData: null,
+      requestPollingDelay: 30000
+    }
+  },
+  methods: {
+    requestHomeApi: function() {
+      axios
+        .get('/home/api')
+        .then(response => {
+          this.settings = response.data.settings;
+        })
     }
   },
   mounted: function() {
-    axios
-      .get('/home/api')
-      .then(response => {
-        this.settings = response.data.settings;
-      });
+    this.requestHomeApi()
+
+    this.pollingApiData = setInterval(() => {
+      this.requestHomeApi()
+    }, this.requestPollingDelay)
+  },
+  beforeDestroy: function() {
+    clearInterval(this.pollingApiData)
   }
 }
 
