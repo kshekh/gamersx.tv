@@ -41,6 +41,26 @@ final class HomeRowItemAdmin extends AbstractAdmin
         '_sort_by' => 'sortIndex'
     );
 
+    public function configureActionButtons($action, $object = null)
+    {
+        $list = parent::configureActionButtons($action, $object);
+        $list['importForm']['template'] = 'CRUD/import_button.html.twig';
+        return $list;
+    }
+
+    public function getDashboardActions()
+    {
+        $actions = parent::getDashboardActions();
+
+        $actions['importForm'] = [
+            'label' => 'Import',
+            'url' => $this->generateUrl('importForm'),
+            'icon' => 'level-up',
+        ];
+
+        return $actions;
+    }
+
     protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
     {
         $datagridMapper
@@ -192,10 +212,26 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ;
     }
 
+    protected function configureBatchActions($actions)
+    {
+
+        if ($this->hasRoute('list') && $this->hasAccess('list')) {
+            $actions['export'] = [
+                'label' => 'Download Export Zip',
+                'ask_confirmation' => FALSE,
+            ];
+        }
+
+        return $actions;
+    }
+
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
         $collection
-            ->add('reorder', $this->getRouterIdParameter().'/reorder');
+            ->add('reorder', $this->getRouterIdParameter().'/reorder')
+            ->add('importForm')
+            ->add('import')
+            ;
     }
 
     public function alterNewInstance(object $instance): void

@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\{ HeaderUtils, Request, Response, ResponseHeaderBag, RedirectResponse };
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
@@ -128,7 +127,7 @@ class HomeRowAdminController extends CRUDController
             $archive->open($filename, \ZipArchive::CREATE);
 
             foreach ($selectedModels as $selectedModel) {
-                $json = $this->serializer->serialize($selectedModel, 'json');
+                $json = $this->serializer->serialize($selectedModel, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['partner', 'items']]);
                 $archive->addFromString($selectedModel.'-'.$selectedModel->getId().'.json', $json);
             }
 
@@ -147,7 +146,7 @@ class HomeRowAdminController extends CRUDController
         $response = new BinaryFileResponse($filename);
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
-            'gamersx-export-'.time().'.zip'
+            'gamersx-home-row-export-'.time().'.zip'
         );
         $response->headers->set('Content-Disposition', $disposition);
         $response->deleteFileAfterSend(TRUE);

@@ -109,7 +109,7 @@ class HomeRowItem implements PartneredInterface
      * The Home Row this item belongs to
      *
      * @ORM\ManyToOne(targetEntity=HomeRow::class, inversedBy="items")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn()
      */
     private $homeRow;
 
