@@ -41,6 +41,26 @@ final class HomeRowItemAdmin extends AbstractAdmin
         '_sort_by' => 'sortIndex'
     );
 
+    public function configureActionButtons($action, $object = null)
+    {
+        $list = parent::configureActionButtons($action, $object);
+        $list['importForm']['template'] = 'CRUD/import_button.html.twig';
+        return $list;
+    }
+
+    public function getDashboardActions()
+    {
+        $actions = parent::getDashboardActions();
+
+        $actions['importForm'] = [
+            'label' => 'Import',
+            'url' => $this->generateUrl('importForm'),
+            'icon' => 'level-up',
+        ];
+
+        return $actions;
+    }
+
     protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
     {
         $datagridMapper
@@ -48,6 +68,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('itemType')
             ->add('partner')
             ->add('homeRow')
+            ->add('isPublished')
             ;
     }
 
@@ -74,6 +95,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'sortable' => false,
             ])
             ->add('partner')
+            ->add('isPublished', null, [
+                'sortable' => false
+            ])
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],
@@ -149,6 +173,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'label' => 'Sort and Trim Options',
                 'required' => false,
             ])
+            ->add('isPublished')
             ->getFormBuilder()->addModelTransformer(new CallbackTransformer(
                 // Use the array in the form
                 function ($valuesAsArray) {
@@ -183,13 +208,30 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('offlineDisplayType')
             ->add('linkType')
             ->add('partner')
+            ->add('isPublished')
             ;
+    }
+
+    protected function configureBatchActions($actions)
+    {
+
+        if ($this->hasRoute('list') && $this->hasAccess('list')) {
+            $actions['export'] = [
+                'label' => 'Download Export Zip',
+                'ask_confirmation' => FALSE,
+            ];
+        }
+
+        return $actions;
     }
 
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
         $collection
-            ->add('reorder', $this->getRouterIdParameter().'/reorder');
+            ->add('reorder', $this->getRouterIdParameter().'/reorder')
+            ->add('importForm')
+            ->add('import')
+            ;
     }
 
     public function alterNewInstance(object $instance): void

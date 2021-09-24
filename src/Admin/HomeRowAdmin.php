@@ -37,6 +37,27 @@ final class HomeRowAdmin extends AbstractAdmin
         '_sort_by' => 'sortIndex'
     );
 
+
+    public function configureActionButtons($action, $object = null)
+    {
+        $list = parent::configureActionButtons($action, $object);
+        $list['importForm']['template'] = 'CRUD/import_button.html.twig';
+        return $list;
+    }
+
+    public function getDashboardActions()
+    {
+        $actions = parent::getDashboardActions();
+
+        $actions['importForm'] = [
+            'label' => 'Import',
+            'url' => $this->generateUrl('importForm'),
+            'icon' => 'level-up',
+        ];
+
+        return $actions;
+    }
+
     protected function configureTabMenu(MenuItemInterface $menu, $action,
         AdminInterface $childAdmin = null)
     {
@@ -64,6 +85,7 @@ final class HomeRowAdmin extends AbstractAdmin
         $datagridMapper
             ->add('title')
             ->add('partner')
+            ->add('isPublished')
             ;
     }
 
@@ -85,6 +107,9 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('options', null, [
                 'editable' => false,
                 'sortable' => false,
+            ])
+            ->add('isPublished', null, [
+                'sortable' => false
             ])
             ->add('_action', null, [
                 'actions' => [
@@ -116,7 +141,7 @@ final class HomeRowAdmin extends AbstractAdmin
                     'Full Width - Descriptive' => 'FullWidthDescriptive',
                     'Full Width - Imagery' => 'FullWidthImagery',
                     'Parallax' => 'Parallax',
-                    'Numbered' => 'Numbered',
+                    'Numbered' => 'NumberedRow',
                 ]
             ])
             ->add('partner')
@@ -124,6 +149,7 @@ final class HomeRowAdmin extends AbstractAdmin
                 'label' => 'Sort and Trim Options',
                 'required' => false,
             ])
+            ->add('isPublished')
             ;
     }
 
@@ -135,13 +161,30 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('layout')
             ->add('partner')
             ->add('options')
+            ->add('isPublished')
             ;
+    }
+
+    protected function configureBatchActions($actions)
+    {
+
+        if ($this->hasRoute('list') && $this->hasAccess('list')) {
+            $actions['export'] = [
+                'label' => 'Download Export Zip',
+                'ask_confirmation' => FALSE,
+            ];
+        }
+
+        return $actions;
     }
 
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
         $collection
-            ->add('reorder', $this->getRouterIdParameter().'/reorder');
+            ->add('reorder', $this->getRouterIdParameter().'/reorder')
+            ->add('importForm')
+            ->add('import')
+            ;
     }
 
     public function alterNewInstance(object $instance): void

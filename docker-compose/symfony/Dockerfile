@@ -12,10 +12,12 @@ RUN apt-get update -y && apt-get install -y \
   git \
   libmcrypt-dev \
   zip \
+  libzip-dev \
   unzip
 
 RUN pecl install apcu \
   && docker-php-ext-enable apcu \
+  && docker-php-ext-install zip \
   && pecl clear-cache
 
 # Get latest Composer
