@@ -30,6 +30,9 @@ module.exports = {
       twitch: "0px 0px 10px rgba(100, 65, 165, 0.8)",
       youtube: "0px 0px 10px rgba(255, 0, 0, 0.6)"
     },
+    fontFamily: {
+      play: "Play, sans-serif",
+    },
     extend: {
       fontSize: {
         xxs: [
