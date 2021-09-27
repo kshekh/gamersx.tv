@@ -19,18 +19,6 @@ div.embed-frame {
   width: 540px;
 }
 
-p {
-  padding-top: 1rem;
-}
-
-li {
-  padding-left: 2rem;
-}
-
-h2, h3, h4 {
-  padding-top: 2rem;
-}
-
 div.custom-bg {
   background-size: cover;
   background-repeat: no-repeat;

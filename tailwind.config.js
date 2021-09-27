@@ -31,40 +31,43 @@ module.exports = {
       youtube: "0px 0px 10px rgba(255, 0, 0, 0.6)"
     },
     fontFamily: {
-      play: "Play, sans-serif",
+      play: "Play, sans-serif"
     },
     extend: {
       fontSize: {
         xxs: [
           "0.63rem", // 10px
           {
-            lineHeight: "1.2em", // 12px
-          },
+            lineHeight: "1.2em" // 12px
+          }
         ],
         sm: [
           "0.875rem", // 14px
           {
-            lineHeight: "1.214em", // 17px
-          },
+            lineHeight: "1.214em" // 17px
+          }
         ],
         lg: [
           "1.125rem", // 18px
           {
-            lineHeight: "1.1666em", // 21px
-          },
+            lineHeight: "1.1666em" // 21px
+          }
         ],
         "2xl": [
           "1.5rem", // 24px
           {
-            lineHeight: "1.22em", // 29.3px
-          },
+            lineHeight: "1.22em" // 29.3px
+          }
         ],
         "4xl": [
           "2.25rem", // 36px
           {
-            lineHeight: "1.111em", // 41px
-          },
-        ],
+            lineHeight: "1.111em" // 41px
+          }
+        ]
+      },
+      width: {
+        "1px": "1px"
       }
     }
   },
