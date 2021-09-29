@@ -6,7 +6,8 @@ module.exports = {
   theme: {
     colors: {
       purple: {
-        DEFAULT: "#6441A5"
+        600: "#32235B",
+        DEFAULT: "#6441A5",
       },
       white: {
         DEFAULT: "#FFFFFF"
@@ -19,9 +20,13 @@ module.exports = {
       },
       red: {
         DEFAULT: "#FF0000"
-      }
+      },
+      transparent: {
+        DEFAULT: "transparent"
+      },
     },
     boxShadow: {
+      base: "0px 0px 20px #6441A5",
       twitch: "0px 0px 40px #6441A5",
       youtube: "0px 0px 15px rgba(255, 0, 0, 0.25)",
       none: "none"
@@ -31,7 +36,9 @@ module.exports = {
       youtube: "0px 0px 10px rgba(255, 0, 0, 0.6)"
     },
     fontFamily: {
-      play: "Play, sans-serif"
+      play: "Play, sans-serif",
+      calibri: "Calibri, sans-serif",
+      bahnschrift: "Bahnschrift, sans-serif",
     },
     extend: {
       fontSize: {
@@ -68,7 +75,14 @@ module.exports = {
       },
       width: {
         "1px": "1px"
-      }
+      },
+      maxWidth: {
+        "116": "116px",
+        "224": "224px",
+      },
+      spacing: {
+        "0.75": "3px",
+      },
     }
   },
   variants: {
