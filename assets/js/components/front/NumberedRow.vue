@@ -6,6 +6,10 @@
       {{ settings.title }}
       <title-addinional-description />
     </h2>
+    <div class="bg-red">
+      <slider-arrow />
+      <slider-arrow />
+    </div>
     <div class="flex flex-row justify-start items-center">
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="first()">
         <img
@@ -45,6 +49,8 @@ import NoEmbedContainer from "../layout/NoEmbedContainer.vue";
 
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
+import SliderArrow from "../helpers/SliderArrow.vue";
+
 require("swiped-events");
 
 export default {
@@ -52,7 +58,8 @@ export default {
   components: {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
-    "title-addinional-description": TitleAdditionalDescription
+    "title-addinional-description": TitleAdditionalDescription,
+    "slider-arrow": SliderArrow
   },
   props: {
     settings: {
