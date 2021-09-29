@@ -1,6 +1,6 @@
 <template>
   <!-- remowe "text-white" later -->
-  <div class="text-center mx-auto text-white">
+  <div class="text-white">
     <div v-for="row in settings.rows" :key="row.id">
       <component :is="row.componentName" v-bind:settings="row"></component>
     </div>

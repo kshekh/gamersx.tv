@@ -1,12 +1,17 @@
 <template>
   <div @swiped-left="forward()" @swiped-right="back()" class="home-row p-6">
-    <div class="text-3xl text-left font-bold pl-22 px-12 pt-4 pb-2">{{ settings.title}}</div>
+    <h2
+      class="text-white pl-3 mb-3  font-calibri font-bold text-sm  md:text-2xl xl:text-4xl md:pl-6 xl:pl-5 md:mb-2 xl:mb-7"
+    >
+      {{ settings.title }}
+      <title-addinional-description />
+    </h2>
     <div class="flex flex-row justify-start items-center" >
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="first()">
         <img alt="cursor-left" class="cursor-pointer" v-show="allowScrolling && (rowIndex > 0)" src="/images/left-arrow.png" />
       </div>
       <div ref="channelBox" class="flex flex-row p-5 overflow-hidden">
-        <div v-bind:style="customBg(channel)" class="custom-bg relative tall-art" ref="channelDivs" v-for="channel in displayChannels">
+        <div v-bind:style="customBg(channel)" class="custom-bg relative tall-art" ref="channelDivs" v-for="(channel, index) in displayChannels" :key="index">
             <component class="absolute bottom-6 inset-x-0"
               :is="channel.componentName"
               v-bind="channel"
@@ -23,6 +28,8 @@
 import EmbedContainer from '../layout/EmbedContainer.vue'
 import NoEmbedContainer from '../layout/NoEmbedContainer.vue'
 
+import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
+
 require('swiped-events');
 
 export default {
@@ -30,6 +37,7 @@ export default {
   components: {
     'EmbedContainer': EmbedContainer,
     'NoEmbedContainer': NoEmbedContainer,
+    "title-addinional-description": TitleAdditionalDescription
   },
   props: {
     settings: {
