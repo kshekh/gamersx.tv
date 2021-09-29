@@ -1,5 +1,6 @@
 <template>
-  <div class="text-center mx-auto">
+  <!-- remowe "text-white" later -->
+  <div class="text-center mx-auto text-white">
     <div v-for="row in settings.rows" :key="row.id">
       <component :is="row.componentName" v-bind:settings="row"></component>
     </div>
@@ -7,6 +8,7 @@
 </template>
 <script>
 import axios from "axios";
+
 import ClassicMd from "./front/ClassicMd.vue";
 import FullWidthDescriptive from "./front/FullWidthDescriptive.vue";
 import Parallax from "./front/Parallax.vue";
