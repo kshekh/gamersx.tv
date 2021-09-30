@@ -7,6 +7,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\{ HeaderUtils, Request, Response, ResponseHeaderBag, RedirectResponse };
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 
