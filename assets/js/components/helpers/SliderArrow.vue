@@ -1,7 +1,15 @@
 <template>
-  <button>
+  <button
+    @click="handleClick()"
+    :class="[
+      videoTypeClass,
+      {
+        'transform rotate-180': !isNext
+      }
+    ]"
+  >
     <svg
-      class="w-2 h-2 md:w-6 md:h-6"
+      class="w-4 h-4 md:w-8 md:h-8 fill-current"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 512 512"
     >
@@ -14,6 +22,37 @@
 
 <script>
 export default {
-  name: "SliderArrow"
-}
+  name: "SliderArrow",
+  props: {
+    videoType: {
+      type: String,
+      required: true
+    },
+    isNext: {
+      type: Boolean,
+      required: true
+    }
+  },
+  computed: {
+    videoTypeClass() {
+      let className;
+
+      switch (this.videoType) {
+        case "youtube":
+          className = "text-red";
+          break;
+        case "twitch":
+          className = "text-purple";
+          break;
+      }
+
+      return className;
+    }
+  },
+  methods: {
+    handleClick() {
+      this.$emit("arrow-clicked");
+    }
+  }
+};
 </script>
