@@ -152,6 +152,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'choice_label' => 'title',
                 'placeholder' => 'Choose a home row for this item',
                 'required' => true,
+                'attr' => [
+                    'oninvalid' => "alert('Please choose a Home Row')",
+                ],
             ])
             ->add('itemType', ChoiceType::class, [
                 'choices' => [
