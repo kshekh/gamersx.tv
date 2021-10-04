@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import url('../fonts/fonts.css');
+@import url('./text-stroke.css');
 
 div.profile-pic {
   height: 332px;

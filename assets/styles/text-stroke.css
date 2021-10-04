@@ -1,0 +1,5 @@
+.text-stroke {
+  -webkit-text-fill-color: #000612;
+  -webkit-text-stroke-color: #595959;
+  -webkit-text-stroke-width: 3px;
+}

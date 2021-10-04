@@ -25,14 +25,14 @@
     <div class="flex flex-row justify-start items-center">
       <div ref="channelBox" class="flex flex-row p-5 overflow-hidden">
         <div
-          class="flex flex-row"
+          class="flex"
           ref="channelDivs"
           v-for="(channel, index) in displayChannels"
           :key="index"
         >
-          <div class="font-extrabold big-number">
+          <span class="font-bahnschrift font-semibold text-8xl md:text-xxl xl:text-3xxl text-stroke">
             {{ index + 1 }}
-          </div>
+          </span>
           <component :is="channel.componentName" v-bind="channel"></component>
         </div>
       </div>

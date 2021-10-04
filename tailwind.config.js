@@ -71,6 +71,18 @@ module.exports = {
           {
             lineHeight: "1.111em" // 41px
           }
+        ],
+        "xxl": [
+          "9rem", // 144px
+          {
+            lineHeight: "1" // 144px
+          }
+        ],
+        "3xxl": [
+          "11rem", // 176px
+          {
+            lineHeight: "1" // 176px
+          }
         ]
       },
       width: {
