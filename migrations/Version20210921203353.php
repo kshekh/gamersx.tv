@@ -21,6 +21,11 @@ final class Version20210921203353 extends AbstractMigration
         $this->addSql('UPDATE home_row SET is_published = TRUE');
         $this->addSql('ALTER TABLE home_row MODIFY is_published BOOLEAN NOT NULL');
 
+        // Add to HomeRow and set all to published
+        $this->addSql('ALTER TABLE home_row ADD COLUMN is_glow_styling BOOLEAN');
+        $this->addSql('UPDATE home_row SET is_glow_styling = TRUE');
+        $this->addSql('ALTER TABLE home_row MODIFY is_glow_styling BOOLEAN NOT NULL');
+
         // Add to HomeRowItem and set all to published
         $this->addSql('ALTER TABLE home_row_item ADD COLUMN is_published BOOLEAN');
         $this->addSql('UPDATE home_row_item SET is_published = TRUE');
@@ -31,6 +36,7 @@ final class Version20210921203353 extends AbstractMigration
     {
         // Drop is_published columns
         $this->addSql('ALTER TABLE home_row DROP COLUMN is_published');
+        $this->addSql('ALTER TABLE home_row DROP COLUMN is_glow_styling');
         $this->addSql('ALTER TABLE home_row_item DROP COLUMN is_published');
     }
 }
