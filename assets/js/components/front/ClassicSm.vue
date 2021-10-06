@@ -44,7 +44,7 @@ import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription
 require("swiped-events");
 
 export default {
-  name: "CustomSm",
+  name: "ClassicSm",
   components: {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,

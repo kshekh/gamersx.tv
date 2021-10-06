@@ -2,13 +2,14 @@
   <!-- remowe "text-white" later -->
   <div class="text-white">
     <div v-for="row in settings.rows" :key="row.id">
-      <component :is="row.componentName" v-bind:settings="row"></component>
+      <component :is="row.componentName" :settings="row"></component>
     </div>
   </div>
 </template>
 <script>
 import axios from "axios";
 
+import ClassicSm from "./front/ClassicSm.vue";
 import ClassicMd from "./front/ClassicMd.vue";
 import FullWidthDescriptive from "./front/FullWidthDescriptive.vue";
 import Parallax from "./front/Parallax.vue";
@@ -16,6 +17,7 @@ import NumberedRow from "./front/NumberedRow.vue";
 
 export default {
   components: {
+    ClassicSm: ClassicSm,
     ClassicMd: ClassicMd,
     FullWidthDescriptive: FullWidthDescriptive,
     Parallax: Parallax,
@@ -40,4 +42,3 @@ Number.prototype.mod = function(n) {
   return ((this % n) + n) % n;
 };
 </script>
-<style scoped></style>

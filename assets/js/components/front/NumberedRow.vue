@@ -41,7 +41,7 @@
         <component
           :is="channel.componentName"
           v-bind="channel"
-          class="red"
+          class=""
         ></component>
       </div>
     </div>
