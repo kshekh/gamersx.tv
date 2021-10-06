@@ -7,7 +7,7 @@ module.exports = {
     colors: {
       purple: {
         600: "#32235B",
-        DEFAULT: "#6441A5",
+        DEFAULT: "#6441A5"
       },
       white: {
         DEFAULT: "#FFFFFF"
@@ -23,7 +23,7 @@ module.exports = {
       },
       transparent: {
         DEFAULT: "transparent"
-      },
+      }
     },
     boxShadow: {
       base: "0px 0px 20px #6441A5",
@@ -38,7 +38,7 @@ module.exports = {
     fontFamily: {
       play: "Play, sans-serif",
       calibri: "Calibri, sans-serif",
-      bahnschrift: "Bahnschrift, sans-serif",
+      bahnschrift: "Bahnschrift, sans-serif"
     },
     extend: {
       fontSize: {
@@ -72,7 +72,7 @@ module.exports = {
             lineHeight: "1.111em" // 41px
           }
         ],
-        "xxl": [
+        xxl: [
           "9rem", // 144px
           {
             lineHeight: "1" // 144px
@@ -90,11 +90,11 @@ module.exports = {
       },
       maxWidth: {
         "116": "116px",
-        "224": "224px",
+        "224": "224px"
       },
       spacing: {
-        "0.75": "3px",
-      },
+        "0.75": "3px"
+      }
     }
   },
   variants: {

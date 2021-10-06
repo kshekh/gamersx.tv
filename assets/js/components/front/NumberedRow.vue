@@ -1,10 +1,14 @@
 <template>
-  <div @swiped-left="forward()" @swiped-right="back()" class="home-row p-6">
+  <div
+    @swiped-left="forward()"
+    @swiped-right="back()"
+    class="mb-7 md:mb-9 xl:mb-14 pl-4 xl:pl-16"
+  >
     <div
-      class="flex items-center justify-between pl-3 mb-3 md:pl-6 xl:pl-5 md:mb-2 xl:mb-7"
+      class="flex items-center justify-between px-3 mb-3 md:px-6 xl:px-5 md:mb-2 xl:mb-7"
     >
       <h2
-        class="text-white   font-calibri font-bold text-sm  md:text-2xl xl:text-4xl"
+        class="text-white font-calibri font-bold text-sm  md:text-2xl xl:text-4xl"
       >
         {{ settings.title }}
         <title-addinional-description />
@@ -22,19 +26,23 @@
         />
       </div>
     </div>
-    <div class="flex flex-row justify-start items-center">
-      <div ref="channelBox" class="flex flex-row p-5 overflow-hidden">
-        <div
-          class="flex"
-          ref="channelDivs"
-          v-for="(channel, index) in displayChannels"
-          :key="index"
+    <div ref="channelBox" class="flex overflow-hidden">
+      <div
+        class="flex px-2 md:px-2 xl:px-6"
+        ref="channelDivs"
+        v-for="(channel, index) in displayChannels"
+        :key="index"
+      >
+        <span
+          class="font-bahnschrift font-semibold text-8xl md:text-xxl xl:text-3xxl text-stroke"
         >
-          <span class="font-bahnschrift font-semibold text-8xl md:text-xxl xl:text-3xxl text-stroke">
-            {{ index + 1 }}
-          </span>
-          <component :is="channel.componentName" v-bind="channel"></component>
-        </div>
+          {{ index + 1 }}
+        </span>
+        <component
+          :is="channel.componentName"
+          v-bind="channel"
+          class="red"
+        ></component>
       </div>
     </div>
   </div>
@@ -83,15 +91,15 @@ export default {
             channel.offlineDisplay.showOverlay))
       );
     },
-    first: function() {
+    first() {
       this.rowIndex = 0;
       this.reorder();
     },
-    back: function() {
+    back() {
       this.rowIndex = (this.rowIndex - 1).mod(this.displayChannels.length);
       this.reorder();
     },
-    forward: function() {
+    forward() {
       this.rowIndex = (this.rowIndex + 1).mod(this.displayChannels.length);
       this.reorder();
     },
@@ -105,13 +113,12 @@ export default {
     clickPrev() {},
     clickNext() {}
   },
-  mounted: function() {
+  mounted() {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
   },
-  updated: function() {
+  updated() {
     this.allowScrolling =
       this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
   }
 };
 </script>
-<style scoped></style>
