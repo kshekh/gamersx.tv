@@ -102,6 +102,9 @@ module.exports = {
         "1px": "1px",
         "18": "4.5rem"
       },
+      height: {
+        "18": "72px"
+      },
       maxWidth: {
         "116": "116px",
         "224": "224px"
@@ -112,7 +115,12 @@ module.exports = {
     }
   },
   variants: {
-    extend: {}
+    extend: {
+      maxWidth: ['hover'],
+      width: ['hover'],
+      maxHeight: ['hover'],
+      height: ['hover'],
+    }
   },
   plugins: []
 };

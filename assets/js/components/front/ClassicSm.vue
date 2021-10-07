@@ -1,20 +1,33 @@
 <template>
   <div @swiped-left="forward()" @swiped-right="back()">
-    <h2
-      class="
-        text-white
-        pl-8
-        font-calibri font-bold
-        text-sm
-        md:text-2xl
-        xl:text-4xl
-        md:pl-10
-        xl:pl-24
-      "
-    >
-      {{ settings.title }}
-      <title-addinional-description />
-    </h2>
+    <div class="flex items-center justify-between pl-8 md:pl-10
+          xl:pl-24 pr-4 md:pr-5 xl:pr-12">
+      <h2
+        class="
+          text-white
+          font-calibri font-bold
+          text-sm
+          md:text-2xl
+          xl:text-4xl
+          mr-2
+        "
+      >
+        {{ settings.title }}
+        <title-addinional-description />
+      </h2>
+      <div class="flex items-center space-x-5">
+        <slider-arrow
+          :isNext="false"
+          :videoType="'twitch'"
+          @arrow-clicked="back()"
+        />
+        <slider-arrow
+          :isNext="true"
+          :videoType="'twitch'"
+          @arrow-clicked="forward()"
+        />
+      </div>
+    </div>
     <!-- <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="first()">
       <img
         alt="cursor-left"
@@ -23,7 +36,28 @@
         src="/images/left-arrow.png"
       />
     </div> -->
-    <div ref="channelBox" class="flex overflow-hidden pt-3 md:pt-2 xl:pt-7 pb-7 md:pb-6 xl:pb-12 pl-4 xl:pl-20">
+    <div ref="channelBox" class="flex overflow-hidden pt-5 xl:pt-9 pb-7 md:pb-6 xl:pb-12 pl-4 xl:pl-20">
+      <!-- test with width and height transition -->
+      <!-- <div
+        ref="channelDivs"
+        v-for="(channel, index) in displayChannels"
+        :key="index"
+        class="
+          flex-shrink-0
+          mr-1.5
+          xl:mr-3
+          w-36
+          md:w-28
+          xl:w-48
+          h-20
+          md:h-18
+          xl:h-32
+          transform
+          transition-all
+          hover:w-52
+          hover:h-48
+        "
+      > -->
       <div
         ref="channelDivs"
         v-for="(channel, index) in displayChannels"
@@ -36,7 +70,7 @@
           md:w-28
           xl:w-48
           h-20
-          md:h-16
+          md:h-18
           xl:h-32
         "
       >
@@ -57,6 +91,9 @@
 import EmbedContainer from "../layout/EmbedContainerClassicSm.vue";
 import NoEmbedContainer from "../layout/NoEmbedContainer.vue";
 
+import SliderArrow from "../helpers/SliderArrow.vue";
+import PlayButton from "../helpers/PlayButton.vue";
+
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
 require("swiped-events");
@@ -67,6 +104,8 @@ export default {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
     "title-addinional-description": TitleAdditionalDescription,
+    "slider-arrow": SliderArrow,
+    "play-button": PlayButton
   },
   props: {
     settings: {
@@ -74,7 +113,7 @@ export default {
       required: true,
     },
   },
-  data: function () {
+  data() {
     return {
       rowIndex: 0,
       displayChannels: [],
@@ -82,7 +121,7 @@ export default {
     };
   },
   methods: {
-    showChannel: function (channel) {
+    showChannel(channel) {
       return (
         (channel.showOnline &&
           (channel.onlineDisplay.showArt ||
@@ -94,11 +133,15 @@ export default {
             channel.offlineDisplay.showOverlay))
       );
     },
-    first: function () {
+    first() {
       this.rowIndex = 0;
       this.reorder();
     },
-    forward: function () {
+    back() {
+      this.rowIndex = (this.rowIndex - 1).mod(this.displayChannels.length);
+      this.reorder();
+    },
+    forward() {
       this.rowIndex = (this.rowIndex + 1).mod(this.displayChannels.length);
       this.reorder();
     },
@@ -110,10 +153,10 @@ export default {
       }
     },
   },
-  mounted: function () {
+  mounted() {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
   },
-  updated: function () {
+  updated() {
     this.allowScrolling =
       this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
   },

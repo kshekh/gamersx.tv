@@ -6,7 +6,8 @@
       h-full
       transform
       transition-transform
-      hover:scale-110
+      hover:scale-x-110
+      hover:scale-y-150
     "
     :class="{
       'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
@@ -54,7 +55,7 @@
             :width="'100%'"
             :height="'100%'"
           ></component>
-          <a :href="link" class="flex justify-between pt-2 pb-3 px-2 bg-grey-900">
+          <a :href="link" class="flex justify-between py-1 xl:pt-2 xl:pb-3 px-2 bg-grey-900">
             <div class="mr-2">
               <h5 class="text-8 text-white font-play">{{ offlineDisplay.title }}</h5>
               <h6 class="text-7 text-grey font-play">{{ embedData.channel }}</h6>
