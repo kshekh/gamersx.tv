@@ -1,5 +1,13 @@
 .text-stroke {
+  position: relative;
+  color: #000612;
+}
+
+.text-stroke::before {
+  content: attr(data-number);
+  position: absolute;
+  z-index: -1;
   -webkit-text-fill-color: #000612;
   -webkit-text-stroke-color: #595959;
-  -webkit-text-stroke-width: 3px;
+  -webkit-text-stroke-width: 5px;
 }

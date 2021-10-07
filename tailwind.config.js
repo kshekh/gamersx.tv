@@ -86,7 +86,8 @@ module.exports = {
         ]
       },
       width: {
-        "1px": "1px"
+        "1px": "1px",
+        "18": "4.5rem"
       },
       maxWidth: {
         "116": "116px",

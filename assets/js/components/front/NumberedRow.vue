@@ -26,8 +26,38 @@
         />
       </div>
     </div>
-    <div ref="channelBox" class="flex overflow-hidden">
+    <div
+      ref="channelBox"
+      class="flex space-x-3 md:space-x-1 xl:space-x-5 overflow-hidden"
+    >
       <div
+        class="flex items-baseline"
+        ref="channelDivs"
+        v-for="num of 12"
+        :key="num"
+      >
+        <span
+          :data-number="num"
+          class="transform translate-x-3 md:translate-x-4 xl:translate-x-5 flex-shrink-0 font-bahnschrift font-semibold text-8xl md:text-xxl xl:text-3xxl text-stroke"
+          :class="{
+            'translate-x-8 md:translate-x-10 xl:translate-x-12': num >= 10
+          }"
+        >
+          {{ num }}
+        </span>
+        <div
+          class="flex-shrink-0 w-18 h-24 md:w-24 md:h-32 xl:w-28 xl:h-40 relative z-10"
+        >
+          <div class="relative">
+            <play-button
+              :videoType="'twitch'"
+              class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+            />
+            <img src="https://picsum.photos/200/300" alt="" />
+          </div>
+        </div>
+      </div>
+      <!-- <div
         class="flex px-2 md:px-2 xl:px-6"
         ref="channelDivs"
         v-for="(channel, index) in displayChannels"
@@ -43,7 +73,7 @@
           v-bind="channel"
           class=""
         ></component>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -54,6 +84,7 @@ import NoEmbedContainer from "../layout/NoEmbedContainer.vue";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
 import SliderArrow from "../helpers/SliderArrow.vue";
+import PlayButton from "../helpers/PlayButton.vue";
 
 require("swiped-events");
 
@@ -63,7 +94,8 @@ export default {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
     "title-addinional-description": TitleAdditionalDescription,
-    "slider-arrow": SliderArrow
+    "slider-arrow": SliderArrow,
+    "play-button": PlayButton
   },
   props: {
     settings: {
