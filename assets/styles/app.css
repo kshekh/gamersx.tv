@@ -5,6 +5,10 @@
 @import url('../fonts/fonts.css');
 @import url('./text-stroke.css');
 
+html, body {
+  height: 100%;
+}
+
 div.profile-pic {
   height: 332px;
   width: 332px;
@@ -96,7 +100,7 @@ div.big-number {
   width: 22px;
   height: 1px;
   top: 6px;
-  left: -px;
+  left: -4px;
   transform: rotateZ(135deg);
 }
 

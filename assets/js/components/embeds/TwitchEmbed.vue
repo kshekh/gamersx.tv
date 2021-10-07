@@ -7,11 +7,11 @@ export default {
   name: 'TwitchEmbed',
   props: {
     embedData: Object,
+    height: [Number, String],
+    width: [Number, String],
   },
   data: function() {
     return {
-      height: 300,
-      width: 540,
       embed: {},
       embedPlaying: false,
     }
@@ -41,8 +41,8 @@ export default {
   },
   mounted: function() {
     this.embed = new Twitch.Embed(this.embedData.elementId, {
-      width: this.width,
-      height: this.height,
+      width: this.width || 540,
+      height: this.height || 300,
       channel: this.embedData.channel,
       video: this.embedData.video,
       layout: 'video',

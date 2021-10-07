@@ -16,7 +16,8 @@ module.exports = {
         DEFAULT: "#000612"
       },
       grey: {
-        DEFAULT: "#737373"
+        DEFAULT: "#737373",
+        900: "#1e1927",
       },
       red: {
         DEFAULT: "#FF0000"
@@ -42,6 +43,18 @@ module.exports = {
     },
     extend: {
       fontSize: {
+        7: [
+          "0.46rem", // 7px
+          {
+            lineHeight: "1.11em" // 8px
+          }
+        ],
+        8: [
+          "0.5rem", // 8px
+          {
+            lineHeight: "1.18em" // 9px
+          }
+        ],
         xxs: [
           "0.63rem", // 10px
           {
