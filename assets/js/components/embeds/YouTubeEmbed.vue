@@ -9,11 +9,11 @@ export default {
   name: 'YouTubeEmbed',
   props: {
     embedData: Object,
+    height: [Number, String],
+    width: [Number, String],
   },
   data: function() {
     return {
-      height: 300,
-      width: 540,
       embed: {},
       embedPlaying: false,
     }
@@ -47,8 +47,8 @@ export default {
   },
   mounted: function() {
     this.embed = new YT.Player(this.embedData.elementId, {
-      width: this.width,
-      height: this.height,
+      width: this.width || 540,
+      height: this.height || 300,
       videoId: this.embedData.video,
       autoplay: false,
       playerVars: {

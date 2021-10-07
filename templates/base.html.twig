@@ -21,104 +21,105 @@
 		{% endblock %}
 	</head>
 	<body class="bg-black">
-		{% block header %}
-			<div class="w-full">
-				<header
-					id="header"
-					class="flex items-center justify-between
-						px-4 md:px-6 xl:px-20 pb-3 md:pb-6 pt-6 xl:py-7
-						shadow-base"
-				>
-					<img src="/images/logo.png" class="flex-shrink-0 w-24 md:w-72 mr-3 md:mr-14 xl:mr-4"/>
-					<div class="flex flex-grow items-center justify-between xl:justify-end ml-auto">
-						<nav class="hidden xl:block">
-							<ul class="flex items-center space-x-8 mx-8">
-								<li>
-									<a href="{{ path('home') }}" class="text-white font-play text-lg hover:text-purple">Home</a>
-								</li>
-								<li>
-									<a href="#" class="text-white font-play text-lg hover:text-purple">Channels</a>
-								</li>
-								<li>
-									<a href="#" class="text-white font-play text-lg hover:text-purple">Gamers</a>
-								</li>
-								<li>
-									<a href="#" class="text-white font-play text-lg hover:text-purple">Store</a>
-								</li>
-							</ul>
-						</nav>
-						<div class="w-full xl:max-w-xs
-							mr-9 md:mr-24 xl:mr-8
-							cut-edge__wrapper">
-							<div class="cut-edge__clipped cut-edge__clipped--md-border cut-edge__clipped--twitch cut-edge__clipped-bottom-left-md">
-								<input id="query"
-									class="
-									w-full bg-transparent
-									border-0
-									pl-2.5 md:pl-4 xl:pl-6
-									pr-2
-									py-0.5 xl:py-1.5
-									placeholder-grey
-									text-white
-									text-base xl:text-lg
-									font-play
-									outline-none"
-									type="text"
-									placeholder="Search"
-								/>
+		<div class="h-full flex flex-col">
+			{% block header %}
+				<div class="w-full">
+					<header
+						id="header"
+						class="flex items-center justify-between
+							px-4 md:px-6 xl:px-20 pb-3 md:pb-6 pt-6 xl:py-7
+							shadow-base"
+					>
+						<img src="/images/logo.png" class="flex-shrink-0 w-24 md:w-72 mr-3 md:mr-14 xl:mr-4"/>
+						<div class="flex flex-grow items-center justify-between xl:justify-end ml-auto">
+							<nav class="hidden xl:block">
+								<ul class="flex items-center space-x-8 mx-8">
+									<li>
+										<a href="{{ path('home') }}" class="text-white font-play text-lg hover:text-purple">Home</a>
+									</li>
+									<li>
+										<a href="#" class="text-white font-play text-lg hover:text-purple">Channels</a>
+									</li>
+									<li>
+										<a href="#" class="text-white font-play text-lg hover:text-purple">Gamers</a>
+									</li>
+									<li>
+										<a href="#" class="text-white font-play text-lg hover:text-purple">Store</a>
+									</li>
+								</ul>
+							</nav>
+							<div class="w-full xl:max-w-xs
+								mr-9 md:mr-24 xl:mr-8
+								cut-edge__wrapper">
+								<div class="cut-edge__clipped cut-edge__clipped--md-border cut-edge__clipped--twitch cut-edge__clipped-bottom-left-md">
+									<input id="query"
+										class="
+										w-full bg-transparent
+										border-0
+										pl-2.5 md:pl-4 xl:pl-6
+										pr-2
+										py-0.5 xl:py-1.5
+										placeholder-grey
+										text-white
+										text-base xl:text-lg
+										font-play
+										outline-none"
+										type="text"
+										placeholder="Search"
+									/>
+								</div>
 							</div>
-						</div>
-						<button class="hidden xl:block">
-							<svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<path d="M35.8493 6.15074C31.8829 2.1844 26.6092 0 21 0C15.3905 0 10.1171 2.1844 6.15074 6.15074C2.1844 10.1171 0 15.3905 0 21C0 26.6092 2.1844 31.8829 6.15074 35.8493C10.1171 39.8156 15.3905 42 21 42C26.6092 42 31.8829 39.8156 35.8493 35.8493C39.8156 31.8829 42 26.6092 42 21C42 15.3905 39.8156 10.1171 35.8493 6.15074ZM10.5279 36.2895C11.4062 31.2324 15.7885 27.5023 21 27.5023C26.2119 27.5023 30.5938 31.2324 31.4721 36.2895C28.4905 38.3381 24.883 39.5391 21 39.5391C17.117 39.5391 13.5095 38.3381 10.5279 36.2895ZM14.3228 18.3641C14.3228 14.682 17.3182 11.6869 21 11.6869C24.6818 11.6869 27.6772 14.6823 27.6772 18.3641C27.6772 22.0459 24.6818 25.0413 21 25.0413C17.3182 25.0413 14.3228 22.0459 14.3228 18.3641ZM33.6037 34.5826C32.9413 32.2283 31.6259 30.0923 29.7822 28.4238C28.651 27.4 27.3635 26.5922 25.9792 26.0228C28.4812 24.3908 30.1385 21.5675 30.1385 18.3641C30.1385 13.3253 26.0388 9.22595 21 9.22595C15.9612 9.22595 11.8618 13.3253 11.8618 18.3641C11.8618 21.5675 13.5191 24.3908 16.0208 26.0228C14.6368 26.5922 13.349 27.3997 12.2178 28.4235C10.3744 30.092 9.05869 32.228 8.39635 34.5823C4.7482 31.1943 2.46094 26.3596 2.46094 21C2.46094 10.7775 10.7775 2.46094 21 2.46094C31.2225 2.46094 39.5391 10.7775 39.5391 21C39.5391 26.3599 37.2518 31.1946 33.6037 34.5826Z" fill="#6441A5"/>
-							</svg>
-						</button>
-						<button class="jsOpenBurgerButton block xl:hidden w-7 md:w-11 flex-shrink-0">
-							<span class="block h-0.75 w-full bg-purple"></span>
-							<span class="block h-0.75 w-full bg-purple my-1 md:my-1.5"></span>
-							<span class="block h-0.75 w-full bg-purple"></span>
-						</button>
-					</div>
-					<div class="jsBurgerMenu
-					fixed top-0 left-0
-					w-full h-full
-					transform translate-x-full
-					z-50 bg-black bg-opacity-80
-					flex justify-end
-					transition-all
-					duration-500
-					opacity-0">
-						<div class="px-5 pt-8 md:px-8">
-							<button class="closeBurgerButton block ml-auto mb-3 md:mb-11">
-								<svg class="w-4 h-4 md:w-7 md:h-7" width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-									<path d="M1 1L16 16M16 1L1 16" stroke="white" stroke-linecap="round"/>
+							<button class="hidden xl:block">
+								<svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M35.8493 6.15074C31.8829 2.1844 26.6092 0 21 0C15.3905 0 10.1171 2.1844 6.15074 6.15074C2.1844 10.1171 0 15.3905 0 21C0 26.6092 2.1844 31.8829 6.15074 35.8493C10.1171 39.8156 15.3905 42 21 42C26.6092 42 31.8829 39.8156 35.8493 35.8493C39.8156 31.8829 42 26.6092 42 21C42 15.3905 39.8156 10.1171 35.8493 6.15074ZM10.5279 36.2895C11.4062 31.2324 15.7885 27.5023 21 27.5023C26.2119 27.5023 30.5938 31.2324 31.4721 36.2895C28.4905 38.3381 24.883 39.5391 21 39.5391C17.117 39.5391 13.5095 38.3381 10.5279 36.2895ZM14.3228 18.3641C14.3228 14.682 17.3182 11.6869 21 11.6869C24.6818 11.6869 27.6772 14.6823 27.6772 18.3641C27.6772 22.0459 24.6818 25.0413 21 25.0413C17.3182 25.0413 14.3228 22.0459 14.3228 18.3641ZM33.6037 34.5826C32.9413 32.2283 31.6259 30.0923 29.7822 28.4238C28.651 27.4 27.3635 26.5922 25.9792 26.0228C28.4812 24.3908 30.1385 21.5675 30.1385 18.3641C30.1385 13.3253 26.0388 9.22595 21 9.22595C15.9612 9.22595 11.8618 13.3253 11.8618 18.3641C11.8618 21.5675 13.5191 24.3908 16.0208 26.0228C14.6368 26.5922 13.349 27.3997 12.2178 28.4235C10.3744 30.092 9.05869 32.228 8.39635 34.5823C4.7482 31.1943 2.46094 26.3596 2.46094 21C2.46094 10.7775 10.7775 2.46094 21 2.46094C31.2225 2.46094 39.5391 10.7775 39.5391 21C39.5391 26.3599 37.2518 31.1946 33.6037 34.5826Z" fill="#6441A5"/>
 								</svg>
 							</button>
-							<ul class="space-y-4 md:space-y-5 pr-4">
-								<li>
-									<a href="{{ path('home') }}" class="text-white font-play text-lg md:text-2xl">Home</a>
-								</li>
-								<li>
-									<a href="#" class="text-white font-play text-lg md:text-2xl">Channels</a>
-								</li>
-								<li>
-									<a href="#" class="text-white font-play text-lg md:text-2xl">Gamers</a>
-								</li>
-								<li>
-									<a href="#" class="text-white font-play text-lg md:text-2xl">Store</a>
-								</li>
-								<li>
-									<a href="#" class="text-white font-play text-lg md:text-2xl">Log in</a>
-								</li>
-							</ul>
+							<button class="jsOpenBurgerButton block xl:hidden w-7 md:w-11 flex-shrink-0">
+								<span class="block h-0.75 w-full bg-purple"></span>
+								<span class="block h-0.75 w-full bg-purple my-1 md:my-1.5"></span>
+								<span class="block h-0.75 w-full bg-purple"></span>
+							</button>
 						</div>
-					</div>
-				</header>
+						<div class="jsBurgerMenu
+						fixed top-0 left-0
+						w-full h-full
+						transform translate-x-full
+						z-50 bg-black bg-opacity-80
+						flex justify-end
+						transition-all
+						duration-500
+						opacity-0">
+							<div class="px-5 pt-8 md:px-8">
+								<button class="closeBurgerButton block ml-auto mb-3 md:mb-11">
+									<svg class="w-4 h-4 md:w-7 md:h-7" width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<path d="M1 1L16 16M16 1L1 16" stroke="white" stroke-linecap="round"/>
+									</svg>
+								</button>
+								<ul class="space-y-4 md:space-y-5 pr-4">
+									<li>
+										<a href="{{ path('home') }}" class="text-white font-play text-lg md:text-2xl">Home</a>
+									</li>
+									<li>
+										<a href="#" class="text-white font-play text-lg md:text-2xl">Channels</a>
+									</li>
+									<li>
+										<a href="#" class="text-white font-play text-lg md:text-2xl">Gamers</a>
+									</li>
+									<li>
+										<a href="#" class="text-white font-play text-lg md:text-2xl">Store</a>
+									</li>
+									<li>
+										<a href="#" class="text-white font-play text-lg md:text-2xl">Log in</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</header>
+				</div>
+			{% endblock %}
+			<div class="w-full mx-auto flex-grow">
+				{% block body %}{% endblock %}
 			</div>
-		{% endblock %}
-		<div class="w-full mx-auto">
-			{% block body %}{% endblock %}
-		</div>
 			{% block footer %}
 				<footer class="mb-2 bg-cover bg-left-bottom bg-no-repeat xl:pt-10" style="background-image: url('/images/footer-border.png')">
 					<div>
@@ -197,5 +198,6 @@
 					</div>
 				</footer>
 			{% endblock %}
+		</div>
 		</body>
 	</html>
