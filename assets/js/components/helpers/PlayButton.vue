@@ -3,15 +3,11 @@
     class="w-8 h-8 md:h-10 md:w-10 xl:w-12 xl:h-12 flex cursor-pointer rounded-full"
     :class="[videoTypeClass]"
   >
-    <svg
-      class="text-white fill-current w-4 h-4 m-auto"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 50 50"
-    >
-      <path
-        d="M 25 2 C 12.316406 2 2 12.316406 2 25 C 2 37.683594 12.316406 48 25 48 C 37.683594 48 48 37.683594 48 25 C 48 12.316406 37.683594 2 25 2 Z M 19 35 L 19 15 L 36 25 Z"
-      ></path>
-    </svg>
+    <div class="m-auto pl-1">
+      <svg class="text-white fill-current w-4 h-4 " viewBox="0 0 16 16">
+        <path d="M12.876 8.311.62 16.131V.491l12.255 7.82Z" />
+      </svg>
+    </div>
   </button>
 </template>
 
