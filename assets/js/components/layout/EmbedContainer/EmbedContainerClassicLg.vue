@@ -4,10 +4,12 @@
       cut-edge__wrapper
       w-full
       h-full
+      flex-shrink-0
       transform
       transition-transform
-      hover:scale-x-101 hover:scale-y-110
-      md:hover:scale-y-115
+      hover:h-110p
+      md:hover:h-115p
+      hover:z-10
     "
     :class="{
       'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
@@ -23,6 +25,7 @@
         cut-edge__clipped
         cut-edge__clipped--sm-border
         cut-edge__clipped-top-left-sm
+        bg-black
       "
       :class="{
         'cut-edge__clipped--twitch': embedName === 'TwitchEmbed',

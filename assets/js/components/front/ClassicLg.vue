@@ -61,6 +61,8 @@
         v-for="(channel, index) in displayChannels"
         :key="index"
         class="
+          flex
+          items-center
           flex-shrink-0
           w-60
           md:w-44
