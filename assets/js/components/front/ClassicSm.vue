@@ -88,8 +88,8 @@
   </div>
 </template>
 <script>
-import EmbedContainer from "../layout/EmbedContainerClassicSm.vue";
-import NoEmbedContainer from "../layout/NoEmbedContainer.vue";
+import EmbedContainer from "../layout/EmbedContainer/EmbedContainerClassicSm.vue";
+import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainer.vue";
 
 import SliderArrow from "../helpers/SliderArrow.vue";
 import PlayButton from "../helpers/PlayButton.vue";

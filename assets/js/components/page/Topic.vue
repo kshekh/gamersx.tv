@@ -39,7 +39,7 @@
   </div>
 </template>
 <script>
-import EmbedContainer from '../layout/EmbedContainer.vue'
+import EmbedContainer from '../layout/EmbedContainer/EmbedContainer.vue'
 
 export default {
   name: 'Topic',
