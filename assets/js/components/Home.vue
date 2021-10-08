@@ -9,6 +9,7 @@
 <script>
 import axios from "axios";
 
+import ClassicLg from "./front/ClassicLg.vue";
 import ClassicSm from "./front/ClassicSm.vue";
 import ClassicMd from "./front/ClassicMd.vue";
 import FullWidthDescriptive from "./front/FullWidthDescriptive.vue";
@@ -17,6 +18,7 @@ import NumberedRow from "./front/NumberedRow.vue";
 
 export default {
   components: {
+    ClassicLg: ClassicLg,
     ClassicSm: ClassicSm,
     ClassicMd: ClassicMd,
     FullWidthDescriptive: FullWidthDescriptive,

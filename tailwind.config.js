@@ -111,7 +111,11 @@ module.exports = {
       },
       spacing: {
         "0.75": "3px"
-      }
+      },
+      scale: {
+        '101': '1.01',
+        '115': '1.15',
+      },
     }
   },
   variants: {

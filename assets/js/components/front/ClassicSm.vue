@@ -1,7 +1,18 @@
 <template>
   <div @swiped-left="forward()" @swiped-right="back()">
-    <div class="flex items-center justify-between pl-8 md:pl-10
-          xl:pl-24 pr-4 md:pr-5 xl:pr-12">
+    <div
+      class="
+        flex
+        items-center
+        justify-between
+        pl-8
+        md:pl-10
+        xl:pl-24
+        pr-4
+        md:pr-5
+        xl:pr-12
+      "
+    >
       <h2
         class="
           text-white
@@ -36,7 +47,20 @@
         src="/images/left-arrow.png"
       />
     </div> -->
-    <div ref="channelBox" class="flex overflow-hidden pt-5 xl:pt-9 pb-7 md:pb-6 xl:pb-12 pl-4 xl:pl-20">
+    <div
+      ref="channelBox"
+      class="
+        flex
+        overflow-hidden
+        pt-5
+        xl:pt-9
+        pb-7
+        md:pb-6
+        xl:pb-12
+        pl-4
+        xl:pl-20
+      "
+    >
       <!-- test with width and height transition -->
       <!-- <div
         ref="channelDivs"
@@ -105,7 +129,7 @@ export default {
     NoEmbedContainer: NoEmbedContainer,
     "title-addinional-description": TitleAdditionalDescription,
     "slider-arrow": SliderArrow,
-    "play-button": PlayButton
+    "play-button": PlayButton,
   },
   props: {
     settings: {

@@ -1,43 +1,85 @@
 <template>
-  <div @swiped-left="forward()" @swiped-right="back()" class="home-row p-6">
-    <h2
-      class="text-white pl-3 mb-3  font-calibri font-bold text-sm  md:text-2xl xl:text-4xl md:pl-6 xl:pl-5 md:mb-2 xl:mb-7"
+  <div @swiped-left="forward()" @swiped-right="back()">
+    <div
+      class="
+        flex
+        items-center
+        justify-between
+        pl-8
+        md:pl-10
+        xl:pl-24
+        pr-4
+        md:pr-5
+        xl:pr-12
+      "
     >
-      {{ settings.title }}
-      <title-addinional-description />
-    </h2>
-    <div class="flex flex-row justify-start items-center">
-      <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="first()">
-        <img
-          alt="cursor-left"
-          class="cursor-pointer"
-          v-show="allowScrolling && rowIndex > 0"
-          src="/images/left-arrow.png"
+      <h2
+        class="
+          text-white
+          font-calibri font-bold
+          text-sm
+          md:text-2xl
+          xl:text-4xl
+          mr-2
+        "
+      >
+        {{ settings.title }}
+        <title-addinional-description />
+      </h2>
+      <div class="flex items-center space-x-5">
+        <slider-arrow
+          :isNext="false"
+          :videoType="'twitch'"
+          @arrow-clicked="back()"
+        />
+        <slider-arrow
+          :isNext="true"
+          :videoType="'twitch'"
+          @arrow-clicked="forward()"
         />
       </div>
-      <div ref="channelBox" class="flex flex-row p-5 overflow-hidden">
-        <div
-          ref="channelDivs"
-          v-for="(channel, index) in displayChannels"
-          :key="index"
-        >
-          <component :is="channel.componentName" v-bind="channel"></component>
-        </div>
-      </div>
-      <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="forward()">
-        <img
-          alt="cursor-right"
-          class="cursor-pointer"
-          v-show="allowScrolling"
-          src="/images/right-arrow.png"
-        />
+    </div>
+    <div
+      ref="channelBox"
+      class="
+        flex
+        overflow-hidden
+        pt-5
+        xl:pt-9
+        pb-7
+        md:pb-6
+        xl:pb-12
+        pl-4
+        xl:pl-20
+        space-x-3
+        md:space-x-2
+        xl:space-x-4
+      "
+    >
+      <div
+        ref="channelDivs"
+        v-for="(channel, index) in displayChannels"
+        :key="index"
+        class="
+          flex-shrink-0
+          w-60
+          md:w-44
+          xl:w-80
+          h-48
+          md:h-28
+          xl:h-48
+        "
+      >
+        <component :is="channel.componentName" v-bind="channel"></component>
       </div>
     </div>
   </div>
 </template>
 <script>
-import EmbedContainer from "../layout/EmbedContainer/EmbedContainer.vue";
+import EmbedContainer from "../layout/EmbedContainer/EmbedContainerClassicLg.vue";
 import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainer.vue";
+
+import SliderArrow from "../helpers/SliderArrow.vue";
 
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
@@ -48,23 +90,24 @@ export default {
   components: {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
-    "title-addinional-description": TitleAdditionalDescription
+    "title-addinional-description": TitleAdditionalDescription,
+    "slider-arrow": SliderArrow,
   },
   props: {
     settings: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
-  data: function() {
+  data() {
     return {
       rowIndex: 0,
       displayChannels: [],
-      allowScrolling: false
+      allowScrolling: false,
     };
   },
   methods: {
-    showChannel: function(channel) {
+    showChannel(channel) {
       return (
         (channel.showOnline &&
           (channel.onlineDisplay.showArt ||
@@ -76,11 +119,15 @@ export default {
             channel.offlineDisplay.showOverlay))
       );
     },
-    first: function() {
+    first() {
       this.rowIndex = 0;
       this.reorder();
     },
-    forward: function() {
+    back() {
+      this.rowIndex = (this.rowIndex - 1).mod(this.displayChannels.length);
+      this.reorder();
+    },
+    forward() {
       this.rowIndex = (this.rowIndex + 1).mod(this.displayChannels.length);
       this.reorder();
     },
@@ -90,15 +137,15 @@ export default {
         // Add one to j because flexbox order should start with 1, not 0
         this.$refs.channelDivs[i].style.order = j + 1;
       }
-    }
+    },
   },
-  mounted: function() {
+  mounted() {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
   },
-  updated: function() {
+  updated() {
     this.allowScrolling =
       this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
-  }
+  },
 };
 </script>
 <style scoped></style>
