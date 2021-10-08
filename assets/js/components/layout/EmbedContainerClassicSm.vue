@@ -39,14 +39,15 @@
 
       <!-- Show the embed with overlay if there's an embed -->
       <div v-if="showEmbed && embedData" class="w-full h-full" @mouseenter="mouseEntered" @mouseleave="mouseLeft">
+        <img v-if="showArt" v-show="isOverlayVisible" :src="image.url" class="w-full h-full">
         <img
-          v-if="overlay"
+          v-else-if="overlay"
           v-show="isOverlayVisible"
           alt="Embed's Custom Overlay"
           :src="overlay"
           class="w-full h-full"
         />
-        <div class="w-full h-full flex flex-col" v-show="isTitleVisible">
+        <div class="w-full h-full flex flex-col" v-show="isEmbedVisible">
           <component
             ref="embed"
             :is="embedName"
@@ -67,7 +68,14 @@
         </div>
       </div>
 
-      <!-- If there's only an overlay, show that instead with a link -->
+      <!-- If there's no embed, show that instead with a link first -->
+      <div v-if="showArt & image" class="w-full h-full">
+        <a :href="link" class="block w-full h-full">
+          <img :src="image.url" class="w-full h-full" />
+        </a>
+      </div>
+
+      <!-- If there's only an overlay and isn't art, show that instead with a link -->
       <div v-else-if="showOverlay" class="w-full h-full">
         <a :href="link" class="block w-full h-full">
           <img
@@ -78,13 +86,6 @@
         </a>
       </div>
     </div>
-    <!-- <div v-show="isTitleVisible" class="fixed inset-x-2">
-      <a :href="link">
-        <div class="truncate text-left">
-          {{ showOnline ? onlineDisplay.title : offlineDisplay.title }}
-        </div>
-      </a>
-    </div> -->
   </div>
 </template>
 
@@ -122,14 +123,14 @@ export default {
   },
   methods: {
     mouseEntered() {
-      if (this.showOverlay) {
+      if (this.showOverlay || this.showArt) {
         this.isOverlayVisible = false;
         this.isEmbedVisible = true;
       }
       this.$refs.embed.startPlayer();
     },
     mouseLeft() {
-      if (this.showOverlay) {
+      if (this.showOverlay || this.showArt) {
         this.isOverlayVisible = true;
         this.isEmbedVisible = false;
       }
