@@ -87,6 +87,8 @@
         v-for="(channel, index) in displayChannels"
         :key="index"
         class="
+          flex
+          items-center
           flex-shrink-0
           mr-1.5
           xl:mr-3

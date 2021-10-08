@@ -86,14 +86,14 @@
             class="flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
           >
             <div class="mr-2">
-              <h5 class="text-8 text-white font-play">
+              <h5 class="text-xxs text-white font-play">
                 {{ offlineDisplay.title }}
               </h5>
-              <h6 class="text-7 text-grey font-play">
+              <h6 class="text-8 text-grey font-play">
                 {{ embedData.channel }}
               </h6>
             </div>
-            <h6 class="text-7 text-grey font-play">
+            <h6 class="text-8 text-grey font-play">
               {{ liveViewerCount }} viewers
             </h6>
           </a>
