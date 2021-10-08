@@ -1,19 +1,23 @@
 <template>
-  <div
-    @swiped-left="forward()"
-    @swiped-right="back()"
-    class="mb-7 md:mb-9 xl:mb-14 pl-4 xl:pl-16"
-  >
+  <div @swiped-left="forward()" @swiped-right="back()">
     <div
-      class="flex items-center justify-between px-3 mb-3 md:px-6 xl:px-5 md:mb-2 xl:mb-7"
+      class="flex items-center justify-between pl-8 md:pl-10
+          xl:pl-24 pr-4 md:pr-5 xl:pr-12"
     >
       <h2
-        class="text-white font-calibri font-bold text-sm  md:text-2xl xl:text-4xl"
+        class="
+          text-white
+          font-calibri font-bold
+          text-sm
+          md:text-2xl
+          xl:text-4xl
+          mr-2
+        "
       >
         {{ settings.title }}
         <title-addinional-description />
       </h2>
-      <div class="flex items-center space-x-3 space-x-5">
+      <div class="flex items-center space-x-5">
         <slider-arrow
           :isNext="false"
           :videoType="'twitch'"
@@ -28,7 +32,7 @@
     </div>
     <div
       ref="channelBox"
-      class="flex space-x-3 md:space-x-1 xl:space-x-5 overflow-hidden"
+      class="flex overflow-hidden pt-5 xl:pt-9 pb-7 md:pb-6 xl:pb-12 pl-4 xl:pl-20"
     >
       <div
         class="flex items-baseline"
@@ -55,7 +59,7 @@
   </div>
 </template>
 <script>
-import EmbedContainer from "../layout/EmbedContainer/EmbedContainer.vue";
+import EmbedContainer from "../layout/EmbedContainer/EmbedContainerNumbered.vue";
 import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainer.vue";
 
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";

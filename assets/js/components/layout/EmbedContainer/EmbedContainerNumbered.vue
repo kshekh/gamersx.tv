@@ -18,8 +18,9 @@
     @mouseleave="isTitleVisible = false"
   >
     <play-button
+      v-if="!isTitleVisible"
       :videoType="'twitch'"
-      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20"
     />
     <div
       class="
@@ -115,10 +116,10 @@
 import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 
-import PlayButton from ".././helpers/PlayButton.vue";
+import PlayButton from "../../helpers/PlayButton.vue";
 
 export default {
-  name: "EmbedContainer",
+  name: "EmbedContainerNumbered",
   components: {
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
