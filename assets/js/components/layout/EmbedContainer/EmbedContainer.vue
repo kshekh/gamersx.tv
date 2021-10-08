@@ -49,8 +49,8 @@
 </template>
 
 <script>
-import TwitchEmbed from "../embeds/TwitchEmbed.vue";
-import YouTubeEmbed from "../embeds/YouTubeEmbed.vue";
+import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
+import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 
 export default {
   name: "EmbedContainer",

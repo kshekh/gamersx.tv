@@ -2,8 +2,9 @@
   <div
     class="
       cut-edge__wrapper
-      w-full
-      h-full
+      w-18 h-24 md:w-24 md:h-32 xl:w-28 xl:h-40
+      flex-shrink-0 z-10
+      relative
       transform
       transition-transform
       hover:scale-x-110
@@ -11,11 +12,15 @@
     "
     :class="{
       'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
-      'cut-edge__wrapper--youtube': embedName === 'YouTubeEmbed',
+      'cut-edge__wrapper--youtube': embedName === 'YouTubeEmbed'
     }"
     @mouseenter="isTitleVisible = true"
     @mouseleave="isTitleVisible = false"
   >
+    <play-button
+      :videoType="'twitch'"
+      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+    />
     <div
       class="
         w-full
@@ -26,7 +31,7 @@
       "
       :class="{
         'cut-edge__clipped--twitch': embedName === 'TwitchEmbed',
-        'cut-edge__clipped--youtube': embedName === 'YouTubeEmbed',
+        'cut-edge__clipped--youtube': embedName === 'YouTubeEmbed'
       }"
     >
       <!-- <div v-if="showArt">
@@ -38,8 +43,18 @@
       </div> -->
 
       <!-- Show the embed with overlay if there's an embed -->
-      <div v-if="showEmbed && embedData" class="w-full h-full" @mouseenter="mouseEntered" @mouseleave="mouseLeft">
-        <img v-if="showArt" v-show="isOverlayVisible" :src="image.url" class="w-full h-full">
+      <div
+        v-if="showEmbed && embedData"
+        class="w-full h-full"
+        @mouseenter="mouseEntered"
+        @mouseleave="mouseLeft"
+      >
+        <img
+          v-if="showArt"
+          v-show="isOverlayVisible"
+          :src="image.url"
+          class="w-full h-full"
+        />
         <img
           v-else-if="overlay"
           v-show="isOverlayVisible"
@@ -56,10 +71,17 @@
             :width="'100%'"
             :height="'100%'"
           ></component>
-          <a :href="link" class="flex justify-between py-1 xl:pt-2 xl:pb-3 px-2 bg-grey-900">
+          <a
+            :href="link"
+            class="flex justify-between py-1 xl:pt-2 xl:pb-3 px-2 bg-grey-900"
+          >
             <div class="mr-2">
-              <h5 class="text-8 text-white font-play">{{ offlineDisplay.title }}</h5>
-              <h6 class="text-7 text-grey font-play">{{ embedData.channel }}</h6>
+              <h5 class="text-8 text-white font-play">
+                {{ offlineDisplay.title }}
+              </h5>
+              <h6 class="text-7 text-grey font-play">
+                {{ embedData.channel }}
+              </h6>
             </div>
             <h6 class="text-7 text-grey font-play">
               {{ liveViewerCount }} viewers
@@ -93,11 +115,14 @@
 import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 
+import PlayButton from ".././helpers/PlayButton.vue";
+
 export default {
   name: "EmbedContainer",
   components: {
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
+    "play-button": PlayButton
   },
   props: [
     "title",
@@ -112,13 +137,13 @@ export default {
     "componentName",
     "embedName",
     "embedData",
-    "liveViewerCount",
+    "liveViewerCount"
   ],
   data() {
     return {
       isOverlayVisible: true,
       isEmbedVisible: false,
-      isTitleVisible: false,
+      isTitleVisible: false
     };
   },
   methods: {
@@ -137,7 +162,7 @@ export default {
       if (this.$refs.embed.isPlaying()) {
         this.$refs.embed.stopPlayer();
       }
-    },
+    }
   },
   computed: {
     showEmbed() {
@@ -158,11 +183,11 @@ export default {
         ((this.showOnline && this.onlineDisplay.showOverlay) ||
           (!this.showOnline && this.offlineDisplay.showOverlay))
       );
-    },
+    }
   },
   mounted() {
     this.isOverlayVisible = this.showOverlay;
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
-  },
+  }
 };
 </script>

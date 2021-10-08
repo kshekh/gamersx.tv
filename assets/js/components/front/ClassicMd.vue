@@ -37,7 +37,7 @@
 </template>
 <script>
 import EmbedContainer from "../layout/EmbedContainer/EmbedContainer.vue";
-import NoEmbedContainer from "../layou/NoEmbedContainer/NoEmbedContainer.vue";
+import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainer.vue";
 
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
