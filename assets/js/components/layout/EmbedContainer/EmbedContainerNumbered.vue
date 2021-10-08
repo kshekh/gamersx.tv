@@ -7,8 +7,9 @@
       relative
       transform
       transition-transform
-      hover:scale-x-110
+      hover:scale-x-230
       hover:scale-y-150
+      hover:z-20
     "
     :class="{
       'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',

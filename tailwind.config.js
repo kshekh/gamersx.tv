@@ -17,7 +17,7 @@ module.exports = {
       },
       grey: {
         DEFAULT: "#737373",
-        900: "#1e1927",
+        900: "#1e1927"
       },
       red: {
         DEFAULT: "#FF0000"
@@ -86,17 +86,14 @@ module.exports = {
           }
         ],
         xxl: [
-          "9rem", // 144px
-          {
-            lineHeight: "1" // 144px
-          }
+          "9rem" // 144px
         ],
         "3xxl": [
-          "11rem", // 176px
-          {
-            lineHeight: "1" // 176px
-          }
+          "11rem" // 176px
         ]
+      },
+      lineHeight: {
+        "extra-tight": "0.6"
       },
       width: {
         "1px": "1px",
@@ -113,17 +110,19 @@ module.exports = {
         "0.75": "3px"
       },
       scale: {
-        '101': '1.01',
-        '115': '1.15',
-      },
+        "101": "1.01",
+        "115": "1.15",
+        "230": "2.3",
+      }
     }
   },
   variants: {
     extend: {
-      maxWidth: ['hover'],
-      width: ['hover'],
-      maxHeight: ['hover'],
-      height: ['hover'],
+      maxWidth: ["hover"],
+      width: ["hover"],
+      maxHeight: ["hover"],
+      height: ["hover"],
+      zIndex: ["hover"]
     }
   },
   plugins: []

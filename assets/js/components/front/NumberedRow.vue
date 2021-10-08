@@ -32,17 +32,17 @@
     </div>
     <div
       ref="channelBox"
-      class="flex overflow-hidden pt-5 xl:pt-9 pb-7 md:pb-6 xl:pb-12 pl-4 xl:pl-20"
+      class="flex overflow-hidden pt-8 xl:pt-12 pb-9 md:pb-8 xl:pb-14 pl-4 xl:pl-20"
     >
       <div
-        class="flex items-baseline"
+        class="flex items-end"
         ref="channelDivs"
         v-for="(channel, index) in displayChannels"
         :key="index"
       >
         <span
           :data-number="index + 1"
-          class="transform translate-x-3 md:translate-x-4 xl:translate-x-5 flex-shrink-0 font-bahnschrift font-semibold text-8xl md:text-xxl xl:text-3xxl text-stroke"
+          class="transform translate-x-3 leading-extra-tight md:translate-x-4 xl:translate-x-5 flex-shrink-0 font-bahnschrift font-semibold text-8xl md:text-xxl xl:text-3xxl text-stroke"
           :class="{
             'translate-x-8 md:translate-x-10 xl:translate-x-12': index + 1 >= 10
           }"

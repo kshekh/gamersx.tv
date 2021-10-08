@@ -48,6 +48,7 @@ export default {
       layout: 'video',
       autoplay: false,
       muted: true,
+      controls: false,
       parent: window.location.hostname
     });
 
