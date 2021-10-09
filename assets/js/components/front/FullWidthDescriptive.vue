@@ -5,9 +5,7 @@
     @swiped-right="back()"
     class="home-row mb-7 md:mb-9 xl:mb-14"
   >
-    <div
-      class="container mx-auto"
-    >
+    <div class="container mx-auto">
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="first()">
         <img
           alt="cursor-left"
@@ -16,7 +14,6 @@
           src="/images/left-arrow.png"
         />
       </div>
-
 
       <div ref="channelBox" class="flex overflow-hidden">
         <div
@@ -31,7 +28,6 @@
           ></component>
         </div>
       </div>
-
 
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="forward()">
         <img
@@ -77,6 +73,7 @@ export default {
       if (selected && selected.customArt) {
         return {
           backgroundImage: "url(https://picsum.photos/2000/3000)"
+          // backgroundImage: "url(" + selected.customArt + ")"
         };
       } else {
         return {};
