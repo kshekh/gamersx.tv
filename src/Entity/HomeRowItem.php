@@ -124,6 +124,11 @@ class HomeRowItem implements PartneredInterface
     private $partner;
 
     /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $description;
+
+    /**
      * @ORM\Column(type="boolean")
      */
     private $isPublished;
@@ -314,6 +319,18 @@ class HomeRowItem implements PartneredInterface
     public function setPartner(?Partner $partner): self
     {
         $this->partner = $partner;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }

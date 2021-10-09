@@ -10,6 +10,7 @@ use App\Form\TopicType;
 use App\Form\SortAndTrimOptionsType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType };
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\CallbackTransformer;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -176,6 +177,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'label' => 'Sort and Trim Options',
                 'required' => false,
             ])
+            ->add('description', TextareaType::class, [
+                'required' => false,
+            ])
             ->add('isPublished')
             ->getFormBuilder()->addModelTransformer(new CallbackTransformer(
                 // Use the array in the form
@@ -211,6 +215,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('offlineDisplayType')
             ->add('linkType')
             ->add('partner')
+            ->add('description')
             ->add('isPublished')
             ;
     }
