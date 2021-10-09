@@ -1,18 +1,12 @@
 <template>
   <div
-    v-bind:style="customBg"
+    :style="customBg"
     @swiped-left="forward()"
     @swiped-right="back()"
-    class="home-row custom-bg full-screen-art relative"
+    class="home-row mb-7 md:mb-9 xl:mb-14"
   >
-    <h2
-      class="text-white pl-3 mb-3  font-calibri font-bold text-sm  md:text-2xl xl:text-4xl md:pl-6 xl:pl-5 md:mb-2 xl:mb-7"
-    >
-      {{ settings.title }}
-      <title-addinional-description />
-    </h2>
     <div
-      class="flex flex-row justify-center items-center absolute inset-x-0 bottom-6"
+      class="container mx-auto"
     >
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="first()">
         <img
@@ -22,7 +16,9 @@
           src="/images/left-arrow.png"
         />
       </div>
-      <div ref="channelBox" class="flex flex-row p-5 overflow-hidden">
+
+
+      <div ref="channelBox" class="flex overflow-hidden">
         <div
           ref="channelDivs"
           v-for="(channel, index) in displayChannels"
@@ -35,6 +31,8 @@
           ></component>
         </div>
       </div>
+
+
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="forward()">
         <img
           alt="cursor-right"
@@ -47,7 +45,7 @@
   </div>
 </template>
 <script>
-import EmbedContainer from "../layout/EmbedContainer/EmbedContainer.vue";
+import EmbedContainer from "../layout/EmbedContainer/EmbedContainerFullWidthDescriptive.vue";
 import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainer.vue";
 
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
@@ -78,7 +76,7 @@ export default {
       let selected = this.displayChannels[this.rowIndex];
       if (selected && selected.customArt) {
         return {
-          backgroundImage: "url(" + selected.customArt + ")"
+          backgroundImage: "url(https://picsum.photos/2000/3000)"
         };
       } else {
         return {};
