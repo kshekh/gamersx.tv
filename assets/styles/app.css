@@ -53,3 +53,7 @@ div.big-number {
   position: relative;
   left: 2rem;
 }
+
+div.channel-description {
+  color: #fff;
+}

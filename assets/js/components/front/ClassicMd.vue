@@ -1,6 +1,6 @@
 <template>
   <div @swiped-left="forward()" @swiped-right="back()" class="home-row p-6">
-    <div class="text-3xl text-left font-bold pl-22 px-12 pt-4 pb-2">{{ settings.title}}</div>
+    <div class="text-3xl text-left font-bold pl-22 px-12 pt-4 pb-2">{{ settings.title }}</div>
     <div class="flex flex-row justify-start items-center">
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="first()">
         <img alt="cursor-left" class="cursor-pointer" v-show="allowScrolling && (rowIndex > 0)" src="/images/left-arrow.png" />
@@ -11,6 +11,7 @@
             :is="channel.componentName"
             v-bind="channel"
           ></component>
+          <div class="channel-description">{{ channel.description }}</div>
         </div>
       </div>
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="forward()">

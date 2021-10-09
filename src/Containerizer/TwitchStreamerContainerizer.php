@@ -42,6 +42,7 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
 
         $title = $broadcast === NULL ? $info['display_name'] : sprintf("%s playing %s for %d viewers",
             $broadcast['user_name'], $broadcast['game_name'], $broadcast['viewer_count']);
+        $description = $homeRowItem->getDescription();
 
         // No need for a container if we're not displaying and not online
         if (($homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_NONE) &&
@@ -119,6 +120,7 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
                 'componentName' => 'EmbedContainer',
                 'embedName' => 'TwitchEmbed',
                 'embedData' => $embedData,
+                'description' => $description
             ]
         ];
 

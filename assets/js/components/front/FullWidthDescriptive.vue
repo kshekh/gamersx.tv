@@ -12,6 +12,7 @@
             v-show="index === rowIndex"
             v-bind="channel"
           ></component>
+          <div class="channel-description">{{ channel.description }}</div>
         </div>
       </div>
       <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="forward()">

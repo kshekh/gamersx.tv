@@ -22,6 +22,7 @@ class NoEmbedContainer extends LiveContainerizer implements ContainerizerInterfa
         $link = $homeRowItem->getCustomLink();
 
         $title = $rowName;
+        $description = $homeRowItem->getDescription();
 
         $display = [
             'title' => $title,
@@ -48,6 +49,7 @@ class NoEmbedContainer extends LiveContainerizer implements ContainerizerInterfa
             'componentName' => 'NoEmbedContainer',
             'embedName' => NULL,
             'embedData' => NULL,
+            'description' => $description
         ];
 
         $this->items = Array($item);

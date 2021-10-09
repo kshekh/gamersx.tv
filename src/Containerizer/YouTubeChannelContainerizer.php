@@ -32,6 +32,7 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
 
         $info = $info[0];
         $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
+        $description = $homeRowItem->getDescription();
 
         // No need for a container if we're not displaying and not online
         if (($homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_NONE) &&
@@ -110,6 +111,7 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
                 'componentName' => 'EmbedContainer',
                 'embedName' => 'YouTubeEmbed',
                 'embedData' => $embedData,
+                'description' => $description
             ]
         ];
 

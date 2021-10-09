@@ -42,6 +42,7 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
         $broadcasts = $broadcasts->toArray()['data'];
 
         $rowName = $homeRowItem->getHomeRow()->getTitle();
+        $description = $homeRowItem->getDescription();
 
         switch ($homeRowItem->getLinkType()) {
         case HomeRowItem::LINK_TYPE_GAMERSX:
@@ -93,6 +94,7 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
                     'channel' => $broadcast['user_login'],
                     'elementId' => uniqid('embed-'),
                 ],
+                'description' => $description
             ];
         }
 

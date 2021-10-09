@@ -29,6 +29,7 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
         }
 
         $query = $homeRowItem->getTopic()['topicId'];
+        $description = $homeRowItem->getDescription();
 
         try {
             $broadcasts = $youtube->searchLiveChannels($query, $max, null, null);
@@ -82,7 +83,8 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
                 'embedData' => [
                     'video' => $broadcast->getId()->getVideoId(),
                     'elementId' => uniqid('embed-'),
-                ]
+                ],
+                'description' => $description
             ];
 
             $channels[] = $channel;
