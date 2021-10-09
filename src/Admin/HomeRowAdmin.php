@@ -149,8 +149,9 @@ final class HomeRowAdmin extends AbstractAdmin
                 'label' => 'Sort and Trim Options',
                 'required' => false,
             ])
-            ->add('isPublished')
-            ;
+            ->add('isPublished', null, [
+                'help' => 'Current Server Time: ' . date('h:m a'),
+            ]);
     }
 
     protected function configureShowFields(ShowMapper $showMapper): void

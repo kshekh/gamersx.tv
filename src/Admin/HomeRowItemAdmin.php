@@ -180,7 +180,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('description', TextareaType::class, [
                 'required' => false,
             ])
-            ->add('isPublished')
+            ->add('isPublished', null, [
+                'help' => 'Current Server Time: ' . date('h:m a'),
+            ])
             ->getFormBuilder()->addModelTransformer(new CallbackTransformer(
                 // Use the array in the form
                 function ($valuesAsArray) {
