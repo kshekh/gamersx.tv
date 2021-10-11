@@ -4,6 +4,7 @@
 
 @import url('../fonts/fonts.css');
 @import url('./text-stroke.css');
+@import url('./aspect-ratio.css');
 
 html, body {
   height: 100%;
@@ -55,7 +56,7 @@ div.big-number {
   filter: drop-shadow(0px 0px 10px rgba(255, 0, 0, 0.6));
 }
 
-.cut-edge__clipped { 
+.cut-edge__clipped {
   position: relative;
 }
 

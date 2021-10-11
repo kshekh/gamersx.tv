@@ -1,41 +1,48 @@
 <template>
   <div
-    :style="customBg"
     @swiped-left="forward()"
     @swiped-right="back()"
-    class="home-row mb-7 md:mb-9 xl:mb-14"
+    class="home-row mb-7 md:mb-9 xl:mb-14 relative "
   >
-    <div class="container mx-auto">
-      <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="first()">
-        <img
-          alt="cursor-left"
-          class="cursor-pointer"
-          v-show="displayChannels.length > 1 && rowIndex > 0"
-          src="/images/left-arrow.png"
-        />
-      </div>
-
-      <div ref="channelBox" class="flex overflow-hidden">
-        <div
-          ref="channelDivs"
-          v-for="(channel, index) in displayChannels"
-          :key="index"
-        >
-          <component
-            :is="channel.componentName"
-            v-show="index === rowIndex"
-            v-bind="channel"
-          ></component>
+    <div
+      class="aspect-ratio-box container mx-auto px-4 pt-5 pb-2 md:pb-9 md:px-12"
+    >
+      <div class="flex items-center justify-between">
+        <div class="w-16 h-16 flex-shrink-0" @click="first()">
+          <svg
+            viewBox="0 0 19 30"
+            width="19"
+            height="30"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M 19 14.999 L 0 30 L 0 0 L 19 14.999 Z" fill="#6441A5" />
+          </svg>
         </div>
-      </div>
 
-      <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="forward()">
-        <img
-          alt="cursor-right"
-          class="cursor-pointer"
-          v-show="displayChannels.length > 1"
-          src="/images/right-arrow.png"
-        />
+        <div ref="channelBox">
+          <div
+            ref="channelDivs"
+            v-for="(channel, index) in displayChannels"
+            :key="index"
+          >
+            <component
+              :is="channel.componentName"
+              v-show="index === rowIndex"
+              v-bind="channel"
+            ></component>
+          </div>
+        </div>
+
+        <button class="flex-shrink-0 text-purple" @click="forward()">
+          <svg
+            class="xl:h-12 xl:w-8 fill-current"
+            viewBox="0 0 19 30"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M 19 14.999 L 0 30 L 0 0 L 19 14.999 Z" />
+          </svg>
+        </button>
       </div>
     </div>
   </div>
@@ -66,19 +73,6 @@ export default {
       rowIndex: 0,
       displayChannels: []
     };
-  },
-  computed: {
-    customBg: function() {
-      let selected = this.displayChannels[this.rowIndex];
-      if (selected && selected.customArt) {
-        return {
-          backgroundImage: "url(https://picsum.photos/2000/3000)"
-          // backgroundImage: "url(" + selected.customArt + ")"
-        };
-      } else {
-        return {};
-      }
-    }
   },
   methods: {
     showChannel: function(channel) {

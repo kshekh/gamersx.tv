@@ -102,7 +102,13 @@ module.exports = {
       height: {
         "18": "72px"
       },
+      minWidth: {
+        "50": "50px",
+        "75": "75px",
+        "130": "130px",
+      },
       maxWidth: {
+        "1/3": "33%",
         "116": "116px",
         "224": "224px"
       },
@@ -117,6 +123,9 @@ module.exports = {
         "150p": "150%",
         "230p": "230%",
       },
+      zIndex: {
+        'negative': -1,
+      }
     }
   },
   variants: {
