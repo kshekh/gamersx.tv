@@ -69,7 +69,7 @@
           class="w-full h-full flex flex-col relative"
           v-show="isEmbedVisible"
         >
-          <div class="absolute left-4 md:left-3 ls:left-6 top-2 w-2/3">
+          <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
             <h5 class="text-xxs text-white font-play truncate">
               {{ offlineDisplay.title }}
             </h5>

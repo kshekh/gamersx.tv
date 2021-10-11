@@ -57,11 +57,11 @@
           class="w-full h-full flex flex-col relative"
           v-show="isEmbedVisible"
         >
-          <div class="absolute left-4 md:left-3 ls:left-6 top-2 w-2/3">
-            <h5 class="text-xxs text-white font-play truncate">
+          <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
+            <h5 class="text-xxs xl:text-xs text-white font-play truncate">
               {{ offlineDisplay.title }}
             </h5>
-            <h6 class="text-8 text-white font-play truncate">
+            <h6 class="text-xxs text-white font-play truncate">
               {{ embedData.channel }}
             </h6>
           </div>
@@ -75,17 +75,17 @@
           ></component>
           <a
             :href="link"
-            class="flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
+            class="flex justify-between py-2 md:pt-3 mt:pb-4 xl:pt-6 xl:pb-7 px-3 md:px-2 xl:px-4 bg-grey-900"
           >
             <div class="mr-2">
-              <h5 class="text-xxs text-white font-play">
+              <h5 class="text-xs xl:text-sm text-white font-play">
                 {{ offlineDisplay.title }}
               </h5>
-              <h6 class="text-8 text-grey font-play">
+              <h6 class="text-xxs xl:text-xs text-grey font-play">
                 {{ embedData.channel }}
               </h6>
             </div>
-            <h6 class="text-8 text-grey font-play">
+            <h6 class="text-xxs xl:text-xs text-grey font-play">
               {{ liveViewerCount }} viewers
             </h6>
           </a>
