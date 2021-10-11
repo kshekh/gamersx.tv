@@ -6,7 +6,8 @@
       h-full
       flex-shrink-0
       transform
-      transition-transform
+      transition-all
+      duration-300
       hover:w-110p
       hover:h-150p
       hover:z-10

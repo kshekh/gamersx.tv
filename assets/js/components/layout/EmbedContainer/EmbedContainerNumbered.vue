@@ -2,27 +2,18 @@
   <div
     class="
       cut-edge__wrapper
+      flex
+      items-center
       w-18 h-24 md:w-24 md:h-32 xl:w-28 xl:h-40
       flex-shrink-0 z-10
       relative
-      transform
-      transition-transform
-      hover:scale-x-230
-      hover:scale-y-150
       hover:z-20
     "
     :class="{
       'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
       'cut-edge__wrapper--youtube': embedName === 'YouTubeEmbed'
     }"
-    @mouseenter="isTitleVisible = true"
-    @mouseleave="isTitleVisible = false"
   >
-    <play-button
-      v-if="!isTitleVisible"
-      :videoType="'twitch'"
-      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20"
-    />
     <div
       class="
         w-full
@@ -30,6 +21,13 @@
         cut-edge__clipped
         cut-edge__clipped--sm-border
         cut-edge__clipped-top-left-sm
+        bg-black
+        flex-shrink-0
+        transform
+        transition-all
+        duration-300
+        hover:w-230p
+        hover:h-150p
       "
       :class="{
         'cut-edge__clipped--twitch': embedName === 'TwitchEmbed',
@@ -64,6 +62,11 @@
           :src="overlay"
           class="w-full h-full"
         />
+        <play-button
+          v-show="isOverlayVisible"
+          :videoType="'twitch'"
+          class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20"
+        />
         <div class="w-full h-full flex flex-col" v-show="isEmbedVisible">
           <component
             ref="embed"
@@ -93,7 +96,7 @@
       </div>
 
       <!-- If there's no embed, show that instead with a link first -->
-      <div v-if="showArt & image" class="w-full h-full">
+      <div v-else-if="showArt & image" class="w-full h-full">
         <a :href="link" class="block w-full h-full">
           <img :src="image.url" class="w-full h-full" />
         </a>
@@ -145,7 +148,6 @@ export default {
     return {
       isOverlayVisible: true,
       isEmbedVisible: false,
-      isTitleVisible: false
     };
   },
   methods: {

@@ -59,8 +59,6 @@
         xl:pb-12
         pl-4
         xl:pl-20
-        space-x-1.5
-        xl:space-x-3
       "
     >
       <!-- test with width and height transition -->
@@ -91,6 +89,8 @@
         class="
           flex
           items-center
+          mr-1.5
+          xl:mr-3
           flex-shrink-0
           w-36
           md:w-28

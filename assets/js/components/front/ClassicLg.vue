@@ -51,9 +51,6 @@
         xl:pb-12
         pl-4
         xl:pl-20
-        space-x-3
-        md:space-x-2
-        xl:space-x-4
       "
     >
       <div
@@ -64,6 +61,9 @@
           flex
           items-center
           flex-shrink-0
+          mr-3
+          md:mr-2
+          xl:mr-4
           w-60
           md:w-44
           xl:w-80
