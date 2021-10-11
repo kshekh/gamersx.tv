@@ -138,6 +138,7 @@ final class HomeRowAdmin extends AbstractAdmin
                     'Classic Small' => 'ClassicSm',
                     'Classic Medium' => 'ClassicMd',
                     'Classic Large' => 'ClassicLg',
+                    'Classic Vertical' => 'ClassicVertical',
                     'Full Width - Descriptive' => 'FullWidthDescriptive',
                     'Full Width - Imagery' => 'FullWidthImagery',
                     'Parallax' => 'Parallax',

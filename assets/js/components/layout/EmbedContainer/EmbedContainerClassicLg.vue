@@ -132,7 +132,7 @@ import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 import PlayButton from "../../helpers/PlayButton.vue";
 
 export default {
-  name: "EmbedContainer",
+  name: "EmbedContainerClassicLg",
   components: {
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
