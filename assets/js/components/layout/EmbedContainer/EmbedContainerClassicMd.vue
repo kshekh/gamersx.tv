@@ -9,7 +9,7 @@
       transition-all
       duration-300
       hover:h-110p
-      hover:w-150p
+      md:hover:h-115p
       hover:z-10
     "
     :class="{
@@ -23,9 +23,9 @@
       class="
         w-full
         h-full
+        cut-edge__clipped
         cut-edge__clipped--sm-border
-        hover:cut-edge__clipped
-        hover:cut-edge__clipped-top-left-sm
+        cut-edge__clipped-top-left-sm
         bg-black
       "
       :class="{
@@ -36,32 +36,109 @@
       <!-- Show the embed with overlay if there's an embed -->
       <div
         v-if="showEmbed && embedData"
-        class="w-full h-full relative"
+        class="w-full h-full relative flex flex-col"
         @mouseenter="mouseEntered"
         @mouseleave="mouseLeft"
       >
-        <img
-          v-if="showArt"
+        <div v-show="isOverlayVisible" class="w-full h-full overflow-hidden flex-grow relative">
+          <img v-if="showArt" :src="image.url" class="w-full h-full" />
+          <img
+            v-else-if="overlay"
+            alt="Embed's Custom Overlay"
+            :src="overlay"
+            class="w-full h-full"
+          />
+          <div
+            class="
+              absolute
+              top-3
+              left-6
+              md:left-2
+              xl:left-6
+              py-px
+              px-1.5
+              bg-purple
+              text-white text-xxs text-center
+              font-play
+              min-w-40
+            "
+          >
+            <span>3:05:09</span>
+          </div>
+          <div
+            class="
+              absolute
+              bottom-1.5
+              left-6
+              md:left-2
+              xl:left-6
+              py-px
+              px-1.5
+              bg-purple
+              text-white text-xxs text-center
+              font-play
+              min-w-40
+            "
+          >
+            <span>{{ liveViewerCount }} views</span>
+          </div>
+          <div
+            class="
+              absolute
+              bottom-1.5
+              right-6
+              md:right-2
+              xl:right-6
+              py-px
+              px-1.5
+              bg-red
+              text-white text-xxs text-center
+              font-play
+              min-w-40
+            "
+          >
+            <span>Online</span>
+          </div>
+          <play-button
+            class="
+              absolute
+              top-1/2
+              left-1/2
+              transform
+              -translate-x-1/2 -translate-y-1/2
+              z-20
+            "
+            :videoType="playBtnColor"
+          />
+        </div>
+        <div
           v-show="isOverlayVisible"
-          :src="image.url"
-          class="w-full h-full"
-        />
-        <img
-          v-else-if="overlay"
-          v-show="isOverlayVisible"
-          alt="Embed's Custom Overlay"
-          :src="overlay"
-          class="w-full h-full"
-        />
+          class="py-1.5 md:py-0.5 xl:py-1.5 px-3 md:px-2 xl:px-3 flex items-center"
+          :class="{
+            'bg-purple': embedName === 'TwitchEmbed',
+            'bg-red': embedName === 'YouTubeEmbed',
+          }"
+        >
+          <img src="https://picsum.photos/id/1062/100/100" alt="avatar" class="w-9 h-9 md:w-5 md:h-5 xl:w-9 xl:h-9 rounded-full mr-1.5">
+          <div class="overflow-hidden">
+            <h5 class="text-xxs text-white font-play truncate">
+              {{ offlineDisplay.title }}
+            </h5>
+            <h6 class="text-8 text-grey-600 font-play truncate">
+              {{ embedData.channel }}
+            </h6>
+          </div>
+        </div>
+
         <div
           class="w-full h-full flex flex-col relative"
           v-show="isEmbedVisible"
         >
           <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
-            <h5 class="text-xxs xl:text-xs text-white font-play truncate">
+            <h5 class="text-xxs text-white font-play truncate">
               {{ offlineDisplay.title }}
             </h5>
-            <h6 class="text-xxs text-white font-play truncate">
+            <h6 class="text-8 text-white font-play truncate">
               {{ embedData.channel }}
             </h6>
           </div>
@@ -75,17 +152,27 @@
           ></component>
           <a
             :href="link"
-            class="flex justify-between py-2 md:pt-3 mt:pb-4 xl:pt-6 xl:pb-7 px-3 md:px-2 xl:px-4 bg-grey-900"
+            class="
+              flex
+              justify-between
+              py-1
+              xl:pt-3
+              xl:pb-3
+              px-3
+              md:px-2
+              xl:px-4
+              bg-grey-900
+            "
           >
             <div class="mr-2">
-              <h5 class="text-xs xl:text-sm text-white font-play">
+              <h5 class="text-xxs text-white font-play">
                 {{ offlineDisplay.title }}
               </h5>
-              <h6 class="text-xxs xl:text-xs text-grey font-play">
+              <h6 class="text-8 text-grey font-play">
                 {{ embedData.channel }}
               </h6>
             </div>
-            <h6 class="text-xxs xl:text-xs text-grey font-play">
+            <h6 class="text-8 text-grey font-play">
               {{ liveViewerCount }} viewers
             </h6>
           </a>
@@ -117,11 +204,14 @@
 import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 
+import PlayButton from "../../helpers/PlayButton.vue";
+
 export default {
-  name: "EmbedContainerClassicVertical",
+  name: "EmbedContainerClassicMd",
   components: {
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
+    "play-button": PlayButton,
   },
   props: [
     "title",
@@ -164,6 +254,9 @@ export default {
     },
   },
   computed: {
+    playBtnColor() {
+      return this.embedName === "TwitchEmbed" ? "twitch" : "youtube";
+    },
     showEmbed() {
       return (
         (this.showOnline && this.onlineDisplay.showEmbed) ||

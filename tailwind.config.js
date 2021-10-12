@@ -16,6 +16,7 @@ module.exports = {
         DEFAULT: "#000612"
       },
       grey: {
+        600: "#C3C3C3",
         DEFAULT: "#737373",
         900: "#1e1927"
       },
@@ -103,6 +104,7 @@ module.exports = {
         "18": "72px"
       },
       minWidth: {
+        "40": "40px",
         "50": "50px",
         "75": "75px",
         "130": "130px",

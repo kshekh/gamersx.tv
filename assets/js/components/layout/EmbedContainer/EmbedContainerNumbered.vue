@@ -190,7 +190,6 @@ export default {
     }
   },
   mounted() {
-    this.isOverlayVisible = this.showOverlay;
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
   }
 };
