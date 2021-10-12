@@ -8,35 +8,40 @@
       class="aspect-ratio-box container mx-auto px-4 pt-5 pb-2 md:pb-9 md:px-12"
     >
       <div class="flex items-center justify-between">
-        <div class="w-16 h-16 flex-shrink-0" @click="first()">
+        <button class="text-purple" @click="back()">
           <svg
+            class="h-4 w-5 md:h-5 md:w-7 xl:h-12 xl:w-8 fill-current transform rotate-180"
             viewBox="0 0 19 30"
-            width="19"
-            height="30"
-            fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path d="M 19 14.999 L 0 30 L 0 0 L 19 14.999 Z" fill="#6441A5" />
+            <path d="M 19 14.999 L 0 30 L 0 0 L 19 14.999 Z" />
           </svg>
-        </div>
+        </button>
 
-        <div ref="channelBox">
-          <div
-            ref="channelDivs"
-            v-for="(channel, index) in displayChannels"
-            :key="index"
-          >
-            <component
-              :is="channel.componentName"
-              v-show="index === rowIndex"
-              v-bind="channel"
-            ></component>
+        <div
+          class="flex w-full items-end justify-between md:flex-col md:items-center"
+        >
+          <div ref="channelBox" class="mr-5 md:mr-0 md:mb-8 xl:mb-24">
+            <div
+              ref="channelDivs"
+              v-for="(channel, index) in displayChannels"
+              :key="index"
+            >
+              <component
+                :is="channel.componentName"
+                v-show="index === rowIndex"
+                v-bind="channel"
+              ></component>
+            </div>
+          </div>
+          <div class="w-10 h-10 bg-purple">
+            dots
           </div>
         </div>
 
         <button class="flex-shrink-0 text-purple" @click="forward()">
           <svg
-            class="xl:h-12 xl:w-8 fill-current"
+            class="h-4 w-5 md:h-5 md:w-7 xl:h-12 xl:w-8 fill-current"
             viewBox="0 0 19 30"
             xmlns="http://www.w3.org/2000/svg"
           >
