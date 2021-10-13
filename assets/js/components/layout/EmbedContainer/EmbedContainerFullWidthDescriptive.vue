@@ -121,10 +121,12 @@ export default {
   },
   methods: {
     mouseEntered() {
-      if (this.showOverlay || this.showArt) {
-        this.isOverlayVisible = false;
-        this.isEmbedVisible = true;
-      }
+      setTimeout(() => {
+        if (this.showOverlay || this.showArt) {
+          this.isOverlayVisible = false;
+          this.isEmbedVisible = true;
+        }
+      }, 0)
       this.$refs.embed.startPlayer();
     },
     mouseLeft() {

@@ -126,8 +126,11 @@ module.exports = {
         "86": "344px",
         "110p": "110%",
         "115p": "115%",
+        "140p": "140%",
         "150p": "150%",
         "230p": "230%",
+        "330p": "330%",
+        "360p": "360%",
         "360p": "360%",
       },
       zIndex: {
@@ -135,6 +138,10 @@ module.exports = {
       },
       inset: {
         "1/5": "20%",
+      },
+      transitionProperty: {
+        "inset": "inset",
+        "left": "left",
       }
     }
   },
@@ -144,7 +151,9 @@ module.exports = {
       width: ["hover"],
       maxHeight: ["hover"],
       height: ["hover"],
-      zIndex: ["hover"]
+      zIndex: ["hover"],
+      inset: ["hover"],
+      left: ["hover"],
     }
   },
   plugins: []

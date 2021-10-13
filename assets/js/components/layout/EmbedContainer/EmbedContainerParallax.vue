@@ -17,6 +17,7 @@
         relative
         top-1/2
         -translate-y-1/2
+        left-0
         w-full
         h-full
         cut-edge__wrapper
@@ -24,16 +25,18 @@
         transform
         transition-all
         duration-500
-        hover:h-150p
-        hover:w-360p
+        hover:h-140p
+        md:hover:h-150p
+        hover:w-330p
+        md:hover:w-360p
         hover:z-10
+        hover:-left-full
+        md:hover:left-0
       "
       :class="{
         'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
         'cut-edge__wrapper--youtube': embedName === 'YouTubeEmbed',
       }"
-      @mouseenter="isTitleVisible = true"
-      @mouseleave="isTitleVisible = false"
     >
       <div
         class="
@@ -178,10 +181,12 @@ export default {
   },
   methods: {
     mouseEntered() {
-      if (this.showOverlay || this.showArt) {
-        this.isOverlayVisible = false;
-        this.isEmbedVisible = true;
-      }
+      setTimeout(() => {
+        if (this.showOverlay || this.showArt) {
+          this.isOverlayVisible = false;
+          this.isEmbedVisible = true;
+        }
+      }, 0)
       this.$refs.embed.startPlayer();
     },
     mouseLeft() {

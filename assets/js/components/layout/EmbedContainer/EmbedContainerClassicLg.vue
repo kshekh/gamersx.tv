@@ -16,8 +16,6 @@
       'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
       'cut-edge__wrapper--youtube': embedName === 'YouTubeEmbed',
     }"
-    @mouseenter="isTitleVisible = true"
-    @mouseleave="isTitleVisible = false"
   >
     <div
       class="
@@ -162,10 +160,12 @@ export default {
   },
   methods: {
     mouseEntered() {
-      if (this.showOverlay || this.showArt) {
-        this.isOverlayVisible = false;
-        this.isEmbedVisible = true;
-      }
+      setTimeout(() => {
+        if (this.showOverlay || this.showArt) {
+          this.isOverlayVisible = false;
+          this.isEmbedVisible = true;
+        }
+      }, 0)
       this.$refs.embed.startPlayer();
     },
     mouseLeft() {
