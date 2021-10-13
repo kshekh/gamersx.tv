@@ -125,6 +125,10 @@ export default {
       this.rowIndex = 0;
       this.reorder();
     },
+    back() {
+      this.rowIndex = (this.rowIndex - 1).mod(this.displayChannels.length);
+      this.reorder();
+    },
     forward: function() {
       this.rowIndex = (this.rowIndex + 1).mod(this.displayChannels.length);
       this.reorder();
