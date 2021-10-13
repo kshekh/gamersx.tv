@@ -3,6 +3,7 @@ sonata_admin:
     title_logo: '/images/controller.png'
     templates:
         layout: 'admin/standard_layout.html.twig'
+        user_block: 'admin/user_block.html.twig'
 
     security:
         handler: sonata.admin.security.handler.role
