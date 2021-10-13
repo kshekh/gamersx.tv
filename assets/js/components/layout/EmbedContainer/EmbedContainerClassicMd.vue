@@ -41,12 +41,12 @@
         @mouseleave="mouseLeft"
       >
         <div v-show="isOverlayVisible" class="w-full h-full overflow-hidden flex-grow relative">
-          <img v-if="showArt" :src="image.url" class="w-full h-full" />
+          <img v-if="showArt" :src="image.url" class="relative top-1/2 transform -translate-y-1/2 w-full" />
           <img
             v-else-if="overlay"
             alt="Embed's Custom Overlay"
             :src="overlay"
-            class="w-full h-full"
+            class="relative top-1/2 transform -translate-y-1/2 w-full"
           />
           <div
             class="
@@ -181,16 +181,16 @@
 
       <!-- If there's no embed, show that instead with a link first -->
       <div v-else-if="showArt && image" class="w-full h-full">
-        <a :href="link" class="block w-full h-full">
-          <img :src="image.url" class="w-full h-full" />
+        <a :href="link" class="block w-full h-full overflow-hidden">
+          <img :src="image.url" class="relative top-1/2 transform -translate-y-1/2 w-full" />
         </a>
       </div>
 
       <!-- If there's only an overlay and isn't art, show that instead with a link -->
       <div v-else-if="showOverlay" class="w-full h-full">
-        <a :href="link" class="block w-full h-full">
+        <a :href="link" class="block w-full h-full overflow-hidden">
           <img
-            class="w-full h-full"
+            class="relative top-1/2 transform -translate-y-1/2 w-full"
             alt="Embed's Custom Overlay"
             :src="overlay"
           />
