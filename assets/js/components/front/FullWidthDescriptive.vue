@@ -34,8 +34,15 @@
               ></component>
             </div>
           </div>
-          <div class="w-10 h-10 bg-purple">
-            dots
+          <div class="flex items-center space-x-1 md:space-x-2">
+            <slider-dot
+              v-for="(channel, index) in displayChannels"
+              :key="'channelDot' + index"
+              :embedType="channel.embedName"
+              :dotIndex="index"
+              :isDotActive="index === rowIndex"
+              @slider-dot-clicked="setActiveChannel"
+            />
           </div>
         </div>
 
@@ -58,6 +65,8 @@ import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainer.vue";
 
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
+import SliderDot from "../helpers/SliderDot.vue";
+
 require("swiped-events");
 
 export default {
@@ -65,7 +74,8 @@ export default {
   components: {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
-    "title-addinional-description": TitleAdditionalDescription
+    "title-addinional-description": TitleAdditionalDescription,
+    "slider-dot": SliderDot
   },
   props: {
     settings: {
@@ -110,6 +120,9 @@ export default {
         // Add one to j because flexbox order should start with 1, not 0
         this.$refs.channelDivs[i].style.order = j + 1;
       }
+    },
+    setActiveChannel(channelIndex) {
+      this.rowIndex = channelIndex;
     }
   },
   mounted: function() {
