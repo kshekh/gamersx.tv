@@ -1,8 +1,5 @@
 {% extends '@SonataAdmin/standard_layout.html.twig' %}
 
-{% set admin_role = is_granted(sonata_config.getOption('role_admin')) %}
-{% set sonata_view_role = is_granted('ROLE_SONATA_USER_ADMIN_USER_VIEW') %}
-
 {% block sonata_nav %}
     <nav class="navbar navbar-static-top">
         <a href="#" class="sidebar-toggle" data-toggle="offcanvas"
@@ -17,7 +14,7 @@
         </div>
 
         {% block sonata_top_nav_menu %}
-            {% if app.user and (admin_role or sonata_view_role) %}
+            {% if app.user %}
                 <div class="navbar-custom-menu">
 
                     <ul class="nav navbar-nav">
