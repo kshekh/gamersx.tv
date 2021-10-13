@@ -75,7 +75,7 @@
           ></component>
           <a
             :href="link"
-            class="flex justify-between py-2 md:pt-3 mt:pb-4 xl:pt-6 xl:pb-7 px-3 md:px-2 xl:px-4 bg-grey-900"
+            class="flex justify-between py-2 md:pt-3 md:pb-4 xl:pt-6 xl:pb-7 px-3 md:px-2 xl:px-4 bg-grey-900"
           >
             <div class="mr-2">
               <h5 class="text-xs xl:text-sm text-white font-play">

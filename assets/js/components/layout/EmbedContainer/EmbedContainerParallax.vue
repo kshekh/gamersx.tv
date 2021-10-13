@@ -98,9 +98,9 @@
                 justify-between
                 py-2
                 md:pt-3
-                mt:pb-4
-                xl:pt-6
-                xl:pb-7
+                md:pb-4
+                xl:pt-4
+                xl:pb-5
                 px-3
                 md:px-2
                 xl:px-4
