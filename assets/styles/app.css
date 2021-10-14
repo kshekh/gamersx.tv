@@ -4,7 +4,6 @@
 
 @import url('../fonts/fonts.css');
 @import url('./text-stroke.css');
-@import url('./aspect-ratio.css');
 
 html, body {
   height: 100%;

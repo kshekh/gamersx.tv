@@ -7,22 +7,15 @@
     @mouseenter="isTitleVisible = true"
     @mouseleave="isTitleVisible = false"
   >
-    <div
-      class="absolute inset-0 z-negative bg-cover bg-no-repeat"
-      :style="
-        `background-image: url(https://static-cdn.jtvnw.net/jtv_user_pictures/3df86ad6-a622-4091-8fa7-78e19a2eb5ed-channel_offline_image-1920x1080.png);`
-      "
-    ></div>
-    <!-- :style="`background-image: url(${customArt});`" -->
     <div v-show="isOverlayVisible" class="max-w-1/3">
       <div class="mb-1 md:mb-2">
-        <img v-if="showArt" :src="image.url" class="w-full h-full" />
+        <img v-if="showArt" :src="image.url" class="max-h-20 md:max-h-28 xl:max-h-52" />
 
         <img
           v-else-if="overlay"
           alt="Embed's Custom Overlay"
           :src="overlay"
-          class="w-full h-full"
+          class="max-h-20 md:max-h-28 xl:max-h-52"
         />
       </div>
 

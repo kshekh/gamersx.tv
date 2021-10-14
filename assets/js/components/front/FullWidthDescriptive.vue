@@ -2,13 +2,22 @@
   <div
     @swiped-left="forward()"
     @swiped-right="back()"
-    class="home-row mb-7 md:mb-9 xl:mb-14 relative "
+    class="home-row mb-7 md:mb-9 xl:mb-14 relative bg-cover bg-no-repeat"
+    :style="customBg"
   >
-    <div
-      class="aspect-ratio-box container mx-auto px-4 pt-5 pb-2 md:pb-9 md:px-12"
-    >
-      <div class="flex items-center justify-between">
-        <button class="text-purple" @click="back()">
+    <div class="container mx-auto">
+      <div class="pb-50p"></div>
+      <div
+        class="px-4 pt-5 pb-2 md:pb-9 md:px-12 flex items-center justify-between absolute inset-0 z-10"
+      >
+        <button
+          @click="back()"
+          class="mr-2 md:mr-5 xl:mr-8 flex-shrink-0"
+          :class="{
+            'text-purple': currentChannelEmbedName === 'TwitchEmbed',
+            'text-red': currentChannelEmbedName === 'YoutubeEmbed'
+          }"
+        >
           <svg
             class="h-4 w-5 md:h-5 md:w-7 xl:h-12 xl:w-8 fill-current transform rotate-180"
             viewBox="0 0 19 30"
@@ -19,7 +28,7 @@
         </button>
 
         <div
-          class="flex w-full items-end justify-between md:flex-col md:items-center"
+          class="flex w-full h-full items-end justify-between md:flex-col md:items-center"
         >
           <div ref="channelBox" class="mr-5 md:mr-0 md:mb-8 xl:mb-24">
             <div
@@ -38,7 +47,7 @@
             <slider-dot
               v-for="(channel, index) in displayChannels"
               :key="'channelDot' + index"
-              :embedType="channel.embedName"
+              :embedType="currentChannelEmbedName"
               :dotIndex="index"
               :isDotActive="index === rowIndex"
               @slider-dot-clicked="setActiveChannel"
@@ -46,7 +55,14 @@
           </div>
         </div>
 
-        <button class="flex-shrink-0 text-purple" @click="forward()">
+        <button
+          @click="forward()"
+          class="ml-2 md:ml-5 xl:ml-8 flex-shrink-0"
+          :class="{
+            'text-purple': currentChannelEmbedName === 'TwitchEmbed',
+            'text-red': currentChannelEmbedName === 'YoutubeEmbed'
+          }"
+        >
           <svg
             class="h-4 w-5 md:h-5 md:w-7 xl:h-12 xl:w-8 fill-current"
             viewBox="0 0 19 30"
@@ -59,6 +75,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import EmbedContainer from "../layout/EmbedContainer/EmbedContainerFullWidthDescriptive.vue";
 import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainer.vue";
@@ -88,6 +105,29 @@ export default {
       rowIndex: 0,
       displayChannels: []
     };
+  },
+  computed: {
+    customBg: function() {
+      let selected = this.displayChannels[this.rowIndex];
+      if (selected && selected.customArt) {
+        return {
+          // backgroundImage: "url(https://picsum.photos/2000/3000)"
+          backgroundImage: "url(" + selected.customArt + ")"
+        };
+      } else {
+        return {};
+      }
+    },
+    currentChannelEmbedName() {
+      let selected = this.displayChannels[this.rowIndex];
+
+      if (selected && selected.embedName) {
+        return selected.embedName;
+      } else {
+        // Default for now
+        return "test";
+      }
+    }
   },
   methods: {
     showChannel: function(channel) {
