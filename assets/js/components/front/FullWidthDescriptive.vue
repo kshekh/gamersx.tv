@@ -2,17 +2,17 @@
   <div
     @swiped-left="forward()"
     @swiped-right="back()"
-    class="home-row mb-7 md:mb-9 xl:mb-14 relative bg-cover bg-no-repeat"
+    class="home-row mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative overflow-hidden"
     :style="customBg"
   >
     <div class="container mx-auto">
       <div class="pb-50p"></div>
       <div
-        class="px-4 pt-5 pb-2 md:pb-9 md:px-12 flex items-center justify-between absolute inset-0 z-10"
+        class="px-4 pt-5 pb-2 md:pb-9 md:px-12 xl:pt-30 flex items-center justify-between absolute inset-0 z-10"
       >
         <button
           @click="back()"
-          class="mr-2 md:mr-5 xl:mr-8 flex-shrink-0"
+          class="mr-2 md:mr-5 xl:mr-8 flex-shrink-0 relative z-10"
           :class="{
             'text-purple': currentChannelEmbedName === 'TwitchEmbed',
             'text-red': currentChannelEmbedName === 'YoutubeEmbed'
@@ -30,7 +30,7 @@
         <div
           class="flex w-full h-full items-end justify-between md:flex-col md:items-center"
         >
-          <div ref="channelBox" class="mr-5 md:mr-0 md:mb-8 xl:mb-24">
+          <div ref="channelBox" class="mr-5 md:mr-0 md:mb-8 xl:mb-24 w-full h-full">
             <div
               ref="channelDivs"
               v-for="(channel, index) in displayChannels"
@@ -43,7 +43,7 @@
               ></component>
             </div>
           </div>
-          <div class="flex items-center space-x-1 md:space-x-2">
+          <div class="flex items-center space-x-1 md:space-x-2 relative z-10">
             <slider-dot
               v-for="(channel, index) in displayChannels"
               :key="'channelDot' + index"
@@ -57,7 +57,7 @@
 
         <button
           @click="forward()"
-          class="ml-2 md:ml-5 xl:ml-8 flex-shrink-0"
+          class="ml-2 md:ml-5 xl:ml-8 flex-shrink-0 relative z-10"
           :class="{
             'text-purple': currentChannelEmbedName === 'TwitchEmbed',
             'text-red': currentChannelEmbedName === 'YoutubeEmbed'
