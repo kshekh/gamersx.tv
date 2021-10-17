@@ -13,6 +13,7 @@ import ClassicLg from "./front/ClassicLg.vue";
 import ClassicSm from "./front/ClassicSm.vue";
 import ClassicMd from "./front/ClassicMd.vue";
 import ClassicVertical from "./front/ClassicVertical.vue";
+import FullWidthImagery from "./front/FullWidthImagery.vue";
 import FullWidthDescriptive from "./front/FullWidthDescriptive.vue";
 import Parallax from "./front/Parallax.vue";
 import NumberedRow from "./front/NumberedRow.vue";
@@ -24,6 +25,7 @@ export default {
     ClassicMd: ClassicMd,
     ClassicVertical: ClassicVertical,
     FullWidthDescriptive: FullWidthDescriptive,
+    FullWidthImagery: FullWidthImagery,
     Parallax: Parallax,
     NumberedRow: NumberedRow
   },
