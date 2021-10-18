@@ -103,17 +103,21 @@ module.exports = {
       height: {
         "18": "72px"
       },
+      minHeight: {
+        mobile: "295px",
+        "mobile-description": "250px"
+      },
       minWidth: {
         "40": "40px",
         "50": "50px",
         "75": "75px",
-        "130": "130px",
+        "130": "130px"
       },
       maxWidth: {
         "1/3": "33%",
         "116": "116px",
         "224": "224px",
-        "485": "485px",
+        "485": "485px"
       },
       spacing: {
         "0.75": "3px",
@@ -132,17 +136,17 @@ module.exports = {
         "230p": "230%",
         "330p": "330%",
         "360p": "360%",
-        "360p": "360%",
+        "360p": "360%"
       },
       zIndex: {
-        'negative': -1,
+        negative: -1
       },
       inset: {
-        "1/5": "20%",
+        "1/5": "20%"
       },
       transitionProperty: {
-        "inset": "inset",
-        "left": "left",
+        inset: "inset",
+        left: "left"
       }
     }
   },
@@ -154,7 +158,7 @@ module.exports = {
       height: ["hover"],
       zIndex: ["hover"],
       inset: ["hover"],
-      left: ["hover"],
+      left: ["hover"]
     }
   },
   plugins: []
