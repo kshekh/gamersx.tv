@@ -2,7 +2,15 @@
   <div
     @swiped-left="forward()"
     @swiped-right="back()"
-    class="mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative overflow-hidden min-h-mobile"
+    class="
+      mb-7
+      md:mb-9
+      xl:mb-14
+      bg-cover bg-no-repeat
+      relative
+      overflow-hidden
+      min-h-mobile
+    "
     :style="customBg"
   >
     <div class="container mx-auto">
@@ -25,7 +33,16 @@
         <div class="flex w-full h-full items-center justify-between">
           <div
             ref="channelBox"
-            class="mr-5 md:mr-0 w-full h-full flex flex-col justify-center py-16 md:py-0"
+            class="
+              mr-5
+              md:mr-0
+              w-full
+              h-full
+              flex flex-col
+              justify-center
+              py-16
+              md:py-0
+            "
           >
             <div
               ref="channelDivs"
@@ -119,7 +136,7 @@
 
 <script>
 import EmbedContainer from "../layout/EmbedContainer/EmbedContainerFullWidthImagery.vue";
-import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainer.vue";
+import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerImagery.vue";
 
 import SliderDot from "../helpers/SliderDot.vue";
 
@@ -164,7 +181,7 @@ export default {
         return selected.embedName;
       } else {
         // Default for now
-        return "test";
+        return "TwitchEmbed";
       }
     },
   },

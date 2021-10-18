@@ -72,14 +72,14 @@
           xl:h-48
         "
       >
-        <component :is="channel.componentName" v-bind="channel"></component>
+        <component :is="channel.componentName" v-bind="channel" :cuttedBorder="true"></component>
       </div>
     </div>
   </div>
 </template>
 <script>
 import EmbedContainer from "../layout/EmbedContainer/EmbedContainerClassicMd.vue";
-import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainer.vue";
+import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerClassic.vue";
 
 import SliderArrow from "../helpers/SliderArrow.vue";
 

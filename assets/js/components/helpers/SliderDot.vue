@@ -22,7 +22,7 @@ export default {
     },
     embedType: {
       type: String,
-      required: true
+      default: "TwitchEmbed"
     },
     isDotActive: {
       type: Boolean,

@@ -23,13 +23,13 @@
         }"
       >
         <img
-          v-if="showArt"
+          v-if="showArt && image"
           :src="image.url"
           class="-translate-y-1/2 relative top-1/2 transform w-full"
         />
 
         <img
-          v-else-if="overlay"
+          v-else-if="showOverlay"
           alt="Embed's Custom Overlay"
           :src="overlay"
           class="-translate-y-1/2 relative top-1/2 transform w-full"

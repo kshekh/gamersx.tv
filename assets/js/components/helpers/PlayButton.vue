@@ -1,7 +1,7 @@
 <template>
   <button
-    class="w-8 h-8 md:h-10 md:w-10 xl:w-12 xl:h-12 flex cursor-pointer rounded-full"
-    :class="[videoTypeClass]"
+    class="flex cursor-pointer rounded-full"
+    :class="[videoTypeClass, buttonClass]"
   >
     <div class="m-auto" :class="wrapperClass">
       <!-- <svg class="text-white fill-current" viewBox="0 0 16 16" :class="svgClass">
@@ -32,6 +32,10 @@ export default {
     wrapperClass: {
       type: String,
       default: "pl-1"
+    },
+    buttonClass: {
+      type: String,
+      default: "w-8 h-8 md:h-10 md:w-10 xl:w-12 xl:h-12",
     },
   },
   computed: {

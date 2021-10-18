@@ -67,7 +67,7 @@
 </template>
 <script>
 import EmbedContainer from "../layout/EmbedContainer/EmbedContainerParallax.vue";
-import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainer.vue";
+import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerParallax.vue";
 
 import SliderArrow from "../helpers/SliderArrow.vue";
 

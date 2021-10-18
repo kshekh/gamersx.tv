@@ -39,13 +39,13 @@
         @mouseleave="mouseLeft"
       >
         <img
-          v-if="showArt"
+          v-if="showArt && image"
           v-show="isOverlayVisible"
           :src="image.url"
           class="relative top-1/2 transform -translate-y-1/2 w-full"
         />
         <img
-          v-else-if="overlay"
+          v-else-if="showOverlay"
           v-show="isOverlayVisible"
           alt="Embed's Custom Overlay"
           :src="overlay"

@@ -100,7 +100,7 @@
           xl:h-32
         "
       >
-        <component :is="channel.componentName" v-bind="channel"></component>
+        <component :is="channel.componentName" v-bind="channel" :cuttedBorder="true"></component>
       </div>
     </div>
     <!-- <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="forward()">
@@ -115,7 +115,7 @@
 </template>
 <script>
 import EmbedContainer from "../layout/EmbedContainer/EmbedContainerClassicSm.vue";
-import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainer.vue";
+import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerClassic.vue";
 
 import SliderArrow from "../helpers/SliderArrow.vue";
 import PlayButton from "../helpers/PlayButton.vue";

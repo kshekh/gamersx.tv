@@ -60,7 +60,7 @@
 </template>
 <script>
 import EmbedContainer from "../layout/EmbedContainer/EmbedContainerNumbered.vue";
-import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainer.vue";
+import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerNumbered.vue";
 
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 

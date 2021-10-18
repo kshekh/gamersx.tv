@@ -79,7 +79,7 @@
 </template>
 <script>
 import EmbedContainer from "../layout/EmbedContainer/EmbedContainerClassicVertical.vue";
-import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainer.vue";
+import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerClassic.vue";
 
 import SliderArrow from "../helpers/SliderArrow.vue";
 
