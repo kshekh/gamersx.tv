@@ -2,13 +2,14 @@
   <div
     @swiped-left="forward()"
     @swiped-right="back()"
-    class="home-row mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative overflow-hidden"
+    @mouseenter="mouseEntered"
+    class="home-row mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative overflow-hidden min-h-mobile"
     :style="customBg"
   >
     <div class="container mx-auto">
       <div class="pb-50p"></div>
       <div
-        class="px-4 pt-5 pb-2 md:pb-9 md:px-12 xl:pt-30 flex items-center justify-between absolute inset-0 z-10"
+        class="px-4 pt-5 pb-2 md:pb-9 md:pt-24 md:px-12 xl:pt-32 flex items-center justify-between absolute inset-0 z-10"
       >
         <button
           @click="back()"
@@ -38,7 +39,7 @@
             >
               <component
                 :is="channel.componentName"
-                v-show="index === rowIndex"
+                v-if="index === rowIndex"
                 v-bind="channel"
               ></component>
             </div>
@@ -163,6 +164,9 @@ export default {
     },
     setActiveChannel(channelIndex) {
       this.rowIndex = channelIndex;
+    },
+    mouseEntered() {
+
     }
   },
   mounted: function() {
@@ -170,4 +174,3 @@ export default {
   }
 };
 </script>
-<style scoped></style>

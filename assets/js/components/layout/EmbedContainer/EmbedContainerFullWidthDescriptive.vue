@@ -1,8 +1,7 @@
 <template>
   <div @mouseenter="mouseEntered" @mouseleave="mouseLeft" class="w-full h-full">
-    <div class="max-w-1/3 relative z-10">
-      <!-- "h-52", "bg-purple" temp -->
-      <div class="mb-1 md:mb-2 h-52 bg-purple">
+    <div class="max-w-1/2 md:max-w-1/3 relative z-10 min-h-mobile-description flex flex-col">
+      <div class="mb-1 md:mb-2 h-14 md:h-26 xl:h-52 bg-purple overflow-hidden">
         <img
           v-if="showArt"
           :src="image.url"
@@ -18,15 +17,14 @@
       </div>
 
       <p class="mb-2 xl:mb-4 text-white text-xs md:text-sm xl:text-lg">
-        <!-- {{ info.description }} -->
         <!-- Will be "description" field -->
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam, libero eos
-        neque cum explicabo expedita consectetur quibusdam odio molestiae esse
-        voluptate magni, possimus hic eius sapiente quasi iste laborum?
-        Incidunt.
+        <!-- {{ info.description }} -->
+        League of Legends is a multiplayer online battle arena (MOBA) game in
+        which the player controls a character ("champion") with a set of unique
+        abilities from an isometric perspective.
       </p>
 
-      <div class="space-x-2 md:space-x-3 xl:space-x-4">
+      <div class="space-x-2 md:space-x-3 xl:space-x-4 mt-auto">
         <button
           @click="playVideo()"
           class="text-white text-xs md:text-sm xl:text-lg p-1 min-w-50 md:min-w-75 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6"
