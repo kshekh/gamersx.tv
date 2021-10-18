@@ -1,22 +1,42 @@
 <template>
-  <div @mouseenter="mouseEntered" @mouseleave="mouseLeft" class="w-full h-full">
-    <div class="max-w-1/2 md:max-w-1/3 relative z-10 min-h-mobile-description flex flex-col">
-      <div class="mb-1 md:mb-2 h-14 md:h-26 xl:h-52 bg-purple overflow-hidden">
+  <div class="w-full h-full">
+    <div
+      class="relative z-10 min-h-mobile-description flex flex-col opacity-1 transform rounded-md transition-all duration-300 backdrop-filter backdrop-blur p-3 -m-3"
+      :class="[
+        isVideoBuffered ? 'md:max-w-1/4' : 'max-w-1/2 md:max-w-1/3',
+        { 'opacity-0 translate-y-3': isVideoPlaying }
+      ]"
+    >
+      <div
+        class="overflow-hidden transition-all duration-300"
+        :class="[
+          isVideoBuffered
+            ? 'md:mb-1 h-11 md:h-20 xl:h-41'
+            : 'mb-1 md:mb-2 h-14 md:h-26 xl:h-52'
+        ]"
+      >
         <img
-          v-if="showArt"
+          v-if="showArt && image"
           :src="image.url"
           class="max-h-20 md:max-h-28 xl:max-h-52"
         />
 
         <img
-          v-else-if="overlay"
+          v-else-if="showOverlay"
           alt="Embed's Custom Overlay"
           :src="overlay"
           class="max-h-20 md:max-h-28 xl:max-h-52"
         />
       </div>
 
-      <p class="mb-2 xl:mb-4 text-white text-xs md:text-sm xl:text-lg">
+      <p
+        class="text-white  transition-all duration-300"
+        :class="[
+          isVideoBuffered
+            ? 'text-8 md:text-xs xl:text-sm mb-1 xl:mb-2'
+            : 'text-xs md:text-sm xl:text-lg mb-2 xl:mb-4'
+        ]"
+      >
         <!-- Will be "description" field -->
         <!-- {{ info.description }} -->
         League of Legends is a multiplayer online battle arena (MOBA) game in
@@ -24,23 +44,40 @@
         abilities from an isometric perspective.
       </p>
 
-      <div class="space-x-2 md:space-x-3 xl:space-x-4 mt-auto">
+      <div
+        class=" mt-auto transition-all duration-300"
+        :class="[
+          isVideoBuffered
+            ? 'space-x-1 md:space-x-2 xl:space-x-3'
+            : 'space-x-2 md:space-x-3 xl:space-x-4'
+        ]"
+      >
         <button
-          @click="playVideo()"
-          class="text-white text-xs md:text-sm xl:text-lg p-1 min-w-50 md:min-w-75 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6"
-          :class="bgColor"
+          @click="handlePlayVideo()"
+          class="text-white p-1 transition-all duration-300"
+          :class="[
+            bgColor,
+            isVideoBuffered
+              ? 'text-8 md:text-xs xl:text-sm md:px-1 md:py-1 xl:py-2 xl:px-4 min-w-40 md:min-w-50 xl:min-w-75'
+              : 'text-xs md:text-sm xl:text-lg min-w-50 md:min-w-75 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6'
+          ]"
         >
           Play
         </button>
         <button
-          class="text-white text-xs md:text-sm xl:text-lg p-1 min-w-50 md:min-w-75 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6"
-          :class="bgColor"
+          @click="isVideoBuffered = !isVideoBuffered"
+          class="text-white p-1 transition-all duration-300"
+          :class="[
+            bgColor,
+            isVideoBuffered
+              ? 'text-8 md:text-xs xl:text-sm md:px-1 md:py-1 xl:py-2 xl:px-4 min-w-40 md:min-w-50 xl:min-w-75'
+              : 'text-xs md:text-sm xl:text-lg min-w-50 md:min-w-75 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6'
+          ]"
         >
           More info
         </button>
       </div>
     </div>
-
     <!-- Show the embed with overlay if there's an embed -->
     <div v-if="showEmbed && embedData">
       <div v-show="isEmbedVisible">
@@ -48,29 +85,12 @@
           ref="embed"
           :is="embedName"
           :embedData="embedData"
+          @video-buffered="videoBuffered"
           class="flex-grow min-h-0 absolute inset-0"
           :width="'100%'"
           :height="'100%'"
         ></component>
       </div>
-    </div>
-
-    <!-- If there's no embed, show that instead with a link first -->
-    <div v-else-if="showArt && image" class="w-full h-full absolute inset-0">
-      <a :href="link" class="block w-full h-full">
-        <img :src="image.url" class="w-full h-full" />
-      </a>
-    </div>
-
-    <!-- If there's only an overlay and isn't art, show that instead with a link -->
-    <div v-else-if="showOverlay" class="w-full h-full absolute inset-0">
-      <a :href="link" class="block w-full h-full">
-        <img
-          class="w-full h-full"
-          alt="Embed's Custom Overlay"
-          :src="overlay"
-        />
-      </a>
     </div>
   </div>
 </template>
@@ -100,38 +120,17 @@ export default {
     "componentName",
     "embedName",
     "embedData",
-    "liveViewerCount"
+    "liveViewerCount",
+    "isAllowPlaying"
   ],
   data() {
     return {
       isOverlayVisible: true,
       isEmbedVisible: false,
-      isTitleVisible: false
+      isTitleVisible: false,
+      isVideoPlaying: false,
+      isVideoBuffered: false
     };
-  },
-  methods: {
-    playVideo() {
-      this.$refs.embed.startPlayer();
-    },
-    mouseEntered() {
-      setTimeout(() => {
-        if (this.showOverlay || this.showArt) {
-          this.isOverlayVisible = false;
-          this.isEmbedVisible = true;
-        }
-      }, 0);
-
-      this.playVideo();
-    },
-    mouseLeft() {
-      if (this.showOverlay || this.showArt) {
-        this.isOverlayVisible = true;
-        this.isEmbedVisible = false;
-      }
-      if (this.$refs.embed.isPlaying()) {
-        this.$refs.embed.stopPlayer();
-      }
-    }
   },
   computed: {
     bgColor() {
@@ -155,6 +154,36 @@ export default {
         ((this.showOnline && this.onlineDisplay.showOverlay) ||
           (!this.showOnline && this.offlineDisplay.showOverlay))
       );
+    }
+  },
+  methods: {
+    handlePlayVideo() {
+      this.isVideoPlaying = true;
+
+      this.playVideo();
+    },
+    playVideo() {
+      this.$refs.embed.startPlayer();
+    },
+    videoBuffered() {
+      this.isVideoBuffered = true;
+    }
+  },
+  watch: {
+    isAllowPlaying(newVal, oldVal) {
+      if (newVal === true) {
+        if (this.showOverlay || this.showArt) {
+          this.isOverlayVisible = false;
+          this.isEmbedVisible = true;
+        }
+
+        this.playVideo();
+      } else {
+        if (this.$refs.embed.isPlaying()) {
+          this.isVideoPlaying = false;
+          this.$refs.embed.stopPlayer();
+        }
+      }
     }
   },
   mounted() {

@@ -2,14 +2,15 @@
   <div
     @swiped-left="forward()"
     @swiped-right="back()"
-    @mouseenter="mouseEntered"
+    @mouseenter="mouseEntered()"
+    @mouseleave="mouseLeaved()"
     class="home-row mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative overflow-hidden min-h-mobile"
     :style="customBg"
   >
     <div class="container mx-auto">
       <div class="pb-50p"></div>
       <div
-        class="px-4 pt-5 pb-2 md:pb-9 md:pt-24 md:px-12 xl:pt-32 flex items-center justify-between absolute inset-0 z-10"
+        class="px-4 md:px-12 flex items-center justify-between absolute inset-0 z-10"
       >
         <button
           @click="back()"
@@ -29,9 +30,12 @@
         </button>
 
         <div
-          class="flex w-full h-full items-end justify-between md:flex-col md:items-center"
+          class="pt-5 pb-2 md:pb-9 md:pt-24 xl:pt-32 flex w-full h-full items-end justify-between md:flex-col md:items-center"
         >
-          <div ref="channelBox" class="mr-5 md:mr-0 md:mb-8 xl:mb-24 w-full h-full">
+          <div
+            ref="channelBox"
+            class="mr-5 md:mr-0 md:mb-8 xl:mb-24 w-full h-full"
+          >
             <div
               ref="channelDivs"
               v-for="(channel, index) in displayChannels"
@@ -41,6 +45,7 @@
                 :is="channel.componentName"
                 v-if="index === rowIndex"
                 v-bind="channel"
+                :is-allow-playing="isAllowPlaying"
               ></component>
             </div>
           </div>
@@ -104,16 +109,18 @@ export default {
   data: function() {
     return {
       rowIndex: 0,
-      displayChannels: []
+      displayChannels: [],
+      isAllowPlaying: false
     };
   },
   computed: {
     customBg: function() {
       let selected = this.displayChannels[this.rowIndex];
+
       if (selected && selected.customArt) {
         return {
-          // backgroundImage: "url(https://picsum.photos/2000/3000)"
-          backgroundImage: "url(" + selected.customArt + ")"
+          backgroundImage: "url(https://picsum.photos/2000/3000)"
+          // backgroundImage: "url(" + selected.customArt + ")"
         };
       } else {
         return {};
@@ -166,7 +173,10 @@ export default {
       this.rowIndex = channelIndex;
     },
     mouseEntered() {
-
+      this.isAllowPlaying = true;
+    },
+    mouseLeaved() {
+      this.isAllowPlaying = false;
     }
   },
   mounted: function() {
