@@ -2,7 +2,7 @@
   <div
     @swiped-left="forward()"
     @swiped-right="back()"
-    class="mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative overflow-hidden"
+    class="mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative overflow-hidden min-h-mobile"
     :style="customBg"
   >
     <div class="container mx-auto">
@@ -22,27 +22,10 @@
           z-10
         "
       >
-        <!-- <button
-          @click="back()"
-          class="mr-2 md:mr-5 xl:mr-8 flex-shrink-0 relative z-10"
-          :class="{
-            'text-purple': currentChannelEmbedName === 'TwitchEmbed',
-            'text-red': currentChannelEmbedName === 'YoutubeEmbed'
-          }"
-        >
-          <svg
-            class="h-4 w-5 md:h-5 md:w-7 xl:h-12 xl:w-8 fill-current transform rotate-180"
-            viewBox="0 0 19 30"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M 19 14.999 L 0 30 L 0 0 L 19 14.999 Z" />
-          </svg>
-        </button> -->
-
         <div class="flex w-full h-full items-center justify-between">
           <div
             ref="channelBox"
-            class="mr-5 md:mr-0 w-full h-full flex flex-col justify-center"
+            class="mr-5 md:mr-0 w-full h-full flex flex-col justify-center py-16 md:py-0"
           >
             <div
               ref="channelDivs"
@@ -54,10 +37,12 @@
                 :is="channel.componentName"
                 v-show="index === rowIndex"
                 v-bind="channel"
+                @hide-controls="toggleControls(false)"
               ></component>
             </div>
           </div>
           <div
+            v-show="isControlsShown"
             class="
               flex
               items-center
@@ -79,22 +64,54 @@
           </div>
         </div>
 
-        <button
-          @click="forward()"
-          class="ml-2 md:ml-5 xl:ml-8 flex-shrink-0 relative z-10"
-          :class="{
-            'text-purple': currentChannelEmbedName === 'TwitchEmbed',
-            'text-red': currentChannelEmbedName === 'YoutubeEmbed',
-          }"
+        <div
+          v-show="isControlsShown"
+          class="ml-2 md:ml-5 xl:ml-8 flex-shrink-0 relative z-10 flex"
         >
-          <svg
-            class="h-4 w-5 md:h-5 md:w-7 xl:h-12 xl:w-8 fill-current"
-            viewBox="0 0 19 30"
-            xmlns="http://www.w3.org/2000/svg"
+          <button
+            @click="back()"
+            class="flex-shrink-0 mr-1 xl:mr-3"
+            :class="{
+              'text-purple': currentChannelEmbedName === 'TwitchEmbed',
+              'text-red': currentChannelEmbedName === 'YoutubeEmbed',
+            }"
           >
-            <path d="M 19 14.999 L 0 30 L 0 0 L 19 14.999 Z" />
-          </svg>
-        </button>
+            <svg
+              class="
+                h-4
+                w-5
+                md:h-5
+                md:w-7
+                xl:h-12
+                xl:w-8
+                fill-current
+                transform
+                rotate-180
+              "
+              viewBox="0 0 19 30"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M 19 14.999 L 0 30 L 0 0 L 19 14.999 Z" />
+            </svg>
+          </button>
+
+          <button
+            @click="forward()"
+            class="flex-shrink-0"
+            :class="{
+              'text-purple': currentChannelEmbedName === 'TwitchEmbed',
+              'text-red': currentChannelEmbedName === 'YoutubeEmbed',
+            }"
+          >
+            <svg
+              class="h-4 w-5 md:h-5 md:w-7 xl:h-12 xl:w-8 fill-current"
+              viewBox="0 0 19 30"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M 19 14.999 L 0 30 L 0 0 L 19 14.999 Z" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -125,6 +142,7 @@ export default {
     return {
       rowIndex: 0,
       displayChannels: [],
+      isControlsShown: true,
     };
   },
   computed: {
@@ -184,6 +202,9 @@ export default {
     },
     setActiveChannel(channelIndex) {
       this.rowIndex = channelIndex;
+    },
+    toggleControls(val) {
+      this.isControlsShown = val;
     },
   },
   mounted: function () {

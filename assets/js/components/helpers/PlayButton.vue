@@ -3,9 +3,15 @@
     class="w-8 h-8 md:h-10 md:w-10 xl:w-12 xl:h-12 flex cursor-pointer rounded-full"
     :class="[videoTypeClass]"
   >
-    <div class="m-auto pl-1">
-      <svg class="text-white fill-current w-4 h-4 " viewBox="0 0 16 16">
+    <div class="m-auto" :class="wrapperClass">
+      <!-- <svg class="text-white fill-current" viewBox="0 0 16 16" :class="svgClass">
         <path d="M12.876 8.311.62 16.131V.491l12.255 7.82Z" />
+      </svg> -->
+      <!-- <svg class="text-white fill-current" viewBox="0 0 19 30" :class="svgClass">
+        <path d="M 19 14.999 L 0 30 L 0 0 L 19 14.999 Z"/>
+      </svg> -->
+      <svg class="text-white fill-current" viewBox="0 0 21 28" fill="none" :class="svgClass">
+        <path d="M 21 13.999 L 0 28 L 0 0 L 21 13.999 Z"/>
       </svg>
     </div>
   </button>
@@ -18,7 +24,15 @@ export default {
     videoType: {
       type: String,
       required: true
-    }
+    },
+    svgClass: {
+      type: String,
+      default: "w-4"
+    },
+    wrapperClass: {
+      type: String,
+      default: "pl-1"
+    },
   },
   computed: {
     videoTypeClass() {
