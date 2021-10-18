@@ -1,7 +1,7 @@
 <template>
-  <!-- <div @mouseenter="mouseEntered" @mouseleave="mouseLeft" class="w-full h-full "> -->
   <div class="w-full h-full flex flex-col">
     <div
+      v-show="!isEmbedVisible"
       class="cut-edge__wrapper flex-grow min-h-0 w-36 md:w-86 xl:w-118 relative"
       :class="{
         'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
@@ -25,16 +25,17 @@
         <img
           v-if="showArt"
           :src="image.url"
-          class="max-h-20 md:max-h-28 xl:max-h-52"
+          class="-translate-y-1/2 relative top-1/2 transform w-full"
         />
 
         <img
           v-else-if="overlay"
           alt="Embed's Custom Overlay"
           :src="overlay"
-          class="max-h-20 md:max-h-28 xl:max-h-52"
+          class="-translate-y-1/2 relative top-1/2 transform w-full"
         />
         <play-button
+          v-if="showEmbed && embedData"
           class="
             absolute
             top-1/2
@@ -49,41 +50,51 @@
             md:w-16
             xl:w-32
           "
+          svgClass="w-3 md:w-7 xl:w-12"
+          wrapperClass="md:pl-1.5 xl:pl-3"
           :videoType="playBtnColor"
+          @click.native="playVideo"
         />
       </div>
     </div>
 
     <!-- Show the embed with overlay if there's an embed -->
     <div v-if="showEmbed && embedData">
-      <div v-show="isEmbedVisible">
+      <div
+        v-show="isEmbedVisible"
+        class="
+          cut-edge__wrapper
+          flex-grow
+          min-h-0
+          absolute
+          inset-0
+          z-20
+          py-5
+          md:py-8
+          xl:py-12
+          px-4
+          md:px-18
+          xl:px-32
+        "
+        :class="{
+          'cut-edge__clipped--twitch border-purple':
+            embedName === 'TwitchEmbed',
+          'cut-edge__clipped--youtube border-red': embedName === 'YouTubeEmbed',
+        }"
+      >
         <component
           ref="embed"
           :is="embedName"
           :embedData="embedData"
-          class="flex-grow min-h-0 absolute inset-0"
+          class="h-full w-full border overflow-hidden bg-black"
+          :class="{
+            'border-purple': embedName === 'TwitchEmbed',
+            'border-red': embedName === 'YouTubeEmbed',
+          }"
           :width="'100%'"
           :height="'100%'"
         ></component>
       </div>
-    </div>
-
-    <!-- If there's no embed, show that instead with a link first -->
-    <div v-else-if="showArt && image" class="w-full h-full absolute inset-0">
-      <a :href="link" class="block w-full h-full">
-        <img :src="image.url" class="w-full h-full" />
-      </a>
-    </div>
-
-    <!-- If there's only an overlay and isn't art, show that instead with a link -->
-    <div v-else-if="showOverlay" class="w-full h-full absolute inset-0">
-      <a :href="link" class="block w-full h-full">
-        <img
-          class="w-full h-full"
-          alt="Embed's Custom Overlay"
-          :src="overlay"
-        />
-      </a>
     </div>
   </div>
 </template>
@@ -127,9 +138,6 @@ export default {
   },
   methods: {
     playVideo() {
-      this.$refs.embed.startPlayer();
-    },
-    mouseEntered() {
       setTimeout(() => {
         if (this.showOverlay || this.showArt) {
           this.isOverlayVisible = false;
@@ -137,7 +145,8 @@ export default {
         }
       }, 0);
 
-      this.playVideo();
+      this.$refs.embed.startPlayer();
+      this.$emit('hide-controls');
     },
     mouseLeft() {
       if (this.showOverlay || this.showArt) {
