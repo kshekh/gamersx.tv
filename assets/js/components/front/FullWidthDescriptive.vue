@@ -4,24 +4,63 @@
     @swiped-right="back()"
     @mouseenter="mouseEntered()"
     @mouseleave="mouseLeaved()"
-    class="home-row mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative overflow-hidden min-h-mobile"
+    class="
+      home-row
+      mb-7
+      md:mb-9
+      xl:mb-14
+      bg-cover bg-no-repeat
+      relative
+      overflow-hidden
+      min-h-mobile
+    "
     :style="customBg"
   >
     <div class="container mx-auto">
       <div class="pb-50p"></div>
       <div
-        class="px-4 md:px-12 flex items-center justify-between absolute inset-0 z-10"
+        class="
+          px-4
+          md:px-12
+          flex
+          items-center
+          justify-between
+          absolute
+          inset-0
+          z-10
+        "
       >
         <button
           @click="back()"
-          class="mr-2 md:mr-5 xl:mr-8 flex-shrink-0 relative z-10"
+          class="
+            mr-2
+            md:mr-5
+            xl:mr-8
+            flex-shrink-0
+            relative
+            z-10
+            transition-all
+            duration-300
+            transform
+            hover:scale-110
+          "
           :class="{
             'text-purple': currentChannelEmbedName === 'TwitchEmbed',
-            'text-red': currentChannelEmbedName === 'YoutubeEmbed'
+            'text-red': currentChannelEmbedName === 'YouTubeEmbed',
           }"
         >
           <svg
-            class="h-4 w-5 md:h-5 md:w-7 xl:h-12 xl:w-8 fill-current transform rotate-180"
+            class="
+              h-4
+              w-5
+              md:h-5
+              md:w-7
+              xl:h-12
+              xl:w-8
+              fill-current
+              transform
+              rotate-180
+            "
             viewBox="0 0 19 30"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -30,7 +69,20 @@
         </button>
 
         <div
-          class="pt-5 pb-2 md:pb-9 md:pt-24 xl:pt-32 flex w-full h-full items-end justify-between md:flex-col md:items-center"
+          class="
+            pt-5
+            pb-2
+            md:pb-9
+            md:pt-24
+            xl:pt-32
+            flex
+            w-full
+            h-full
+            items-end
+            justify-between
+            md:flex-col
+            md:items-center
+          "
         >
           <div
             ref="channelBox"
@@ -63,10 +115,21 @@
 
         <button
           @click="forward()"
-          class="ml-2 md:ml-5 xl:ml-8 flex-shrink-0 relative z-10"
+          class="
+            ml-2
+            md:ml-5
+            xl:ml-8
+            flex-shrink-0
+            relative
+            z-10
+            transition-all
+            duration-300
+            transform
+            hover:scale-110
+          "
           :class="{
             'text-purple': currentChannelEmbedName === 'TwitchEmbed',
-            'text-red': currentChannelEmbedName === 'YoutubeEmbed'
+            'text-red': currentChannelEmbedName === 'YouTubeEmbed',
           }"
         >
           <svg
@@ -98,29 +161,29 @@ export default {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
     "title-addinional-description": TitleAdditionalDescription,
-    "slider-dot": SliderDot
+    "slider-dot": SliderDot,
   },
   props: {
     settings: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
-  data: function() {
+  data: function () {
     return {
       rowIndex: 0,
       displayChannels: [],
-      isAllowPlaying: false
+      isAllowPlaying: false,
     };
   },
   computed: {
-    customBg: function() {
+    customBg: function () {
       let selected = this.displayChannels[this.rowIndex];
 
       if (selected && selected.customArt) {
         return {
           // backgroundImage: "url(https://picsum.photos/2000/3000)"
-          backgroundImage: "url(" + selected.customArt + ")"
+          backgroundImage: "url(" + selected.customArt + ")",
         };
       } else {
         return {};
@@ -133,12 +196,12 @@ export default {
         return selected.embedName;
       } else {
         // Default for now
-        return "test";
+        return "TwitchEmbed";
       }
-    }
+    },
   },
   methods: {
-    showChannel: function(channel) {
+    showChannel: function (channel) {
       return (
         (channel.showOnline &&
           (channel.onlineDisplay.showArt ||
@@ -150,15 +213,15 @@ export default {
             channel.offlineDisplay.showOverlay))
       );
     },
-    first: function() {
+    first: function () {
       this.rowIndex = 0;
       this.reorder();
     },
-    back: function() {
+    back: function () {
       this.rowIndex = (this.rowIndex - 1).mod(this.displayChannels.length);
       this.reorder();
     },
-    forward: function() {
+    forward: function () {
       this.rowIndex = (this.rowIndex + 1).mod(this.displayChannels.length);
       this.reorder();
     },
@@ -177,10 +240,10 @@ export default {
     },
     mouseLeaved() {
       this.isAllowPlaying = false;
-    }
+    },
   },
-  mounted: function() {
+  mounted: function () {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
-  }
+  },
 };
 </script>

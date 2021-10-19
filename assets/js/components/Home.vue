@@ -1,6 +1,6 @@
 <template>
   <!-- remowe "text-white" later -->
-  <div class="text-white">
+  <div class="text-white py-4 md:py-7">
     <div v-for="row in settings.rows" :key="row.id">
       <component :is="row.componentName" :settings="row"></component>
     </div>

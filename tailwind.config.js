@@ -118,7 +118,8 @@ module.exports = {
         "1/4": "25%",
         "116": "116px",
         "224": "224px",
-        "485": "485px"
+        "485": "485px",
+        "full-hd": "1920px"
       },
       spacing: {
         "0.75": "3px",
@@ -149,6 +150,9 @@ module.exports = {
       transitionProperty: {
         inset: "inset",
         left: "left"
+      },
+      backgroundSize: {
+        "full": "100% 100%",
       }
     }
   },

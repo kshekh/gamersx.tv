@@ -87,10 +87,10 @@
         >
           <button
             @click="back()"
-            class="flex-shrink-0 mr-1 xl:mr-3"
+            class="flex-shrink-0 mr-1 xl:mr-3 transition-all duration-300 transform hover:scale-110"
             :class="{
               'text-purple': currentChannelEmbedName === 'TwitchEmbed',
-              'text-red': currentChannelEmbedName === 'YoutubeEmbed',
+              'text-red': currentChannelEmbedName === 'YouTubeEmbed',
             }"
           >
             <svg
@@ -114,10 +114,10 @@
 
           <button
             @click="forward()"
-            class="flex-shrink-0"
+            class="flex-shrink-0 transition-all duration-300 transform hover:scale-110"
             :class="{
               'text-purple': currentChannelEmbedName === 'TwitchEmbed',
-              'text-red': currentChannelEmbedName === 'YoutubeEmbed',
+              'text-red': currentChannelEmbedName === 'YouTubeEmbed',
             }"
           >
             <svg

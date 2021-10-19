@@ -1,10 +1,23 @@
 <template>
   <div class="w-full h-full">
     <div
-      class="relative z-10 min-h-mobile-description flex flex-col opacity-1 transform rounded-md transition-all duration-300 backdrop-filter backdrop-blur p-3 -m-3"
+      class="
+        relative
+        z-10
+        min-h-mobile-description
+        flex flex-col
+        opacity-1
+        transform
+        rounded-md
+        transition-all
+        duration-300
+        backdrop-filter backdrop-blur
+        p-3
+        -m-3
+      "
       :class="[
         isVideoBuffered ? 'md:max-w-1/4' : 'max-w-1/2 md:max-w-1/3',
-        { 'opacity-0 translate-y-3': isVideoPlaying }
+        { 'opacity-0 translate-y-3': isVideoPlaying },
       ]"
     >
       <div
@@ -12,7 +25,7 @@
         :class="[
           isVideoBuffered
             ? 'md:mb-1 h-11 md:h-20 xl:h-41'
-            : 'mb-1 md:mb-2 h-14 md:h-26 xl:h-52'
+            : 'mb-1 md:mb-2 h-14 md:h-26 xl:h-52',
         ]"
       >
         <img
@@ -30,11 +43,11 @@
       </div>
 
       <p
-        class="text-white  transition-all duration-300"
+        class="text-white transition-all duration-300"
         :class="[
           isVideoBuffered
             ? 'text-8 md:text-xs xl:text-sm mb-1 xl:mb-2'
-            : 'text-xs md:text-sm xl:text-lg mb-2 xl:mb-4'
+            : 'text-xs md:text-sm xl:text-lg mb-2 xl:mb-4',
         ]"
       >
         <!-- Will be "description" field -->
@@ -45,33 +58,47 @@
       </p>
 
       <div
-        class=" mt-auto transition-all duration-300"
+        class="mt-auto transition-all duration-300"
         :class="[
           isVideoBuffered
             ? 'space-x-1 md:space-x-2 xl:space-x-3'
-            : 'space-x-2 md:space-x-3 xl:space-x-4'
+            : 'space-x-2 md:space-x-3 xl:space-x-4',
         ]"
       >
         <button
           @click="handlePlayVideo()"
-          class="text-white p-1 transition-all duration-300 bg-opacity-30 hover:bg-opacity-100"
+          class="
+            text-white
+            p-1
+            transition-all
+            duration-300
+            bg-opacity-30
+            hover:bg-opacity-100
+          "
           :class="[
             bgColor,
             isVideoBuffered
               ? 'text-8 md:text-xs xl:text-sm md:px-1 md:py-1 xl:py-2 xl:px-4 min-w-40 md:min-w-50 xl:min-w-75'
-              : 'text-xs md:text-sm xl:text-lg min-w-50 md:min-w-75 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6'
+              : 'text-xs md:text-sm xl:text-lg min-w-50 md:min-w-75 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6',
           ]"
         >
           Play
         </button>
         <button
           @click="isVideoBuffered = !isVideoBuffered"
-          class="text-white p-1 transition-all duration-300 bg-opacity-30 hover:bg-opacity-100"
+          class="
+            text-white
+            p-1
+            transition-all
+            duration-300
+            bg-opacity-30
+            hover:bg-opacity-100
+          "
           :class="[
             bgColor,
             isVideoBuffered
               ? 'text-8 md:text-xs xl:text-sm md:px-1 md:py-1 xl:py-2 xl:px-4 min-w-40 md:min-w-50 xl:min-w-75'
-              : 'text-xs md:text-sm xl:text-lg min-w-50 md:min-w-75 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6'
+              : 'text-xs md:text-sm xl:text-lg min-w-50 md:min-w-75 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6',
           ]"
         >
           More info
@@ -103,7 +130,7 @@ export default {
   name: "EmbedContainerFullWidthDescriptive",
   components: {
     TwitchEmbed: TwitchEmbed,
-    YouTubeEmbed: YouTubeEmbed
+    YouTubeEmbed: YouTubeEmbed,
   },
   props: [
     "title",
@@ -121,7 +148,7 @@ export default {
     "embedName",
     "embedData",
     "liveViewerCount",
-    "isAllowPlaying"
+    "isAllowPlaying",
   ],
   data() {
     return {
@@ -129,7 +156,7 @@ export default {
       isEmbedVisible: false,
       isTitleVisible: false,
       isVideoPlaying: false,
-      isVideoBuffered: false
+      isVideoBuffered: false,
     };
   },
   computed: {
@@ -154,7 +181,7 @@ export default {
         ((this.showOnline && this.onlineDisplay.showOverlay) ||
           (!this.showOnline && this.offlineDisplay.showOverlay))
       );
-    }
+    },
   },
   methods: {
     handlePlayVideo() {
@@ -167,7 +194,7 @@ export default {
     },
     videoBuffered() {
       this.isVideoBuffered = true;
-    }
+    },
   },
   watch: {
     isAllowPlaying(newVal, oldVal) {
@@ -184,11 +211,11 @@ export default {
           this.$refs.embed.stopPlayer();
         }
       }
-    }
+    },
   },
   mounted() {
     this.isOverlayVisible = this.showOverlay;
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
-  }
+  },
 };
 </script>
