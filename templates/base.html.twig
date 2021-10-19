@@ -51,22 +51,28 @@
 							<div class="w-full xl:max-w-xs
 								mr-9 md:mr-24 xl:mr-8
 								cut-edge__wrapper">
-								<div class="cut-edge__clipped cut-edge__clipped--md-border cut-edge__clipped--twitch cut-edge__clipped-bottom-left-md">
+								<div class="h-7 md:h-8 xl:h-9 cut-edge__clipped cut-edge__clipped--md-border cut-edge__clipped--twitch cut-edge__clipped-bottom-left-md flex items-center">
 									<input id="query"
 										class="
 										w-full bg-transparent
 										border-0
 										pl-2.5 md:pl-4 xl:pl-6
 										pr-2
-										py-0.5 xl:py-1.5
+										py-0.5
 										placeholder-grey
 										text-white
 										text-base xl:text-lg
 										font-play
-										outline-none"
+										outline-none
+										h-full"
 										type="text"
 										placeholder="Search"
 									/>
+									<button type="button" class="mr-1 px-1 py-0.5 w-7 h-full">
+										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" class="text-purple fill-current">
+												<path fill-rule="evenodd" clip-rule="evenodd" d="M13.7431 12.5747L9.9101 8.73998C10.5972 7.80284 10.9652 6.66986 10.9601 5.50782C10.947 2.47453 8.49372 0.0175753 5.4606 5.57205e-05C4.00908 -0.00651189 2.61522 0.56774 1.58953 1.59488C0.563845 2.62203 -0.00846493 4.01674 9.46502e-05 5.46832C0.0132044 8.50189 2.4667 10.9591 5.5001 10.9766C6.66681 10.9816 7.80387 10.6093 8.7416 9.91504L8.7456 9.91204L12.5751 13.7437C12.7821 13.9609 13.0907 14.0489 13.3811 13.9734C13.6716 13.898 13.8983 13.6711 13.9735 13.3805C14.0487 13.09 13.9605 12.7815 13.7431 12.5747V12.5747ZM5.49614 9.87852C3.06955 9.86456 1.10679 7.89903 1.09614 5.47231C1.08959 4.3112 1.54748 3.19565 2.36787 2.37399C3.18826 1.55234 4.30307 1.09277 5.46414 1.0976C7.89072 1.11156 9.85349 3.07709 9.86414 5.50381C9.87069 6.66493 9.4128 7.78047 8.59241 8.60213C7.77201 9.42378 6.6572 9.88335 5.49614 9.87852Z" />
+										</svg>
+									</button>
 								</div>
 							</div>
 							<button class="hidden xl:block">

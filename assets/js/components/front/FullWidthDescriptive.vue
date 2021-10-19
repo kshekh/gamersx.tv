@@ -119,8 +119,8 @@ export default {
 
       if (selected && selected.customArt) {
         return {
-          backgroundImage: "url(https://picsum.photos/2000/3000)"
-          // backgroundImage: "url(" + selected.customArt + ")"
+          // backgroundImage: "url(https://picsum.photos/2000/3000)"
+          backgroundImage: "url(" + selected.customArt + ")"
         };
       } else {
         return {};

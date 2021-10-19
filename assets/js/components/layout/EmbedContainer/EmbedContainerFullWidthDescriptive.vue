@@ -54,7 +54,7 @@
       >
         <button
           @click="handlePlayVideo()"
-          class="text-white p-1 transition-all duration-300"
+          class="text-white p-1 transition-all duration-300 bg-opacity-30 hover:bg-opacity-100"
           :class="[
             bgColor,
             isVideoBuffered
@@ -66,7 +66,7 @@
         </button>
         <button
           @click="isVideoBuffered = !isVideoBuffered"
-          class="text-white p-1 transition-all duration-300"
+          class="text-white p-1 transition-all duration-300 bg-opacity-30 hover:bg-opacity-100"
           :class="[
             bgColor,
             isVideoBuffered

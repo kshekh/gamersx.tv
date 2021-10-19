@@ -1,6 +1,6 @@
 <template>
   <button
-    class="flex cursor-pointer rounded-full"
+    class="flex cursor-pointer transition-all duration-300 rounded-full transform hover:scale-105"
     :class="[videoTypeClass, buttonClass]"
   >
     <div class="m-auto" :class="wrapperClass">
