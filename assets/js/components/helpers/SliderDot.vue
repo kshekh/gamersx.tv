@@ -1,10 +1,10 @@
 <template>
-  <button class="flex p-1 transition-all duration-300 transform hover:scale-110" @click="handleClick">
+  <button class="flex transition-all duration-300 transform hover:scale-110" @click="handleClick">
     <span
-      class="w-1 h-1 rounded-full m-auto md:w-2 md:h-2 xl:w-3 xl:h-3 transition-all"
+      class="rounded-full m-auto h-1.5 md:h-2 xl:h-3 transition-all"
       :class="{
         'w-3 md:w-4 xl:w-8': isDotActive,
-        'bg-grey': !isDotActive,
+        'bg-grey w-1.5 md:w-2 xl:w-3': !isDotActive,
         'bg-purple': isDotActive && embedType === 'TwitchEmbed',
         'bg-red': isDotActive && embedType === 'YouTubeEmbed'
       }"

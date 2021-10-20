@@ -70,23 +70,21 @@
 
         <div
           class="
-            pt-5
-            pb-2
-            md:pb-9
-            md:pt-24
-            xl:pt-32
+            py-2
+            md:pt-8
+            xl:py-14
+            flex-grow
+            min-w-0
             flex
-            w-full
             h-full
-            items-end
+            items-center
             justify-between
             md:flex-col
-            md:items-center
           "
         >
           <div
             ref="channelBox"
-            class="mr-5 md:mr-0 md:mb-8 xl:mb-24 w-full h-full"
+            class="mr-5 md:mr-0 md:pt-4 w-full flex-grow flex flex-col justify-center min-h-mobile-description"
           >
             <div
               ref="channelDivs"
@@ -101,7 +99,7 @@
               ></component>
             </div>
           </div>
-          <div class="flex items-center space-x-1 md:space-x-2 relative z-10">
+          <div class="flex items-center space-x-1 md:space-x-2 relative z-10 self-end md:self-center">
             <slider-dot
               v-for="(channel, index) in displayChannels"
               :key="'channelDot' + index"
