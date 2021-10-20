@@ -145,7 +145,7 @@
 
 <script>
 import EmbedContainer from "../layout/EmbedContainer/EmbedContainerFullWidthDescriptive.vue";
-import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainer.vue";
+import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerDescriptive.vue";
 
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
