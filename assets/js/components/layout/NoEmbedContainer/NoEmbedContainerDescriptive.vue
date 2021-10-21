@@ -98,6 +98,7 @@
             xl:px-6
             bg-purple
           "
+          target="_blank"
         >
           Show More
         </a>

@@ -179,7 +179,7 @@
 
 <script>
 import TwitchEmbed from "../../embeds/TwitchEmbedFullWidth.vue";
-import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
+import YouTubeEmbed from "../../embeds/YouTubeFullWidth.vue";
 
 export default {
   name: "EmbedContainerFullWidthDescriptive",
@@ -207,7 +207,6 @@ export default {
   ],
   data() {
     return {
-      isOverlayVisible: true,
       isEmbedVisible: false,
       isTitleVisible: false,
       isVideoPlaying: false,
@@ -249,13 +248,13 @@ export default {
     },
     videoBuffered() {
       this.isVideoBuffered = true;
+      this.isEmbedVisible = true;
     },
   },
   watch: {
     isAllowPlaying(newVal, oldVal) {
       if (newVal === true) {
         if (this.showOverlay || this.showArt) {
-          this.isOverlayVisible = false;
           this.isEmbedVisible = true;
         }
 
@@ -267,10 +266,6 @@ export default {
         }
       }
     },
-  },
-  mounted() {
-    this.isOverlayVisible = this.showOverlay;
-    this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
   },
 };
 </script>

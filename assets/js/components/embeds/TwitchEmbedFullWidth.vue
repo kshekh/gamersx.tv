@@ -19,9 +19,9 @@ export default {
   },
   methods: {
     videoBuffered: function () {
-      this.$emit('video-buffered');
-
       this.startPlayer();
+
+      this.$emit('video-buffered');
     },
     startPlayer: function() {
       if (!this.embedPlaying) {
@@ -61,7 +61,6 @@ export default {
     this.embed.addEventListener(Twitch.Player.PLAY, this.setIsPlaying);
     this.embed.addEventListener(Twitch.Player.PAUSE, this.setIsNotPlaying);
     this.embed.addEventListener(Twitch.Player.ENDED, this.setIsNotPlaying);
-    this.embed.addEventListener(Twitch.Player.OFFLINE, this.setIsNotPlaying);
     this.embed.addEventListener(Twitch.Player.OFFLINE, this.setIsNotPlaying);
 
     this.embed.addEventListener(Twitch.Embed.VIDEO_READY, this.videoBuffered);
