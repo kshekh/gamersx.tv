@@ -81,10 +81,10 @@
               : 'text-xs md:text-sm xl:text-lg min-w-50 md:min-w-75 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6',
           ]"
         >
-          Play
+          Hide
         </button>
-        <button
-          @click="isVideoBuffered = !isVideoBuffered"
+        <a
+          :href="link"
           class="
             text-white
             p-1
@@ -99,9 +99,10 @@
               ? 'text-8 md:text-xs xl:text-sm md:px-1 md:py-1 xl:py-2 xl:px-4 min-w-40 md:min-w-50 xl:min-w-75'
               : 'text-xs md:text-sm xl:text-lg min-w-50 md:min-w-75 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6',
           ]"
+          target="_blank"
         >
           More info
-        </button>
+        </a>
         <svg
           v-if="embedName === 'YouTubeEmbed'"
           class="w-3 md:w-6 xl:w-7 flex-shrink-0"
@@ -167,6 +168,7 @@
           ref="embed"
           :is="embedName"
           :embedData="embedData"
+          :isRowFirst="isRowFirst"
           @video-buffered="videoBuffered"
           class="flex-grow min-h-0 absolute inset-0"
           :width="'100%'"
@@ -204,6 +206,7 @@ export default {
     "embedData",
     "liveViewerCount",
     "isAllowPlaying",
+    "isRowFirst",
   ],
   data() {
     return {

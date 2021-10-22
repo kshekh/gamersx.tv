@@ -9,7 +9,8 @@ export default {
   props: {
     embedData: Object,
     height: [Number, String],
-    width: [Number, String]
+    width: [Number, String],
+    isRowFirst: [Boolean],
   },
   data: function() {
     return {
@@ -19,9 +20,11 @@ export default {
   },
   methods: {
     videoBuffered: function () {
-      this.startPlayer();
+      if (this.isRowFirst) {
+        this.startPlayer();
 
-      this.$emit('video-buffered');
+        this.$emit('video-buffered');
+      }  
     },
     startPlayer: function() {
       if (!this.embedPlaying) {
@@ -53,7 +56,7 @@ export default {
       video: this.embedData.video,
       layout: "video",
       autoplay: false,
-      muted: false,
+      muted: true,
       controls: false,
       parent: window.location.hostname
     });

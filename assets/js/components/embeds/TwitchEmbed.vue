@@ -47,8 +47,8 @@ export default {
       video: this.embedData.video,
       layout: 'video',
       autoplay: false,
-      muted: true,
-      controls: false,
+      muted: false,
+      // controls: false,
       parent: window.location.hostname
     });
 

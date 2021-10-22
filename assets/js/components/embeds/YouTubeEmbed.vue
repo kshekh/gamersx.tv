@@ -30,7 +30,6 @@ export default {
     },
     startPlayer: function() {
       if (!this.embedPlaying) {
-        this.embed.mute();
         this.embed.playVideo();
         this.embedPlaying = true;
       }

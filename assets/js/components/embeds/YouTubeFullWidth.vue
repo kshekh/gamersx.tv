@@ -11,6 +11,7 @@ export default {
     embedData: Object,
     height: [Number, String],
     width: [Number, String],
+    isRowFirst: [Boolean],
   },
   data: function() {
     return {
@@ -20,9 +21,11 @@ export default {
   },
   methods: {
     videoBuffered: function () {
-      this.startPlayer();
+      if (this.isRowFirst) {
+        this.startPlayer();
 
-      this.$emit('video-buffered');
+        this.$emit('video-buffered');
+      } 
     },
     playerStateChanged: function(e) {
       if (e.data == YT.PlayerState.PAUSED) {

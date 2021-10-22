@@ -95,7 +95,8 @@
                 :is="channel.componentName"
                 v-if="index === rowIndex"
                 v-bind="channel"
-                :is-allow-playing="isAllowPlaying"
+                :isAllowPlaying="isAllowPlaying"
+                :isRowFirst="isRowFirst"
               ></component>
             </div>
           </div>
@@ -166,6 +167,10 @@ export default {
       type: Object,
       required: true,
     },
+    rowPosition: {
+      type: Number,
+      required: true,
+    },
   },
   data: function () {
     return {
@@ -175,6 +180,9 @@ export default {
     };
   },
   computed: {
+    isRowFirst() {
+      return this.rowPosition === 0;
+    },
     customBg: function () {
       let selected = this.displayChannels[this.rowIndex];
 
