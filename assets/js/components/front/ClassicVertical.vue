@@ -66,10 +66,10 @@
           xl:mr-4
           w-26
           md:w-36
-          xl:w-64
+          xl:w-60
           h-34
           md:h-46
-          xl:h-86
+          xl:h-80
         "
       >
         <component :is="channel.componentName" v-bind="channel"></component>
@@ -134,6 +134,7 @@ export default {
       this.reorder();
     },
     reorder() {
+      this.$root.$emit('close-other-layouts');
       for (let i = 0; i < this.$refs.channelDivs.length; i++) {
         let j = (i - this.rowIndex).mod(this.$refs.channelDivs.length);
         // Add one to j because flexbox order should start with 1, not 0

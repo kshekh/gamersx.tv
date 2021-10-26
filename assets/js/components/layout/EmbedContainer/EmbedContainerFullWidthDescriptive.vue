@@ -242,6 +242,7 @@ export default {
   },
   methods: {
     handlePlayVideo() {
+      this.$root.$emit('close-other-layouts');
       this.isVideoPlaying = true;
 
       this.playVideo();

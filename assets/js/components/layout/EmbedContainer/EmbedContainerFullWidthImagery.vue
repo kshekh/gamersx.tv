@@ -138,6 +138,7 @@ export default {
   },
   methods: {
     playVideo() {
+      this.$root.$emit('close-other-layouts');
       setTimeout(() => {
         if (this.showOverlay || this.showArt) {
           this.isOverlayVisible = false;

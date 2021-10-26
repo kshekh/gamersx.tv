@@ -1,49 +1,113 @@
 <template>
-  <div
-    class="
-      absolute
-      left-1/3
-      md:left-1/5
-      w-22
-      md:w-12
-      xl:w-22
-      h-48
-      md:h-26
-      xl:h-48
-    "
-  >
+  <div class="w-full h-full flex items-center">
     <div
       class="
         relative
-        top-1/2
-        -translate-y-1/2
-        left-0
-        w-full
-        h-full
-        cut-edge__wrapper
-        flex-shrink-0
-        transform
-        transition-all
-        duration-500
-        hover:h-140p
-        md:hover:h-150p
-        hover:w-330p
-        md:hover:w-360p
-        hover:z-10
-        hover:-left-full
-        md:hover:left-0
+        left-1/3
+        md:left-1/5
+        w-22
+        md:w-12
+        xl:w-22
+        h-48
+        md:h-26
+        xl:h-48
       "
-      :class="{
-        'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
-        'cut-edge__wrapper--youtube': embedName === 'YouTubeEmbed',
-      }"
+      ref="itemWrapper"
     >
       <div
         class="
           w-full
           h-full
+          cut-edge__wrapper
+          flex-shrink-0
+        "
+        :class="{
+          'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
+          'cut-edge__wrapper--youtube': embedName === 'YouTubeEmbed',
+        }"
+      >
+        <div
+          class="
+            w-full
+            h-full
+            cut-edge__clipped--sm-border
+            bg-black
+          "
+          :class="{
+            'cut-edge__clipped--twitch': embedName === 'TwitchEmbed',
+            'cut-edge__clipped--youtube': embedName === 'YouTubeEmbed',
+          }"
+        >
+          <!-- Show the embed with overlay if there's an embed -->
+          <div
+            v-if="showEmbed && embedData"
+            class="w-full h-full relative overflow-hidden"
+            @mouseenter="mouseEntered"
+            @mouseleave="mouseLeave"
+          >
+            <img
+              v-if="showArt && image"
+              :src="image.url"
+              class="relative top-1/2 transform -translate-y-1/2 w-full"
+            />
+            <img
+              v-else-if="showOverlay"
+              alt="Embed's Custom Overlay"
+              :src="overlay"
+              class="relative top-1/2 transform -translate-y-1/2 w-full"
+            />
+          </div>
+
+          <!-- If there's no embed, show that instead with a link first -->
+          <div v-else-if="showArt && image" class="w-full h-full">
+            <a :href="link" class="block w-full h-full overflow-hidden">
+              <img
+                :src="image.url"
+                class="relative top-1/2 transform -translate-y-1/2 w-full"
+              />
+            </a>
+          </div>
+
+          <!-- If there's only an overlay and isn't art, show that instead with a link -->
+          <div v-else-if="showOverlay" class="w-full h-full">
+            <a :href="link" class="block w-full h-full overflow-hidden">
+              <img
+                class="relative top-1/2 transform -translate-y-1/2 w-full"
+                alt="Embed's Custom Overlay"
+                :src="overlay"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      v-if="showEmbed && embedData"
+      class="
+        absolute
+        z-30
+        cut-edge__wrapper
+        transition-opacity-transform
+        ease-linear
+        duration-500
+      "
+      :class="{
+        'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
+        'cut-edge__wrapper--youtube': embedName === 'YouTubeEmbed',
+        invisible: !isEmbedVisible,
+      }"
+      ref="embedWrapper"
+      :style="embedSize"
+    >
+      <div
+        class="
+          w-full
+          h-full
+          flex flex-col
+          relative
+          cut-edge__clipped
           cut-edge__clipped--sm-border
-          hover:cut-edge__clipped hover:cut-edge__clipped-top-left-sm
+          cut-edge__clipped-top-left-sm
           bg-black
         "
         :class="{
@@ -51,35 +115,39 @@
           'cut-edge__clipped--youtube': embedName === 'YouTubeEmbed',
         }"
       >
-        <!-- Show the embed with overlay if there's an embed -->
-        <div
-          v-if="showEmbed && embedData"
-          class="w-full h-full relative overflow-hidden"
-          @mouseenter="mouseEntered"
-          @mouseleave="mouseLeft"
-        >
-          <img
-            v-if="showArt && image"
-            v-show="isOverlayVisible"
-            :src="image.url"
-            class="relative top-1/2 transform -translate-y-1/2 w-full"
-          />
-          <img
-            v-else-if="showOverlay"
-            v-show="isOverlayVisible"
-            alt="Embed's Custom Overlay"
-            :src="overlay"
-            class="relative top-1/2 transform -translate-y-1/2 w-full"
-          />
+        <div class="flex-grow min-h-0 relative">
+          <div class="absolute inset-0 bg-black overflow-hidden">
+            <img
+              v-if="showArt && image"
+              :src="image.url"
+              class="relative top-1/2 transform -translate-y-1/2 w-full"
+            />
+            <img
+              v-else-if="showOverlay"
+              alt="Embed's Custom Overlay"
+              :src="overlay"
+              class="relative top-1/2 transform -translate-y-1/2 w-full"
+            />
+          </div>
           <div
-            class="w-full h-full flex flex-col relative"
-            v-show="isEmbedVisible"
+            class="
+              relative
+              w-full
+              h-full
+              transition-opacity
+              ease-linear
+              duration-500
+              delay-750
+              opacity-0
+              bg-black
+            "
+            :class="{ 'opacity-100': isEmbedVisible }"
           >
             <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
-              <h5 class="text-xxs xl:text-xs text-white font-play truncate">
+              <h5 class="text-xxs text-white font-play truncate">
                 {{ offlineDisplay.title }}
               </h5>
-              <h6 class="text-xxs text-white font-play truncate">
+              <h6 class="text-8 text-white font-play truncate">
                 {{ embedData.channel }}
               </h6>
             </div>
@@ -87,61 +155,53 @@
               ref="embed"
               :is="embedName"
               :embedData="embedData"
-              class="flex-grow min-h-0"
+              class="w-full h-full"
               :width="'100%'"
               :height="'100%'"
             ></component>
-            <a
-              :href="link"
-              class="
-                flex
-                justify-between
-                py-2
-                md:pt-3
-                md:pb-4
-                xl:pt-4
-                xl:pb-5
-                px-3
-                md:px-2
-                xl:px-4
-                bg-grey-900
-              "
-            >
-              <div class="mr-2">
-                <h5 class="text-xs xl:text-sm text-white font-play">
-                  {{ offlineDisplay.title }}
-                </h5>
-                <h6 class="text-xxs xl:text-xs text-grey font-play">
-                  {{ embedData.channel }}
-                </h6>
-              </div>
-              <h6 class="text-xxs xl:text-xs text-grey font-play">
-                {{ liveViewerCount }} viewers
-              </h6>
-            </a>
           </div>
         </div>
-
-        <!-- If there's no embed, show that instead with a link first -->
-        <div v-else-if="showArt && image" class="w-full h-full">
-          <a :href="link" class="block w-full h-full overflow-hidden">
-            <img
-              :src="image.url"
-              class="relative top-1/2 transform -translate-y-1/2 w-full"
-            />
-          </a>
-        </div>
-
-        <!-- If there's only an overlay and isn't art, show that instead with a link -->
-        <div v-else-if="showOverlay" class="w-full h-full">
-          <a :href="link" class="block w-full h-full overflow-hidden">
-            <img
-              class="relative top-1/2 transform -translate-y-1/2 w-full"
-              alt="Embed's Custom Overlay"
-              :src="overlay"
-            />
-          </a>
-        </div>
+        <a
+          :href="link"
+          class="
+            flex
+            justify-between
+            py-1
+            xl:pt-3
+            xl:pb-3
+            px-3
+            md:px-2
+            xl:px-4
+            bg-grey-900
+          "
+          :title="offlineDisplay.title"
+        >
+          <div class="mr-2 overflow-hidden">
+            <h5
+              class="
+                text-xxs text-white
+                font-play
+                overflow-hidden overflow-ellipsis
+                whitespace-nowrap
+              "
+            >
+              {{ offlineDisplay.title }}
+            </h5>
+            <h6
+              class="
+                text-8 text-grey
+                font-play
+                overflow-hidden overflow-ellipsis
+                whitespace-nowrap
+              "
+            >
+              {{ embedData.channel }}
+            </h6>
+          </div>
+          <h6 class="text-8 text-grey font-play whitespace-nowrap">
+            {{ liveViewerCount }} viewers
+          </h6>
+        </a>
       </div>
     </div>
   </div>
@@ -151,8 +211,11 @@
 import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 
+import embedMixin from "../../../mixins/embedFrameMixin";
+
 export default {
   name: "EmbedContainerParallax",
+  mixins: [embedMixin],
   components: {
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
@@ -172,56 +235,56 @@ export default {
     "embedData",
     "liveViewerCount",
   ],
-  data() {
-    return {
-      isOverlayVisible: true,
-      isEmbedVisible: false,
-      isTitleVisible: false,
-    };
-  },
-  methods: {
-    mouseEntered() {
-      setTimeout(() => {
-        if (this.showOverlay || this.showArt) {
-          this.isOverlayVisible = false;
-          this.isEmbedVisible = true;
-        }
-      }, 0)
-      this.$refs.embed.startPlayer();
-    },
-    mouseLeft() {
-      if (this.showOverlay || this.showArt) {
-        this.isOverlayVisible = true;
-        this.isEmbedVisible = false;
-      }
-      if (this.$refs.embed.isPlaying()) {
-        this.$refs.embed.stopPlayer();
-      }
-    },
-  },
-  computed: {
-    showEmbed() {
-      return (
-        (this.showOnline && this.onlineDisplay.showEmbed) ||
-        (!this.showOnline && this.offlineDisplay.showEmbed)
-      );
-    },
-    showArt() {
-      return (
-        (this.showOnline && this.onlineDisplay.showArt) ||
-        (!this.showOnline && this.offlineDisplay.showArt)
-      );
-    },
-    showOverlay() {
-      return (
-        this.overlay &&
-        ((this.showOnline && this.onlineDisplay.showOverlay) ||
-          (!this.showOnline && this.offlineDisplay.showOverlay))
-      );
-    },
-  },
-  mounted() {
-    this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
-  },
+  // data() {
+  //   return {
+  //     isOverlayVisible: true,
+  //     isEmbedVisible: false,
+  //     isTitleVisible: false,
+  //   };
+  // },
+  // methods: {
+  //   mouseEntered() {
+  //     setTimeout(() => {
+  //       if (this.showOverlay || this.showArt) {
+  //         this.isOverlayVisible = false;
+  //         this.isEmbedVisible = true;
+  //       }
+  //     }, 0);
+  //     this.$refs.embed.startPlayer();
+  //   },
+  //   mouseLeft() {
+  //     if (this.showOverlay || this.showArt) {
+  //       this.isOverlayVisible = true;
+  //       this.isEmbedVisible = false;
+  //     }
+  //     if (this.$refs.embed.isPlaying()) {
+  //       this.$refs.embed.stopPlayer();
+  //     }
+  //   },
+  // },
+  // computed: {
+  //   showEmbed() {
+  //     return (
+  //       (this.showOnline && this.onlineDisplay.showEmbed) ||
+  //       (!this.showOnline && this.offlineDisplay.showEmbed)
+  //     );
+  //   },
+  //   showArt() {
+  //     return (
+  //       (this.showOnline && this.onlineDisplay.showArt) ||
+  //       (!this.showOnline && this.offlineDisplay.showArt)
+  //     );
+  //   },
+  //   showOverlay() {
+  //     return (
+  //       this.overlay &&
+  //       ((this.showOnline && this.onlineDisplay.showOverlay) ||
+  //         (!this.showOnline && this.offlineDisplay.showOverlay))
+  //     );
+  //   },
+  // },
+  // mounted() {
+  //   this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
+  // },
 };
 </script>

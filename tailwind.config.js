@@ -131,6 +131,8 @@ module.exports = {
         "34": "136px",
         "41": "164px",
         "46": "184px",
+        "50": "200px",
+        "75": "300px",
         "86": "344px",
         "118": "472px",
         "50p": "50%",
@@ -151,11 +153,15 @@ module.exports = {
       },
       transitionProperty: {
         inset: "inset",
-        left: "left"
+        left: "left",
+        "opacity-transform": "opacity, transform"
+      },
+      transitionDelay: {
+        750: "750ms"
       },
       backgroundSize: {
         "full": "100% 100%",
-      }
+      },
     }
   },
   variants: {

@@ -46,11 +46,8 @@
       <div
         :style="customBg(channel)"
         class="
-          flex
-          items-center
           flex-shrink-0
           bg-cover bg-no-repeat bg-center
-          relative
           xl:max-w-485
           w-full md:w-1/3 xl:w-full
           h-41 md:h-22 xl:h-41
@@ -122,6 +119,7 @@ export default {
       this.reorder();
     },
     reorder() {
+      this.$root.$emit('close-other-layouts');
       for (let i = 0; i < this.$refs.channelDivs.length; i++) {
         let j = (i - this.rowIndex).mod(this.$refs.channelDivs.length);
         // Add one to j because flexbox order should start with 1, not 0

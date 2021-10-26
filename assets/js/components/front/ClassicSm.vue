@@ -172,6 +172,7 @@ export default {
       this.reorder();
     },
     reorder() {
+      this.$root.$emit('close-other-layouts');
       for (let i = 0; i < this.$refs.channelDivs.length; i++) {
         let j = (i - this.rowIndex).mod(this.$refs.channelDivs.length);
         // Add one to j because flexbox order should start with 1, not 0
