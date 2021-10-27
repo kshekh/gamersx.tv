@@ -130,6 +130,7 @@ export default {
   },
 
   destroyed() {
+    this.$root.$off("close-other-layouts", this.hideVideo);
     window.removeEventListener("resize", this.setEmbedSizes);
   },
 };

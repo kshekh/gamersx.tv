@@ -248,8 +248,12 @@ export default {
       this.isAllowPlaying = false;
     },
   },
-  mounted: function () {
+  mounted() {
+    this.$root.$on("close-other-layouts", this.mouseLeaved);
     this.displayChannels = this.settings.channels.filter(this.showChannel);
   },
+  destroyed() {
+    this.$root.$off("close-other-layouts", this.mouseLeaved);
+  }
 };
 </script>

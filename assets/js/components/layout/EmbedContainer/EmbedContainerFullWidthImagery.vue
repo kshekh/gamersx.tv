@@ -184,8 +184,12 @@ export default {
     },
   },
   mounted() {
+    this.$root.$on("close-other-layouts", this.mouseLeft);
     this.isOverlayVisible = this.showOverlay;
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
   },
+  destroyed() {
+    this.$root.$off("close-other-layouts", this.mouseLeft);
+  }
 };
 </script>
