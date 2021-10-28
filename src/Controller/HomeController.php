@@ -31,14 +31,27 @@ class HomeController extends AbstractController
                 ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
 
             $rowChannels = Array();
+            $currentTime = $this->hoursMinutesToSeconds(date('H:i'));
 
             foreach ($rows as $row) {
+                $isPublishedStartStartTime = $row->getIsPublishedStart();
+                $isPublishedStartEndTime = $row->getIsPublishedEnd();
+
+                if (
+                    !empty($isPublishedStartStartTime) && !empty($isPublishedStartEndTime) &&
+                    ($currentTime <= $isPublishedStartStartTime || $currentTime >= $isPublishedStartEndTime)
+                ) {
+                    continue;
+                }
+
                 if ($row->getIsPublished() === FALSE) {
                     continue;
                 }
 
                 $thisRow = Array();
                 $thisRow['title'] = $row->getTitle();
+                $thisRow['isPublishedStart'] = $isPublishedStartStartTime;
+                $thisRow['isPublishedEnd'] = $isPublishedStartEndTime;
                 $thisRow['sortIndex'] = $row->getSortIndex();
                 $thisRow['componentName'] = $row->getLayout();
 
@@ -53,11 +66,18 @@ class HomeController extends AbstractController
 
             return $rowChannels;
         });
-
+ echo '<pre>';print_r($rowChannels);die;
         return $this->json([
             'settings' => [
                 'rows' => $rowChannels
             ]
         ]);
+    }
+
+    private function hoursMinutesToSeconds(string $time): int
+    {
+        $array = explode(':', $time);
+
+        return $array[0] * 3600 + $array[1] * 60;
     }
 }

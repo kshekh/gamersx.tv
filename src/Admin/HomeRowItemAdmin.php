@@ -186,13 +186,14 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('description', TextareaType::class, [
                 'required' => false,
             ])
-            ->add('isPublished')
+            ->add('isPublished', null, [
+                'help' => 'Current Server Time: ' . date('H:i')
+            ])
             ->add('isPublishedStart', TimeType::class, [
                 'label'=> 'Publish Start Time',
                 'required' => false,
                 'input'  => 'timestamp',
                 'widget' => 'single_text',
-                'data' => 0,
                 'attr'=> [
                     'class' => 'timepicker',
                     'title'=> "Start timepicker for published",
@@ -203,7 +204,6 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'required' => false,
                 'input'  => 'timestamp',
                 'widget' => 'single_text',
-                'data' => 24,
                 'attr'=> [
                     'class' => 'timepicker',
                     'title'=> "End timepicker for published",

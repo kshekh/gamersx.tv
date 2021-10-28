@@ -155,13 +155,14 @@ final class HomeRowAdmin extends AbstractAdmin
                 'label' => 'Sort and Trim Options',
                 'required' => false,
             ])
-            ->add('isPublished')
+            ->add('isPublished', null, [
+                'help' => 'Current Server Time: ' . date('H:i')
+            ])
             ->add('isPublishedStart', TimeType::class, [
                 'label'=> 'Publish Start Time',
                 'required' => false,
                 'input'  => 'timestamp',
                 'widget' => 'single_text',
-                'data' => 0,
                 'attr'=> [
                     'class' => 'timepicker',
                     'title'=> "Start timepicker for published",
@@ -172,7 +173,6 @@ final class HomeRowAdmin extends AbstractAdmin
                 'required' => false,
                 'input'  => 'timestamp',
                 'widget' => 'single_text',
-                'data' => 24,
                 'attr'=> [
                     'class' => 'timepicker',
                     'title'=> "End timepicker for published",
