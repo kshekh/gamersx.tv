@@ -9,7 +9,7 @@ use App\Entity\HomeRowItem;
 use App\Form\TopicType;
 use App\Form\SortAndTrimOptionsType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType };
+use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType, TimeType };
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\CallbackTransformer;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -99,6 +99,12 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPublished', null, [
                 'sortable' => false
             ])
+            ->add('isPublishedStart', null, [
+                'sortable' => false
+            ])
+            ->add('isPublishedEnd', null, [
+                'sortable' => false
+            ])
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],
@@ -180,8 +186,28 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('description', TextareaType::class, [
                 'required' => false,
             ])
-            ->add('isPublished', null, [
-                'help' => 'Current Server Time: ' . date('h:m a'),
+            ->add('isPublished')
+            ->add('isPublishedStart', TimeType::class, [
+                'label'=> 'Publish Start Time',
+                'required' => false,
+                'input'  => 'timestamp',
+                'widget' => 'single_text',
+                'data' => 0,
+                'attr'=> [
+                    'class' => 'timepicker',
+                    'title'=> "Start timepicker for published",
+                ]
+            ])
+            ->add('isPublishedEnd', TimeType::class, [
+                'label'=> 'Publish End Time',
+                'required' => false,
+                'input'  => 'timestamp',
+                'widget' => 'single_text',
+                'data' => 24,
+                'attr'=> [
+                    'class' => 'timepicker',
+                    'title'=> "End timepicker for published",
+                ]
             ])
             ->getFormBuilder()->addModelTransformer(new CallbackTransformer(
                 // Use the array in the form

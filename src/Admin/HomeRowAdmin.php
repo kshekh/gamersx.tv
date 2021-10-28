@@ -7,7 +7,7 @@ namespace App\Admin;
 use App\Entity\HomeRow;
 use App\Form\SortAndTrimOptionsType;
 use Knp\Menu\ItemInterface as MenuItemInterface;
-use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType, NumberType };
+use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType, NumberType, TimeType };
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -111,6 +111,12 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('isPublished', null, [
                 'sortable' => false
             ])
+            ->add('isPublishedStart', null, [
+                'sortable' => false
+            ])
+            ->add('isPublishedEnd', null, [
+                'sortable' => false
+            ])
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],
@@ -149,8 +155,28 @@ final class HomeRowAdmin extends AbstractAdmin
                 'label' => 'Sort and Trim Options',
                 'required' => false,
             ])
-            ->add('isPublished', null, [
-                'help' => 'Current Server Time: ' . date('h:m a'),
+            ->add('isPublished')
+            ->add('isPublishedStart', TimeType::class, [
+                'label'=> 'Publish Start Time',
+                'required' => false,
+                'input'  => 'timestamp',
+                'widget' => 'single_text',
+                'data' => 0,
+                'attr'=> [
+                    'class' => 'timepicker',
+                    'title'=> "Start timepicker for published",
+                ]
+            ])
+            ->add('isPublishedEnd', TimeType::class, [
+                'label'=> 'Publish End Time',
+                'required' => false,
+                'input'  => 'timestamp',
+                'widget' => 'single_text',
+                'data' => 24,
+                'attr'=> [
+                    'class' => 'timepicker',
+                    'title'=> "End timepicker for published",
+                ]
             ]);
     }
 

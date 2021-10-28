@@ -6,6 +6,7 @@ use App\Model\PartneredInterface;
 use Symfony\Component\HttpFoundation\File\{ File, UploadedFile };
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
@@ -132,6 +133,26 @@ class HomeRowItem implements PartneredInterface
      * @ORM\Column(type="boolean")
      */
     private $isPublished;
+
+    /**
+     * @ORM\Column(name="isPublishedStart", type="integer", nullable=true)
+     *
+     * @Assert\Expression(
+     *     "this.getIsPublishedStart() < this.getIsPublishedEnd()",
+     *     message="Start time should be less than end date!"
+     * )
+     */
+    private $isPublishedStart;
+
+    /**
+     * @ORM\Column(name="isPublishedEnd", type="integer", nullable=true)
+     *
+     * @Assert\Expression(
+     *     "this.getIsPublishedStart() < this.getIsPublishedEnd()",
+     *     message="Start time should be less than end date!"
+     * )
+     */
+    private $isPublishedEnd;
 
     public function getId(): ?int
     {
@@ -358,6 +379,30 @@ class HomeRowItem implements PartneredInterface
     public function setIsPublished(bool $isPublished): self
     {
         $this->isPublished = $isPublished;
+
+        return $this;
+    }
+
+    public function getIsPublishedStart(): ?int
+    {
+        return $this->isPublishedStart;
+    }
+
+    public function setIsPublishedStart(?int $isPublishedStart): self
+    {
+        $this->isPublishedStart = $isPublishedStart;
+
+        return $this;
+    }
+
+    public function getIsPublishedEnd(): ?int
+    {
+        return $this->isPublishedEnd;
+    }
+
+    public function setIsPublishedEnd(?int $isPublishedEnd): self
+    {
+        $this->isPublishedEnd = $isPublishedEnd;
 
         return $this;
     }
