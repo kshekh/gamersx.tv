@@ -9,6 +9,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class HomeController extends AbstractController
 {
@@ -25,8 +26,10 @@ class HomeController extends AbstractController
      */
     public function apiHome(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
     {
-        $rowChannels = $gamersxCache->get('home', function (ItemInterface $item) use ($containerizer) {
-
+        $cache = new FilesystemAdapter();
+        $beta = 1.0;
+        $rowChannels = $cache->get('home', function (ItemInterface $item) use ($containerizer) { 
+            $item->expiresAfter(60); //expire cache in every 60 sec
             $rows = $this->getDoctrine()->getRepository(HomeRow::class)
                 ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
 
@@ -52,8 +55,7 @@ class HomeController extends AbstractController
             }
 
             return $rowChannels;
-        });
-
+        }, $beta);  
         return $this->json([
             'settings' => [
                 'rows' => $rowChannels
