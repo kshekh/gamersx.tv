@@ -66,7 +66,7 @@ class HomeController extends AbstractController
 
             return $rowChannels;
         });
- echo '<pre>';print_r($rowChannels);die;
+
         return $this->json([
             'settings' => [
                 'rows' => $rowChannels
