@@ -390,7 +390,8 @@ class HomeRowItem implements PartneredInterface
 
     public function setIsPublishedStart(?int $isPublishedStart): self
     {
-        $this->isPublishedStart = $isPublishedStart;
+        $isPublishedStartTime = 0;
+        $this->isPublishedStart = !empty($isPublishedStart) ? $isPublishedStart : $isPublishedStartTime;
 
         return $this;
     }
@@ -402,7 +403,8 @@ class HomeRowItem implements PartneredInterface
 
     public function setIsPublishedEnd(?int $isPublishedEnd): self
     {
-        $this->isPublishedEnd = $isPublishedEnd;
+        $isPublishedEndTime = 86400;
+        $this->isPublishedEnd = !empty($isPublishedEnd) ? $isPublishedEnd : $isPublishedEndTime;
 
         return $this;
     }
