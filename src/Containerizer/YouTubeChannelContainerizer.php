@@ -3,6 +3,7 @@
 namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
+use App\Service\HomeRowInfo;
 
 class YouTubeChannelContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
@@ -17,6 +18,7 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
 
     public function getContainers(): Array
     {
+        $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
         $youtube = $this->youtube;
 
@@ -33,6 +35,17 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
         $info = $info[0];
         $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
         $description = $homeRowItem->getDescription();
+        $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+
+        $isPublishedStartStartTime = $homeRowItem->getIsPublishedStart();
+        $isPublishedStartEndTime = $homeRowItem->getIsPublishedEnd();
+
+        if (
+            !empty($isPublishedStartStartTime) && !empty($isPublishedStartEndTime) &&
+            ($currentTime <= $isPublishedStartStartTime || $currentTime >= $isPublishedStartEndTime)
+        ) {
+            return Array();
+        }
 
         // No need for a container if we're not displaying and not online
         if (($homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_NONE) &&

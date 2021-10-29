@@ -3,6 +3,7 @@
 namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
+use App\Service\HomeRowInfo;
 
 class NoEmbedContainer extends LiveContainerizer implements ContainerizerInterface
 {
@@ -15,6 +16,7 @@ class NoEmbedContainer extends LiveContainerizer implements ContainerizerInterfa
 
     public function getContainers(): Array
     {
+        $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
 
         $rowName = $homeRowItem->getHomeRow()->getTitle();
@@ -23,6 +25,17 @@ class NoEmbedContainer extends LiveContainerizer implements ContainerizerInterfa
 
         $title = $rowName;
         $description = $homeRowItem->getDescription();
+        $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+
+        $isPublishedStartStartTime = $homeRowItem->getIsPublishedStart();
+        $isPublishedStartEndTime = $homeRowItem->getIsPublishedEnd();
+
+        if (
+            !empty($isPublishedStartStartTime) && !empty($isPublishedStartEndTime) &&
+            ($currentTime <= $isPublishedStartStartTime || $currentTime >= $isPublishedStartEndTime)
+        ) {
+            return Array();
+        }
 
         $display = [
             'title' => $title,

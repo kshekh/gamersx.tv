@@ -3,6 +3,7 @@
 namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
+use App\Service\HomeRowInfo;
 
 class YouTubeQueryContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
@@ -17,6 +18,7 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
 
     public function getContainers(): Array
     {
+        $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
         $youtube = $this->youtube;
 
@@ -30,6 +32,17 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
 
         $query = $homeRowItem->getTopic()['topicId'];
         $description = $homeRowItem->getDescription();
+        $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+
+        $isPublishedStartStartTime = $homeRowItem->getIsPublishedStart();
+        $isPublishedStartEndTime = $homeRowItem->getIsPublishedEnd();
+
+        if (
+            !empty($isPublishedStartStartTime) && !empty($isPublishedStartEndTime) &&
+            ($currentTime <= $isPublishedStartStartTime || $currentTime >= $isPublishedStartEndTime)
+        ) {
+            return Array();
+        }
 
         try {
             $broadcasts = $youtube->searchLiveChannels($query, $max, null, null);
