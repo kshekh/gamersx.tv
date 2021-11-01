@@ -10,7 +10,6 @@ export default {
     embedData: Object,
     height: [Number, String],
     width: [Number, String],
-    isRowFirst: [Boolean],
   },
   data: function() {
     return {
@@ -20,31 +19,31 @@ export default {
   },
   methods: {
     videoBuffered: function () {
-      if (this.isRowFirst) {
         this.startPlayer();
 
         this.$emit('video-buffered');
-      }  
     },
     startPlayer: function() {
-      if (!this.embedPlaying) {
+      if (!this.isPlaying()) {
         this.embed.play();
-        this.embedPlaying = true;
+        this.setIsPlaying();
       }
     },
     stopPlayer: function() {
-      if (this.embedPlaying) {
+      if (this.isPlaying) {
         this.embed.pause();
-        this.embedPlaying = false;
+        this.setIsNotPlaying();
       }
     },
     isPlaying: function() {
       return this.embedPlaying;
     },
     setIsPlaying() {
+      this.$emit('set-is-playing', true)
       this.embedPlaying = true;
     },
-    setIsNotPlaying: function() {
+    setIsNotPlaying() {
+      this.$emit('set-is-playing', false)
       this.embedPlaying = false;
     }
   },
@@ -57,7 +56,7 @@ export default {
       layout: "video",
       autoplay: false,
       muted: true,
-      controls: false,
+      controls: true,
       parent: window.location.hostname
     });
 

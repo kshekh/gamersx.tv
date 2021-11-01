@@ -97,6 +97,8 @@
                 v-bind="channel"
                 :isAllowPlaying="isAllowPlaying"
                 :isRowFirst="isRowFirst"
+                :isFirstVideoLoaded="isFirstVideoLoaded"
+                @first-video-buffered="handleFirstVideoLoaded"
               ></component>
             </div>
           </div>
@@ -176,7 +178,8 @@ export default {
     return {
       rowIndex: 0,
       displayChannels: [],
-      isAllowPlaying: false,
+      isAllowPlaying: true,
+      isFirstVideoLoaded: false,
     };
   },
   computed: {
@@ -247,13 +250,15 @@ export default {
     mouseLeaved() {
       this.isAllowPlaying = false;
     },
+    handleFirstVideoLoaded() {
+      this.isFirstVideoLoaded = true;
+    }
   },
   mounted() {
-    this.$root.$on("close-other-layouts", this.mouseLeaved);
+    if (this.rowPosition !== 0) {
+      this.isAllowPlaying = false;
+    }
     this.displayChannels = this.settings.channels.filter(this.showChannel);
   },
-  destroyed() {
-    this.$root.$off("close-other-layouts", this.mouseLeaved);
-  }
 };
 </script>

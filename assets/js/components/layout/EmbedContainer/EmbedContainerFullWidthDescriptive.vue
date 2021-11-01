@@ -15,14 +15,14 @@
         -mx-3
       "
       :class="[
-        isVideoBuffered ? 'md:max-w-1/4 md:min-w-180' : 'max-w-1/2 md:max-w-1/3 md:min-w-240',
-        { 'opacity-0 translate-y-3': isVideoPlaying },
+        decreaseInfoBoxSize ? 'md:max-w-1/4 md:min-w-180' : 'max-w-1/2 md:max-w-1/3 md:min-w-240',
+        { 'opacity-0 translate-y-3': isInfoBoxDisplayed },
       ]"
     >
       <div
         class="overflow-hidden transition-all duration-300"
         :class="[
-          isVideoBuffered
+          decreaseInfoBoxSize
             ? 'md:mb-1 h-11 md:h-20 xl:h-41'
             : 'mb-1 md:mb-2 h-14 md:h-26 xl:h-52',
         ]"
@@ -44,7 +44,7 @@
       <p
         class="text-white transition-all duration-300"
         :class="[
-          isVideoBuffered
+          decreaseInfoBoxSize
             ? 'text-8 md:text-xs xl:text-sm mb-1 xl:mb-2'
             : 'text-xs md:text-sm xl:text-lg mb-2 xl:mb-4',
         ]"
@@ -59,13 +59,13 @@
       <div
         class="mt-6 md:mt-auto transition-all duration-300 flex items-center"
         :class="[
-          isVideoBuffered
+          decreaseInfoBoxSize
             ? 'space-x-1 md:space-x-2 xl:space-x-3'
             : 'space-x-2 md:space-x-3 xl:space-x-4',
         ]"
       >
         <button
-          @click="handlePlayVideo()"
+          @click.stop="handlePlayVideo()"
           class="
             text-white
             p-1
@@ -76,7 +76,7 @@
           "
           :class="[
             bgColor,
-            isVideoBuffered
+            decreaseInfoBoxSize
               ? 'text-8 md:text-xs xl:text-sm md:px-1 md:py-1 xl:py-2 xl:px-4 min-w-40 md:min-w-50 xl:min-w-75'
               : 'text-xs md:text-sm xl:text-lg min-w-50 md:min-w-75 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6',
           ]"
@@ -95,7 +95,7 @@
           "
           :class="[
             bgColor,
-            isVideoBuffered
+            decreaseInfoBoxSize
               ? 'text-8 md:text-xs xl:text-sm md:px-1 md:py-1 xl:py-2 xl:px-4 min-w-40 md:min-w-50 xl:min-w-75'
               : 'text-xs md:text-sm xl:text-lg min-w-50 md:min-w-75 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6',
           ]"
@@ -170,6 +170,7 @@
           :embedData="embedData"
           :isRowFirst="isRowFirst"
           @video-buffered="videoBuffered"
+          @set-is-playing="updateIsPlaying"
           class="flex-grow min-h-0 absolute inset-0"
           :width="'100%'"
           :height="'100%'"
@@ -207,13 +208,15 @@ export default {
     "liveViewerCount",
     "isAllowPlaying",
     "isRowFirst",
+    "isFirstVideoLoaded",
   ],
   data() {
     return {
       isEmbedVisible: false,
       isTitleVisible: false,
-      isVideoPlaying: false,
+      isInfoBoxDisplayed: false,
       isVideoBuffered: false,
+      isVideoPlaying: false,
     };
   },
   computed: {
@@ -239,21 +242,39 @@ export default {
           (!this.showOnline && this.offlineDisplay.showOverlay))
       );
     },
+    decreaseInfoBoxSize() {
+      return this.isVideoBuffered && ( this.isVideoPlaying || this.isEmbedVisible );
+    }
   },
   methods: {
     handlePlayVideo() {
-      this.$root.$emit('close-other-layouts');
-      this.isVideoPlaying = true;
+      this.isInfoBoxDisplayed = true;
 
       this.playVideo();
     },
     playVideo() {
+      this.$root.$emit('close-other-layouts', this.embedData.elementId);
       this.$refs.embed.startPlayer();
     },
     videoBuffered() {
       this.isVideoBuffered = true;
-      this.isEmbedVisible = true;
+      if( (this.isFirstVideoLoaded || this.isRowFirst) && this.isAllowPlaying) {
+        this.isEmbedVisible = true;
+      } else {
+        this.$emit('first-video-buffered');
+        this.$refs.embed.stopPlayer();
+      }
     },
+    hideVideo(elementId) {
+      if (!(elementId && this.embedData.elementId === elementId)) {
+        this.isInfoBoxDisplayed = false;
+        this.$refs.embed.stopPlayer();
+        this.isEmbedVisible = false;
+      }
+    },
+    updateIsPlaying(newVal) {
+      this.isVideoPlaying = newVal;
+    }
   },
   watch: {
     isAllowPlaying(newVal, oldVal) {
@@ -265,11 +286,17 @@ export default {
         this.playVideo();
       } else {
         if (this.$refs.embed.isPlaying()) {
-          this.isVideoPlaying = false;
+          this.isInfoBoxDisplayed = false;
           this.$refs.embed.stopPlayer();
         }
       }
     },
   },
+  mounted() {
+    this.$root.$on("close-other-layouts", this.hideVideo);
+  },
+  destroyed() {
+    this.$root.$off("close-other-layouts", this.hideVideo);
+  }
 };
 </script>

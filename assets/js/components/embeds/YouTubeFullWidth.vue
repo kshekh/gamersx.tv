@@ -11,7 +11,6 @@ export default {
     embedData: Object,
     height: [Number, String],
     width: [Number, String],
-    isRowFirst: [Boolean],
   },
   data: function() {
     return {
@@ -21,37 +20,43 @@ export default {
   },
   methods: {
     videoBuffered: function () {
-      if (this.isRowFirst) {
         this.startPlayer();
 
         this.$emit('video-buffered');
-      } 
     },
     playerStateChanged: function(e) {
       if (e.data == YT.PlayerState.PAUSED) {
-        this.embedPlaying = false;
+        this.setIsNotPlaying();
       } else if (e.data == YT.PlayerState.PLAYING) {
         // Don't swap the order of these or you'll stop this embed, too
         this.$root.$emit('yt-embed-playing', this.embedData.elementId);
-        this.embedPlaying = true;
+        this.setIsPlaying();
       }
     },
     startPlayer: function() {
-      if (!this.embedPlaying) {
+      if (!this.isPlaying()) {
         this.embed.mute();
         this.embed.playVideo();
-        this.embedPlaying = true;
+        this.setIsPlaying();
       }
     },
     stopPlayer: function(elementId) {
-      if (this.embedPlaying && !(elementId && this.embedData.elementId === elementId)) {
+      if (this.isPlaying() && !(elementId && this.embedData.elementId === elementId)) {
         this.embed.pauseVideo();
-        this.embedPlaying = false;
+        this.setIsNotPlaying();
       }
     },
     isPlaying: function() {
       return this.embedPlaying;
     },
+    setIsPlaying() {
+      this.$emit('set-is-playing', true)
+      this.embedPlaying = true;
+    },
+    setIsNotPlaying() {
+      this.$emit('set-is-playing', false)
+      this.embedPlaying = false;
+    }
   },
   mounted: function() {
     this.embed = new YT.Player(this.embedData.elementId, {
