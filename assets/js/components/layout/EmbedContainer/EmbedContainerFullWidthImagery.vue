@@ -2,10 +2,12 @@
   <div class="w-full h-full flex flex-col">
     <div
       v-show="!isEmbedVisible"
-      class="cut-edge__wrapper flex-grow min-h-0 w-36 md:w-86 xl:w-118 relative"
+      class="cut-edge__wrapper flex-grow min-h-0 w-36 md:w-86 xl:w-118 relative ease-linear"
       :class="{
         'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
         'cut-edge__wrapper--youtube': embedName === 'YouTubeEmbed',
+        'opacity-0 pointer-events-none z-negative': isEmbedVisible,
+        'pointer-events-none z-negative': isEmbedVisible,
       }"
     >
       <div
@@ -61,7 +63,6 @@
     <!-- Show the embed with overlay if there's an embed -->
     <div v-if="showEmbed && embedData">
       <div
-        v-show="isEmbedVisible"
         class="
           cut-edge__wrapper
           flex-grow
@@ -75,25 +76,33 @@
           px-4
           md:px-18
           xl:px-32
+          opacity-0
+          transition-opacity
+          duration-300
+          ease-linear
         "
         :class="{
           'cut-edge__clipped--twitch border-purple':
             embedName === 'TwitchEmbed',
           'cut-edge__clipped--youtube border-red': embedName === 'YouTubeEmbed',
+          'opacity-100': isEmbedVisible,
+          'pointer-events-none z-negative': !isEmbedVisible,
         }"
       >
-        <component
-          ref="embed"
-          :is="embedName"
-          :embedData="embedData"
-          class="h-full w-full border overflow-hidden bg-black"
-          :class="{
-            'border-purple': embedName === 'TwitchEmbed',
-            'border-red': embedName === 'YouTubeEmbed',
-          }"
-          :width="'100%'"
-          :height="'100%'"
-        ></component>
+        <div ref="embedWrapper" class="h-full w-full">
+          <component
+            ref="embed"
+            :is="embedName"
+            :embedData="embedData"
+            class="h-full w-full border overflow-hidden bg-black"
+            :class="{
+              'border-purple': embedName === 'TwitchEmbed',
+              'border-red': embedName === 'YouTubeEmbed',
+            }"
+            :width="'100%'"
+            :height="'100%'"
+          ></component>
+        </div>
       </div>
     </div>
   </div>
@@ -146,6 +155,7 @@ export default {
         }
       }, 0);
 
+      window.addEventListener('scroll', this.checkIfBoxInViewPort);
       this.$refs.embed.startPlayer();
       this.$emit('hide-controls');
     },
@@ -157,7 +167,20 @@ export default {
       if (this.$refs.embed.isPlaying()) {
         this.$refs.embed.stopPlayer();
       }
+      window.removeEventListener('scroll', this.checkIfBoxInViewPort);
     },
+    checkIfBoxInViewPort() {
+      const docViewTop = window.scrollY;
+      const docViewBottom = docViewTop + window.innerHeight;
+
+      const elemCoordinates = this.$refs.embedWrapper.getBoundingClientRect();
+      const elemTop = elemCoordinates.top + window.scrollY;
+      const elemBottom = elemCoordinates.bottom + window.scrollY;
+
+      if ( ((elemBottom <= docViewTop) || (elemTop >= docViewBottom)) ) {
+        this.mouseLeft();
+      };
+    }
   },
   computed: {
     playBtnColor() {

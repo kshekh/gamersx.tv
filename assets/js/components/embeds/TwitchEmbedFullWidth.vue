@@ -19,9 +19,9 @@ export default {
   },
   methods: {
     videoBuffered: function () {
-        this.startPlayer();
+      this.startPlayer();
 
-        this.$emit('video-buffered');
+      this.$emit('video-buffered');
     },
     startPlayer: function() {
       if (!this.isPlaying()) {
