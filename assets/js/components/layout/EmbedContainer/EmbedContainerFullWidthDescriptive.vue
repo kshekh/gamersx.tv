@@ -9,14 +9,19 @@
         transform
         rounded-md
         transition-all
-        duration-300
+        duration-700
         backdrop-filter backdrop-blur
         px-3
         -mx-3
       "
       :class="[
-        decreaseInfoBoxSize ? 'md:max-w-1/4 md:min-w-180' : 'max-w-1/2 md:max-w-1/3 md:min-w-240',
-        { 'opacity-0 translate-y-3': isInfoBoxDisplayed },
+        decreaseInfoBoxSize
+          ? 'md:max-w-1/4 md:min-w-180'
+          : 'max-w-1/2 md:max-w-1/3 md:min-w-240',
+        {
+          'opacity-0 translate-y-3': isInfoBoxHidden,
+          'pointer-events-none': isHideButtonClicked,
+        },
       ]"
     >
       <div
@@ -65,6 +70,7 @@
         ]"
       >
         <button
+          v-if="showEmbed && embedData"
           @click.stop="handlePlayVideo()"
           class="
             text-white
@@ -162,7 +168,10 @@
       </div>
     </div>
     <!-- Show the embed with overlay if there's an embed -->
-    <div v-if="showEmbed && embedData">
+    <div
+      v-if="showEmbed && embedData"
+      :class="{ 'pointer-events-none': !isHideButtonClicked }"
+    >
       <div v-show="isEmbedVisible">
         <component
           ref="embed"
@@ -209,12 +218,12 @@ export default {
     "isAllowPlaying",
     "isRowFirst",
     "isFirstVideoLoaded",
+    "isMouseStopped",
   ],
   data() {
     return {
       isEmbedVisible: false,
-      isTitleVisible: false,
-      isInfoBoxDisplayed: false,
+      isHideButtonClicked: false,
       isVideoBuffered: false,
       isVideoPlaying: false,
     };
@@ -243,38 +252,52 @@ export default {
       );
     },
     decreaseInfoBoxSize() {
-      return this.isVideoBuffered && ( this.isVideoPlaying || this.isEmbedVisible );
-    }
+      return (
+        this.isVideoBuffered && (this.isVideoPlaying || this.isEmbedVisible)
+      );
+    },
+    isInfoBoxHidden() {
+      return ( this.isMouseStopped || this.isHideButtonClicked ) && this.isVideoBuffered;
+    },
   },
   methods: {
     handlePlayVideo() {
-      this.isInfoBoxDisplayed = true;
+      this.isHideButtonClicked = true;
 
       this.playVideo();
     },
     playVideo() {
-      this.$root.$emit('close-other-layouts', this.embedData.elementId);
+      this.$root.$emit("close-other-layouts", this.embedData.elementId);
       this.$refs.embed.startPlayer();
     },
     videoBuffered() {
       this.isVideoBuffered = true;
-      if( (this.isFirstVideoLoaded || this.isRowFirst) && this.isAllowPlaying) {
+      if ((this.isFirstVideoLoaded || this.isRowFirst) && this.isAllowPlaying) {
+        this.$emit("reset-mouse-moving");
         this.isEmbedVisible = true;
+        if (!this.isFirstVideoLoaded) {
+          this.activateIsMouseStopped();
+        }
       } else {
-        this.$emit('first-video-buffered');
+        this.$emit("first-video-buffered");
         this.$refs.embed.stopPlayer();
       }
     },
     hideVideo(elementId) {
       if (!(elementId && this.embedData.elementId === elementId)) {
-        this.isInfoBoxDisplayed = false;
+        this.isHideButtonClicked = false;
         this.$refs.embed.stopPlayer();
         this.isEmbedVisible = false;
       }
     },
     updateIsPlaying(newVal) {
       this.isVideoPlaying = newVal;
-    }
+    },
+    activateIsMouseStopped() {
+      setTimeout(() => {
+        this.$emit("activate-mouse-stopped");
+      }, 3000);
+    },
   },
   watch: {
     isAllowPlaying(newVal, oldVal) {
@@ -286,7 +309,7 @@ export default {
         this.playVideo();
       } else {
         if (this.$refs.embed.isPlaying()) {
-          this.isInfoBoxDisplayed = false;
+          this.isHideButtonClicked = false;
           this.$refs.embed.stopPlayer();
         }
       }
@@ -297,6 +320,6 @@ export default {
   },
   destroyed() {
     this.$root.$off("close-other-layouts", this.hideVideo);
-  }
+  },
 };
 </script>

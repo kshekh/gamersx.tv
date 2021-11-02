@@ -4,6 +4,7 @@
     @swiped-right="back()"
     @mouseenter="mouseEntered()"
     @mouseleave="mouseLeaved()"
+    @mousemove="checkMouseActive()"
     class="
       home-row
       mb-7
@@ -98,7 +99,10 @@
                 :isAllowPlaying="isAllowPlaying"
                 :isRowFirst="isRowFirst"
                 :isFirstVideoLoaded="isFirstVideoLoaded"
+                :isMouseStopped="isMouseStopped"
                 @first-video-buffered="handleFirstVideoLoaded"
+                @activate-mouse-stopped="activateMouseStopped"
+                @reset-mouse-moving="checkMouseActive"
               ></component>
             </div>
           </div>
@@ -180,6 +184,8 @@ export default {
       displayChannels: [],
       isAllowPlaying: true,
       isFirstVideoLoaded: false,
+      isMouseStopped: false,
+      isMouseMovingTimeout: false, 
     };
   },
   computed: {
@@ -235,6 +241,7 @@ export default {
       this.reorder();
     },
     reorder() {
+      this.checkMouseActive();
       for (let i = 0; i < this.$refs.channelDivs.length; i++) {
         let j = (i - this.rowIndex).mod(this.$refs.channelDivs.length);
         // Add one to j because flexbox order should start with 1, not 0
@@ -249,10 +256,22 @@ export default {
     },
     mouseLeaved() {
       this.isAllowPlaying = false;
+      this.isMouseStopped = false;
+      clearTimeout(this.isMouseMovingTimeout);
     },
     handleFirstVideoLoaded() {
       this.isFirstVideoLoaded = true;
-    }
+    },
+    activateMouseStopped() {
+      this.isMouseStopped = true;
+    },
+    checkMouseActive() {
+      this.isMouseStopped = false;
+      clearTimeout(this.isMouseMovingTimeout);
+      this.isMouseMovingTimeout = setTimeout(() => {
+        this.isMouseStopped = true;
+      }, 3000);
+    },
   },
   mounted() {
     if (this.rowPosition !== 0) {
