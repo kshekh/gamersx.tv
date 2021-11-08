@@ -10,7 +10,8 @@
         rounded-md
         transition-all
         duration-700
-        backdrop-filter backdrop-blur
+        backdrop-filter backdrop-blur-xs
+        shadow-smooth
         px-3
         -mx-3
       "

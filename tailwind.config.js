@@ -162,6 +162,12 @@ module.exports = {
       backgroundSize: {
         "full": "100% 100%",
       },
+      boxShadow: {
+        "smooth": "0px 0px 27px 25px #e1e1e140, inset 0px 0px 43px 130px #e1e1e140",
+      },
+      backdropBlur: {
+        xs: "2px",
+      }
     }
   },
   variants: {
