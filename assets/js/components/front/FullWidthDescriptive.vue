@@ -1,9 +1,9 @@
 <template>
   <div
+    ref="embedWrapper"
     @swiped-left="forward()"
     @swiped-right="back()"
     @mouseenter="mouseEntered()"
-    @mouseleave="mouseLeaved()"
     @mousemove="checkMouseActive()"
     class="
       home-row
@@ -158,10 +158,13 @@ import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription
 
 import SliderDot from "../helpers/SliderDot.vue";
 
+import isBoxInViewport from "../../mixins/isBoxInViewport";
+
 require("swiped-events");
 
 export default {
   name: "FullWidthDescriptive",
+  mixins: [isBoxInViewport],
   components: {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
@@ -253,11 +256,13 @@ export default {
     },
     mouseEntered() {
       this.isAllowPlaying = true;
+      window.addEventListener('scroll', this.checkIfBoxInViewPort);
     },
-    mouseLeaved() {
+    scrollOut() {
       this.isAllowPlaying = false;
       this.isMouseStopped = false;
       clearTimeout(this.isMouseMovingTimeout);
+      window.removeEventListener('scroll', this.checkIfBoxInViewPort);
     },
     handleFirstVideoLoaded() {
       this.isFirstVideoLoaded = true;
@@ -274,8 +279,10 @@ export default {
     },
   },
   mounted() {
-    if (this.rowPosition !== 0) {
+    if (!this.isRowFirst) {
       this.isAllowPlaying = false;
+    } else {
+      window.addEventListener('scroll', this.checkIfBoxInViewPort);
     }
     this.displayChannels = this.settings.channels.filter(this.showChannel);
   },

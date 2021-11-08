@@ -309,6 +309,7 @@ export default {
         this.playVideo();
       } else {
         if (this.$refs.embed.isPlaying()) {
+          this.isEmbedVisible = false;
           this.isHideButtonClicked = false;
           this.$refs.embed.stopPlayer();
         }

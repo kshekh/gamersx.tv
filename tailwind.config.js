@@ -163,7 +163,7 @@ module.exports = {
         "full": "100% 100%",
       },
       boxShadow: {
-        "smooth": "0px 0px 27px 25px #e1e1e140, inset 0px 0px 43px 130px #e1e1e140",
+        "smooth": "0px 0px 27px 25px #e1e1e12e, inset 0px 0px 43px 130px #e1e1e12e",
       },
       backdropBlur: {
         xs: "2px",

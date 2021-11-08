@@ -114,8 +114,11 @@ import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 
 import PlayButton from "../../helpers/PlayButton.vue";
 
+import isBoxInViewport from "../../../mixins/isBoxInViewport";
+
 export default {
   name: "EmbedContainerFullWidthImagery",
+  mixins: [isBoxInViewport],
   components: {
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
@@ -159,28 +162,16 @@ export default {
       this.$refs.embed.startPlayer();
       this.$emit('hide-controls');
     },
-    mouseLeft() {
+    scrollOut() {
       if (this.showOverlay || this.showArt) {
         this.isOverlayVisible = true;
         this.isEmbedVisible = false;
       }
-      if (this.$refs.embed.isPlaying()) {
+      // if (this.$refs.embed.isPlaying()) {
         this.$refs.embed.stopPlayer();
-      }
+      // }
       window.removeEventListener('scroll', this.checkIfBoxInViewPort);
     },
-    checkIfBoxInViewPort() {
-      const docViewTop = window.scrollY;
-      const docViewBottom = docViewTop + window.innerHeight;
-
-      const elemCoordinates = this.$refs.embedWrapper.getBoundingClientRect();
-      const elemTop = elemCoordinates.top + window.scrollY;
-      const elemBottom = elemCoordinates.bottom + window.scrollY;
-
-      if ( ((elemBottom <= docViewTop) || (elemTop >= docViewBottom)) ) {
-        this.mouseLeft();
-      };
-    }
   },
   computed: {
     playBtnColor() {
@@ -207,12 +198,12 @@ export default {
     },
   },
   mounted() {
-    this.$root.$on("close-other-layouts", this.mouseLeft);
+    this.$root.$on("close-other-layouts", this.scrollOut);
     this.isOverlayVisible = this.showOverlay;
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
   },
   destroyed() {
-    this.$root.$off("close-other-layouts", this.mouseLeft);
+    this.$root.$off("close-other-layouts", this.scrollOut);
   }
 };
 </script>
