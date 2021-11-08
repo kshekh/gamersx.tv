@@ -170,7 +170,6 @@
     <!-- Show the embed with overlay if there's an embed -->
     <div
       v-if="showEmbed && embedData"
-      :class="{ 'pointer-events-none': !isHideButtonClicked }"
     >
       <div v-show="isEmbedVisible">
         <component
