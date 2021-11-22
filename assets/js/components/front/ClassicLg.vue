@@ -1,77 +1,154 @@
 <template>
-  <div @swiped-left="forward()" @swiped-right="back()" class="home-row p-6">
-    <div class="text-3xl text-left font-bold pl-22 px-12 pt-4 pb-2">{{ settings.title}}</div>
-    <div class="flex flex-row justify-start items-center">
-      <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="first()">
-        <img alt="cursor-left" class="cursor-pointer" v-show="allowScrolling && (rowIndex > 0)" src="/images/left-arrow.png" />
+  <div @swiped-left="forward()" @swiped-right="back()">
+    <div
+      class="
+        flex
+        items-center
+        justify-between
+        pl-8
+        md:pl-10
+        xl:pl-24
+        pr-4
+        md:pr-5
+        xl:pr-12
+      "
+    >
+      <h2
+        class="
+          text-white
+          font-calibri font-bold
+          text-sm
+          md:text-2xl
+          xl:text-4xl
+          mr-2
+        "
+      >
+        {{ settings.title }}
+        <title-addinional-description />
+      </h2>
+      <div class="flex items-center space-x-5">
+        <slider-arrow
+          :isNext="false"
+          :videoType="'twitch'"
+          @arrow-clicked="back()"
+        />
+        <slider-arrow
+          :isNext="true"
+          :videoType="'twitch'"
+          @arrow-clicked="forward()"
+        />
       </div>
-      <div ref="channelBox" class="flex flex-row p-5 overflow-hidden">
-        <div ref="channelDivs" v-for="channel in displayChannels">
-          <component
-            :is="channel.componentName"
-            v-bind="channel"
-          ></component>
-        </div>
-      </div>
-      <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="forward()">
-        <img alt="cursor-right" class="cursor-pointer" v-show="allowScrolling" src="/images/right-arrow.png" />
+    </div>
+    <div
+      ref="channelBox"
+      class="
+        flex
+        overflow-hidden
+        pt-5
+        xl:pt-9
+        pb-7
+        md:pb-6
+        xl:pb-12
+        pl-4
+        xl:pl-20
+      "
+    >
+      <div
+        ref="channelDivs"
+        v-for="(channel, index) in displayChannels"
+        :key="index"
+        class="
+          flex
+          items-center
+          flex-shrink-0
+          mr-3
+          md:mr-2
+          xl:mr-4
+          w-60
+          md:w-44
+          xl:w-72
+          h-40
+          md:h-28
+          xl:h-48
+        "
+      >
+        <component :is="channel.componentName" v-bind="channel" :cuttedBorder="true"></component>
       </div>
     </div>
   </div>
 </template>
 <script>
-import EmbedContainer from '../layout/EmbedContainer.vue'
-import NoEmbedContainer from '../layout/NoEmbedContainer.vue'
+import EmbedContainer from "../layout/EmbedContainer/EmbedContainerClassicLg.vue";
+import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerClassic.vue";
 
-require('swiped-events');
+import SliderArrow from "../helpers/SliderArrow.vue";
+
+import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
+
+require("swiped-events");
 
 export default {
-  name: 'ClassicLg',
+  name: "ClassicLg",
   components: {
-    'EmbedContainer': EmbedContainer,
-    'NoEmbedContainer': NoEmbedContainer,
+    EmbedContainer: EmbedContainer,
+    NoEmbedContainer: NoEmbedContainer,
+    "title-addinional-description": TitleAdditionalDescription,
+    "slider-arrow": SliderArrow,
   },
   props: {
     settings: {
       type: Object,
       required: true,
-    }
+    },
   },
-  data: function()  {
+  data() {
     return {
       rowIndex: 0,
       displayChannels: [],
       allowScrolling: false,
-    }
+    };
   },
   methods: {
-    showChannel: function(channel) {
-      return (channel.showOnline && (channel.onlineDisplay.showArt || channel.onlineDisplay.showEmbed || channel.onlineDisplay.showOverlay)) ||
-        (!channel.showOnline && (channel.offlineDisplay.showArt || channel.offlineDisplay.showEmbed || channel.offlineDisplay.showOverlay));
+    showChannel(channel) {
+      return (
+        (channel.showOnline &&
+          (channel.onlineDisplay.showArt ||
+            channel.onlineDisplay.showEmbed ||
+            channel.onlineDisplay.showOverlay)) ||
+        (!channel.showOnline &&
+          (channel.offlineDisplay.showArt ||
+            channel.offlineDisplay.showEmbed ||
+            channel.offlineDisplay.showOverlay))
+      );
     },
-    first: function() {
+    first() {
       this.rowIndex = 0;
       this.reorder();
     },
-    forward: function() {
+    back() {
+      this.rowIndex = (this.rowIndex - 1).mod(this.displayChannels.length);
+      this.reorder();
+    },
+    forward() {
       this.rowIndex = (this.rowIndex + 1).mod(this.displayChannels.length);
       this.reorder();
     },
     reorder() {
+      this.$root.$emit('close-other-layouts');
       for (let i = 0; i < this.$refs.channelDivs.length; i++) {
         let j = (i - this.rowIndex).mod(this.$refs.channelDivs.length);
         // Add one to j because flexbox order should start with 1, not 0
         this.$refs.channelDivs[i].style.order = j + 1;
       }
-    }
+    },
   },
-  mounted: function() {
+  mounted() {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
   },
-  updated: function() {
-    this.allowScrolling = this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
-  }
-}
+  updated() {
+    this.allowScrolling =
+      this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
+  },
+};
 </script>
-<style scoped>
-</style>
+<style scoped></style>
