@@ -86,6 +86,7 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('title')
             ->add('partner')
             ->add('isPublished')
+            ->add('isGlowStyling')
             ;
     }
 
@@ -109,6 +110,9 @@ final class HomeRowAdmin extends AbstractAdmin
                 'sortable' => false,
             ])
             ->add('isPublished', null, [
+                'sortable' => false
+            ])
+            ->add('isGlowStyling', null, [
                 'sortable' => false
             ])
             ->add('_action', null, [
@@ -151,6 +155,7 @@ final class HomeRowAdmin extends AbstractAdmin
                 'required' => false,
             ])
             ->add('isPublished')
+            ->add('isGlowStyling')
             ;
     }
 
@@ -163,6 +168,7 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('partner')
             ->add('options')
             ->add('isPublished')
+            ->add('isGlowStyling')
             ;
     }
 

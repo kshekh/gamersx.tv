@@ -44,6 +44,7 @@ class HomeController extends AbstractController
                 $thisRow['title'] = $row->getTitle();
                 $thisRow['sortIndex'] = $row->getSortIndex();
                 $thisRow['componentName'] = $row->getLayout();
+                $thisRow['isGlowStyling'] = $row->getIsGlowStyling();
 
                 $containers = Array();
 

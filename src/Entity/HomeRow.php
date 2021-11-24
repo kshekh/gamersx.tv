@@ -62,6 +62,11 @@ class HomeRow implements PartneredInterface
      */
     private $isPublished;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isGlowStyling;
+
 
     public function __construct()
     {
@@ -180,6 +185,18 @@ class HomeRow implements PartneredInterface
     public function setIsPublished(bool $isPublished): self
     {
         $this->isPublished = $isPublished;
+
+        return $this;
+    }
+
+    public function getIsGlowStyling(): ?bool
+    {
+        return $this->isGlowStyling;
+    }
+
+    public function setIsGlowStyling(bool $isGlowStyling): self
+    {
+        $this->isGlowStyling = $isGlowStyling;
 
         return $this;
     }
