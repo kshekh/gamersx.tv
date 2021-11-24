@@ -1,50 +1,209 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome to GamersX{% endblock %}</title>
-        {% block stylesheets %}
-        {{ encore_entry_link_tags('app') }}
-        {% endblock %}
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}Welcome to GamersX
+			{% endblock %}
+		</title>
+		{% block stylesheets %}
+			{{ encore_entry_link_tags('app') }}
+		{% endblock %}
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-        {% block javascripts %}
-        <!-- Load the Twitch embed script -->
-        <script src="https://embed.twitch.tv/embed/v1.js"></script>
-        <script src="https://www.youtube.com/player_api"></script>
-        {{ encore_entry_script_tags('app') }}
-        {% endblock %}
-    </head>
-    <body class="bg-black">
-        {% block header %}
-        <div class="w-full p-4">
-            <div id="header" class="flex flex-row justify-between space-x-4 h-12 text-2xl" >
-                <div>
-                 <img src="/images/logo.png" class="h-14" />
-                </div>
-                <div><a href="{{ path('home') }}">Home</a></div>
-                <div>Channels</div>
-                <div>Gamers</div>
-                <div>Store</div>
-                <div class="flex-grow">
-                    <input id="query" class="w-full rounded-sm pl-4" type="text" placeholder="search"></input>
-                </div>
-            </div>
-        </div>
-        <hr class="border-current pb-6" />
-        {% endblock %}
-        <div class="w-full mx-auto">
-          {% block body %}{% endblock %}
-        </div>
 
-        <hr class="border-current pt-6">
-        {% block footer %}
+		{% block javascripts %}
+			<!-- Load the Twitch embed script -->
+			<script src="https://embed.twitch.tv/embed/v1.js"></script>
+			<script src="https://www.youtube.com/player_api"></script>
+			{{ encore_entry_script_tags('app') }}
+			{{ encore_entry_script_tags('main') }}
+		{% endblock %}
+	</head>
+	<body class="bg-black">
+		<div class="h-full flex flex-col">
+			{% block header %}
+				<div class="w-full shadow-base">
+					<header
+						id="header"
+						class="flex items-center justify-between
+							px-4 md:px-6 xl:px-20 pb-3 md:pb-6 pt-6 xl:py-7
+							mx-auto max-w-full-hd"
+					>
+						<img src="/images/logo.png" class="flex-shrink-0 w-24 md:w-72 mr-3 md:mr-14 xl:mr-4"/>
+						<div class="flex flex-grow items-center justify-between xl:justify-end ml-auto">
+							<nav class="hidden xl:block">
+								<ul class="flex items-center space-x-8 mx-8">
+									<li>
+										<a href="{{ path('home') }}" class="text-white font-play text-lg hover:text-purple">Home</a>
+									</li>
+									<li>
+										<a href="#" class="text-white font-play text-lg hover:text-purple">Channels</a>
+									</li>
+									<li>
+										<a href="#" class="text-white font-play text-lg hover:text-purple">Gamers</a>
+									</li>
+									<li>
+										<a href="#" class="text-white font-play text-lg hover:text-purple">Store</a>
+									</li>
+								</ul>
+							</nav>
+							<div class="w-full xl:max-w-xs
+								mr-9 md:mr-24 xl:mr-8
+								cut-edge__wrapper">
+								<div class="h-7 md:h-8 xl:h-9 cut-edge__clipped cut-edge__clipped--md-border cut-edge__clipped--twitch cut-edge__clipped-bottom-left-md flex items-center">
+									<input id="query"
+										class="
+										w-full bg-transparent
+										border-0
+										pl-2.5 md:pl-4 xl:pl-6
+										pr-2
+										py-0.5
+										placeholder-grey
+										text-white
+										text-base xl:text-lg
+										font-play
+										outline-none
+										h-full"
+										type="text"
+										placeholder="Search"
+									/>
+									<button type="button" class="mr-1 px-1 py-0.5 w-7 h-full">
+										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" class="text-purple fill-current">
+												<path fill-rule="evenodd" clip-rule="evenodd" d="M13.7431 12.5747L9.9101 8.73998C10.5972 7.80284 10.9652 6.66986 10.9601 5.50782C10.947 2.47453 8.49372 0.0175753 5.4606 5.57205e-05C4.00908 -0.00651189 2.61522 0.56774 1.58953 1.59488C0.563845 2.62203 -0.00846493 4.01674 9.46502e-05 5.46832C0.0132044 8.50189 2.4667 10.9591 5.5001 10.9766C6.66681 10.9816 7.80387 10.6093 8.7416 9.91504L8.7456 9.91204L12.5751 13.7437C12.7821 13.9609 13.0907 14.0489 13.3811 13.9734C13.6716 13.898 13.8983 13.6711 13.9735 13.3805C14.0487 13.09 13.9605 12.7815 13.7431 12.5747V12.5747ZM5.49614 9.87852C3.06955 9.86456 1.10679 7.89903 1.09614 5.47231C1.08959 4.3112 1.54748 3.19565 2.36787 2.37399C3.18826 1.55234 4.30307 1.09277 5.46414 1.0976C7.89072 1.11156 9.85349 3.07709 9.86414 5.50381C9.87069 6.66493 9.4128 7.78047 8.59241 8.60213C7.77201 9.42378 6.6572 9.88335 5.49614 9.87852Z" />
+										</svg>
+									</button>
+								</div>
+							</div>
+							<button class="hidden xl:block">
+								<svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M35.8493 6.15074C31.8829 2.1844 26.6092 0 21 0C15.3905 0 10.1171 2.1844 6.15074 6.15074C2.1844 10.1171 0 15.3905 0 21C0 26.6092 2.1844 31.8829 6.15074 35.8493C10.1171 39.8156 15.3905 42 21 42C26.6092 42 31.8829 39.8156 35.8493 35.8493C39.8156 31.8829 42 26.6092 42 21C42 15.3905 39.8156 10.1171 35.8493 6.15074ZM10.5279 36.2895C11.4062 31.2324 15.7885 27.5023 21 27.5023C26.2119 27.5023 30.5938 31.2324 31.4721 36.2895C28.4905 38.3381 24.883 39.5391 21 39.5391C17.117 39.5391 13.5095 38.3381 10.5279 36.2895ZM14.3228 18.3641C14.3228 14.682 17.3182 11.6869 21 11.6869C24.6818 11.6869 27.6772 14.6823 27.6772 18.3641C27.6772 22.0459 24.6818 25.0413 21 25.0413C17.3182 25.0413 14.3228 22.0459 14.3228 18.3641ZM33.6037 34.5826C32.9413 32.2283 31.6259 30.0923 29.7822 28.4238C28.651 27.4 27.3635 26.5922 25.9792 26.0228C28.4812 24.3908 30.1385 21.5675 30.1385 18.3641C30.1385 13.3253 26.0388 9.22595 21 9.22595C15.9612 9.22595 11.8618 13.3253 11.8618 18.3641C11.8618 21.5675 13.5191 24.3908 16.0208 26.0228C14.6368 26.5922 13.349 27.3997 12.2178 28.4235C10.3744 30.092 9.05869 32.228 8.39635 34.5823C4.7482 31.1943 2.46094 26.3596 2.46094 21C2.46094 10.7775 10.7775 2.46094 21 2.46094C31.2225 2.46094 39.5391 10.7775 39.5391 21C39.5391 26.3599 37.2518 31.1946 33.6037 34.5826Z" fill="#6441A5"/>
+								</svg>
+							</button>
+							<button class="jsOpenBurgerButton block xl:hidden w-7 md:w-11 flex-shrink-0">
+								<span class="block h-0.75 w-full bg-purple"></span>
+								<span class="block h-0.75 w-full bg-purple my-1 md:my-1.5"></span>
+								<span class="block h-0.75 w-full bg-purple"></span>
+							</button>
+						</div>
+						<div class="jsBurgerMenu
+						fixed top-0 left-0
+						w-full h-full
+						transform translate-x-full
+						z-50 bg-black bg-opacity-80
+						flex justify-end
+						transition-all
+						duration-500
+						opacity-0">
+							<div class="px-5 pt-8 md:px-8">
+								<button class="closeBurgerButton block ml-auto mb-3 md:mb-11">
+									<svg class="w-4 h-4 md:w-7 md:h-7" width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<path d="M1 1L16 16M16 1L1 16" stroke="white" stroke-linecap="round"/>
+									</svg>
+								</button>
+								<ul class="space-y-4 md:space-y-5 pr-4">
+									<li>
+										<a href="{{ path('home') }}" class="text-white font-play text-lg md:text-2xl">Home</a>
+									</li>
+									<li>
+										<a href="#" class="text-white font-play text-lg md:text-2xl">Channels</a>
+									</li>
+									<li>
+										<a href="#" class="text-white font-play text-lg md:text-2xl">Gamers</a>
+									</li>
+									<li>
+										<a href="#" class="text-white font-play text-lg md:text-2xl">Store</a>
+									</li>
+									<li>
+										<a href="#" class="text-white font-play text-lg md:text-2xl">Log in</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</header>
+				</div>
+			{% endblock %}
+			<div class="w-full mx-auto flex-grow">
+				{% block body %}{% endblock %}
+			</div>
+			{% block footer %}
+				<footer class="mb-2 bg-full bg-left-bottom bg-no-repeat xl:pt-10" style="background-image: url('/images/footer-border.png')">
+					<div>
+						<div class="px-4 md:px-6 xl:px-20 py-5 pb-3 mx-auto max-w-full-hd flex flex-col items-center md:relative md:py-10 xl:py-12">
+							<ul class="flex items-center space-x-1 mb-2 md:mb-0 md:absolute md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 md:space-x-2 xl:space-x-4">
+								<li>
+									<a class="block" href="#">
+										<svg class="w-6 h-6 md:w-7 md:h-7 xl:w-10 xl:h-10" viewbox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 8C16 3.58125 12.4187 0 8 0C3.58125 0 0 3.58125 0 8C0 12.4187 3.58125 16 8 16C8.04688 16 8.09375 16 8.14062 15.9969V9.77188H6.42188V7.76875H8.14062V6.29375C8.14062 4.58437 9.18438 3.65313 10.7094 3.65313C11.4406 3.65313 12.0688 3.70625 12.25 3.73125V5.51875H11.2C10.3719 5.51875 10.2094 5.9125 10.2094 6.49062V7.76562H12.1938L11.9344 9.76875H10.2094V15.6906C13.5531 14.7312 16 11.6531 16 8Z" fill="#6441A5"/></svg>
+									</a>
+								</li>
+								<li>
+									<a class="block" href="#">
+										<svg class="w-6 h-6 md:w-7 md:h-7 xl:w-10 xl:h-10" viewbox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<g clip-path="url(#clip0)">
+												<path d="M9.67773 8C9.67773 8.8457 8.99219 9.53125 8.14648 9.53125C7.30078 9.53125 6.61523 8.8457 6.61523 8C6.61523 7.1543 7.30078 6.46875 8.14648 6.46875C8.99219 6.46875 9.67773 7.1543 9.67773 8Z" fill="#6441A5"/>
+												<path d="M11.7275 5.29114C11.6539 5.09167 11.5365 4.91113 11.3839 4.76294C11.2357 4.61035 11.0553 4.49292 10.8557 4.41931C10.6938 4.35645 10.4507 4.28162 10.0028 4.26123C9.51831 4.23914 9.37305 4.23438 8.14648 4.23438C6.9198 4.23438 6.77454 4.23901 6.29016 4.26111C5.84228 4.28162 5.599 4.35645 5.43726 4.41931C5.23767 4.49292 5.05713 4.61035 4.90906 4.76294C4.75647 4.91113 4.63904 5.09155 4.56531 5.29114C4.50244 5.453 4.42761 5.69629 4.40723 6.14416C4.38513 6.62854 4.38037 6.7738 4.38037 8.00049C4.38037 9.22705 4.38513 9.37231 4.40723 9.85681C4.42761 10.3047 4.50244 10.5479 4.56531 10.7097C4.63904 10.9093 4.75635 11.0897 4.90894 11.2379C5.05713 11.3905 5.23755 11.5079 5.43713 11.5815C5.599 11.6445 5.84228 11.7194 6.29016 11.7397C6.77454 11.7618 6.91968 11.7665 8.14636 11.7665C9.37317 11.7665 9.51843 11.7618 10.0027 11.7397C10.4506 11.7194 10.6938 11.6445 10.8557 11.5815C11.2563 11.427 11.573 11.1103 11.7275 10.7097C11.7904 10.5479 11.8652 10.3047 11.8857 9.85681C11.9078 9.37231 11.9125 9.22705 11.9125 8.00049C11.9125 6.7738 11.9078 6.62854 11.8857 6.14416C11.8654 5.69629 11.7905 5.453 11.7275 5.29114ZM8.14648 10.3593C6.84363 10.3593 5.78748 9.30322 5.78748 8.00037C5.78748 6.69751 6.84363 5.64148 8.14648 5.64148C9.44922 5.64148 10.5054 6.69751 10.5054 8.00037C10.5054 9.30322 9.44922 10.3593 8.14648 10.3593ZM10.5986 6.09949C10.2942 6.09949 10.0474 5.85266 10.0474 5.54822C10.0474 5.24377 10.2942 4.99695 10.5986 4.99695C10.9031 4.99695 11.1499 5.24377 11.1499 5.54822C11.1498 5.85266 10.9031 6.09949 10.5986 6.09949Z" fill="#6441A5"/>
+												<path d="M8.14648 0C3.72888 0 0.146484 3.5824 0.146484 8C0.146484 12.4176 3.72888 16 8.14648 16C12.5641 16 16.1465 12.4176 16.1465 8C16.1465 3.5824 12.5641 0 8.14648 0ZM12.7125 9.89392C12.6903 10.3829 12.6125 10.7168 12.499 11.009C12.2604 11.6261 11.7726 12.1139 11.1555 12.3525C10.8634 12.4661 10.5294 12.5437 10.0405 12.566C9.55066 12.5884 9.39417 12.5938 8.14661 12.5938C6.89893 12.5938 6.74255 12.5884 6.25256 12.566C5.76367 12.5437 5.42969 12.4661 5.13757 12.3525C4.83093 12.2372 4.55334 12.0564 4.32385 11.8226C4.09021 11.5933 3.90942 11.3156 3.79407 11.009C3.68054 10.7169 3.60278 10.3829 3.58057 9.89404C3.55798 9.40405 3.55273 9.24756 3.55273 8C3.55273 6.75244 3.55798 6.59595 3.58044 6.10608C3.60266 5.61707 3.6803 5.2832 3.79382 4.99097C3.90918 4.68445 4.09009 4.40674 4.32385 4.17737C4.55322 3.9436 4.83093 3.76282 5.13745 3.64746C5.42969 3.53394 5.76355 3.4563 6.25256 3.43396C6.74243 3.41162 6.89893 3.40625 8.14648 3.40625C9.39404 3.40625 9.55054 3.41162 10.0404 3.43408C10.5294 3.4563 10.8633 3.53394 11.1555 3.64734C11.462 3.7627 11.7397 3.9436 11.9692 4.17737C12.2029 4.40686 12.3838 4.68445 12.499 4.99097C12.6127 5.2832 12.6903 5.61707 12.7126 6.10608C12.735 6.59595 12.7402 6.75244 12.7402 8C12.7402 9.24756 12.735 9.40405 12.7125 9.89392Z" fill="#6441A5"/>
+											</g>
+											<defs>
+												<clipPath id="clip0">
+													<rect width="16" height="16" fill="white" transform="translate(0.146484)"/>
+												</clipPath>
+											</defs>
+										</svg>
 
-        <div class="w-full">
-            <div id="footer" class="flex flex-row justify-center space-x-4 h-16 text-base" >
-                <div>&copy; 2021 GamersX</div>
-                <div class="underline"><a href="{{ path('terms') }}">Terms of Service</a></div>
-            </div>
-        </div>
-        {% endblock %}
-    </body>
-</html>
+									</a>
+								</li>
+								<li>
+									<a class="block" href="#">
+										<svg class="w-6 h-6 md:w-7 md:h-7 xl:w-10 xl:h-10" viewbox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<g clip-path="url(#clip0)">
+												<path d="M7.29639 9.49854L9.89868 7.99976L7.29639 6.50098V9.49854Z" fill="#6441A5"/>
+												<path d="M8.29297 0C3.87537 0 0.292969 3.5824 0.292969 8C0.292969 12.4176 3.87537 16 8.29297 16C12.7106 16 16.293 12.4176 16.293 8C16.293 3.5824 12.7106 0 8.29297 0ZM13.2917 8.00818C13.2917 8.00818 13.2917 9.63062 13.0859 10.413C12.9706 10.8412 12.6329 11.1788 12.2047 11.2941C11.4224 11.5 8.29297 11.5 8.29297 11.5C8.29297 11.5 5.17175 11.5 4.38123 11.2859C3.953 11.1707 3.61536 10.8329 3.5 10.4047C3.29407 9.63062 3.29407 8 3.29407 8C3.29407 8 3.29407 6.37769 3.5 5.59534C3.61523 5.16711 3.96118 4.82117 4.38123 4.70593C5.16357 4.5 8.29297 4.5 8.29297 4.5C8.29297 4.5 11.4224 4.5 12.2047 4.71411C12.6329 4.82935 12.9706 5.16711 13.0859 5.59534C13.3 6.37769 13.2917 8.00818 13.2917 8.00818Z" fill="#6441A5"/>
+											</g>
+											<defs>
+												<clipPath id="clip0">
+													<rect width="16" height="16" fill="white" transform="translate(0.292969)"/>
+												</clipPath>
+											</defs>
+										</svg>
+
+									</a>
+								</li>
+								<li>
+									<a class="block" href="#">
+										<svg class="w-6 h-6 md:w-7 md:h-7 xl:w-10 xl:h-10" viewbox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<circle cx="8" cy="8" r="8" fill="#6441A5"/>
+											<g clip-path="url(#clip0)">
+												<path d="M5.23633 4.50098L4.70508 6.09471V11.9384H6.83008V13.0009H7.89258L8.95508 11.9384H10.5488L12.6738 9.67528V4.50098H5.23633ZM12.1426 9.28216L10.6551 10.8759H8.77127L7.62695 11.7084V10.8759H5.76758V5.03222H12.1426V9.28216Z" fill="#1A161F"/>
+												<path d="M8.95508 6.62598H8.42383V8.75095H8.95508V6.62598Z" fill="#1A161F"/>
+												<path d="M10.5488 6.62598H10.0176V8.75095H10.5488V6.62598Z" fill="#1A161F"/>
+											</g>
+											<defs>
+												<clipPath id="clip0">
+													<rect width="8.5" height="8.49989" fill="white" transform="translate(4.43945 4.50098)"/>
+												</clipPath>
+											</defs>
+										</svg>
+
+
+									</a>
+								</li>
+							</ul>
+
+							<div class="flex flex-col justify-between items-center w-full md:flex-row">
+								<p class="text-grey text-xxs md:text-sm mb-1 md:mb-0">&copy; 2021 GamersX. All Rights Reserved</p>
+
+
+								<div class="flex items-center space-x-1">
+									<a class="text-grey text-xxs md:text-sm" href="#">Privacy Policy</a>
+									<span class="w-1px h-2 bg-grey md:h-3"></span>
+									<a class="text-grey text-xxs md:text-sm" href="{{ path('terms') }}">Terms of Service</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</footer>
+			{% endblock %}
+		</div>
+		</body>
+	</html>
