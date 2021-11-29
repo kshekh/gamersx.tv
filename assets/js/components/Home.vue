@@ -40,6 +40,29 @@ export default {
     axios.get("/home/api").then(response => {
       this.settings = response.data.settings;
     });
+      },
+      pollingApiData: null,
+      requestPollingDelay: 30000
+    }
+  },
+  methods: {
+    requestHomeApi: function() {
+      axios
+        .get('/home/api')
+        .then(response => {
+          this.settings = response.data.settings;
+        })
+    }
+  },
+  mounted: function() {
+    this.requestHomeApi()
+
+    this.pollingApiData = setInterval(() => {
+      this.requestHomeApi()
+    }, this.requestPollingDelay)
+  },
+  beforeDestroy: function() {
+    clearInterval(this.pollingApiData)
   }
 };
 
