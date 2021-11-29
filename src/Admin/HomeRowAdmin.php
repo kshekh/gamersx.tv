@@ -135,7 +135,8 @@ final class HomeRowAdmin extends AbstractAdmin
                         'direction' => 'down'
                     ],
                 ],
-            ]);
+            ])
+            ;
     }
 
     protected function configureFormFields(FormMapper $formMapper): void
@@ -162,7 +163,6 @@ final class HomeRowAdmin extends AbstractAdmin
             ])
             ->add('isPublished')
             ->add('isGlowStyling')
-            ;
             ->add('isPublished', null, [
                 'help' => 'Current Server Time: ' . date('H:i')
             ])
@@ -185,7 +185,8 @@ final class HomeRowAdmin extends AbstractAdmin
                     'class' => 'timepicker',
                     'title'=> "End timepicker for published",
                 ]
-            ]);
+            ])
+            ;
     }
 
     protected function configureShowFields(ShowMapper $showMapper): void
