@@ -63,6 +63,9 @@ class HomeRow implements PartneredInterface
      */
     private $isPublished;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
     private $isGlowStyling;
 
    /**
