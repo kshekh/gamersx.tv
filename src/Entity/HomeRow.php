@@ -63,18 +63,16 @@ class HomeRow implements PartneredInterface
      */
     private $isPublished;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
     private $isGlowStyling;
 
-     * @ORM\Column(name="isPublishedStart", type="integer", nullable=true)
-     *
-     * @Assert\Expression(
-     *     "this.getIsPublishedStart() < this.getIsPublishedEnd()",
-     *     message="Start time should be less than end date!"
-     * )
-     */
+   /**
+    * @ORM\Column(name="isPublishedStart", type="integer", nullable=true)
+    *
+    * @Assert\Expression(
+    *     "this.getIsPublishedStart() < this.getIsPublishedEnd()",
+    *     message="Start time should be less than end date!"
+    * )
+    */
     private $isPublishedStart;
 
     /**
@@ -216,7 +214,7 @@ class HomeRow implements PartneredInterface
     public function setIsGlowStyling(bool $isGlowStyling): self
     {
         $this->isGlowStyling = $isGlowStyling;
-        
+
         return $this;
     }
 
@@ -242,7 +240,7 @@ class HomeRow implements PartneredInterface
     {
         $isPublishedEndTime = 86400;
         $this->isPublishedEnd = !empty($isPublishedEnd) ? $isPublishedEnd : $isPublishedEndTime;
-        
+
         return $this;
     }
 
