@@ -33,13 +33,6 @@ export default {
     return {
       settings: {
         rows: []
-      }
-    };
-  },
-  mounted: function() {
-    axios.get("/home/api").then(response => {
-      this.settings = response.data.settings;
-    });
       },
       pollingApiData: null,
       requestPollingDelay: 30000
