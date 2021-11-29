@@ -8,21 +8,20 @@
 </template>
 <script>
 import axios from "axios";
-
-import ClassicLg from "./front/ClassicLg.vue";
 import ClassicSm from "./front/ClassicSm.vue";
 import ClassicMd from "./front/ClassicMd.vue";
+import ClassicLg from "./front/ClassicLg.vue";
 import ClassicVertical from "./front/ClassicVertical.vue";
-import FullWidthImagery from "./front/FullWidthImagery.vue";
 import FullWidthDescriptive from "./front/FullWidthDescriptive.vue";
+import FullWidthImagery from "./front/FullWidthImagery.vue";
 import Parallax from "./front/Parallax.vue";
 import NumberedRow from "./front/NumberedRow.vue";
 
 export default {
   components: {
-    ClassicLg: ClassicLg,
     ClassicSm: ClassicSm,
     ClassicMd: ClassicMd,
+    ClassicLg: ClassicLg,
     ClassicVertical: ClassicVertical,
     FullWidthDescriptive: FullWidthDescriptive,
     FullWidthImagery: FullWidthImagery,
@@ -40,11 +39,9 @@ export default {
   },
   methods: {
     requestHomeApi: function() {
-      axios
-        .get('/home/api')
-        .then(response => {
-          this.settings = response.data.settings;
-        })
+      axios.get("/home/api").then(response => {
+        this.settings = response.data.settings;
+      });
     }
   },
   mounted: function() {

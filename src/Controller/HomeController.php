@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\HomeRow;
 use App\Containerizer\ContainerizerFactory;
+use App\Service\HomeRowInfo;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +14,13 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class HomeController extends AbstractController
 {
+    private $homeRowInfo;
+
+    public function __construct(HomeRowInfo $homeRowInfo)
+    {
+        $this->homeRowInfo = $homeRowInfo;
+    }
+
     /**
      * @Route("/", name="home")
      */
@@ -34,9 +42,20 @@ class HomeController extends AbstractController
                 ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
 
             $rowChannels = Array();
+            $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
 
             foreach ($rows as $row) {
+                $isPublishedStartStartTime = $row->getIsPublishedStart();
+                $isPublishedStartEndTime = $row->getIsPublishedEnd();
+
                 if ($row->getIsPublished() === FALSE) {
+                    continue;
+                }
+
+                if (
+                    !empty($isPublishedStartStartTime) && !empty($isPublishedStartEndTime) &&
+                    ($currentTime <= $isPublishedStartStartTime || $currentTime >= $isPublishedStartEndTime)
+                ) {
                     continue;
                 }
 

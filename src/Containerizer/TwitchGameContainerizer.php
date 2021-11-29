@@ -3,6 +3,7 @@
 namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
+use App\Service\HomeRowInfo;
 
 class TwitchGameContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
@@ -17,6 +18,7 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
 
     public function getContainers(): Array
     {
+        $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
         $twitch = $this->twitch;
         $gameIds = $homeRowItem->getTopic()['topicId'];
@@ -42,6 +44,18 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
         $broadcasts = $broadcasts->toArray()['data'];
 
         $rowName = $homeRowItem->getHomeRow()->getTitle();
+        $description = $homeRowItem->getDescription();
+        $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+
+        $isPublishedStartStartTime = $homeRowItem->getIsPublishedStart();
+        $isPublishedStartEndTime = $homeRowItem->getIsPublishedEnd();
+
+        if (
+            !empty($isPublishedStartStartTime) && !empty($isPublishedStartEndTime) &&
+            ($currentTime <= $isPublishedStartStartTime || $currentTime >= $isPublishedStartEndTime)
+        ) {
+            return Array();
+        }
 
         switch ($homeRowItem->getLinkType()) {
         case HomeRowItem::LINK_TYPE_GAMERSX:
@@ -93,6 +107,7 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
                     'channel' => $broadcast['user_login'],
                     'elementId' => uniqid('embed-'),
                 ],
+                'description' => $description
             ];
         }
 

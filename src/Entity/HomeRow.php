@@ -6,6 +6,7 @@ use App\Model\PartneredInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
@@ -67,6 +68,24 @@ class HomeRow implements PartneredInterface
      */
     private $isGlowStyling;
 
+     * @ORM\Column(name="isPublishedStart", type="integer", nullable=true)
+     *
+     * @Assert\Expression(
+     *     "this.getIsPublishedStart() < this.getIsPublishedEnd()",
+     *     message="Start time should be less than end date!"
+     * )
+     */
+    private $isPublishedStart;
+
+    /**
+     * @ORM\Column(name="isPublishedEnd", type="integer", nullable=true)
+     *
+     * @Assert\Expression(
+     *     "this.getIsPublishedStart() < this.getIsPublishedEnd()",
+     *     message="Start time should be less than end date!"
+     * )
+     */
+    private $isPublishedEnd;
 
     public function __construct()
     {
@@ -197,7 +216,33 @@ class HomeRow implements PartneredInterface
     public function setIsGlowStyling(bool $isGlowStyling): self
     {
         $this->isGlowStyling = $isGlowStyling;
+        
+        return $this;
+    }
 
+    public function getIsPublishedStart(): ?int
+    {
+        return $this->isPublishedStart;
+    }
+
+    public function setIsPublishedStart(?int $isPublishedStart): self
+    {
+        $isPublishedStartTime = 0;
+        $this->isPublishedStart = !empty($isPublishedStart) ? $isPublishedStart : $isPublishedStartTime;
+
+        return $this;
+    }
+
+    public function getIsPublishedEnd(): ?int
+    {
+        return $this->isPublishedEnd;
+    }
+
+    public function setIsPublishedEnd(?int $isPublishedEnd): self
+    {
+        $isPublishedEndTime = 86400;
+        $this->isPublishedEnd = !empty($isPublishedEnd) ? $isPublishedEnd : $isPublishedEndTime;
+        
         return $this;
     }
 
