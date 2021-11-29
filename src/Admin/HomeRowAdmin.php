@@ -113,6 +113,8 @@ final class HomeRowAdmin extends AbstractAdmin
                 'sortable' => false
             ])
             ->add('isGlowStyling', null, [
+                'sortable' => false
+            ])
             ->add('isPublishedStart', null, [
                 'sortable' => false
             ])
