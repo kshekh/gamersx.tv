@@ -9,7 +9,8 @@ use App\Entity\HomeRowItem;
 use App\Form\TopicType;
 use App\Form\SortAndTrimOptionsType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType };
+use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType, TimeType };
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\CallbackTransformer;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -98,6 +99,12 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPublished', null, [
                 'sortable' => false
             ])
+            ->add('isPublishedStart', null, [
+                'sortable' => false
+            ])
+            ->add('isPublishedEnd', null, [
+                'sortable' => false
+            ])
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],
@@ -176,7 +183,32 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'label' => 'Sort and Trim Options',
                 'required' => false,
             ])
-            ->add('isPublished')
+            ->add('description', TextareaType::class, [
+                'required' => false,
+            ])
+            ->add('isPublished', null, [
+                'help' => 'Current Server Time: ' . date('H:i')
+            ])
+            ->add('isPublishedStart', TimeType::class, [
+                'label'=> 'Publish Start Time',
+                'required' => false,
+                'input'  => 'timestamp',
+                'widget' => 'single_text',
+                'attr'=> [
+                    'class' => 'timepicker',
+                    'title'=> "Start timepicker for published",
+                ]
+            ])
+            ->add('isPublishedEnd', TimeType::class, [
+                'label'=> 'Publish End Time',
+                'required' => false,
+                'input'  => 'timestamp',
+                'widget' => 'single_text',
+                'attr'=> [
+                    'class' => 'timepicker',
+                    'title'=> "End timepicker for published",
+                ]
+            ])
             ->getFormBuilder()->addModelTransformer(new CallbackTransformer(
                 // Use the array in the form
                 function ($valuesAsArray) {
@@ -211,6 +243,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('offlineDisplayType')
             ->add('linkType')
             ->add('partner')
+            ->add('description')
             ->add('isPublished')
             ;
     }

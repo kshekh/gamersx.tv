@@ -188,7 +188,7 @@ export default {
       isAllowPlaying: true,
       isFirstVideoLoaded: false,
       isMouseStopped: false,
-      isMouseMovingTimeout: false, 
+      isMouseMovingTimeout: false,
     };
   },
   computed: {

@@ -3,6 +3,7 @@
 namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
+use App\Service\HomeRowInfo;
 
 class TwitchStreamerContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
@@ -17,6 +18,7 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
 
     public function getContainers(): Array
     {
+        $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
         $twitch = $this->twitch;
 
@@ -42,6 +44,18 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
 
         $title = $broadcast === NULL ? $info['display_name'] : sprintf("%s playing %s for %d viewers",
             $broadcast['user_name'], $broadcast['game_name'], $broadcast['viewer_count']);
+        $description = $homeRowItem->getDescription();
+        $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+
+        $isPublishedStartStartTime = $homeRowItem->getIsPublishedStart();
+        $isPublishedStartEndTime = $homeRowItem->getIsPublishedEnd();
+
+        if (
+            !empty($isPublishedStartStartTime) && !empty($isPublishedStartEndTime) &&
+            ($currentTime <= $isPublishedStartStartTime || $currentTime >= $isPublishedStartEndTime)
+        ) {
+            return Array();
+        }
 
         // No need for a container if we're not displaying and not online
         if (($homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_NONE) &&
@@ -119,6 +133,7 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
                 'componentName' => 'EmbedContainer',
                 'embedName' => 'TwitchEmbed',
                 'embedData' => $embedData,
+                'description' => $description
             ]
         ];
 

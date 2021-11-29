@@ -7,7 +7,7 @@ namespace App\Admin;
 use App\Entity\HomeRow;
 use App\Form\SortAndTrimOptionsType;
 use Knp\Menu\ItemInterface as MenuItemInterface;
-use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType, NumberType };
+use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType, NumberType, TimeType };
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -115,6 +115,12 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('isGlowStyling', null, [
                 'sortable' => false
             ])
+            ->add('isPublishedStart', null, [
+                'sortable' => false
+            ])
+            ->add('isPublishedEnd', null, [
+                'sortable' => false
+            ])
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],
@@ -129,7 +135,8 @@ final class HomeRowAdmin extends AbstractAdmin
                         'direction' => 'down'
                     ],
                 ],
-            ]);
+            ])
+            ;
     }
 
     protected function configureFormFields(FormMapper $formMapper): void
@@ -156,6 +163,29 @@ final class HomeRowAdmin extends AbstractAdmin
             ])
             ->add('isPublished')
             ->add('isGlowStyling')
+            ->add('isPublished', null, [
+                'help' => 'Current Server Time: ' . date('H:i')
+            ])
+            ->add('isPublishedStart', TimeType::class, [
+                'label'=> 'Publish Start Time',
+                'required' => false,
+                'input'  => 'timestamp',
+                'widget' => 'single_text',
+                'attr'=> [
+                    'class' => 'timepicker',
+                    'title'=> "Start timepicker for published",
+                ]
+            ])
+            ->add('isPublishedEnd', TimeType::class, [
+                'label'=> 'Publish End Time',
+                'required' => false,
+                'input'  => 'timestamp',
+                'widget' => 'single_text',
+                'attr'=> [
+                    'class' => 'timepicker',
+                    'title'=> "End timepicker for published",
+                ]
+            ])
             ;
     }
 
