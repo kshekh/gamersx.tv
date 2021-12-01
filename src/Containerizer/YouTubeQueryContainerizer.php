@@ -69,8 +69,8 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
             $channel = [
                 'info' => $snippet,
                 'broadcast' =>  $broadcast,
-                'liveViewerCount' => 0,
-                'viewedCount' => 0,
+                'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
+                'viewedCount' => $info['view_count'],
                 'showOnline' => TRUE,
                 'onlineDisplay' => [
                     'title' => $title,
