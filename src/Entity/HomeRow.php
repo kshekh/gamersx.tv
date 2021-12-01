@@ -64,7 +64,7 @@ class HomeRow implements PartneredInterface
     private $isPublished;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="string", length=20)
      */
     private $isGlowStyling;
 
@@ -209,12 +209,12 @@ class HomeRow implements PartneredInterface
         return $this;
     }
 
-    public function getIsGlowStyling(): ?bool
+    public function getIsGlowStyling(): ?string
     {
         return $this->isGlowStyling;
     }
 
-    public function setIsGlowStyling(bool $isGlowStyling): self
+    public function setIsGlowStyling(string $isGlowStyling): self
     {
         $this->isGlowStyling = $isGlowStyling;
 
