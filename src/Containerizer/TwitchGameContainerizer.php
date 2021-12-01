@@ -79,8 +79,8 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
             $channels[] = [
                 'info' => $info,
                 'broadcast' => $broadcast,
-                'liveViewerCount' => $broadcast['viewer_count'],
-                'viewedCount' => 0,
+                'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
+                'viewedCount' => $info['view_count'],
                 'showOnline' => TRUE,
                 'onlineDisplay' => [
                     'title' => $title,
