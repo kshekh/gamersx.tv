@@ -56,11 +56,7 @@
           xl:mb-4
         "
       >
-        <!-- Will be "description" field -->
-        <!-- {{ info.description }} -->
-        League of Legends is a multiplayer online battle arena (MOBA) game in
-        which the player controls a character ("champion") with a set of unique
-        abilities from an isometric perspective.
+         {{ description }}
       </p>
 
       <div
@@ -131,6 +127,7 @@ export default {
     "link",
     "componentName",
     "embedData",
+    "description"
   ],
   data() {
     return {};
