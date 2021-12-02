@@ -1,7 +1,7 @@
 <template>
   <div
-    :class="showGlowStyling"
     class="
+      cut-edge__wrapper
       w-full
       h-full
       flex-shrink-0
@@ -53,8 +53,7 @@ export default {
     "componentName",
     "embedName",
     "embedData",
-    "cuttedBorder",
-    "isGlowStyling"
+    "cuttedBorder"
   ],
   data: function () {
     return {
@@ -76,9 +75,6 @@ export default {
         ((this.showOnline && this.onlineDisplay.showOverlay) ||
           (!this.showOnline && this.offlineDisplay.showOverlay))
       );
-    },
-    showGlowStyling: function () {
-      return this.isGlowStyling === "Enabled" || this.isGlowStyling === "Enabled if Live" ? "cut-edge__wrapper" : "";
     },
   },
 };

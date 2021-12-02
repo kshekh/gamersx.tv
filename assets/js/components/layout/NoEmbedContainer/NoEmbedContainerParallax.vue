@@ -13,7 +13,6 @@
     "
   >
     <div
-      :class="showGlowStyling"
       class="
         relative
         top-1/2
@@ -21,6 +20,7 @@
         left-0
         w-full
         h-full
+        cut-edge__wrapper
         flex-shrink-0
         cut-edge__wrapper--twitch
       "
@@ -68,7 +68,6 @@ export default {
     "componentName",
     "embedName",
     "embedData",
-    "isGlowStyling"
   ],
   data: function () {
     return {};
@@ -86,9 +85,6 @@ export default {
         ((this.showOnline && this.onlineDisplay.showOverlay) ||
           (!this.showOnline && this.offlineDisplay.showOverlay))
       );
-    },
-    showGlowStyling: function () {
-      return this.isGlowStyling === "Enabled" || this.isGlowStyling === "Enabled if Live" ? "cut-edge__wrapper" : "";
     },
   },
 };
