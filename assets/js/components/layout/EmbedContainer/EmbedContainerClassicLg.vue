@@ -1,10 +1,11 @@
 <template>
   <div class="w-full h-full flex-shrink-0" ref="itemWrapper">
     <div
-      class="cut-edge__wrapper w-full h-full"
+      class="w-full h-full"
       :class="{
         'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
         'cut-edge__wrapper--youtube': embedName === 'YouTubeEmbed',
+        showGlowStyling
       }"
     >
       <div
@@ -81,7 +82,6 @@
       class="
         absolute
         z-30
-        cut-edge__wrapper
         transition-opacity-transform
         ease-linear
         duration-500
@@ -90,6 +90,7 @@
         'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
         'cut-edge__wrapper--youtube': embedName === 'YouTubeEmbed',
         invisible: !isEmbedVisible,
+        showGlowStyling
       }"
       ref="embedWrapper"
       :style="embedSize"
@@ -218,6 +219,12 @@ export default {
     "embedName",
     "embedData",
     "liveViewerCount",
+    "isGlowStyling"
   ],
+  computed: {
+    showGlowStyling: function () {
+      return this.isGlowStyling === "Enabled" || this.isGlowStyling === "Enabled if Live" ? "cut-edge__wrapper" : "";
+    },
+  }
 };
 </script>

@@ -18,12 +18,12 @@
         class="
           w-full
           h-full
-          cut-edge__wrapper
           flex-shrink-0
         "
         :class="{
           'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
           'cut-edge__wrapper--youtube': embedName === 'YouTubeEmbed',
+          showGlowStyling
         }"
       >
         <div
@@ -86,7 +86,6 @@
       class="
         absolute
         z-30
-        cut-edge__wrapper
         transition-opacity-transform
         ease-linear
         duration-500
@@ -95,6 +94,7 @@
         'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
         'cut-edge__wrapper--youtube': embedName === 'YouTubeEmbed',
         invisible: !isEmbedVisible,
+        showGlowStyling
       }"
       ref="embedWrapper"
       :style="embedSize"
@@ -234,7 +234,13 @@ export default {
     "embedName",
     "embedData",
     "liveViewerCount",
+    "isGlowStyling"
   ],
+  computed: {
+    showGlowStyling: function () {
+      return this.isGlowStyling === "Enabled" || this.isGlowStyling === "Enabled if Live" ? "cut-edge__wrapper" : "";
+    },
+  }
   // data() {
   //   return {
   //     isOverlayVisible: true,

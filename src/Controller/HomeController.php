@@ -36,7 +36,7 @@ class HomeController extends AbstractController
     {
         $cache = new FilesystemAdapter();
         $beta = 1.0;
-        $rowChannels = $cache->get('home', function (ItemInterface $item) use ($containerizer) { 
+        $rowChannels = $cache->get('home', function (ItemInterface $item) use ($containerizer) {
             $item->expiresAfter(60); //expire cache in every 60 sec
             $rows = $this->getDoctrine()->getRepository(HomeRow::class)
                 ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
@@ -63,19 +63,23 @@ class HomeController extends AbstractController
                 $thisRow['title'] = $row->getTitle();
                 $thisRow['sortIndex'] = $row->getSortIndex();
                 $thisRow['componentName'] = $row->getLayout();
-                $thisRow['isGlowStyling'] = $row->getIsGlowStyling();
 
                 $containers = Array();
 
                 $containerized = $containerizer($row);
                 $channels = $containerized->getContainers();
+
+                foreach ($channels as $key => $channel) {
+                    $channels[$key]['isGlowStyling'] = $row->getIsGlowStyling();
+                }
+
                 $thisRow['channels'] = $channels;
 
                 $rowChannels[] = $thisRow;
             }
 
             return $rowChannels;
-        }, $beta);  
+        }, $beta);
         return $this->json([
             'settings' => [
                 'rows' => $rowChannels

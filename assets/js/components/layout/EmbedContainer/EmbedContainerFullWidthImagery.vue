@@ -2,12 +2,13 @@
   <div class="w-full h-full flex flex-col">
     <div
       v-show="!isEmbedVisible"
-      class="cut-edge__wrapper flex-grow min-h-0 w-36 md:w-86 xl:w-118 relative ease-linear"
+      class="flex-grow min-h-0 w-36 md:w-86 xl:w-118 relative ease-linear"
       :class="{
         'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
         'cut-edge__wrapper--youtube': embedName === 'YouTubeEmbed',
         'opacity-0 pointer-events-none z-negative': isEmbedVisible,
         'pointer-events-none z-negative': isEmbedVisible,
+        showGlowStyling
       }"
     >
       <div
@@ -64,7 +65,6 @@
     <div v-if="showEmbed && embedData">
       <div
         class="
-          cut-edge__wrapper
           flex-grow
           min-h-0
           absolute
@@ -87,6 +87,7 @@
           'cut-edge__clipped--youtube border-red': embedName === 'YouTubeEmbed',
           'opacity-100': isEmbedVisible,
           'pointer-events-none z-negative': !isEmbedVisible,
+          showGlowStyling
         }"
       >
         <div ref="embedWrapper" class="h-full w-full">
@@ -140,6 +141,7 @@ export default {
     "embedName",
     "embedData",
     "liveViewerCount",
+    "isGlowStyling"
   ],
   data() {
     return {
@@ -195,6 +197,9 @@ export default {
         ((this.showOnline && this.onlineDisplay.showOverlay) ||
           (!this.showOnline && this.offlineDisplay.showOverlay))
       );
+    },
+    showGlowStyling: function () {
+      return this.isGlowStyling === "Enabled" || this.isGlowStyling === "Enabled if Live" ? "cut-edge__wrapper" : "";
     },
   },
   mounted() {
