@@ -45,14 +45,20 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
         }
 
         try {
-            $broadcasts = $youtube->searchLiveChannels($query, $max, null, null);
+            $broadcasts = $youtube->searchLiveChannels($query, $max, null, null)->getItems();
         } catch (\Exception $e) {
             $this->logger->error("Call to YouTube failed with the message \"".$e->getErrors()[0]['message']."\"");
             return Array();
         }
 
+        $videoIds = [];
+        foreach ($broadcasts as $broadcast) {
+            $videoIds[] = $broadcast->getId()->getVideoId();
+        }
 
-        foreach ($broadcasts->getItems() as $i => $broadcast) {
+        $videoStats = $youtube->getChannelVideosStats($videoIds)->getItems();
+
+        foreach ($broadcasts as $i => $broadcast) {
             $snippet = $broadcast->getSnippet();
 
             $title = sprintf("%s - \"%s\"",
@@ -66,11 +72,14 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
                 $link = 'https://www.youtube.com/v/'.$broadcast->getId()->getVideoId();
             }
 
+            $broadcast['view_count'] = $videoStats[$i]->getStatistics()->getViewCount();
+            $broadcast['viewer_count'] = $videoStats[$i]->getLiveStreamingDetails()->getConcurrentViewers();
+
             $channel = [
                 'info' => $snippet,
                 'broadcast' =>  $broadcast,
                 'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
-                'viewedCount' => isset($snippet['view_count']) ? $snippet['view_count'] : 0,
+                'viewedCount' => isset($broadcast['view_count']) ? $broadcast['view_count'] : 0,
                 'showOnline' => TRUE,
                 'onlineDisplay' => [
                     'title' => $title,

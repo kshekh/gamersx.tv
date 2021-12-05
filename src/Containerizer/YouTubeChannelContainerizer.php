@@ -95,12 +95,18 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
             $embedData = NULL;
         }
 
+        if ($info !== NULL) {
+            if ($info->getStatistics() !== NULL) {
+                $info['statistics_view_count'] = $info->getStatistics()->getViewCount();
+            }
+        }
+
         $channels = [
             [
                 'info' => $info,
                 'broadcast' => $broadcast,
                 'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
-                'viewedCount' => isset($info['view_count']) ? $info['view_count'] : 0,
+                'viewedCount' => isset($info['statistics_view_count']) ? (int) $info['statistics_view_count'] : 0,
                 'showOnline' => $broadcast !== NULL,
                 'onlineDisplay' => [
                     'title' => $title,
