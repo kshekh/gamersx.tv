@@ -94,6 +94,7 @@
           relative
           cut-edge__clipped
           cut-edge__clipped--sm-border
+          cut-edge__clipped-top-left-sm
           bg-black
         "
         :class="getOutline"
@@ -230,11 +231,11 @@ export default {
     computeGlowStyling: function () {
       if (this.isGlowStyling === "Enabled" || this.isGlowStyling === "Enabled if Live") {
         if (this.embedName === 'TwitchEmbed') {
-          this.glowStyling.outline = 'cut-edge__clipped-top-left-sm cut-edge__clipped--twitch';
+          this.glowStyling.outline = 'cut-edge__clipped--twitch';
           this.glowStyling.glow = 'cut-edge__wrapper--twitch';
         }
         else if (this.embedName === 'YouTubeEmbed') {
-          this.glowStyling.outline = 'cut-edge__clipped-top-left-sm cut-edge__clipped--youtube';
+          this.glowStyling.outline = 'cut-edge__clipped--youtube';
           this.glowStyling.glow = 'cut-edge__wrapper--youtube';
         }
       }

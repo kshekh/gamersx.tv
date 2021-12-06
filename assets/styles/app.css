@@ -82,7 +82,7 @@ div.channel-description {
 }
 
 .cut-edge__clipped--twitch::after {
-  background-color: #6441A5;
+  background-color: #6441A5!important;
 }
 
 .cut-edge__clipped--youtube {
@@ -90,7 +90,7 @@ div.channel-description {
 }
 
 .cut-edge__clipped--youtube::after {
-  background-color: #FF0000;
+  background-color: #FF0000!important;
 }
 
 .cut-edge__clipped-top-left-sm {
@@ -102,6 +102,7 @@ div.channel-description {
   height: 1px;
   top: 6px;
   left: -4px;
+  background-color: #fff;
   transform: rotateZ(135deg);
 }
 

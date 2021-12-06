@@ -173,12 +173,12 @@ export default {
     computeGlowStyling: function () {
       if (this.isGlowStyling === "Enabled" || this.isGlowStyling === "Enabled if Live") {
         if (this.embedName === 'TwitchEmbed') {
-          this.glowStyling.outline = 'cut-edge__clipped-top-left-sm cut-edge__clipped--twitch';
+          this.glowStyling.outline = 'cut-edge__clipped--twitch';
           this.glowStyling.outlineBorder = 'cut-edge__clipped--twitch border-purple';
           this.glowStyling.glow = 'cut-edge__wrapper--twitch';
         }
         else if (this.embedName === 'YouTubeEmbed') {
-          this.glowStyling.outline = 'cut-edge__clipped-top-left-sm cut-edge__clipped--youtube';
+          this.glowStyling.outline = 'cut-edge__clipped--youtube';
           this.glowStyling.outlineBorder = 'cut-edge__clipped--youtube border-red';
           this.glowStyling.glow = 'cut-edge__wrapper--youtube';
         }
