@@ -27,51 +27,56 @@ class NoEmbedContainer extends LiveContainerizer implements ContainerizerInterfa
         $description = $homeRowItem->getDescription();
         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
 
-        $isPublishedStartStartTime = $homeRowItem->getIsPublishedStart();
-        $isPublishedStartEndTime = $homeRowItem->getIsPublishedEnd();
+        $isPublished = $homeRowItem->getIsPublished();
 
-        if (
-            !empty($isPublishedStartStartTime) && !empty($isPublishedStartEndTime) &&
-            ($currentTime <= $isPublishedStartStartTime || $currentTime >= $isPublishedStartEndTime)
-        ) {
+        if (!$isPublished) {
             return Array();
         }
 
-        $display = [
-            'title' => $title,
-            'showArt' => TRUE,
-            'showEmbed' => FALSE,
-            'showOverlay' => TRUE,
-        ];
+        $isPublishedStartTime = $homeRowItem->getIsPublishedStart();
+        $isPublishedEndTime = $homeRowItem->getIsPublishedEnd();
 
-        $item = [
-            'info' => null,
-            'broadcast' => null,
-            'liveViewerCount' => 0,
-            'viewedCount' => 0,
-            'showOnline' => TRUE,
-            'onlineDisplay' => $display,
-            'offlineDisplay' => $display,
-            'itemType' => $homeRowItem->getItemType(),
-            'rowName' => $rowName,
-            'sortIndex' => 1,
-            'image' => NULL,
-            'overlay' => $this->uploader->asset($this->homeRowItem, 'overlayArtFile'),
-            'customArt' => $this->uploader->asset($this->homeRowItem, 'customArtFile'),
-            'link' => $link,
-            'componentName' => 'NoEmbedContainer',
-            'embedName' => NULL,
-            'embedData' => NULL,
-            'description' => $description
-        ];
+        if (
+           !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
+           (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
+        ) {
+            $display = [
+                'title' => $title,
+                'showArt' => TRUE,
+                'showEmbed' => FALSE,
+                'showOverlay' => TRUE,
+            ];
 
-        $this->items = Array($item);
-        $this->options = $homeRowItem->getSortAndTrimOptions();
+            $item = [
+                'info' => null,
+                'broadcast' => null,
+                'liveViewerCount' => 0,
+                'viewedCount' => 0,
+                'showOnline' => TRUE,
+                'onlineDisplay' => $display,
+                'offlineDisplay' => $display,
+                'itemType' => $homeRowItem->getItemType(),
+                'rowName' => $rowName,
+                'sortIndex' => 1,
+                'image' => NULL,
+                'overlay' => $this->uploader->asset($this->homeRowItem, 'overlayArtFile'),
+                'customArt' => $this->uploader->asset($this->homeRowItem, 'customArtFile'),
+                'link' => $link,
+                'componentName' => 'NoEmbedContainer',
+                'embedName' => NULL,
+                'embedData' => NULL,
+                'description' => $description
+            ];
 
-        $this->sort();
-        $this->trim();
+            $this->items = Array($item);
+            $this->options = $homeRowItem->getSortAndTrimOptions();
 
-        return $this->items;
+            $this->sort();
+            $this->trim();
+
+            return $this->items;
+        }
+
+        return Array();
     }
-
 }

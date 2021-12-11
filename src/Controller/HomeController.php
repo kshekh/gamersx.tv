@@ -41,41 +41,38 @@ class HomeController extends AbstractController
             $rows = $this->getDoctrine()->getRepository(HomeRow::class)
                 ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
 
-            $rowChannels = Array();
             $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
 
             foreach ($rows as $row) {
-                $isPublishedStartStartTime = $row->getIsPublishedStart();
-                $isPublishedStartEndTime = $row->getIsPublishedEnd();
+                $isPublishedStartTime = $row->getIsPublishedStart();
+                $isPublishedEndTime = $row->getIsPublishedEnd();
 
                 if ($row->getIsPublished() === FALSE) {
                     continue;
                 }
 
                 if (
-                    !empty($isPublishedStartStartTime) && !empty($isPublishedStartEndTime) &&
-                    ($currentTime <= $isPublishedStartStartTime || $currentTime >= $isPublishedStartEndTime)
+                    !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
+                    (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
                 ) {
-                    continue;
+                    $thisRow = Array();
+                    $thisRow['title'] = $row->getTitle();
+                    $thisRow['sortIndex'] = $row->getSortIndex();
+                    $thisRow['componentName'] = $row->getLayout();
+
+                    $containers = Array();
+
+                    $containerized = $containerizer($row);
+                    $channels = $containerized->getContainers();
+
+                    foreach ($channels as $key => $channel) {
+                        $channels[$key]['isGlowStyling'] = $row->getIsGlowStyling();
+                    }
+
+                    $thisRow['channels'] = $channels;
+
+                    $rowChannels[] = $thisRow;
                 }
-
-                $thisRow = Array();
-                $thisRow['title'] = $row->getTitle();
-                $thisRow['sortIndex'] = $row->getSortIndex();
-                $thisRow['componentName'] = $row->getLayout();
-
-                $containers = Array();
-
-                $containerized = $containerizer($row);
-                $channels = $containerized->getContainers();
-
-                foreach ($channels as $key => $channel) {
-                    $channels[$key]['isGlowStyling'] = $row->getIsGlowStyling();
-                }
-
-                $thisRow['channels'] = $channels;
-
-                $rowChannels[] = $thisRow;
             }
 
             return $rowChannels;
