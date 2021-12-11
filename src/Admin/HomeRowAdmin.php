@@ -162,7 +162,13 @@ final class HomeRowAdmin extends AbstractAdmin
                 'required' => false,
             ])
             ->add('isPublished')
-            ->add('isGlowStyling')
+            ->add('isGlowStyling', ChoiceType::class, [
+                'choices' => [
+                    'Enabled' => 'Enabled',
+                    'Disabled' => 'Disabled',
+                    'Enabled if Live' => 'Enabled if Live'
+                ]
+            ])
             ->add('isPublished', null, [
                 'help' => 'Current Server Time: ' . date('H:i')
             ])
