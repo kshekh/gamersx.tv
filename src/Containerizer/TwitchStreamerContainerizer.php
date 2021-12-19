@@ -24,10 +24,10 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
 
         $streamerId = $homeRowItem->getTopic()['topicId'];
 
-        $info = $twitch->getStreamerInfo($streamerId);
+        $infos = $twitch->getStreamerInfo($streamerId);
         if (200 !== $info->getStatusCode()) {
             $this->logger->error("Call to Twitch failed with ".$info->getStatusCode());
-            unset($info);
+            unset($infos);
             return Array();
         }
 
@@ -38,13 +38,13 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
             return Array();
         }
 
-        $info = $info->toArray()['data'];
+        $info = $infos->toArray()['data'];
 
         if (!isset($info) || empty($info)) {
             return Array();
         }
 
-        $info = $infoData[0];
+        $info = $info[0];
         $broadcast = $broadcast->toArray()['data'];
         $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
 
