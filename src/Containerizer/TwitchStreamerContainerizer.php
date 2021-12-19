@@ -38,7 +38,13 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
             return Array();
         }
 
-        $info = $info->toArray()['data'][0];
+        $info = $info->toArray()['data'];
+
+        if (!isset($info) || empty($info)) {
+            return Array();
+        }
+
+        $info = $infoData[0];
         $broadcast = $broadcast->toArray()['data'];
         $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
 

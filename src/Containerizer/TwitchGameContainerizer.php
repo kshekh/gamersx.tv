@@ -38,7 +38,13 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
         }
 
         // Get the info for the game, use that for every game
-        $info = $infos->toArray()['data'][0];
+        $info = $info->toArray()['data'];
+
+        if (!isset($info) || empty($info)) {
+            return Array();
+        }
+
+        $info = $infoData[0];
 
         // Get every broadcast
         $broadcasts = $broadcasts->toArray()['data'];
