@@ -25,8 +25,8 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
         $streamerId = $homeRowItem->getTopic()['topicId'];
 
         $infos = $twitch->getStreamerInfo($streamerId);
-        if (200 !== $info->getStatusCode()) {
-            $this->logger->error("Call to Twitch failed with ".$info->getStatusCode());
+        if (200 !== $infos->getStatusCode()) {
+            $this->logger->error("Call to Twitch failed with ".$infos->getStatusCode());
             unset($infos);
             return Array();
         }
