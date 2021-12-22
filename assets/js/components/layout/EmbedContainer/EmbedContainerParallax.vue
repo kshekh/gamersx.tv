@@ -28,6 +28,7 @@
             w-full
             h-full
             cut-edge__clipped--sm-border
+            cut-edge__clipped-top-left-sm
             bg-black
           "
           :class="getOutline"
