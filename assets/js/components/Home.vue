@@ -34,7 +34,7 @@ export default {
         rows: []
       },
       pollingApiData: null,
-      requestPollingDelay: 30000
+      requestPollingDelay: 90000
     }
   },
   methods: {

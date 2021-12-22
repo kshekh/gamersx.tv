@@ -37,7 +37,7 @@ class HomeController extends AbstractController
         $cache = new FilesystemAdapter();
         $beta = 1.0;
         $rowChannels = $cache->get('home', function (ItemInterface $item) use ($containerizer) {
-            $item->expiresAfter(60); //expire cache in every 60 sec
+            $item->expiresAfter(240); //expire cache in every 240 sec
             $rows = $this->getDoctrine()->getRepository(HomeRow::class)
                 ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
 
