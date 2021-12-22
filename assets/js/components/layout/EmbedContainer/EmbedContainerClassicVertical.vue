@@ -5,7 +5,7 @@
       :class="getGlow"
     >
       <div
-        class="w-full h-full cut-edge__clipped--sm-border bg-black"
+        class="w-full h-full cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
         :class="getOutline"
       >
         <!-- Show the embed with overlay if there's an embed -->
