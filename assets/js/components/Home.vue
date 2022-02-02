@@ -1,8 +1,15 @@
 <template>
   <!-- remowe "text-white" later -->
   <div class="text-white py-4 md:py-7">
-    <div v-for="(row, index) in settings.rows" :key="row.id">
-      <component :is="row.componentName" :settings="row" :rowPosition="index"></component>
+    <template v-if="settings.rows.length">
+      <div v-for="(row, index) in settings.rows" :key="row.id">
+        <component :is="row.componentName" :settings="row" :rowPosition="index"></component>
+      </div>
+    </template>
+    <div v-else>
+      <DefaultSceleton />
+      <DefaultSceleton />
+      <DefaultSceleton />
     </div>
   </div>
 </template>
@@ -16,6 +23,7 @@ import FullWidthDescriptive from "./front/FullWidthDescriptive.vue";
 import FullWidthImagery from "./front/FullWidthImagery.vue";
 import Parallax from "./front/Parallax.vue";
 import NumberedRow from "./front/NumberedRow.vue";
+import DefaultSceleton from "./sceletons/Default.vue";
 
 export default {
   components: {
@@ -26,7 +34,8 @@ export default {
     FullWidthDescriptive: FullWidthDescriptive,
     FullWidthImagery: FullWidthImagery,
     Parallax: Parallax,
-    NumberedRow: NumberedRow
+    NumberedRow: NumberedRow,
+    DefaultSceleton: DefaultSceleton,
   },
   data: function() {
     return {
