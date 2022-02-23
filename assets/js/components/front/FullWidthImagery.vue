@@ -85,49 +85,17 @@
           v-show="isControlsShown"
           class="ml-2 md:ml-5 xl:ml-8 flex-shrink-0 relative z-10 flex"
         >
-          <button
-            @click="back()"
-            class="flex-shrink-0 mr-1 xl:mr-3 transition-all duration-300 transform hover:scale-110"
-            :class="{
-              'text-purple': currentChannelEmbedName === 'TwitchEmbed',
-              'text-red': currentChannelEmbedName === 'YouTubeEmbed',
-            }"
-          >
-            <svg
-              class="
-                h-4
-                w-5
-                md:h-5
-                md:w-7
-                xl:h-12
-                xl:w-8
-                fill-current
-                transform
-                rotate-180
-              "
-              viewBox="0 0 19 30"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M 19 14.999 L 0 30 L 0 0 L 19 14.999 Z" />
-            </svg>
-          </button>
+         <slider-arrow-big
+          :isNext="false"
+          :videoType="currentChannelEmbedName"
+          @arrow-big-clicked="back()"
+        />
+         <slider-arrow-big
+          :isNext="true"
+          :videoType="currentChannelEmbedName"
+          @arrow-big-clicked="forward()"
+        />
 
-          <button
-            @click="forward()"
-            class="flex-shrink-0 transition-all duration-300 transform hover:scale-110"
-            :class="{
-              'text-purple': currentChannelEmbedName === 'TwitchEmbed',
-              'text-red': currentChannelEmbedName === 'YouTubeEmbed',
-            }"
-          >
-            <svg
-              class="h-4 w-5 md:h-5 md:w-7 xl:h-12 xl:w-8 fill-current"
-              viewBox="0 0 19 30"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M 19 14.999 L 0 30 L 0 0 L 19 14.999 Z" />
-            </svg>
-          </button>
         </div>
       </div>
     </div>
@@ -139,6 +107,7 @@ import EmbedContainer from "../layout/EmbedContainer/EmbedContainerFullWidthImag
 import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerImagery.vue";
 
 import SliderDot from "../helpers/SliderDot.vue";
+import SliderArrowBig from "../helpers/SliderArrowBig.vue";
 
 require("swiped-events");
 
@@ -148,6 +117,7 @@ export default {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
     "slider-dot": SliderDot,
+    "slider-arrow-big": SliderArrowBig
   },
   props: {
     settings: {
