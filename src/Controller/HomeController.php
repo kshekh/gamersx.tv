@@ -74,8 +74,9 @@ class HomeController extends AbstractController
                     $rowChannels[] = $thisRow;
                 }
             }
-
-            return $rowChannels;
+            if (isset($rowChannels)) {
+              return $rowChannels;
+            } 
         }, $beta);
         return $this->json([
             'settings' => [
