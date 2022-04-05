@@ -65,7 +65,7 @@ services:
         class: App\Admin\SiteSettingsAdmin
         arguments: [ ~, App\Entity\SiteSettings, ~ ]
         tags:
-            - { name: sonata.admin, manager_type: orm, group: home, label: Site Settings }
+            - { name: sonata.admin, manager_type: orm, group: admin, label: Site Settings }
         public: true
 
     admin.partner:

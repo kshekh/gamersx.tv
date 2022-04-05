@@ -10,7 +10,6 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 final class SiteSettingsAdmin extends AbstractAdmin
 {
@@ -19,11 +18,10 @@ final class SiteSettingsAdmin extends AbstractAdmin
      */
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
+        $row = $this->getConfigurationPool()->getContainer()->get('doctrine')->getManager()->getRepository(SiteSettings::class)->findOneBy([]);
         $collection->remove('export');
 
-        $row = $this->getConfigurationPool()->getContainer()->get('doctrine')->getManager()->getRepository(SiteSettings::class)->findOneBy([]);
-
-        if ($row != NULL) {
+        if (isset($row) && $row->getId() == true) {
             $collection->remove('create');
         }
     }
@@ -33,22 +31,25 @@ final class SiteSettingsAdmin extends AbstractAdmin
      */
     protected function configureListFields(ListMapper $listMapper): void
     {
-        $listMapper
-            ->add('disableHomeAccess', null, [
-                'editable' => true,
-                'label' => 'Disable HomePage Access'
-            ])
-        ;
+        if ($this->isGranted('ROLE_LOGIN_ALLOWED')) {
+            $listMapper
+                ->add('disableHomeAccess', null, [
+                    'editable' => true,
+                    'label' => 'Disable HomePage Access'
+                ])
+            ;
+        }
     }
 
     protected function configureFormFields(FormMapper $formMapper): void
     {
-        $formMapper
-            ->add('disableHomeAccess', null, [
-                'label' => 'Disable HomePage Access'
-            ])
-            ->remove('saveAndAdd')
-        ;
+        if ($this->isGranted('ROLE_LOGIN_ALLOWED')) {
+            $formMapper
+                ->add('disableHomeAccess', null, [
+                    'label' => 'Disable HomePage Access'
+                ])
+            ;
+        }
     }
 
     protected function configureBatchActions($actions)

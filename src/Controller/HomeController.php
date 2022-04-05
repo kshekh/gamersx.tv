@@ -29,7 +29,7 @@ class HomeController extends AbstractController
     {
         $row = $this->getDoctrine()->getRepository(SiteSettings::class)->findOneBy([]);
 
-        if ($row->getDisableHomeAccess() == false || $this->isGranted('ROLE_LOGIN_ALLOWED')) {
+        if ($this->isGranted('ROLE_LOGIN_ALLOWED') || (isset($row) && (!$row->getDisableHomeAccess() || $row->getDisableHomeAccess() == false))) {
             return $this->render('home/index.html.twig');
         }
 
