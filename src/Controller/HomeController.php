@@ -68,6 +68,7 @@ class HomeController extends AbstractController
                     $thisRow['title'] = $row->getTitle();
                     $thisRow['sortIndex'] = $row->getSortIndex();
                     $thisRow['componentName'] = $row->getLayout();
+                    $thisRow['onGamersXtv'] = $row->getonGamersXtv();
 
                     $containers = Array();
 

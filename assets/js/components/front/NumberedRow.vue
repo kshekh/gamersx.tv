@@ -15,7 +15,7 @@
         "
       >
         {{ settings.title }}
-        <title-addinional-description />
+        <title-addinional-description v-show="settings.onGamersXtv" />
       </h2>
       <div class="flex items-center space-x-5">
         <slider-arrow

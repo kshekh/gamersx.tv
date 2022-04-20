@@ -88,6 +88,11 @@ class HomeRow implements PartneredInterface
      */
     private $isPublishedEnd;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default" : 0})
+     */
+    private $onGamersXtv;
+
     public function __construct()
     {
         $this->items = new ArrayCollection();
@@ -243,6 +248,18 @@ class HomeRow implements PartneredInterface
     {
         $isPublishedEndTime = 86400;
         $this->isPublishedEnd = !empty($isPublishedEnd) ? $isPublishedEnd : $isPublishedEndTime;
+
+        return $this;
+    }
+
+    public function getonGamersXtv(): ?bool
+    {
+        return $this->onGamersXtv;
+    }
+
+    public function setonGamersXtv(bool $onGamersXtv): self
+    {
+        $this->onGamersXtv = $onGamersXtv;
 
         return $this;
     }
