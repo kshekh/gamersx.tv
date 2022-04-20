@@ -1,5 +1,5 @@
 <template>
-  <span> on GAMER <span class="text-red"> X</span> TV </span>
+  <span> on GAMERS<span class="text-red">x</span>TV</span>
 </template>
 
 <script>
