@@ -31,45 +31,13 @@
           z-10
         "
       >
-        <button
-          @click="back()"
-          class="
-            mr-2
-            md:mr-5
-            xl:mr-8
-            flex-shrink-0
-            relative
-            z-10
-            transition-all
-            duration-300
-            transform
-            hover:scale-110
-          "
-          :class="{
-            'text-purple': currentChannelEmbedName === 'TwitchEmbed',
-            'text-red': currentChannelEmbedName === 'YouTubeEmbed',
-          }"
-        >
-          <svg
-            class="
-              h-4
-              w-5
-              md:h-5
-              md:w-7
-              xl:h-12
-              xl:w-8
-              fill-current
-              transform
-              rotate-180
-            "
-            viewBox="0 0 19 30"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M 19 14.999 L 0 30 L 0 0 L 19 14.999 Z" />
-          </svg>
-        </button>
+        <slider-arrow-big
+          :isNext="false"
+          :videoType="currentChannelEmbedName"
+          @arrow-big-clicked="back()"
+        />
 
-        <div
+         <div
           class="
             py-2
             md:pt-8
@@ -106,7 +74,9 @@
               ></component>
             </div>
           </div>
-          <div class="flex items-center space-x-1 md:space-x-2 relative z-10 self-end md:self-center">
+          <div
+            class="flex items-center space-x-1 md:space-x-2 relative z-10 self-end md:self-center"
+          >
             <slider-dot
               v-for="(channel, index) in displayChannels"
               :key="'channelDot' + index"
@@ -118,33 +88,11 @@
           </div>
         </div>
 
-        <button
-          @click="forward()"
-          class="
-            ml-2
-            md:ml-5
-            xl:ml-8
-            flex-shrink-0
-            relative
-            z-10
-            transition-all
-            duration-300
-            transform
-            hover:scale-110
-          "
-          :class="{
-            'text-purple': currentChannelEmbedName === 'TwitchEmbed',
-            'text-red': currentChannelEmbedName === 'YouTubeEmbed',
-          }"
-        >
-          <svg
-            class="h-4 w-5 md:h-5 md:w-7 xl:h-12 xl:w-8 fill-current"
-            viewBox="0 0 19 30"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M 19 14.999 L 0 30 L 0 0 L 19 14.999 Z" />
-          </svg>
-        </button>
+        <slider-arrow-big
+          :isNext="true"
+          :videoType="currentChannelEmbedName"
+          @arrow-big-clicked="forward()"
+        />
       </div>
     </div>
   </div>
@@ -157,6 +105,7 @@ import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerDescrip
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
 import SliderDot from "../helpers/SliderDot.vue";
+import SliderArrowBig from "../helpers/SliderArrowBig.vue";
 
 import isBoxInViewport from "../../mixins/isBoxInViewport";
 
@@ -170,38 +119,39 @@ export default {
     NoEmbedContainer: NoEmbedContainer,
     "title-addinional-description": TitleAdditionalDescription,
     "slider-dot": SliderDot,
+    "slider-arrow-big": SliderArrowBig
   },
   props: {
     settings: {
       type: Object,
-      required: true,
+      required: true
     },
     rowPosition: {
       type: Number,
-      required: true,
-    },
+      required: true
+    }
   },
-  data: function () {
+  data: function() {
     return {
       rowIndex: 0,
       displayChannels: [],
       isAllowPlaying: true,
       isFirstVideoLoaded: false,
       isMouseStopped: false,
-      isMouseMovingTimeout: false,
+      isMouseMovingTimeout: false
     };
   },
   computed: {
     isRowFirst() {
       return this.rowPosition === 0;
     },
-    customBg: function () {
+    customBg: function() {
       let selected = this.displayChannels[this.rowIndex];
 
       if (selected && selected.customArt) {
         return {
           // backgroundImage: "url(https://picsum.photos/2000/3000)"
-          backgroundImage: "url(" + selected.customArt + ")",
+          backgroundImage: "url(" + selected.customArt + ")"
         };
       } else {
         return {};
@@ -216,10 +166,10 @@ export default {
         // Default for now
         return "TwitchEmbed";
       }
-    },
+    }
   },
   methods: {
-    showChannel: function (channel) {
+    showChannel: function(channel) {
       return (
         (channel.showOnline &&
           (channel.onlineDisplay.showArt ||
@@ -231,15 +181,15 @@ export default {
             channel.offlineDisplay.showOverlay))
       );
     },
-    first: function () {
+    first: function() {
       this.rowIndex = 0;
       this.reorder();
     },
-    back: function () {
+    back: function() {
       this.rowIndex = (this.rowIndex - 1).mod(this.displayChannels.length);
       this.reorder();
     },
-    forward: function () {
+    forward: function() {
       this.rowIndex = (this.rowIndex + 1).mod(this.displayChannels.length);
       this.reorder();
     },
@@ -256,13 +206,13 @@ export default {
     },
     mouseEntered() {
       this.isAllowPlaying = true;
-      window.addEventListener('scroll', this.checkIfBoxInViewPort);
+      window.addEventListener("scroll", this.checkIfBoxInViewPort);
     },
     scrollOut() {
       this.isAllowPlaying = false;
       this.isMouseStopped = false;
       clearTimeout(this.isMouseMovingTimeout);
-      window.removeEventListener('scroll', this.checkIfBoxInViewPort);
+      window.removeEventListener("scroll", this.checkIfBoxInViewPort);
     },
     handleFirstVideoLoaded() {
       this.isFirstVideoLoaded = true;
@@ -276,15 +226,15 @@ export default {
       this.isMouseMovingTimeout = setTimeout(() => {
         this.isMouseStopped = true;
       }, 3000);
-    },
+    }
   },
   mounted() {
     if (!this.isRowFirst) {
       this.isAllowPlaying = false;
     } else {
-      window.addEventListener('scroll', this.checkIfBoxInViewPort);
+      window.addEventListener("scroll", this.checkIfBoxInViewPort);
     }
     this.displayChannels = this.settings.channels.filter(this.showChannel);
-  },
+  }
 };
 </script>

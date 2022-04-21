@@ -12,8 +12,8 @@
         duration-700
         backdrop-filter backdrop-blur-xs
         shadow-smooth
-        px-3
-        -mx-3
+        px-7
+        -mx-7
       "
       :class="[
         decreaseInfoBoxSize

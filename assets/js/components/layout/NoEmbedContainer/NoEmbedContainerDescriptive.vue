@@ -11,8 +11,8 @@
         transition-all
         duration-300
         backdrop-filter backdrop-blur
-        px-3
-        -mx-3
+        px-7
+        -mx-7
         max-w-1/2
         md:max-w-1/3
         md:min-w-240

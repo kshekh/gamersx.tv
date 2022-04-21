@@ -1,8 +1,19 @@
 <template>
-  <!-- remowe "text-white" later -->
+  <!-- remove "text-white" later -->
   <div class="text-white py-4 md:py-7">
-    <div v-for="(row, index) in settings.rows" :key="row.id">
-      <component :is="row.componentName" :settings="row" :rowPosition="index"></component>
+    <template v-if="settings.rows.length">
+      <div v-for="(row, index) in settings.rows" :key="row.id">
+        <component
+          :is="row.componentName"
+          :settings="row"
+          :rowPosition="index"
+        ></component>
+      </div>
+    </template>
+    <div v-else>
+      <div v-for="(skeletonName, index) of skeletonsArray" :key="index">
+        <component :is="skeletonName"></component>
+      </div>
     </div>
   </div>
 </template>
@@ -17,6 +28,15 @@ import FullWidthImagery from "./front/FullWidthImagery.vue";
 import Parallax from "./front/Parallax.vue";
 import NumberedRow from "./front/NumberedRow.vue";
 
+import ClassicSmSkeleton from "./skeletons/ClassicSmSkeleton.vue";
+import ClassicMdSkeleton from "./skeletons/ClassicMdSkeleton.vue";
+import ClassicLgSkeleton from "./skeletons/ClassicLgSkeleton.vue";
+import ClassicVerticalSkeleton from "./skeletons/ClassicVerticalSkeleton.vue";
+import NumberedRowSkeleton from "./skeletons/NumberedRowSkeleton.vue";
+import ParallaxSkeleton from "./skeletons/ParallaxSkeleton.vue";
+import FullWidthDescriptiveSkeleton from "./skeletons/FullWidthDescriptiveSkeleton.vue";
+import FullWidthImagerySkeleton from "./skeletons/FullWidthImagerySkeleton.vue";
+
 export default {
   components: {
     ClassicSm: ClassicSm,
@@ -26,16 +46,35 @@ export default {
     FullWidthDescriptive: FullWidthDescriptive,
     FullWidthImagery: FullWidthImagery,
     Parallax: Parallax,
-    NumberedRow: NumberedRow
+    NumberedRow: NumberedRow,
+    // Skeletons
+    ClassicSmSkeleton: ClassicSmSkeleton,
+    ClassicMdSkeleton: ClassicMdSkeleton,
+    ClassicLgSkeleton: ClassicLgSkeleton,
+    ClassicVerticalSkeleton: ClassicVerticalSkeleton,
+    NumberedRowSkeleton: NumberedRowSkeleton,
+    ParallaxSkeleton: ParallaxSkeleton,
+    FullWidthDescriptiveSkeleton: FullWidthDescriptiveSkeleton,
+    FullWidthImagerySkeleton: FullWidthImagerySkeleton,
   },
   data: function() {
     return {
       settings: {
         rows: []
       },
+      skeletonsArray: [
+        "ClassicSmSkeleton",
+        "ClassicMdSkeleton",
+        "ClassicLgSkeleton",
+        "ClassicVerticalSkeleton",
+        "NumberedRowSkeleton",
+        "ParallaxSkeleton",
+        "FullWidthDescriptiveSkeleton",
+        "FullWidthImagerySkeleton",
+      ],
       pollingApiData: null,
       requestPollingDelay: 90000
-    }
+    };
   },
   methods: {
     requestHomeApi: function() {
@@ -45,14 +84,14 @@ export default {
     }
   },
   mounted: function() {
-    this.requestHomeApi()
+    this.requestHomeApi();
 
     this.pollingApiData = setInterval(() => {
-      this.requestHomeApi()
-    }, this.requestPollingDelay)
+      this.requestHomeApi();
+    }, this.requestPollingDelay);
   },
   beforeDestroy: function() {
-    clearInterval(this.pollingApiData)
+    clearInterval(this.pollingApiData);
   }
 };
 
