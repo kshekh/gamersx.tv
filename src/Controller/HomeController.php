@@ -3,14 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\HomeRow;
+use App\Entity\SiteSettings;
 use App\Containerizer\ContainerizerFactory;
 use App\Service\HomeRowInfo;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\HttpFoundation\{ Response, RedirectResponse };
 
 class HomeController extends AbstractController
 {
@@ -26,7 +27,15 @@ class HomeController extends AbstractController
      */
     public function index(): Response
     {
-        return $this->render('home/index.html.twig');
+        $row = $this->getDoctrine()->getRepository(SiteSettings::class)->findOneBy([]);
+
+        if ($this->isGranted('ROLE_LOGIN_ALLOWED') || (isset($row) && (!$row->getDisableHomeAccess() || $row->getDisableHomeAccess() == false))) {
+            return $this->render('home/index.html.twig');
+        }
+
+        return new RedirectResponse(
+            $this->generateUrl('sonata_user_admin_security_login')
+        );
     }
 
     /**
@@ -59,6 +68,7 @@ class HomeController extends AbstractController
                     $thisRow['title'] = $row->getTitle();
                     $thisRow['sortIndex'] = $row->getSortIndex();
                     $thisRow['componentName'] = $row->getLayout();
+                    $thisRow['onGamersXtv'] = $row->getonGamersXtv();
 
                     $containers = Array();
 
@@ -76,7 +86,7 @@ class HomeController extends AbstractController
             }
             if (isset($rowChannels)) {
               return $rowChannels;
-            } 
+            }
         }, $beta);
         return $this->json([
             'settings' => [
