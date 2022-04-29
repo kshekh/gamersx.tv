@@ -168,9 +168,18 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('isPublished')
             ->add('isGlowStyling', ChoiceType::class, [
                 'choices' => [
-                    'Enabled' => 'Enabled',
-                    'Disabled' => 'Disabled',
-                    'Enabled if Live' => 'Enabled if Live'
+                    'Enabled If Live' => 'enabled_if_live',
+                    'Always On' => 'always_on',
+                    'Always Off' => 'always_off',
+                    'Enabled If Offline' => 'enabled_if_offline'
+                ]
+            ])
+            ->add('isCornerCut', ChoiceType::class, [
+                'choices' => [
+                    'Enabled If Live' => 'enabled_if_live',
+                    'Always On' => 'always_on',
+                    'Always Off' => 'always_off',
+                    'Enabled If Offline' => 'enabled_if_offline'
                 ]
             ])
             ->add('isPublished', null, [
