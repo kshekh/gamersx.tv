@@ -69,7 +69,7 @@ class HomeRow implements PartneredInterface
     private $isGlowStyling;
 
      /**
-      * @ORM\Column(type="string", length=50)
+      * @ORM\Column(type="string", length=50, options={"default" : 0})
       */
     private $isCornerCut;
 
