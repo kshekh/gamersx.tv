@@ -235,12 +235,15 @@ export default {
     "embedName",
     "embedData",
     "liveViewerCount",
-    "isGlowStyling"
+    "isGlowStyling",
+    "isCornerCut",
   ],
   data: function() {
     return {
       glowStyling: {
-        glow: '',
+        glow: ''
+      },
+      cornerCutStyling: {
         outline: ''
       }
     }
@@ -248,7 +251,7 @@ export default {
   computed: {
     getOutline: function () {
       this.computeGlowStyling();
-      return this.glowStyling.outline;
+      return this.cornerCutStyling.outline;
     },
     getGlow: function () {
       this.computeGlowStyling();
@@ -257,14 +260,21 @@ export default {
   },
   methods: {
     computeGlowStyling: function () {
-      if (this.isGlowStyling === "Enabled" || this.isGlowStyling === "Enabled if Live") {
+      if (this.isGlowStyling === "always_on" || (this.isGlowStyling === "enabled_if_live" && this.showOnline) || (this.isGlowStyling === "enabled_if_offline" && !this.showOnline)) {
         if (this.embedName === 'TwitchEmbed') {
-          this.glowStyling.outline = 'cut-edge__clipped--twitch';
           this.glowStyling.glow = 'cut-edge__wrapper--twitch';
         }
         else if (this.embedName === 'YouTubeEmbed') {
-          this.glowStyling.outline = 'cut-edge__clipped--youtube';
           this.glowStyling.glow = 'cut-edge__wrapper--youtube';
+        }
+      }
+
+      if (this.isCornerCut === "always_on" || (this.isCornerCut === "enabled_if_live" && this.showOnline) || (this.isCornerCut === "enabled_if_offline" && !this.showOnline)) {
+        if (this.embedName === 'TwitchEmbed') {
+          this.cornerCutStyling.outline = 'cut-edge__clipped--twitch';
+        }
+        else if (this.embedName === 'YouTubeEmbed') {
+          this.cornerCutStyling.outline = 'cut-edge__clipped--youtube';
         }
       }
     }

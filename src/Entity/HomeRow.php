@@ -64,9 +64,14 @@ class HomeRow implements PartneredInterface
     private $isPublished;
 
     /**
-     * @ORM\Column(type="string", length=20)
+     * @ORM\Column(type="string", length=50)
      */
     private $isGlowStyling;
+
+     /**
+      * @ORM\Column(type="string", length=50)
+      */
+    private $isCornerCut;
 
    /**
     * @ORM\Column(name="isPublishedStart", type="integer", nullable=true)
@@ -222,6 +227,18 @@ class HomeRow implements PartneredInterface
     public function setIsGlowStyling(string $isGlowStyling): self
     {
         $this->isGlowStyling = $isGlowStyling;
+
+        return $this;
+    }
+
+    public function getIsCornerCut(): ?string
+    {
+        return $this->isCornerCut;
+    }
+
+    public function setIsCornerCut(string $isCornerCut): self
+    {
+        $this->isCornerCut = $isCornerCut;
 
         return $this;
     }
