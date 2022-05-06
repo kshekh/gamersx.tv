@@ -67,6 +67,8 @@ final class HomeRowItemAdmin extends AbstractAdmin
         $datagridMapper
             ->add('label')
             ->add('itemType')
+            ->add('videoId')
+            ->add('playlistId')
             ->add('partner')
             ->add('homeRow')
             ->add('isPublished')
@@ -83,6 +85,12 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'sortable' => false,
             ])
             ->add('itemType', null, [
+                'sortable' => false
+            ])
+            ->add('videoId', null, [
+                'sortable' => false
+            ])
+            ->add('playlistId', null, [
                 'sortable' => false
             ])
             ->add('topic', null, [
@@ -170,11 +178,30 @@ final class HomeRowItemAdmin extends AbstractAdmin
                     'YouTube - Channel' => HomeRowItem::TYPE_CHANNEL,
                     'YouTube - Query' => HomeRowItem::TYPE_YOUTUBE,
                     'No Embed - Link Only' => HomeRowItem::TYPE_LINK,
+                    'Twitch - Video' => HomeRowItem::TYPE_TWITCH_VIDEO,
+                    'Twitch - Playlist' => HomeRowItem::TYPE_TWITCH_PLAYLIST,
+                    'YouTube - Video' => HomeRowItem::TYPE_YOUTUBE_VIDEO,
+                    'YouTube - Playlist' => HomeRowItem::TYPE_YOUTUBE_PLAYLIST,
                 ],
                 'attr' => [
                     'data-topic-select' => 'itemType',
+                    'class' => 'container-item-type'
                 ],
                 'required' => true
+            ])
+            ->add('videoId', null, [
+                'required' => false,
+                'label' => 'Video ID',
+                'attr' => [
+                    'class' => 'video-id'
+                ]
+            ])
+            ->add('playlistId', null, [
+                'required' => false,
+                'label' => 'Playlist ID',
+                'attr' => [
+                    'class' => 'playlist-id'
+                ]
             ])
             ->add('topic', TopicType::class, [
                 'required' => false,
@@ -236,6 +263,8 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('topic')
             ->add('label')
             ->add('itemType')
+            ->add('videoId')
+            ->add('playlistId')
             ->add('sortIndex')
             ->add('showArt')
             ->add('customArt')
