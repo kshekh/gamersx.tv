@@ -19,6 +19,7 @@ security:
                 use_forward:    false
                 check_path:     /admin/login_check
                 failure_path:   null
+            access_denied_url:  /access-denied
             logout:
                 path:           /admin/logout
                 target:         /admin/login
@@ -37,6 +38,7 @@ security:
                 use_forward:    false
                 check_path:     /admin/login_check
                 failure_path:   null
+            access_denied_url:  /access-denied
             logout:             true
             anonymous:          true
 
