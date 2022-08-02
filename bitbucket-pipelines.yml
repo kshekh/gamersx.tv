@@ -5,6 +5,7 @@ definitions:
   steps:
     - step: &webpack
         name: Webpack Build
+        # Used by both deployment strategies to build frontend assets.
         image: node:12.22
         services:
           - docker
@@ -18,11 +19,12 @@ definitions:
           - public/build/**
 
     - step: &zip
+        name: Zip Repo
+        # Used by CodeDeploy strategy to compress the codebase for S3 upload
         services:
           - docker
         caches:
           - docker
-        name: Zip Repo
         script:
           - zip -r gamersx.zip *
         artifacts:
@@ -30,6 +32,7 @@ definitions:
 
     - step: &upload
         name: Upload to S3
+        # Used by CodeDeploy strategy to upload the compressed artifact to S3
         services:
           - docker
         caches:
@@ -46,6 +49,7 @@ definitions:
 
     - step: &codedeploy
         name: Deploy via CodeDeploy
+        # Used by the CodeDeploy Strategy to start a deployment
         deployment: null
         services:
         - docker
@@ -64,6 +68,7 @@ definitions:
 
     - step: &composer
         name: Composer Dependencies
+        # Used by the ECS strategy to build PHP dependencies for the docker image.
         image: php:7.4-cli
         services:
           - docker
@@ -80,6 +85,7 @@ definitions:
 
     - step: &setenvdev
         name: Setting the Deployment for Development
+        # Used by the ECS strategy to allow for abstraction and reuse for multiple environments
         script:
           - echo "gamersx-dev-dev" > ecr-repo
           - echo "us-west-1" > aws-region
@@ -89,6 +95,7 @@ definitions:
 
     - step: &setenvpr
         name: Setting the Environment for Pull Requests
+        # Used by the ECS strategy to allow for abstraction and reuse for multiple environments
         script:
           - echo "gamersx-dev-pr" > ecr-repo
           - echo "us-west-1" > aws-region
@@ -100,6 +107,7 @@ definitions:
     # we also need to replace the account id with a bitbucket variable and pass the region and environment dynamcially 
     - step: &container-dev
         name: Container Image Build and Push
+        # Used by the ECS strategy to build the docker images, push them to ECR and trigger the refresh
         image: docker:latest
         services:
           - docker
@@ -126,6 +134,7 @@ definitions:
 
     - step: &launch-environment
         name: Launch Temporary QA Environment
+        # Used by the ECS strategy to automate the launch of temporary environments for QA
         image: ubuntu:latest
         services:
           - docker
@@ -167,6 +176,7 @@ definitions:
 
     - step: &destroy-environment
         name: Destroy Temporary QA Environment
+        # Used by the ECS strategy to automate the destruction of temporary environments
         image: ubuntu:latest
         services:
           - docker
@@ -208,12 +218,15 @@ pipelines:
           deployment: dev
 
   tags:
+    # This is the new ECS strategy for deployments. Eventually, the CodeDeploy strategy will be deprecated
+    # as we move toward containerized environments. 
     dev-*:
       - step: *webpack
       - step: *composer
       - step: *setenvdev
       - step: *container-dev
 
+    # We currently use a CodeDeploy-based strategy for deploying to production and demo environments
     'release-v*':
       - step: *webpack
       - step: *zip
@@ -228,11 +241,14 @@ pipelines:
             name: Deploy to Production
             deployment: production
   
+  # This pipeline triggers the automation of temporary QA environments whenever someone opens a pull request
+  # to merge into staging branch
   pull-requests:
     Staging:
       - step: *setenvpr
       - step: *launch-environment
 
+# This custom pipeline is used by the BitBucket API interface to control the destruction of temp envs
   custom:
     detroy: 
       - step: *setenvpr
