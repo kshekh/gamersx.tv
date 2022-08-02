@@ -62,6 +62,140 @@ definitions:
             FILE_EXISTS_BEHAVIOR: 'OVERWRITE'
             WAIT: 'false'
 
+    - step: &composer
+        name: Composer Dependencies
+        image: php:7.4-cli
+        services:
+          - docker
+        caches:
+          - docker
+          - composer
+        script:
+          - apt-get update && apt-get install -y libzip-dev
+          - docker-php-ext-install zip
+          - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+          - composer install --ignore-platform-reqs --no-interaction --no-plugins --no-scripts --prefer-dist
+        artifacts:
+          - vendor
+
+    - step: &setenvdev
+        name: Setting the Deployment for Development
+        script:
+          - echo "gamersx-dev-dev" > ecr-repo
+          - echo "us-west-1" > aws-region
+        artifacts:
+          - ecr-repo
+          - aws-region
+
+    - step: &setenvpr
+        name: Setting the Environment for Pull Requests
+        script:
+          - echo "gamersx-dev-pr" > ecr-repo
+          - echo "us-west-1" > aws-region
+        artifacts:
+          - ecr-repo
+          - aws-region
+
+    # this step needs to pull the app name from a varible so that it's reusable
+    # we also need to replace the account id with a bitbucket variable and pass the region and environment dynamcially 
+    - step: &container-dev
+        name: Container Image Build and Push
+        image: docker:latest
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - apk add --no-cache curl jq python3 py3-pip
+          - pip install awscli
+          - export AWS_REGION=$(cat ./aws-region)
+          - export AWS_IMAGE_REPO=$(cat ./ecr-repo)
+          - aws --region ${AWS_REGION} ecr get-login-password | docker login --username AWS --password-stdin 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}
+          - aws --version
+          - docker info
+          - docker --version
+          - echo "Building the container image."
+          - docker build --target app --build-arg UID=1000 -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php . -f docker/Dockerfile 
+          - docker build --target web --build-arg UID=1000 --build-arg UPSTREAM=fargate -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx . -f docker/Dockerfile 
+          - echo "Pushing the container image to ECR."
+          - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php
+          - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx
+          - echo "Updating the service in ECS..."
+          - aws ecs update-service --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-app --force-new-deployment
+          - aws ecs wait services-stable --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --services ${AWS_IMAGE_REPO}-app
+
+    - step: &launch-environment
+        name: Launch Temporary QA Environment
+        image: ubuntu:latest
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - apt-get update -y
+          - apt-get install -y zip unzip curl less git
+          - echo "Installing AWS CLI"
+          - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          - unzip awscliv2.zip
+          - ./aws/install
+          - export AWS_REGION=$(cat ./aws-region)
+          - export AWS_IMAGE_REPO=$(cat ./ecr-repo)
+          # - cd public && mv index.php index.php.bak && cd ..
+          # - echo "This is a temporary QA environment for pull request \# ${BITBUCKET_PR_ID}" > public/index.php
+          - echo "Building the container image."
+          - aws --region ${AWS_REGION} ecr get-login-password | docker login --username AWS --password-stdin 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}
+          - docker build --target app --build-arg UID=1000 -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:pr-${BITBUCKET_PR_ID}-php . -f docker/Dockerfile 
+          - docker build --target web --build-arg UID=1000 --build-arg UPSTREAM=fargate -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:pr-${BITBUCKET_PR_ID}-nginx . -f docker/Dockerfile 
+          - echo "Pushing the container image to ECR."
+          - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:pr-${BITBUCKET_PR_ID}-php
+          - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:pr-${BITBUCKET_PR_ID}-nginx
+          - echo "Installing Terraform and Terragrunt"
+          - apt-get update && apt-get install -y gnupg software-properties-common curl
+          - curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+          - apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+          - apt-get update && apt-get install terraform
+          - curl -L -O https://github.com/gruntwork-io/terragrunt/releases/download/v0.38.0/terragrunt_linux_amd64 
+          - mv terragrunt_linux_amd64 /usr/local/bin
+          - mv /usr/local/bin/terragrunt_linux_amd64 /usr/local/bin/terragrunt
+          - chmod u+x /usr/local/bin/terragrunt
+          - echo "Cloning Terragrunt Codebase"
+          - git clone git@bitbucket.org:TheResearchCorp/gamersx-iac.git iac
+          - cp iac/regions/${AWS_REGION}/env.tfvars.sample iac/regions/${AWS_REGION}/dev.tfvars
+          - chmod +x pipeline/terraform.sh
+          - ./pipeline/terraform.sh dev ${AWS_REGION} ${BITBUCKET_PR_ID} apply
+          - aws ecs wait services-stable --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO}-${BITBUCKET_PR_ID} --services ${AWS_IMAGE_REPO}-${BITBUCKET_PR_ID}-app
+
+    - step: &destroy-environment
+        name: Destroy Temporary QA Environment
+        image: ubuntu:latest
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - apt-get update -y
+          - apt-get install -y zip unzip curl less git
+          - echo "Installing AWS CLI"
+          - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          - unzip awscliv2.zip
+          - ./aws/install
+          - export AWS_REGION=$(cat ./aws-region)
+          - export AWS_IMAGE_REPO=$(cat ./ecr-repo)
+          - echo "Installing Terraform and Terragrunt"
+          - apt-get update && apt-get install -y gnupg software-properties-common curl
+          - curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+          - apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+          - apt-get update && apt-get install terraform
+          - curl -L -O https://github.com/gruntwork-io/terragrunt/releases/download/v0.38.0/terragrunt_linux_amd64 
+          - mv terragrunt_linux_amd64 /usr/local/bin
+          - mv /usr/local/bin/terragrunt_linux_amd64 /usr/local/bin/terragrunt
+          - chmod u+x /usr/local/bin/terragrunt
+          - echo "Cloning Terragrunt Codebase"
+          - git clone git@bitbucket.org:TheResearchCorp/gamersx-iac.git iac
+          - cp iac/regions/${AWS_REGION}/env.tfvars.sample iac/regions/${AWS_REGION}/dev.tfvars
+          - chmod +x pipeline/terraform.sh
+          - ./pipeline/terraform.sh dev ${AWS_REGION} ${BITBUCKET_PR_ID} destroy
+
 pipelines:
   branches:
     main:
@@ -74,6 +208,12 @@ pipelines:
           deployment: dev
 
   tags:
+    dev-*:
+      - step: *webpack
+      - step: *composer
+      - step: *setenvdev
+      - step: *container-dev
+
     'release-v*':
       - step: *webpack
       - step: *zip
@@ -87,3 +227,13 @@ pipelines:
             <<: *codedeploy
             name: Deploy to Production
             deployment: production
+  
+  pull-requests:
+    Staging:
+      - step: *setenvpr
+      - step: *launch-environment
+
+  custom:
+    detroy: 
+      - step: *setenvpr
+      - step: *destroy-environment
