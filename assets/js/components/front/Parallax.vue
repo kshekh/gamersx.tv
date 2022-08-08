@@ -26,26 +26,35 @@
         {{ settings.title }}
         <title-addinional-description v-show="settings.onGamersXtv" />
       </h2>
-      <div class="flex items-center space-x-5">
+<!--      <div class="flex items-center space-x-5">-->
+<!--        <slider-arrow-->
+<!--          :isNext="false"-->
+<!--          :videoType="'twitch'"-->
+<!--          @arrow-clicked="back()"-->
+<!--        />-->
+<!--        <slider-arrow-->
+<!--          :isNext="true"-->
+<!--          :videoType="'twitch'"-->
+<!--          @arrow-clicked="forward()"-->
+<!--        />-->
+<!--      </div>-->
+    </div>
+
+    <div class="flex" style="align-items: center;">
+      <div class="w5-center " :class="{ sliderArrowHide:!rowIndex }">
         <slider-arrow
           :isNext="false"
           :videoType="'twitch'"
           @arrow-clicked="back()"
         />
-        <slider-arrow
-          :isNext="true"
-          :videoType="'twitch'"
-          @arrow-clicked="forward()"
-        />
       </div>
-    </div>
-    <div
-      ref="channelBox"
-      class="flex overflow-hidden pt-18 md:pt-12 xl:pt-18 pb-18 md:pb-14 xl:pb-20"
-    >
       <div
-        :style="customBg(channel)"
-        class="
+        ref="channelBox"
+        class="flex overflow-hidden pt-18 md:pt-12 xl:pt-18 pb-18 md:pb-14 xl:pb-20 w90-pleft-0"
+      >
+        <div
+          :style="customBg(channel)"
+          class="
           flex-shrink-0
           bg-cover bg-no-repeat bg-center
           xl:max-w-485
@@ -53,11 +62,19 @@
           h-41 md:h-22 xl:h-41
           bg-black
         "
-        ref="channelDivs"
-        v-for="(channel, index) in displayChannels"
-        :key="index"
-      >
-        <component :is="channel.componentName" v-bind="channel"></component>
+          ref="channelDivs"
+          v-for="(channel, index) in displayChannels"
+          :key="index"
+        >
+          <component :is="channel.componentName" v-bind="channel"></component>
+        </div>
+      </div>
+      <div class="w5-center" :class="{ sliderArrowHide:!(this.displayChannels.length > 1) }">
+        <slider-arrow
+          :isNext="true"
+          :videoType="'twitch'"
+          @arrow-clicked="forward()"
+        />
       </div>
     </div>
   </div>
