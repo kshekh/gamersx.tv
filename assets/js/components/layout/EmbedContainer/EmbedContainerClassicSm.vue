@@ -33,6 +33,11 @@
             :src="overlay"
             class="relative top-1/2 transform -translate-y-1/2 w-full"
           />
+          <img
+            v-if="showEmbed && embedData"
+            src="/images/live-icon.gif"
+            class="" style="position: absolute;top: 0px;width: 75px;right: 0;"
+          />
           <!-- <div class="w-full h-full flex flex-col" v-show="isEmbedVisible">
             <component
               ref="embed"
