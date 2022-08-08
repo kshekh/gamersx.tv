@@ -24,23 +24,23 @@
         "
       >
         {{ settings.title }}
-        <title-addinional-description v-show="settings.onGamersXtv" />
+        <title-addinional-description v-show="settings.onGamersXtv"/>
       </h2>
-<!--      <div class="flex items-center space-x-5">-->
-<!--        <slider-arrow-->
-<!--          :isNext="false"-->
-<!--          :videoType="'twitch'"-->
-<!--          @arrow-clicked="back()"-->
-<!--        />-->
-<!--        <slider-arrow-->
-<!--          :isNext="true"-->
-<!--          :videoType="'twitch'"-->
-<!--          @arrow-clicked="forward()"-->
-<!--        />-->
-<!--      </div>-->
+      <!--      <div class="flex items-center space-x-5">-->
+      <!--        <slider-arrow-->
+      <!--          :isNext="false"-->
+      <!--          :videoType="'twitch'"-->
+      <!--          @arrow-clicked="back()"-->
+      <!--        />-->
+      <!--        <slider-arrow-->
+      <!--          :isNext="true"-->
+      <!--          :videoType="'twitch'"-->
+      <!--          @arrow-clicked="forward()"-->
+      <!--        />-->
+      <!--      </div>-->
     </div>
     <div class="flex" style="align-items: center;">
-      <div class="w5-center " :class="{ sliderArrowHide:!rowIndex }">
+      <div :class="{ sliderArrowHide:!rowIndex }" class="w5-center ">
         <slider-arrow
           :isNext="false"
           :videoType="'twitch'"
@@ -63,9 +63,9 @@
       "
       >
         <div
-          ref="channelDivs"
           v-for="(channel, index) in displayChannels"
           :key="index"
+          ref="channelDivs"
           class="
           flex
           items-center
@@ -84,7 +84,7 @@
           <component :is="channel.componentName" v-bind="channel"></component>
         </div>
       </div>
-      <div class="w5-center" :class="{ sliderArrowHide:!(this.displayChannels.length > 1) }" :class="{ sliderArrowHide:!(this.displayChannels.length > 1) }">
+      <div :class="{ sliderArrowHide:!(this.displayChannels.length > 1) }" class="w5-center">
         <slider-arrow
           :isNext="true"
           :videoType="'twitch'"
