@@ -71,6 +71,27 @@ demo and prod environments, tag a release with a version number, e.g.
 If you don't want to deploy to dev automatically, include [skip ci] in your
 commit's message.
 
+### Automated Temporary Environment Pipeline
+When pull requests with the Staging branch are created, the pipeline creates a temporary environment based off of the merging branch for QA. Once that pull request is merged or declined, the temporary environment is destroyed.
+
+#### Pull Request Open
+- This action is configured in the bitbucket-pipelines.yml. it's built in to the bitbucket pipelines configuration. 
+- The pipeline installs Terraform and downloads the code that describes our development resources in AWS. 
+- The pipeline then uses Terraform to launch a temporary QA environment in the cloud. It uses the pull request id number as a naming convention. For example, if your pull request is number 59, an environment built from your merging branch will be automatically launched to a subdomian at `pr-59.gamersx.tv`
+
+#### Pull Request Close
+- Pull request close actions cannot be configured to directly trigger a pipeline, but we can use BitBucket Manage Webhooks to get around this.
+- BitBucket Manage Webhook actions are configured to send a payload to a webhook we manage in Zapier. This payload includes the pull request id
+- Zapier then authenticates with BitBucket API to get a temporary token.
+- Once the Zapier zap has a token it uses the pipelines endpoint in the BitBucket API to trigger a custom pipeline to destroy the temporary environment
+- The destroy pipeline is a custom pipeline that is configured along with the create pipeline. It just needs to be triggered manually because BitBucket Pipelines do not support pull request close actions. But we can trigger one manually with BitBucket API
+- Once the custom destroy pipeline is triggered with the `BITBUCKET_PR_ID` variable manually set from the API request, it uses the same Terraform code to destroy the environment.
+
+ToDo: 
+1. Find a way to stop the destroy pipeline from running until the create pipeline is complete. Since it takes around 5 minutes for the pipeline to finish, if someone were to create and merge a pull request in a hurry it could cause weird, undesirable effects when Terraform tries to destroy infrastructure while it's being created. 
+2. This Zapier webhook is not secured. Anyone who knows the id of a pull request could use Postman to trigger an unwanted environment destruction. It doesn't leak the token and it doesn't create anything. And it doesn't destroy anything other than exisiting development environments. It's just worth noting that if we decide to use this to do more sophisticated and complex things, we want to pay close attention to security.
+
+
 ## Settings
 
 You can reach the settings admin via the /admin/ route. You must have a logon to
