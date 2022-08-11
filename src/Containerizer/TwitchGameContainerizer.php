@@ -38,7 +38,13 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
         }
 
         // Get the info for the game, use that for every game
-        $info = $infos->toArray()['data'][0];
+        $info = $infos->toArray()['data'];
+
+        if (!isset($info) || empty($info)) {
+            return Array();
+        }
+
+        $info = $info[0];
 
         // Get every broadcast
         $broadcasts = $broadcasts->toArray()['data'];
@@ -47,99 +53,104 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
         $description = $homeRowItem->getDescription();
         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
 
-        $isPublishedStartStartTime = $homeRowItem->getIsPublishedStart();
-        $isPublishedStartEndTime = $homeRowItem->getIsPublishedEnd();
+        $isPublished = $homeRowItem->getIsPublished();
 
-        if (
-            !empty($isPublishedStartStartTime) && !empty($isPublishedStartEndTime) &&
-            ($currentTime <= $isPublishedStartStartTime || $currentTime >= $isPublishedStartEndTime)
-        ) {
+        if (!$isPublished) {
             return Array();
         }
 
-        switch ($homeRowItem->getLinkType()) {
-        case HomeRowItem::LINK_TYPE_GAMERSX:
-            $link = '/game/'.$info['id'];
-            break;
-        case HomeRowItem::LINK_TYPE_EXTERNAL:
-            $link = 'https://www.twitch.tv/directory/game/'.$info['name'];
-            break;
-        case HomeRowItem::LINK_TYPE_CUSTOM:
-            $link = $homeRowItem->getCustomLink();
-            break;
-        default:
-            $link = '#';
+        $isPublishedStartTime = $homeRowItem->getIsPublishedStart();
+        $isPublishedEndTime = $homeRowItem->getIsPublishedEnd();
+
+        if (
+            !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
+            (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
+        ) {
+            switch ($homeRowItem->getLinkType()) {
+            case HomeRowItem::LINK_TYPE_GAMERSX:
+                $link = '/game/'.$info['id'];
+                break;
+            case HomeRowItem::LINK_TYPE_EXTERNAL:
+                $link = 'https://www.twitch.tv/directory/game/'.$info['name'];
+                break;
+            case HomeRowItem::LINK_TYPE_CUSTOM:
+                $link = $homeRowItem->getCustomLink();
+                break;
+            default:
+                $link = '#';
+            }
+
+            $channels = Array();
+            foreach ($broadcasts as $i => $broadcast) {
+                $title = sprintf("%s playing %s for %d viewers",
+                    $broadcast['user_name'], $broadcast['game_name'], $broadcast['viewer_count']);
+
+                $channels[] = [
+                    'info' => $info,
+                    'broadcast' => $broadcast,
+                    'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
+                    'viewedCount' => isset($info['view_count']) ? $info['view_count'] : 0,
+                    'showOnline' => TRUE,
+                    'onlineDisplay' => [
+                        'title' => $title,
+                        'showArt' => FALSE,
+                        'showEmbed' => TRUE,
+                        'showOverlay' => TRUE,
+                    ],
+                    'offlineDisplay' => [
+                        'title' => $info['name'],
+                        'showArt' => FALSE,
+                        'showEmbed' => FALSE,
+                        'showOverlay' => FALSE,
+                    ],
+                    'itemType' => $homeRowItem->getItemType(),
+                    'rowName' => $rowName,
+                    'sortIndex' => $i,
+                    'image' => NULL,
+                    'overlay' => $this->uploader->asset($this->homeRowItem, 'overlayArtFile'),
+                    'customArt' => $this->uploader->asset($this->homeRowItem, 'customArtFile'),
+                    'link' => $link,
+                    'componentName' => 'EmbedContainer',
+                    'embedName' => 'TwitchEmbed',
+                    'embedData' => [
+                        'channel' => $broadcast['user_login'],
+                        'elementId' => uniqid('embed-'),
+                    ],
+                    'description' => $description
+                ];
+            }
+
+            $this->items = $channels;
+            $this->options = $homeRowItem->getSortAndTrimOptions();
+
+            $this->sort();
+
+            // If showArt is checked, add the art to the very first item
+            if ($homeRowItem->getShowArt() === TRUE) {
+                // Get the sized art link
+                $imageWidth = 225;
+                $imageHeight = 300;
+                $imageUrl = $info['box_art_url'];
+                $imageUrl = str_replace('{height}', $imageHeight, $imageUrl);
+                $imageUrl = str_replace('{width}', $imageWidth, $imageUrl);
+
+                $image = [
+                    'url' => $imageUrl,
+                    'class' => 'box-art',
+                    'width' => $imageWidth,
+                    'height' => $imageHeight,
+                ];
+
+                $this->items[0]['image'] = $image;
+                $this->items[0]['onlineDisplay']['showArt'] = TRUE;
+                $this->items[0]['offlineDisplay']['showArt'] = TRUE;
+            }
+
+            $this->trim();
+
+            return $this->items;
         }
 
-        $channels = Array();
-        foreach ($broadcasts as $i => $broadcast) {
-            $title = sprintf("%s playing %s for %d viewers",
-                $broadcast['user_name'], $broadcast['game_name'], $broadcast['viewer_count']);
-
-            $channels[] = [
-                'info' => $info,
-                'broadcast' => $broadcast,
-                'liveViewerCount' => $broadcast['viewer_count'],
-                'viewedCount' => 0,
-                'showOnline' => TRUE,
-                'onlineDisplay' => [
-                    'title' => $title,
-                    'showArt' => FALSE,
-                    'showEmbed' => TRUE,
-                    'showOverlay' => TRUE,
-                ],
-                'offlineDisplay' => [
-                    'title' => $info['name'],
-                    'showArt' => FALSE,
-                    'showEmbed' => FALSE,
-                    'showOverlay' => FALSE,
-                ],
-                'itemType' => $homeRowItem->getItemType(),
-                'rowName' => $rowName,
-                'sortIndex' => $i,
-                'image' => NULL,
-                'overlay' => $this->uploader->asset($this->homeRowItem, 'overlayArtFile'),
-                'customArt' => $this->uploader->asset($this->homeRowItem, 'customArtFile'),
-                'link' => $link,
-                'componentName' => 'EmbedContainer',
-                'embedName' => 'TwitchEmbed',
-                'embedData' => [
-                    'channel' => $broadcast['user_login'],
-                    'elementId' => uniqid('embed-'),
-                ],
-                'description' => $description
-            ];
-        }
-
-        $this->items = $channels;
-        $this->options = $homeRowItem->getSortAndTrimOptions();
-
-        $this->sort();
-
-        // If showArt is checked, add the art to the very first item
-        if ($homeRowItem->getShowArt() === TRUE) {
-            // Get the sized art link
-            $imageWidth = 225;
-            $imageHeight = 300;
-            $imageUrl = $info['box_art_url'];
-            $imageUrl = str_replace('{height}', $imageHeight, $imageUrl);
-            $imageUrl = str_replace('{width}', $imageWidth, $imageUrl);
-
-            $image = [
-                'url' => $imageUrl,
-                'class' => 'box-art',
-                'width' => $imageWidth,
-                'height' => $imageHeight,
-            ];
-
-            $this->items[0]['image'] = $image;
-            $this->items[0]['onlineDisplay']['showArt'] = TRUE;
-            $this->items[0]['offlineDisplay']['showArt'] = TRUE;
-        }
-
-        $this->trim();
-
-        return $this->items;
+        return Array();
     }
-
 }

@@ -78,7 +78,7 @@ div.channel-description {
 }
 
 .cut-edge__clipped--twitch {
-  border-color: #6441A5;
+  border-color: #6441A5!important;
 }
 
 .cut-edge__clipped--twitch::after {
@@ -86,7 +86,7 @@ div.channel-description {
 }
 
 .cut-edge__clipped--youtube {
-  border-color: #FF0000;
+  border-color: #FF0000!important;
 }
 
 .cut-edge__clipped--youtube::after {
@@ -94,6 +94,7 @@ div.channel-description {
 }
 
 .cut-edge__clipped-top-left-sm {
+  border-color: transparent;
   clip-path: polygon( 15px 0, /* top left */ 100% 0, /* right top */ 100% 100%, 0 100%, /* bottom left */ 0 15px);
 }
 

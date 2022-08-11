@@ -154,6 +154,11 @@ class HomeRowItem implements PartneredInterface
      */
     private $isPublishedEnd;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default" : 0})
+     */
+    private $isPartner;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -405,6 +410,18 @@ class HomeRowItem implements PartneredInterface
     {
         $isPublishedEndTime = 86400;
         $this->isPublishedEnd = !empty($isPublishedEnd) ? $isPublishedEnd : $isPublishedEndTime;
+
+        return $this;
+    }
+
+    public function getIsPartner(): ?bool
+    {
+        return $this->isPartner;
+    }
+
+    public function setIsPartner(bool $isPartner = false): self
+    {
+        $this->isPartner = $isPartner;
 
         return $this;
     }

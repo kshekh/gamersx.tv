@@ -85,7 +85,7 @@ class YouTubeApi
             'id' => $channelIds
         ];
 
-        return $this->service->channels->listChannels('snippet', $queryParams);
+        return $this->service->channels->listChannels('snippet,statistics', $queryParams);
     }
 
     public function searchLiveChannels($query, $first=25, $before=null, $after=null)
@@ -98,6 +98,21 @@ class YouTubeApi
             'videoCategoryId' => '20',
         ];
         return $this->getPaginatedQuery($queryParams, $first, $before, $after);
+    }
+
+    public function getChannelVideosStats($videoIds)
+    {
+        if (is_array($videoIds)) {
+            $videoIds = implode(',', $videoIds);
+        }
+
+        $part = 'statistics,liveStreamingDetails';
+
+        $queryParams = [
+            'id' => $videoIds,
+        ];
+
+        return $this->service->videos->listVideos($part, $queryParams);
     }
 
     public function searchPopularVideos($query, $first=25, $before=null, $after=null)
