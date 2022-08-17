@@ -22,7 +22,7 @@ $(document).ready(function(){
             }
             else if(title == 'youtube-video'){
                 $('.video-id').val('');
-                $('.video-id').attr('placeholder', 'https://www.googleapis.com/youtube/v3//videos?key=');
+                $('.video-id').attr('placeholder', 'https://www.googleapis.com/youtube/v3/videos?key=');
                 $('.video-id').parent().parent().removeClass('hide');
                 $('.playlist-id').parent().parent().addClass('hide');
             }
