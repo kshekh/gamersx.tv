@@ -176,6 +176,10 @@ WORKDIR /var/www/html
 # Copy the site files 
 COPY --from=backend --chown=ec2-user:nginx /app/. /var/www/html
 
+RUN docker-php-ext-configure zip
+RUN docker-php-ext-install zip
+RUN docker-php-ext-enable zip
+
 # Run the commands for the app container
 CMD ["/usr/local/bin/docker-php-entrypoint","php-fpm","-F"]
 
