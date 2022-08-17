@@ -38,6 +38,9 @@ services:
       - gamersx
     restart: unless-stopped
 
+volumes:
+  mysqldata: {}
+
 networks:
   gamersx:
     driver: bridge
