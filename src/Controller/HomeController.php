@@ -49,7 +49,7 @@ class HomeController extends AbstractController
                 
         return $this->json([
             'settings' => [
-                'rows' => $rowChannels
+                'rows' => $rowChannels->get()
             ]
         ]);
     }
