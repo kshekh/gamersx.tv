@@ -123,7 +123,7 @@ export default {
     window.addEventListener("resize", this.setEmbedSizes);
     this.setEmbedSizes();
   },
-  
+
   mounted() {
     this.$root.$on("close-other-layouts", this.hideVideo);
     this.resetEmbedStyles();

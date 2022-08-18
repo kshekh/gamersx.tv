@@ -37,104 +37,115 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
         $description = $homeRowItem->getDescription();
         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
 
-        $isPublishedStartStartTime = $homeRowItem->getIsPublishedStart();
-        $isPublishedStartEndTime = $homeRowItem->getIsPublishedEnd();
+        $isPublished = $homeRowItem->getIsPublished();
+
+        if (!$isPublished) {
+            return Array();
+        }
+
+        $isPublishedStartTime = $homeRowItem->getIsPublishedStart();
+        $isPublishedEndTime = $homeRowItem->getIsPublishedEnd();
 
         if (
-            !empty($isPublishedStartStartTime) && !empty($isPublishedStartEndTime) &&
-            ($currentTime <= $isPublishedStartStartTime || $currentTime >= $isPublishedStartEndTime)
+            !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
+            (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
         ) {
-            return Array();
-        }
-
-        // No need for a container if we're not displaying and not online
-        if (($homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_NONE) &&
-            $broadcast === NULL) {
-            return Array();
-        }
-
-        if ($broadcast === NULL) {
-            $title = $info->getSnippet()->getTitle();
-            if ($info->getSnippet()->getCustomURL() !== NULL) {
-                $link = 'https://www.youtube.com/c/'.$info->getSnippet()->getCustomURL();
-            } else {
-                $link = 'https://www.youtube.com/channel/'.$info->getId();
+            // No need for a container if we're not displaying and not online
+            if (($homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_NONE) &&
+                $broadcast === NULL) {
+                return Array();
             }
-        } else {
-            $title = sprintf("%s - \"%s\"",
-                $info->getSnippet()->getTitle(), $broadcast->getSnippet()->getTitle());
-            $link = 'https://www.youtube.com/v/'.$broadcast->getId()->getVideoId();
-        }
 
-        if ($homeRowItem->getLinkType() === HomeRowItem::LINK_TYPE_GAMERSX) {
-            $link = '/channel/'.$info->getId();
-        } elseif ($homeRowItem->getLinkType() === HomeRowItem::LINK_TYPE_CUSTOM) {
-            $link = $homeRowItem->getCustomLink();
-        }
+            if ($broadcast === NULL) {
+                $title = $info->getSnippet()->getTitle();
+                if ($info->getSnippet()->getCustomURL() !== NULL) {
+                    $link = 'https://www.youtube.com/c/'.$info->getSnippet()->getCustomURL();
+                } else {
+                    $link = 'https://www.youtube.com/channel/'.$info->getId();
+                }
+            } else {
+                $title = sprintf("%s - \"%s\"",
+                    $info->getSnippet()->getTitle(), $broadcast->getSnippet()->getTitle());
+                $link = 'https://www.youtube.com/v/'.$broadcast->getId()->getVideoId();
+            }
 
-        if (($broadcast === NULL && $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_ART) ||
-            $homeRowItem->getShowArt() === TRUE) {
-            // Get the sized art link
-            $imageInfo = $info->getSnippet()->getThumbnails();
-            $imageInfo = $imageInfo->getMedium() ? $imageInfo->getMedium() : $imageInfo->getStandard();
+            if ($homeRowItem->getLinkType() === HomeRowItem::LINK_TYPE_GAMERSX) {
+                $link = '/channel/'.$info->getId();
+            } elseif ($homeRowItem->getLinkType() === HomeRowItem::LINK_TYPE_CUSTOM) {
+                $link = $homeRowItem->getCustomLink();
+            }
 
-            $image = [
-                'url' => $imageInfo->getUrl(),
-                'class' => 'profile-pic',
-                'width' => $imageInfo->getWidth(),
-                'height' => $imageInfo->getHeight(),
+            if (($broadcast === NULL && $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_ART) ||
+                $homeRowItem->getShowArt() === TRUE) {
+                // Get the sized art link
+                $imageInfo = $info->getSnippet()->getThumbnails();
+                $imageInfo = $imageInfo->getMedium() ? $imageInfo->getMedium() : $imageInfo->getStandard();
+
+                $image = [
+                    'url' => $imageInfo->getUrl(),
+                    'class' => 'profile-pic',
+                    'width' => $imageInfo->getWidth(),
+                    'height' => $imageInfo->getHeight(),
+                ];
+            }
+
+            if ($broadcast !== NULL) {
+                $embedData = [
+                    'video' => $broadcast->getId()->getVideoId(),
+                    'elementId' => uniqid('embed-'),
+                ];
+            } else {
+                $embedData = NULL;
+            }
+
+            if ($info !== NULL) {
+                if ($info->getStatistics() !== NULL) {
+                    $info['statistics_view_count'] = $info->getStatistics()->getViewCount();
+                }
+            }
+
+            $channels = [
+                [
+                    'info' => $info,
+                    'broadcast' => $broadcast,
+                    'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
+                    'viewedCount' => isset($info['statistics_view_count']) ? (int) $info['statistics_view_count'] : 0,
+                    'showOnline' => $broadcast !== NULL,
+                    'onlineDisplay' => [
+                        'title' => $title,
+                        'showArt' => $homeRowItem->getShowArt(),
+                        'showEmbed' => TRUE,
+                        'showOverlay' => TRUE,
+                    ],
+                    'offlineDisplay' => [
+                        'title' => $info->getSnippet()->getTitle(),
+                        'showArt' => $homeRowItem->getShowArt() || $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_ART,
+                        'showEmbed' => $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_STREAM,
+                        'showOverlay' => $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_OVERLAY,
+                    ],
+                    'itemType' => $homeRowItem->getItemType(),
+                    'rowName' => $homeRowItem->getHomeRow()->getTitle(),
+                    'sortIndex' => $homeRowItem->getSortIndex(),
+                    'image' => $image ?? NULL,
+                    'overlay' => $this->uploader->asset($homeRowItem, 'overlayArtFile'),
+                    'customArt' => $this->uploader->asset($homeRowItem, 'customArtFile'),
+                    'link' => $link,
+                    'componentName' => 'EmbedContainer',
+                    'embedName' => 'YouTubeEmbed',
+                    'embedData' => $embedData,
+                    'description' => $description
+                ]
             ];
+
+            $this->items = $channels;
+            $this->options = $homeRowItem->getSortAndTrimOptions();
+
+            $this->sort();
+            $this->trim();
+
+            return $this->items;
         }
 
-        if ($broadcast !== NULL) {
-            $embedData = [
-                'video' => $broadcast->getId()->getVideoId(),
-                'elementId' => uniqid('embed-'),
-            ];
-        } else {
-            $embedData = NULL;
-        }
-
-        $channels = [
-            [
-                'info' => $info,
-                'broadcast' => $broadcast,
-                'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
-                'viewedCount' => $info['view_count'],
-                'showOnline' => $broadcast !== NULL,
-                'onlineDisplay' => [
-                    'title' => $title,
-                    'showArt' => $homeRowItem->getShowArt(),
-                    'showEmbed' => TRUE,
-                    'showOverlay' => TRUE,
-                ],
-                'offlineDisplay' => [
-                    'title' => $info->getSnippet()->getTitle(),
-                    'showArt' => $homeRowItem->getShowArt() || $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_ART,
-                    'showEmbed' => $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_STREAM,
-                    'showOverlay' => $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_OVERLAY,
-                ],
-                'itemType' => $homeRowItem->getItemType(),
-                'rowName' => $homeRowItem->getHomeRow()->getTitle(),
-                'sortIndex' => $homeRowItem->getSortIndex(),
-                'image' => $image ?? NULL,
-                'overlay' => $this->uploader->asset($homeRowItem, 'overlayArtFile'),
-                'customArt' => $this->uploader->asset($homeRowItem, 'customArtFile'),
-                'link' => $link,
-                'componentName' => 'EmbedContainer',
-                'embedName' => 'YouTubeEmbed',
-                'embedData' => $embedData,
-                'description' => $description
-            ]
-        ];
-
-        $this->items = $channels;
-        $this->options = $homeRowItem->getSortAndTrimOptions();
-
-        $this->sort();
-        $this->trim();
-
-        return $this->items;
+        return Array();
     }
-
 }

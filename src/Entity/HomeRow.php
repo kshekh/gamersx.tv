@@ -64,9 +64,14 @@ class HomeRow implements PartneredInterface
     private $isPublished;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="string", length=50)
      */
     private $isGlowStyling;
+
+     /**
+      * @ORM\Column(type="string", length=50, options={"default" : 0})
+      */
+    private $isCornerCut;
 
    /**
     * @ORM\Column(name="isPublishedStart", type="integer", nullable=true)
@@ -87,6 +92,11 @@ class HomeRow implements PartneredInterface
      * )
      */
     private $isPublishedEnd;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default" : 0})
+     */
+    private $onGamersXtv;
 
     public function __construct()
     {
@@ -209,14 +219,26 @@ class HomeRow implements PartneredInterface
         return $this;
     }
 
-    public function getIsGlowStyling(): ?bool
+    public function getIsGlowStyling(): ?string
     {
         return $this->isGlowStyling;
     }
 
-    public function setIsGlowStyling(bool $isGlowStyling): self
+    public function setIsGlowStyling(string $isGlowStyling): self
     {
         $this->isGlowStyling = $isGlowStyling;
+
+        return $this;
+    }
+
+    public function getIsCornerCut(): ?string
+    {
+        return $this->isCornerCut;
+    }
+
+    public function setIsCornerCut(string $isCornerCut): self
+    {
+        $this->isCornerCut = $isCornerCut;
 
         return $this;
     }
@@ -243,6 +265,18 @@ class HomeRow implements PartneredInterface
     {
         $isPublishedEndTime = 86400;
         $this->isPublishedEnd = !empty($isPublishedEnd) ? $isPublishedEnd : $isPublishedEndTime;
+
+        return $this;
+    }
+
+    public function getonGamersXtv(): ?bool
+    {
+        return $this->onGamersXtv;
+    }
+
+    public function setonGamersXtv(bool $onGamersXtv): self
+    {
+        $this->onGamersXtv = $onGamersXtv;
 
         return $this;
     }

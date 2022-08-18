@@ -3,12 +3,10 @@
     <div
       v-show="!isEmbedVisible"
       class="cut-edge__wrapper flex-grow min-h-0 w-36 md:w-86 xl:w-118 relative ease-linear"
-      :class="{
-        'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
-        'cut-edge__wrapper--youtube': embedName === 'YouTubeEmbed',
+      :class="[getGlow, {
         'opacity-0 pointer-events-none z-negative': isEmbedVisible,
         'pointer-events-none z-negative': isEmbedVisible,
-      }"
+      }]"
     >
       <div
         class="
@@ -19,10 +17,7 @@
           bg-black
           overflow-hidden
         "
-        :class="{
-          'cut-edge__clipped--twitch': embedName === 'TwitchEmbed',
-          'cut-edge__clipped--youtube': embedName === 'YouTubeEmbed',
-        }"
+        :class="getOutline"
       >
         <img
           v-if="showArt && image"
@@ -81,13 +76,10 @@
           duration-300
           ease-linear
         "
-        :class="{
-          'cut-edge__clipped--twitch border-purple':
-            embedName === 'TwitchEmbed',
-          'cut-edge__clipped--youtube border-red': embedName === 'YouTubeEmbed',
+        :class="[getOutlineBorder, {
           'opacity-100': isEmbedVisible,
           'pointer-events-none z-negative': !isEmbedVisible,
-        }"
+        }]"
       >
         <div ref="embedWrapper" class="h-full w-full">
           <component
@@ -140,12 +132,21 @@ export default {
     "embedName",
     "embedData",
     "liveViewerCount",
+    "isGlowStyling",
+    "isCornerCut",
   ],
   data() {
     return {
       isOverlayVisible: true,
       isEmbedVisible: false,
       isTitleVisible: false,
+      glowStyling: {
+        glow: '',
+      },
+      cornerCutStyling: {
+        outline: '',
+        outlineBorder: ''
+      }
     };
   },
   methods: {
@@ -172,6 +173,27 @@ export default {
       // }
       window.removeEventListener('scroll', this.checkIfBoxInViewPort);
     },
+    computeGlowStyling: function () {
+      if (this.isGlowStyling === "always_on" || (this.isGlowStyling === "enabled_if_live" && this.showOnline) || (this.isGlowStyling === "enabled_if_offline" && !this.showOnline)) {
+        if (this.embedName === 'TwitchEmbed') {
+          this.glowStyling.glow = 'cut-edge__wrapper--twitch';
+        }
+        else if (this.embedName === 'YouTubeEmbed') {
+          this.glowStyling.glow = 'cut-edge__wrapper--youtube';
+        }
+      }
+
+      if (this.isCornerCut === "always_on" || (this.isCornerCut === "enabled_if_live" && this.showOnline) || (this.isCornerCut === "enabled_if_offline" && !this.showOnline)) {
+        if (this.embedName === 'TwitchEmbed') {
+          this.cornerCutStyling.outline = 'cut-edge__clipped--twitch';
+          this.cornerCutStyling.outlineBorder = 'cut-edge__clipped--twitch border-purple';
+        }
+        else if (this.embedName === 'YouTubeEmbed') {
+          this.cornerCutStyling.outline = 'cut-edge__clipped--youtube';
+          this.cornerCutStyling.outlineBorder = 'cut-edge__clipped--youtube border-red';
+        }
+      }
+    }
   },
   computed: {
     playBtnColor() {
@@ -196,6 +218,18 @@ export default {
           (!this.showOnline && this.offlineDisplay.showOverlay))
       );
     },
+    getOutline: function () {
+      this.computeGlowStyling();
+      return this.cornerCutStyling.outline;
+    },
+    getGlow: function () {
+      this.computeGlowStyling();
+      return this.glowStyling.glow;
+    },
+    getOutlineBorder: function () {
+      this.computeGlowStyling();
+      return this.cornerCutStyling.outlineBorder;
+    }
   },
   mounted() {
     this.$root.$on("close-other-layouts", this.scrollOut);

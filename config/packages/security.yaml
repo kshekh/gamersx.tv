@@ -58,6 +58,9 @@ security:
         - { path: ^/admin/login_check$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
+        # Home page needs to be accessed without credential
+        - { path: ^/$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+
         # Secured part of the site
         # - { path: ^/.*, role: [ROLE_USER] }
 
@@ -72,7 +75,7 @@ security:
         ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH, ROLE_ADMIN_DASHBOARD_ACCESS]
         SONATA:
             - ROLE_SONATA_PAGE_ADMIN_PAGE_EDIT  # if you are using acl then this line must be commented
+        ROLE_HOME_PAGE_LOGIN: [ROLE_LOGIN_ALLOWED]
 
     encoders:
         FOS\UserBundle\Model\UserInterface: bcrypt
-

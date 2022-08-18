@@ -3,14 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\HomeRow;
+use App\Entity\SiteSettings;
 use App\Containerizer\ContainerizerFactory;
 use App\Service\HomeRowInfo;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\HttpFoundation\{ Response, RedirectResponse };
 
 class HomeController extends AbstractController
 {
@@ -26,7 +27,15 @@ class HomeController extends AbstractController
      */
     public function index(): Response
     {
-        return $this->render('home/index.html.twig');
+        $row = $this->getDoctrine()->getRepository(SiteSettings::class)->findOneBy([]);
+
+        if ($this->isGranted('ROLE_LOGIN_ALLOWED') || (isset($row) && (!$row->getDisableHomeAccess() || $row->getDisableHomeAccess() == false))) {
+            return $this->render('home/index.html.twig');
+        }
+
+        return new RedirectResponse(
+            $this->generateUrl('sonata_user_admin_security_login')
+        );
     }
 
     /**
@@ -36,46 +45,49 @@ class HomeController extends AbstractController
     {
         $cache = new FilesystemAdapter();
         $beta = 1.0;
-        $rowChannels = $cache->get('home', function (ItemInterface $item) use ($containerizer) { 
-            $item->expiresAfter(60); //expire cache in every 60 sec
+        $rowChannels = $cache->get('home', function (ItemInterface $item) use ($containerizer) {
+            $item->expiresAfter(240); //expire cache in every 240 sec
             $rows = $this->getDoctrine()->getRepository(HomeRow::class)
                 ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
 
-            $rowChannels = Array();
             $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
 
             foreach ($rows as $row) {
-                $isPublishedStartStartTime = $row->getIsPublishedStart();
-                $isPublishedStartEndTime = $row->getIsPublishedEnd();
+                $isPublishedStartTime = $row->getIsPublishedStart();
+                $isPublishedEndTime = $row->getIsPublishedEnd();
 
                 if ($row->getIsPublished() === FALSE) {
                     continue;
                 }
 
                 if (
-                    !empty($isPublishedStartStartTime) && !empty($isPublishedStartEndTime) &&
-                    ($currentTime <= $isPublishedStartStartTime || $currentTime >= $isPublishedStartEndTime)
+                    !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
+                    (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
                 ) {
-                    continue;
+                    $thisRow = Array();
+                    $thisRow['title'] = $row->getTitle();
+                    $thisRow['sortIndex'] = $row->getSortIndex();
+                    $thisRow['componentName'] = $row->getLayout();
+                    $thisRow['onGamersXtv'] = $row->getonGamersXtv();
+
+                    $containers = Array();
+
+                    $containerized = $containerizer($row);
+                    $channels = $containerized->getContainers();
+
+                    foreach ($channels as $key => $channel) {
+                        $channels[$key]['isGlowStyling'] = $row->getIsGlowStyling();
+                    }
+
+                    $thisRow['channels'] = $channels;
+
+                    $rowChannels[] = $thisRow;
                 }
-
-                $thisRow = Array();
-                $thisRow['title'] = $row->getTitle();
-                $thisRow['sortIndex'] = $row->getSortIndex();
-                $thisRow['componentName'] = $row->getLayout();
-                $thisRow['isGlowStyling'] = $row->getIsGlowStyling();
-
-                $containers = Array();
-
-                $containerized = $containerizer($row);
-                $channels = $containerized->getContainers();
-                $thisRow['channels'] = $channels;
-
-                $rowChannels[] = $thisRow;
             }
-
-            return $rowChannels;
-        }, $beta);  
+            if (isset($rowChannels)) {
+              return $rowChannels;
+            }
+        }, $beta);
         return $this->json([
             'settings' => [
                 'rows' => $rowChannels
