@@ -161,9 +161,8 @@ COPY ./docker/php/php-fpm.conf /usr/local/etc/
 COPY ./docker/php/entrypoint.sh /usr/local/bin/
 
 # Add the user that nginx will be expecting
-ARG UID
-RUN addgroup --gid ${UID} nginx
-RUN adduser --system --no-create-home -D --uid ${UID} --ingroup nginx ec2-user
+RUN addgroup --gid 1000 nginx
+RUN adduser --system --no-create-home -D --uid 1000 --ingroup nginx ec2-user
 
 WORKDIR /var/www/html
 
@@ -174,7 +173,17 @@ WORKDIR /var/www/html
 # RUN alias composer='php composer.phar'
 
 # Copy the site files 
-COPY --from=backend --chown=ec2-user:nginx /app/. /var/www/html
+# COPY --from=backend --chown=ec2-user:nginx /app/. /var/www/html
+# RUN mkdir /var/www/html/vendor
+COPY --chown=ec2-user:nginx . /var/www/html/
+COPY --chown=ec2-user:nginx --from=vendor /app/vendor/. /var/www/html/vendor
+
+
+RUN docker-php-ext-configure zip
+RUN docker-php-ext-install zip
+RUN docker-php-ext-enable zip
+
+# RUN echo "word" > /var/www/html/public/index.php
 
 # Run the commands for the app container
 CMD ["/usr/local/bin/docker-php-entrypoint","php-fpm","-F"]
@@ -189,7 +198,6 @@ CMD ["/usr/local/bin/docker-php-entrypoint","php-fpm","-F"]
 # - Build the remaining static front end assets.
 
 FROM node:lts-alpine as frontend
-ARG user
 
 WORKDIR /app
 COPY package.json postcss.config.js tailwind.config.js webpack.config.js yarn.lock /app/
@@ -211,7 +219,6 @@ RUN yarn install && yarn build
 FROM nginx:alpine as web
 
 ARG UPSTREAM
-ARG UID
 
 RUN apk add --upgrade brotli-libs
 
@@ -221,7 +228,7 @@ COPY ./docker/nginx/default.conf /etc/nginx/conf.d
 COPY ./docker/nginx/${UPSTREAM}.conf /etc/nginx/conf.d
 
 # Add the user that php expects to the nginx group
-RUN adduser --system --no-create-home -D --uid ${UID} --ingroup nginx ec2-user
+RUN adduser --system --no-create-home -D --uid 1000 --ingroup nginx ec2-user
 
 # # Create the site directory
 RUN mkdir -p /var/www/html/assets
@@ -231,6 +238,7 @@ RUN mkdir -p /var/www/html/public/build
 WORKDIR /var/www/html
 
 # COPY --from=backend --chown=ec2-user:nginx /app/assets/. /var/www/html/assets
-COPY --from=backend --chown=ec2-user:nginx /app/public/. /var/www/html/public
+COPY --from=app --chown=ec2-user:nginx /var/www/html/public/. /var/www/html/public
 COPY --from=frontend --chown=ec2-user:nginx /app/public/build/. /var/www/html/public/build
 
+# RUN echo "word" > /var/www/html/public/index.php
