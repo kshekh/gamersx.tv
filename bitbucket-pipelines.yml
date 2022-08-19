@@ -146,7 +146,7 @@ definitions:
           - export AWS_REGION=$(cat ./aws-region)
           - export AWS_IMAGE_REPO=$(cat ./ecr-repo)
           - echo "Retrieving a task ARN"
-          - TASK_ARN="$(aws ecs list-tasks --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-worker --query 'taskArns[0]' --desired-status RUNNING --output text )"
+          - TASK_ARN="$(aws ecs list-tasks --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-app --query 'taskArns[0]' --desired-status RUNNING --output text )"
           - TASK_ID="$(aws ecs describe-tasks --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --tasks $TASK_ARN --query 'tasks[0].taskArn' --output text)"
           - echo "Task ID.... ${TASK_ID}"
           - echo "Running migrations."
