@@ -1,0 +1,83 @@
+version: "3.5"
+services:
+
+  mysql:
+    container_name: gamersx-mysql
+    image: mariadb:10.5.5
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    networks:
+      - gamersx
+    volumes:
+      - mysqldata:/var/lib/mysql
+
+  redis:
+    container_name: gamersx-redis
+    image: redis:5.0
+    ports:
+      - 6379:6379
+
+  php:
+    container_name: gamersx-php
+    depends_on:
+      - mysql
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      target: app
+    environment:
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_HOST=${REDIS_HOST}
+    ports:
+      - 9000:9000
+    volumes:
+      - ./:/var/www/html/
+    networks:
+      - gamersx
+
+  # vue:
+  #   container_name: gamersx-js
+  #   image: node:lts-alpine
+  #   user: '1000'
+  #   working_dir: /var/www
+  #   command: ['yarn', 'watch']
+  #   volumes:
+  #     - ./:/var/www
+  #   networks:
+  #     - gamersx
+  #   restart: unless-stopped
+
+  nginx:
+    container_name: gamersx-web
+    depends_on:
+      - php
+    build:
+      args:
+        upstream: local
+      context: .
+      dockerfile: ./docker/Dockerfile
+      target: web
+    ports:
+      - 80:80
+    # volumes:
+    #   - ./:/var/www
+    #   # - ./docker/nginx:/etc/nginx/conf.d/
+    networks:
+      - gamersx
+    # restart: unless-stopped
+
+volumes:
+  mysqldata: {}
+
+networks:
+  gamersx:
+    driver: bridge
