@@ -132,6 +132,28 @@ definitions:
           - aws ecs update-service --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-app --force-new-deployment
           - aws ecs wait services-stable --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --services ${AWS_IMAGE_REPO}-app
 
+    - step: &runscripts
+        name: Running Migrations and Clearing Cache
+        image: amazonlinux:latest
+        script:
+          - yum install -y curl jq python3 py3-pip expect
+          - python3 -m pip install --upgrade pip
+          - pip install awscli
+          - curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
+          - yum install -y session-manager-plugin.rpm
+          - export AWS_REGION=$(cat ./aws-region)
+          - export AWS_IMAGE_REPO=$(cat ./ecr-repo)
+          - echo "Retrieving a task ARN"
+          - TASK_ARN="$(aws ecs list-tasks --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-web --query 'taskArns[0]' --desired-status RUNNING --output text )"
+          - TASK_ID="$(aws ecs describe-tasks --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --tasks $TASK_ARN --query 'tasks[0].taskArn' --output text)"
+          - echo "Task ID.... ${TASK_ID}"
+          - echo "Running migrations."
+          - aws ecs execute-command --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --container php --command "bin/console --no-interaction doctrine:migrations:migrate" --interactive --task $TASK_ID
+          - echo "Clearing Symfony Cache."
+          - aws ecs execute-command --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --container php --command "bin/console cache:clear" --interactive --task $TASK_ID
+          - echo "Fixing cache folder permissions."
+          - aws ecs execute-command --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --container php --command "chown -R ec2-user:nginx /var/www/html/var/cache" --interactive --task $TASK_ID
+
     - step: &launch-environment
         name: Launch Temporary QA Environment
         # Used by the ECS strategy to automate the launch of temporary environments for QA
