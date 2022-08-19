@@ -238,7 +238,6 @@ RUN mkdir -p /var/www/html/public/build
 WORKDIR /var/www/html
 
 # COPY --from=backend --chown=ec2-user:nginx /app/assets/. /var/www/html/assets
-COPY --from=app --chown=ec2-user:nginx /var/www/html/public/. /var/www/html/public
+# COPY --from=app --chown=ec2-user:nginx /var/www/html/public/. /var/www/html/public
+COPY --from=backend --chown=ec2-user:nginx /app/public/. /var/www/html/public
 COPY --from=frontend --chown=ec2-user:nginx /app/public/build/. /var/www/html/public/build
-
-# RUN echo "word" > /var/www/html/public/index.php
