@@ -44,17 +44,17 @@ services:
     networks:
       - gamersx
 
-  # vue:
-  #   container_name: gamersx-js
-  #   image: node:lts-alpine
-  #   user: '1000'
-  #   working_dir: /var/www
-  #   command: ['yarn', 'watch']
-  #   volumes:
-  #     - ./:/var/www
-  #   networks:
-  #     - gamersx
-  #   restart: unless-stopped
+  vue:
+    container_name: gamersx-js
+    image: node:lts-alpine
+    user: '1000'
+    working_dir: /var/www
+    command: ['yarn', 'watch']
+    volumes:
+      - ./:/var/www
+    networks:
+      - gamersx
+    restart: unless-stopped
 
   nginx:
     container_name: gamersx-web
@@ -62,15 +62,15 @@ services:
       - php
     build:
       args:
-        upstream: local
+        UPSTREAM: local
       context: .
       dockerfile: ./docker/Dockerfile
       target: web
     ports:
       - 80:80
-    # volumes:
-    #   - ./:/var/www
-    #   # - ./docker/nginx:/etc/nginx/conf.d/
+    volumes:
+      - ./public/build/:/var/www/html/public/build/
+      # - ./docker/nginx:/etc/nginx/conf.d/
     networks:
       - gamersx
     # restart: unless-stopped
