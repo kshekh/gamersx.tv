@@ -247,6 +247,7 @@ pipelines:
       - step: *composer
       - step: *setenvdev
       - step: *container-dev
+      - step: *runscripts
 
     # We currently use a CodeDeploy-based strategy for deploying to production and demo environments
     'release-v*':
