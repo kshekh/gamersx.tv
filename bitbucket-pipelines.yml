@@ -125,9 +125,11 @@ definitions:
           - echo "Building the container image."
           - docker build --target app --build-arg UID=1000 -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php . -f docker/Dockerfile 
           - docker build --target web --build-arg UID=1000 --build-arg UPSTREAM=fargate -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx . -f docker/Dockerfile 
+          - docker build --target worker --build-arg UID=1000 -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx . -f docker/Dockerfile 
           - echo "Pushing the container image to ECR."
           - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php
           - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx
+          - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:worker
           - echo "Updating the service in ECS..."
           - aws ecs update-service --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-app --force-new-deployment
           - aws ecs wait services-stable --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --services ${AWS_IMAGE_REPO}-app
@@ -144,7 +146,7 @@ definitions:
           - export AWS_REGION=$(cat ./aws-region)
           - export AWS_IMAGE_REPO=$(cat ./ecr-repo)
           - echo "Retrieving a task ARN"
-          - TASK_ARN="$(aws ecs list-tasks --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-app --query 'taskArns[0]' --desired-status RUNNING --output text )"
+          - TASK_ARN="$(aws ecs list-tasks --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-worker --query 'taskArns[0]' --desired-status RUNNING --output text )"
           - TASK_ID="$(aws ecs describe-tasks --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --tasks $TASK_ARN --query 'tasks[0].taskArn' --output text)"
           - echo "Task ID.... ${TASK_ID}"
           - echo "Running migrations."
