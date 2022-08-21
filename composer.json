@@ -63,7 +63,10 @@
         "preferred-install": {
             "*": "dist"
         },
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "symfony/flex": true
+        }
     },
     "autoload": {
         "psr-4": {
@@ -102,9 +105,6 @@
         "symfony": {
             "allow-contrib": false,
             "require": "4.4.*"
-        },
-        "google/apiclient-services": [
-                "YouTube"
-        ]
+        }
     }
 }

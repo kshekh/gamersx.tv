@@ -15,10 +15,7 @@
   >
     <div
       class="cut-edge__wrapper relative w-full h-full z-10"
-      :class="{
-        'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
-        'cut-edge__wrapper--youtube': embedName === 'YouTubeEmbed',
-      }"
+      :class="getGlow"
     >
       <div
         class="
@@ -30,10 +27,7 @@
           bg-black
           flex-shrink-0
         "
-        :class="{
-          'cut-edge__clipped--twitch': embedName === 'TwitchEmbed',
-          'cut-edge__clipped--youtube': embedName === 'YouTubeEmbed',
-        }"
+        :class="getOutline"
       >
         <!-- Show the embed with overlay if there's an embed -->
         <div
@@ -52,6 +46,10 @@
             alt="Embed's Custom Overlay"
             :src="overlay"
             class="relative top-1/2 transform -translate-y-1/2 w-full"
+          />
+          <img
+            src="/images/live-icon.gif"
+            class="" style="position: absolute;top: 0px;width: 75px;right: 0;"
           />
           <play-button
             :videoType="playBtnColor"
@@ -93,18 +91,16 @@
     <div
       v-if="showEmbed && embedData"
       class="
+        cut-edge__wrapper
         absolute
         z-30
-        cut-edge__wrapper
         transition-opacity-transform
         ease-linear
         duration-500
       "
-      :class="{
-        'cut-edge__wrapper--twitch': embedName === 'TwitchEmbed',
-        'cut-edge__wrapper--youtube': embedName === 'YouTubeEmbed',
+      :class="[getGlow, {
         invisible: !isEmbedVisible,
-      }"
+      }]"
       ref="embedWrapper"
       :style="embedSize"
     >
@@ -119,10 +115,7 @@
           cut-edge__clipped-top-left-sm
           bg-black
         "
-        :class="{
-          'cut-edge__clipped--twitch': embedName === 'TwitchEmbed',
-          'cut-edge__clipped--youtube': embedName === 'YouTubeEmbed',
-        }"
+        :class="getOutline"
       >
         <div class="flex-grow min-h-0 relative">
           <div class="absolute inset-0 bg-black overflow-hidden">
@@ -246,6 +239,54 @@ export default {
     "embedName",
     "embedData",
     "liveViewerCount",
+    "isGlowStyling",
+    "isCornerCut",
   ],
+  data: function() {
+    return {
+      glowStyling: {
+        glow: ''
+      },
+      cornerCutStyling: {
+        outline: ''
+      }
+    }
+  },
+  computed: {
+    getOutline: function () {
+      this.computeGlowStyling();
+      return this.cornerCutStyling.outline;
+    },
+    getGlow: function () {
+      this.computeGlowStyling();
+      return this.glowStyling.glow;
+    }
+  },
+  methods: {
+    computeGlowStyling: function () {
+      if (this.isGlowStyling === "always_on" || (this.isGlowStyling === "enabled_if_live" && this.showOnline) || (this.isGlowStyling === "enabled_if_offline" && !this.showOnline)) {
+        if (this.embedName === 'TwitchEmbed') {
+          this.glowStyling.glow = 'cut-edge__wrapper--twitch';
+        }
+        else if (this.embedName === 'YouTubeEmbed') {
+          this.glowStyling.glow = 'cut-edge__wrapper--youtube';
+        }
+      }
+
+      if (this.isCornerCut === "always_on" || (this.isCornerCut === "enabled_if_live" && this.showOnline) || (this.isCornerCut === "enabled_if_offline" && !this.showOnline)) {
+        if (this.embedName === 'TwitchEmbed') {
+          this.cornerCutStyling.outline = 'cut-edge__clipped--twitch';
+        }
+        else if (this.embedName === 'YouTubeEmbed') {
+          this.cornerCutStyling.outline = 'cut-edge__clipped--youtube';
+        }
+      }
+    }
+  },
+  created() {
+    if(!this.showOnline && this.embedData){
+      this.mouseEntered();
+    }
+  }
 };
 </script>

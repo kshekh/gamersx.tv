@@ -5,6 +5,7 @@ definitions:
   steps:
     - step: &webpack
         name: Webpack Build
+        # Used by both deployment strategies to build frontend assets.
         image: node:12.22
         services:
           - docker
@@ -18,11 +19,12 @@ definitions:
           - public/build/**
 
     - step: &zip
+        name: Zip Repo
+        # Used by CodeDeploy strategy to compress the codebase for S3 upload
         services:
           - docker
         caches:
           - docker
-        name: Zip Repo
         script:
           - zip -r gamersx.zip *
         artifacts:
@@ -30,6 +32,7 @@ definitions:
 
     - step: &upload
         name: Upload to S3
+        # Used by CodeDeploy strategy to upload the compressed artifact to S3
         services:
           - docker
         caches:
@@ -46,6 +49,7 @@ definitions:
 
     - step: &codedeploy
         name: Deploy via CodeDeploy
+        # Used by the CodeDeploy Strategy to start a deployment
         deployment: null
         services:
         - docker
@@ -62,6 +66,170 @@ definitions:
             FILE_EXISTS_BEHAVIOR: 'OVERWRITE'
             WAIT: 'false'
 
+    - step: &composer
+        name: Composer Dependencies
+        # Used by the ECS strategy to build PHP dependencies for the docker image.
+        image: php:7.4-cli
+        services:
+          - docker
+        caches:
+          - docker
+          - composer
+        script:
+          - apt-get update && apt-get install -y libzip-dev
+          - docker-php-ext-install zip
+          - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+          - composer install --ignore-platform-reqs --no-interaction --no-plugins --no-scripts --prefer-dist
+        artifacts:
+          - vendor
+
+    - step: &setenvdev
+        name: Setting the Deployment for Development
+        # Used by the ECS strategy to allow for abstraction and reuse for multiple environments
+        script:
+          - echo "gamersx-dev-dev" > ecr-repo
+          - echo "us-west-1" > aws-region
+        artifacts:
+          - ecr-repo
+          - aws-region
+
+    - step: &setenvpr
+        name: Setting the Environment for Pull Requests
+        # Used by the ECS strategy to allow for abstraction and reuse for multiple environments
+        script:
+          - echo "gamersx-dev-pr" > ecr-repo
+          - echo "us-west-1" > aws-region
+        artifacts:
+          - ecr-repo
+          - aws-region
+
+    # this step needs to pull the app name from a varible so that it's reusable
+    # we also need to replace the account id with a bitbucket variable and pass the region and environment dynamcially 
+    - step: &container-dev
+        name: Container Image Build and Push
+        # Used by the ECS strategy to build the docker images, push them to ECR and trigger the refresh
+        image: docker:latest
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - apk add --no-cache curl jq python3 py3-pip
+          - pip install awscli
+          - export AWS_REGION=$(cat ./aws-region)
+          - export AWS_IMAGE_REPO=$(cat ./ecr-repo)
+          - aws --region ${AWS_REGION} ecr get-login-password | docker login --username AWS --password-stdin 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}
+          - aws --version
+          - docker info
+          - docker --version
+          - echo "Building the container image."
+          - docker build --target app --build-arg UID=1000 -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php . -f docker/Dockerfile 
+          - docker build --target web --build-arg UID=1000 --build-arg UPSTREAM=fargate -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx . -f docker/Dockerfile 
+          - docker build --target worker --build-arg UID=1000 -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:worker . -f docker/Dockerfile 
+          - echo "Pushing the container image to ECR."
+          - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php
+          - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx
+          - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:worker
+          - echo "Updating the service in ECS..."
+          - aws ecs update-service --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-app --force-new-deployment
+          - aws ecs wait services-stable --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --services ${AWS_IMAGE_REPO}-app
+
+    - step: &runscripts
+        name: Running Migrations and Clearing Cache
+        image: amazonlinux:latest
+        script:
+          - yum install -y curl jq python3 py3-pip expect
+          - python3 -m pip install --upgrade pip
+          - pip install awscli
+          - curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
+          - yum install -y session-manager-plugin.rpm
+          - export AWS_REGION=$(cat ./aws-region)
+          - export AWS_IMAGE_REPO=$(cat ./ecr-repo)
+          - echo "Retrieving a task ARN"
+          - TASK_ARN="$(aws ecs list-tasks --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-app --query 'taskArns[0]' --desired-status RUNNING --output text )"
+          - TASK_ID="$(aws ecs describe-tasks --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --tasks $TASK_ARN --query 'tasks[0].taskArn' --output text)"
+          - echo "Task ID.... ${TASK_ID}"
+          - echo "Running migrations."
+          - aws ecs execute-command --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --container php --command "bin/console --no-interaction doctrine:migrations:migrate" --interactive --task $TASK_ID
+          - echo "Clearing Symfony Cache."
+          - aws ecs execute-command --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --container php --command "bin/console cache:clear" --interactive --task $TASK_ID
+          - echo "Fixing cache folder permissions."
+          - aws ecs execute-command --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --container php --command "chown -R ec2-user:nginx /var/www/html/var/cache" --interactive --task $TASK_ID
+
+    - step: &launch-environment
+        name: Launch Temporary QA Environment
+        # Used by the ECS strategy to automate the launch of temporary environments for QA
+        image: ubuntu:latest
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - apt-get update -y
+          - apt-get install -y zip unzip curl less git
+          - echo "Installing AWS CLI"
+          - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          - unzip awscliv2.zip
+          - ./aws/install
+          - export AWS_REGION=$(cat ./aws-region)
+          - export AWS_IMAGE_REPO=$(cat ./ecr-repo)
+          # - cd public && mv index.php index.php.bak && cd ..
+          # - echo "This is a temporary QA environment for pull request \# ${BITBUCKET_PR_ID}" > public/index.php
+          - echo "Building the container image."
+          - aws --region ${AWS_REGION} ecr get-login-password | docker login --username AWS --password-stdin 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}
+          - docker build --target app --build-arg UID=1000 -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:pr-${BITBUCKET_PR_ID}-php . -f docker/Dockerfile 
+          - docker build --target web --build-arg UID=1000 --build-arg UPSTREAM=fargate -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:pr-${BITBUCKET_PR_ID}-nginx . -f docker/Dockerfile 
+          - echo "Pushing the container image to ECR."
+          - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:pr-${BITBUCKET_PR_ID}-php
+          - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:pr-${BITBUCKET_PR_ID}-nginx
+          - echo "Installing Terraform and Terragrunt"
+          - apt-get update && apt-get install -y gnupg software-properties-common curl
+          - curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+          - apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+          - apt-get update && apt-get install terraform
+          - curl -L -O https://github.com/gruntwork-io/terragrunt/releases/download/v0.38.0/terragrunt_linux_amd64 
+          - mv terragrunt_linux_amd64 /usr/local/bin
+          - mv /usr/local/bin/terragrunt_linux_amd64 /usr/local/bin/terragrunt
+          - chmod u+x /usr/local/bin/terragrunt
+          - echo "Cloning Terragrunt Codebase"
+          - git clone git@bitbucket.org:TheResearchCorp/gamersx-iac.git iac
+          - cp iac/regions/${AWS_REGION}/env.tfvars.sample iac/regions/${AWS_REGION}/dev.tfvars
+          - chmod +x pipeline/terraform.sh
+          - ./pipeline/terraform.sh dev ${AWS_REGION} ${BITBUCKET_PR_ID} apply
+          - aws ecs wait services-stable --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO}-${BITBUCKET_PR_ID} --services ${AWS_IMAGE_REPO}-${BITBUCKET_PR_ID}-app
+
+    - step: &destroy-environment
+        name: Destroy Temporary QA Environment
+        # Used by the ECS strategy to automate the destruction of temporary environments
+        image: ubuntu:latest
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - apt-get update -y
+          - apt-get install -y zip unzip curl less git
+          - echo "Installing AWS CLI"
+          - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          - unzip awscliv2.zip
+          - ./aws/install
+          - export AWS_REGION=$(cat ./aws-region)
+          - export AWS_IMAGE_REPO=$(cat ./ecr-repo)
+          - echo "Installing Terraform and Terragrunt"
+          - apt-get update && apt-get install -y gnupg software-properties-common curl
+          - curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+          - apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+          - apt-get update && apt-get install terraform
+          - curl -L -O https://github.com/gruntwork-io/terragrunt/releases/download/v0.38.0/terragrunt_linux_amd64 
+          - mv terragrunt_linux_amd64 /usr/local/bin
+          - mv /usr/local/bin/terragrunt_linux_amd64 /usr/local/bin/terragrunt
+          - chmod u+x /usr/local/bin/terragrunt
+          - echo "Cloning Terragrunt Codebase"
+          - git clone git@bitbucket.org:TheResearchCorp/gamersx-iac.git iac
+          - cp iac/regions/${AWS_REGION}/env.tfvars.sample iac/regions/${AWS_REGION}/dev.tfvars
+          - chmod +x pipeline/terraform.sh
+          - ./pipeline/terraform.sh dev ${AWS_REGION} ${BITBUCKET_PR_ID} destroy
+
 pipelines:
   branches:
     main:
@@ -74,6 +242,16 @@ pipelines:
           deployment: dev
 
   tags:
+    # This is the new ECS strategy for deployments. Eventually, the CodeDeploy strategy will be deprecated
+    # as we move toward containerized environments. 
+    dev-*:
+      - step: *webpack
+      - step: *composer
+      - step: *setenvdev
+      - step: *container-dev
+      - step: *runscripts
+
+    # We currently use a CodeDeploy-based strategy for deploying to production and demo environments
     'release-v*':
       - step: *webpack
       - step: *zip
@@ -87,3 +265,16 @@ pipelines:
             <<: *codedeploy
             name: Deploy to Production
             deployment: production
+  
+  # This pipeline triggers the automation of temporary QA environments whenever someone opens a pull request
+  # to merge into staging branch
+  pull-requests:
+    Staging:
+      - step: *setenvpr
+      - step: *launch-environment
+
+# This custom pipeline is used by the BitBucket API interface to control the destruction of temp envs
+  custom:
+    detroy: 
+      - step: *setenvpr
+      - step: *destroy-environment
