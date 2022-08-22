@@ -1,6 +1,6 @@
 $(document).ready(function(){
-    var videoId = $('.video-id').val();alert(videoId);
-    var playlistId = $('.playlist-id').val();alert(playlistId);
+    var videoId = $('.video-id').val();
+    var playlistId = $('.playlist-id').val();
 
     if(videoId == '')
         $('.video-id').parent().parent().addClass('hide');
