@@ -8,6 +8,46 @@
 html, body {
   height: 100%;
 }
+/* new arrows style */
+.overBG{
+  height: 40px;
+  width: 40px;
+
+}
+.overBG:hover{
+  background: #2929294a!important;
+  border-radius: 50%;
+}
+.sliderArrowParent{
+  position: absolute;
+  z-index: 9999999;
+  height: 40px;
+  width: calc(100% - 1rem);
+  justify-content: space-between;
+  padding-left: 5rem;
+}
+.sliderArrow{
+  width: 40px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% - 20px);
+}
+.sliderArrowHide{
+  visibility: hidden!important;
+}
+.w5-center{
+  width: 5%; text-align: center
+}
+
+@media(max-width: 600px){
+  .w5-center{
+    width: 12% !important;
+  }
+}
+.w90-pleft-0{
+  width: 90%; padding-left: 0 !important;
+}
 
 div.profile-pic {
   height: 332px;

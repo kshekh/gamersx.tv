@@ -121,6 +121,11 @@ export default {
   mounted: function() {
     this.isOverlayVisible = this.showOverlay;
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
+  },
+  created() {
+    if(!this.showOnline && this.embedData){
+      this.mouseEntered();
+    }
   }
 };
 </script>
