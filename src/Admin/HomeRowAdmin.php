@@ -87,6 +87,7 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('partner')
             ->add('isPublished')
             ->add('isGlowStyling')
+            ->add('onGamersXtv')
             ;
     }
 
@@ -110,6 +111,9 @@ final class HomeRowAdmin extends AbstractAdmin
                 'sortable' => false,
             ])
             ->add('isPublished', null, [
+                'sortable' => false
+            ])
+            ->add('onGamersXtv', null, [
                 'sortable' => false
             ])
             ->add('isGlowStyling', null, [
@@ -162,7 +166,22 @@ final class HomeRowAdmin extends AbstractAdmin
                 'required' => false,
             ])
             ->add('isPublished')
-            ->add('isGlowStyling')
+            ->add('isGlowStyling', ChoiceType::class, [
+                'choices' => [
+                    'Enabled If Live' => 'enabled_if_live',
+                    'Always On' => 'always_on',
+                    'Always Off' => 'always_off',
+                    'Enabled If Offline' => 'enabled_if_offline'
+                ]
+            ])
+            ->add('isCornerCut', ChoiceType::class, [
+                'choices' => [
+                    'Enabled If Live' => 'enabled_if_live',
+                    'Always On' => 'always_on',
+                    'Always Off' => 'always_off',
+                    'Enabled If Offline' => 'enabled_if_offline'
+                ]
+            ])
             ->add('isPublished', null, [
                 'help' => 'Current Server Time: ' . date('H:i')
             ])
@@ -186,6 +205,11 @@ final class HomeRowAdmin extends AbstractAdmin
                     'title'=> "End timepicker for published",
                 ]
             ])
+             ->add('onGamersXtv', null, [
+                'label' => 'add \'on GamersX TV\' to end of row title'
+            ], [
+                'type' => 'string'
+            ])
             ;
     }
 
@@ -199,6 +223,7 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('options')
             ->add('isPublished')
             ->add('isGlowStyling')
+            ->add('onGamersXtv')
             ;
     }
 

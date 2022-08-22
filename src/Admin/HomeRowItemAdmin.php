@@ -72,6 +72,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('partner')
             ->add('homeRow')
             ->add('isPublished')
+            ->add('isPartner')
             ;
     }
 
@@ -105,6 +106,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ])
             ->add('partner')
             ->add('isPublished', null, [
+                'sortable' => false
+            ])
+            ->add('isPartner', null, [
                 'sortable' => false
             ])
             ->add('isPublishedStart', null, [
@@ -236,6 +240,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
                     'title'=> "End timepicker for published",
                 ]
             ])
+            ->add('isPartner')
             ->getFormBuilder()->addModelTransformer(new CallbackTransformer(
                 // Use the array in the form
                 function ($valuesAsArray) {
@@ -274,6 +279,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('partner')
             ->add('description')
             ->add('isPublished')
+            ->add('isPartner')
             ;
     }
 
