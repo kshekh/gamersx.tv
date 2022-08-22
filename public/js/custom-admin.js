@@ -1,6 +1,12 @@
 $(document).ready(function(){
-    $('.video-id').parent().parent().addClass('hide');
-    $('.playlist-id').parent().parent().addClass('hide');
+    var videoId = $('.video-id').val();alert(videoId);
+    var playlistId = $('.playlist-id').val();alert(playlistId);
+
+    if(videoId == '')
+        $('.video-id').parent().parent().addClass('hide');
+
+    if(playlistId == '')   
+        $('.playlist-id').parent().parent().addClass('hide');
 
     var selector = document.querySelector("[data-topic-select='itemType']");
 
