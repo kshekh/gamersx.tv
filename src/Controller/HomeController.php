@@ -44,9 +44,29 @@ class HomeController extends AbstractController
     public function apiHome(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
     {
         $cache = new FilesystemAdapter();
+       
+        $rowChannels = $cache->getItem('home');
+                
+        return $this->json([
+            'settings' => [
+                'rows' => $rowChannels->get()
+            ]
+        ]);
+    }
+
+    /**
+     * @Route("/home/api/cache", name="home_api_cache")
+     */
+    public function apiHomeCache(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
+    {
+        $cache = new FilesystemAdapter();
+        
+        // Deleting old cache
+        $cache->delete('home');
+
         $beta = 1.0;
         $rowChannels = $cache->get('home', function (ItemInterface $item) use ($containerizer) {
-            $item->expiresAfter(240); //expire cache in every 240 sec
+            //$item->expiresAfter(240); //expire cache in every 240 sec
             $rows = $this->getDoctrine()->getRepository(HomeRow::class)
                 ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
 
@@ -84,10 +104,12 @@ class HomeController extends AbstractController
                     $rowChannels[] = $thisRow;
                 }
             }
+            
             if (isset($rowChannels)) {
-              return $rowChannels;
+                return $rowChannels;
             }
         }, $beta);
+
         return $this->json([
             'settings' => [
                 'rows' => $rowChannels
