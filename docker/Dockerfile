@@ -54,14 +54,9 @@ RUN apt-get install -y wget \
     supervisor \
     mariadb-client
 
-
 WORKDIR /root
 
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
-RUN HASH=`curl -sS https://composer.github.io/installer.sig`
-RUN php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-RUN php /tmp/composer-setup.php --install-dir=/usr/bin --filename=composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 RUN docker-php-ext-configure pcntl --enable-pcntl
 RUN docker-php-ext-install pcntl
@@ -88,20 +83,11 @@ WORKDIR /app
 
 COPY . /app/
 
-COPY --from=vendor --chown=root:root /app/vendor/. /var/www/html/vendor
-
-# COPY --from=vendor /app/vendor/. /app/vendor
+COPY --from=vendor --chown=root:root /app/vendor/. /app/vendor
 
 RUN pecl install -o -f redis \
 &&  rm -rf /tmp/pear \
 &&  docker-php-ext-enable redis
-
-COPY --chown=root:root ./docker/worker/entrypoint /entrypoint
-RUN chmod +x /entrypoint
-
-# RUN chmod +x /app/artisan
-
-ENTRYPOINT ["/entrypoint"]
 
 ###########################################
 # Stage 2 [PHP CLI] - Build Sonata Bundles
@@ -182,8 +168,6 @@ COPY --chown=ec2-user:nginx --from=vendor /app/vendor/. /var/www/html/vendor
 RUN docker-php-ext-configure zip
 RUN docker-php-ext-install zip
 RUN docker-php-ext-enable zip
-
-# RUN echo "word" > /var/www/html/public/index.php
 
 # Run the commands for the app container
 CMD ["/usr/local/bin/docker-php-entrypoint","php-fpm","-F"]
