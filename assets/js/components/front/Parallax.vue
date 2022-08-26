@@ -48,6 +48,11 @@
           @arrow-clicked="back()"
         />
       </div>
+    </div>
+    <div
+      ref="channelBox"
+      class="flex overflow-hidden custom-smooth-scroll pt-18 md:pt-12 xl:pt-18 pb-18 md:pb-14 xl:pb-20"
+    >
       <div
         ref="channelBox"
         class="flex overflow-hidden pt-18 md:pt-12 xl:pt-18 pb-18 md:pb-14 xl:pb-20 w90-pleft-0"

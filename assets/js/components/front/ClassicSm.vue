@@ -59,7 +59,7 @@
         ref="channelBox"
         class="
         flex
-        overflow-hidden
+        overflow-hidden custom-smooth-scroll
         pt-5
         xl:pt-9
         pb-7
