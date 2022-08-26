@@ -19,6 +19,19 @@
 			{{ encore_entry_script_tags('app') }}
 			{{ encore_entry_script_tags('main') }}
 		{% endblock %}
+        <style>
+            .custom-smooth-scroll {
+                overflow-x: auto;
+                display: flex;
+                flex-wrap: nowrap;
+                scroll-behavior: smooth;
+                cursor: grab;
+            }
+
+            .custom-smooth-scroll::-webkit-scrollbar {
+                display: none;
+            }
+        </style>
 	</head>
 	<body class="bg-black">
 		<div class="h-full flex flex-col">
@@ -212,4 +225,38 @@
 			{% endblock %}
 		</div>
 		</body>
+    <script>
+        window.onload = function () {
+            const draggableRows = document.getElementsByClassName('custom-smooth-scroll');
+            for (let draggableRow of draggableRows) {
+                console.log(draggableRow)
+                let mouseDown = false;
+                let startX, scrollLeft;
+
+                let startDragging = function (e) {
+                    mouseDown = true;
+                    startX = e.pageX - draggableRow.offsetLeft;
+                    scrollLeft = draggableRow.scrollLeft;
+                };
+                let stopDragging = function (event) {
+                    mouseDown = false;
+                };
+
+                draggableRow.addEventListener('mousemove', (e) => {
+                    e.preventDefault();
+                    if (!mouseDown) {
+                        return;
+                    }
+                    const x = e.pageX - draggableRow.offsetLeft;
+                    const scroll = x - startX;
+                    draggableRow.scrollLeft = scrollLeft - scroll;
+                });
+
+                // Add the event listeners to Rows
+                draggableRow.addEventListener('mousedown', startDragging, false);
+                draggableRow.addEventListener('mouseup', stopDragging, false);
+                draggableRow.addEventListener('mouseleave', stopDragging, false);
+            }
+        }
+    </script>
 	</html>
