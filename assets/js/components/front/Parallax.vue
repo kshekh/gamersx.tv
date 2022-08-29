@@ -40,6 +40,10 @@
       </div>
     </div>
     <div
+      @mousemove="this.triggerDragging"
+      @mousedown="this.startDragging"
+      @mouseup="this.stopDragging"
+      @mouseleave="this.stopDragging"
       ref="channelBox"
       class="flex overflow-hidden custom-smooth-scroll pt-18 md:pt-12 xl:pt-18 pb-18 md:pb-14 xl:pb-20"
     >
@@ -67,13 +71,14 @@ import EmbedContainer from "../layout/EmbedContainer/EmbedContainerParallax.vue"
 import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerParallax.vue";
 
 import SliderArrow from "../helpers/SliderArrow.vue";
-
+import embedMixin from "../../mixins/embedFrameMixin";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
 require("swiped-events");
 
 export default {
   name: "Parallax",
+  mixins: [embedMixin],
   components: {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,

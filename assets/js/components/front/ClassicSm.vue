@@ -48,6 +48,10 @@
       />
     </div> -->
     <div
+      @mousemove="this.triggerDragging"
+      @mousedown="this.startDragging"
+      @mouseup="this.stopDragging"
+      @mouseleave="this.stopDragging"
       ref="channelBox"
       class="
         flex
@@ -119,13 +123,14 @@ import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerClassic
 
 import SliderArrow from "../helpers/SliderArrow.vue";
 import PlayButton from "../helpers/PlayButton.vue";
-
+import embedMixin from "../../mixins/embedFrameMixin";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
 require("swiped-events");
 
 export default {
   name: "ClassicSm",
+  mixins: [embedMixin],
   components: {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
