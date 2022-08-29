@@ -89,6 +89,16 @@ RUN pecl install -o -f redis \
 &&  rm -rf /tmp/pear \
 &&  docker-php-ext-enable redis
 
+# Add the user that nginx will be expecting
+RUN addgroup --gid 1000 nginx
+RUN adduser --system --no-create-home --uid 1000 --ingroup nginx ec2-user
+
+# Create cache directory
+RUN mkdir -p /app/var/cache/ && chmod -R 755 /app/var/cache/ && chown -R ec2-user:nginx /app/var/cache/
+
+# Copy php ini file
+COPY ./docker/php/php.ini /usr/local/etc/php/
+
 ###########################################
 # Stage 2 [PHP CLI] - Build Sonata Bundles
 ###########################################
