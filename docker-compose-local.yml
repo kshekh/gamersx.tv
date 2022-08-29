@@ -80,8 +80,12 @@ services:
 
   vue:
     container_name: gamersx-js
-    image: node:lts-alpine
-    user: '1000'
+    # image: node:lts-alpine
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      target: frontend
+    # user: '1000'
     working_dir: /var/www
     command: ['yarn', 'watch']
     volumes:
