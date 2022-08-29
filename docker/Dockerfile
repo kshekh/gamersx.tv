@@ -216,10 +216,10 @@ RUN adduser --system --no-create-home --uid $HOST_USER_UID --ingroup nginx ec2-u
 RUN mkdir -p /app/assets
 
 # Copy the assets from the backend build stage
-# COPY --from=backend --chown=ec2-user:nginx /app/assets/. /app/assets
+COPY --from=backend --chown=ec2-user:nginx /app/assets/. /app/assets
 
 # To speed up troubleshooting, swap the call to backend stage with this command
-COPY ./assets/. /app/assets
+# COPY ./assets/. /app/assets
 
 
 RUN yarn install && yarn build
