@@ -26,6 +26,23 @@ services:
     networks:
       - gamersx
       
+  vue:
+    container_name: gamersx-js
+    # image: node:lts-alpine
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      target: frontend
+    # user: '1000'
+    working_dir: /var/www
+    command: ['yarn', 'watch']
+    volumes:
+      - ./:/var/www
+      - ./node_modules:/var/www/node_modules
+    networks:
+      - gamersx
+    restart: unless-stopped
+
   php:
     container_name: gamersx-php
     depends_on:
@@ -50,8 +67,29 @@ services:
       - 9000:9000
     volumes:
       - ./:/var/www/html/
+      - ./var/cache/:/var/www/html/var/cache/
+      - ./var/logs/:/var/www/html/var/logs/
     networks:
       - gamersx
+
+  nginx:
+    container_name: gamersx-web
+    depends_on:
+      - php
+    build:
+      args:
+        UPSTREAM: local
+      context: .
+      dockerfile: ./docker/Dockerfile
+      target: web
+    ports:
+      - 80:80
+    volumes:
+      - ./public/build/:/var/www/html/public/build/
+      # - ./docker/nginx:/etc/nginx/conf.d/
+    networks:
+      - gamersx
+    # restart: unless-stopped
 
   worker:
     container_name: gamersx-worker
@@ -75,43 +113,10 @@ services:
       - ./vendor/:/app/vendor/
       - ./composer.json:/app/composer.json
       - ./composer.lock:/app/composer.lock
+      - ./var/cache/:/app/var/cache/
+      - ./var/logs/:/app/var/logs/
     networks:
       - gamersx
-
-  vue:
-    container_name: gamersx-js
-    # image: node:lts-alpine
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile
-      target: frontend
-    # user: '1000'
-    working_dir: /var/www
-    command: ['yarn', 'watch']
-    volumes:
-      - ./:/var/www
-    networks:
-      - gamersx
-    restart: unless-stopped
-
-  nginx:
-    container_name: gamersx-web
-    depends_on:
-      - php
-    build:
-      args:
-        UPSTREAM: local
-      context: .
-      dockerfile: ./docker/Dockerfile
-      target: web
-    ports:
-      - 80:80
-    volumes:
-      - ./public/build/:/var/www/html/public/build/
-      # - ./docker/nginx:/etc/nginx/conf.d/
-    networks:
-      - gamersx
-    # restart: unless-stopped
 
 volumes:
   mysqldata: {}
