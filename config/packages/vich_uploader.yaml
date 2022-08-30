@@ -1,34 +1,80 @@
 vich_uploader:
     db_driver: orm
+    storage: flysystem
 
     mappings:
        theme_banner:
            uri_prefix: /images/themes
-           upload_destination: '%kernel.project_dir%/public/images/themes'
+           upload_destination: managed_files
            namer:
                service: Vich\UploaderBundle\Naming\Base64Namer
        theme_embed:
-           uri_prefix: /images/themes
-           upload_destination: '%kernel.project_dir%/public/images/themes'
-           namer:
-               service: Vich\UploaderBundle\Naming\Base64Namer
+           uri_prefix: '/public/images/themes'
+           upload_destination: managed_files
+           namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+           inject_on_load: true
+           delete_on_remove: true
+
        theme_art:
-           uri_prefix: /images/themes
-           upload_destination: '%kernel.project_dir%/public/images/themes'
-           namer:
-               service: Vich\UploaderBundle\Naming\Base64Namer
+           uri_prefix: '/public/images/themes'
+           upload_destination: managed_files
+           namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+           inject_on_load: true
+           delete_on_remove: true
        theme_art_background:
-           uri_prefix: /images/themes
-           upload_destination: '%kernel.project_dir%/public/images/themes'
-           namer:
-               service: Vich\UploaderBundle\Naming\Base64Namer
+           uri_prefix: '/public/images/themes'
+           upload_destination: managed_files
+           namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+           inject_on_load: true
+           delete_on_remove: true
        hri_custom:
            uri_prefix: /images/items
-           upload_destination: '%kernel.project_dir%/public/images/items'
+           upload_destination: managed_files
            namer:
                service: Vich\UploaderBundle\Naming\Base64Namer
        hri_overlay:
            uri_prefix: /images/items
-           upload_destination: '%kernel.project_dir%/public/images/items'
+           upload_destination: managed_files
            namer:
                service: Vich\UploaderBundle\Naming\Base64Namer
+       managed_files:
+           uri_prefix: '/%kernel.environment%/public-files'
+           upload_destination: managed_files
+           namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+           inject_on_load: true
+           delete_on_remove: true
+
+# vich_uploader:
+#     db_driver: orm
+
+#     mappings:
+#        theme_banner:
+#            uri_prefix: /images/themes
+#            upload_destination: '%kernel.project_dir%/public/images/themes'
+#            namer:
+#                service: Vich\UploaderBundle\Naming\Base64Namer
+#        theme_embed:
+#            uri_prefix: /images/themes
+#            upload_destination: '%kernel.project_dir%/public/images/themes'
+#            namer:
+#                service: Vich\UploaderBundle\Naming\Base64Namer
+#        theme_art:
+#            uri_prefix: /images/themes
+#            upload_destination: '%kernel.project_dir%/public/images/themes'
+#            namer:
+#                service: Vich\UploaderBundle\Naming\Base64Namer
+#        theme_art_background:
+#            uri_prefix: /images/themes
+#            upload_destination: '%kernel.project_dir%/public/images/themes'
+#            namer:
+#                service: Vich\UploaderBundle\Naming\Base64Namer
+#        hri_custom:
+#            uri_prefix: /images/items
+#            upload_destination: '%kernel.project_dir%/public/images/items'
+#            namer:
+#                service: Vich\UploaderBundle\Naming\Base64Namer
+#        hri_overlay:
+#            uri_prefix: /images/items
+#            upload_destination: '%kernel.project_dir%/public/images/items'
+#            namer:
+#                service: Vich\UploaderBundle\Naming\Base64Namer

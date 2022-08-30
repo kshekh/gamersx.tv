@@ -26,26 +26,36 @@
         {{ settings.title }}
         <title-addinional-description v-show="settings.onGamersXtv" />
       </h2>
-      <div class="flex items-center space-x-5">
-        <slider-arrow
-          :isNext="false"
-          :videoType="'twitch'"
-          @arrow-clicked="back()"
-        />
-        <slider-arrow
-          :isNext="true"
-          :videoType="'twitch'"
-          @arrow-clicked="forward()"
-        />
-      </div>
+<!--      <div class="flex items-center space-x-5">-->
+<!--        <slider-arrow-->
+<!--          :isNext="false"-->
+<!--          :videoType="'twitch'"-->
+<!--          @arrow-clicked="back()"-->
+<!--        />-->
+<!--        <slider-arrow-->
+<!--          :isNext="true"-->
+<!--          :videoType="'twitch'"-->
+<!--          @arrow-clicked="forward()"-->
+<!--        />-->
+<!--      </div>-->
     </div>
-    <div
-      @mousedown="this.startDragging"
-      @mousemove="this.triggerDragging"
-      @mouseup="this.stopDragging"
-      @mouseleave="this.stopDragging"
-      ref="channelBox"
-      class="
+
+<div class="flex" style="align-items: center;">
+
+  <div class="w5-center " :class="{ sliderArrowHide:!rowIndex }">
+    <slider-arrow
+      :isNext="false"
+      :videoType="'twitch'"
+      @arrow-clicked="back()"
+    />
+  </div>
+  <div
+    @mousedown="this.startDragging"
+    @mousemove="this.triggerDragging"
+    @mouseup="this.stopDragging"
+    @mouseleave="this.stopDragging"
+    ref="channelBox"
+    class="
         flex
         overflow-hidden custom-smooth-scroll
         pt-5
@@ -55,13 +65,14 @@
         xl:pb-12
         pl-4
         xl:pl-20
+        w90-pleft-0
       "
-    >
-      <div
-        ref="channelDivs"
-        v-for="(channel, index) in displayChannels"
-        :key="index"
-        class="
+  >
+    <div
+      ref="channelDivs"
+      v-for="(channel, index) in displayChannels"
+      :key="index"
+      class="
           flex
           items-center
           flex-shrink-0
@@ -75,10 +86,21 @@
           md:h-28
           xl:h-48
         "
-      >
-        <component :is="channel.componentName" v-bind="channel" :cuttedBorder="true"></component>
-      </div>
+    >
+      <component :is="channel.componentName" v-bind="channel" :cuttedBorder="true"></component>
     </div>
+  </div>
+  <div class="w5-center" :class="{ sliderArrowHide:!(this.displayChannels.length > 1) }">
+    <slider-arrow
+      :isNext="true"
+      :videoType="'twitch'"
+      @arrow-clicked="forward()"
+    />
+  </div>
+</div>
+
+
+
   </div>
 </template>
 <script>

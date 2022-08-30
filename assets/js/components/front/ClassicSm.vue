@@ -26,18 +26,18 @@
         {{ settings.title }}
         <title-addinional-description v-show="settings.onGamersXtv" />
       </h2>
-      <div class="flex items-center space-x-5">
-        <slider-arrow
-          :isNext="false"
-          :videoType="'twitch'"
-          @arrow-clicked="back()"
-        />
-        <slider-arrow
-          :isNext="true"
-          :videoType="'twitch'"
-          @arrow-clicked="forward()"
-        />
-      </div>
+<!--      <div class="flex items-center space-x-5">-->
+<!--        <slider-arrow-->
+<!--          :isNext="false"-->
+<!--          :videoType="'twitch'"-->
+<!--          @arrow-clicked="back()"-->
+<!--        />-->
+<!--        <slider-arrow-->
+<!--          :isNext="true"-->
+<!--          :videoType="'twitch'"-->
+<!--          @arrow-clicked="forward()"-->
+<!--        />-->
+<!--      </div>-->
     </div>
     <!-- <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="first()">
       <img
@@ -47,13 +47,21 @@
         src="/images/left-arrow.png"
       />
     </div> -->
-    <div
-      @mousemove="this.triggerDragging"
-      @mousedown="this.startDragging"
-      @mouseup="this.stopDragging"
-      @mouseleave="this.stopDragging"
-      ref="channelBox"
-      class="
+    <div class="flex" style="align-items: center;">
+      <div class="w5-center " :class="{ sliderArrowHide:!rowIndex }">
+        <slider-arrow
+          :isNext="false"
+          :videoType="'twitch'"
+          @arrow-clicked="back()"
+        />
+      </div>
+      <div
+        @mousemove="this.triggerDragging"
+        @mousedown="this.startDragging"
+        @mouseup="this.stopDragging"
+        @mouseleave="this.stopDragging"
+        ref="channelBox"
+        class="
         flex
         overflow-hidden custom-smooth-scroll
         pt-5
@@ -63,34 +71,35 @@
         xl:pb-12
         pl-4
         xl:pl-20
+        w90-pleft-0
       "
-    >
-      <!-- test with width and height transition -->
-      <!-- <div
-        ref="channelDivs"
-        v-for="(channel, index) in displayChannels"
-        :key="index"
-        class="
-          flex-shrink-0
-          mr-1.5
-          xl:mr-3
-          w-36
-          md:w-28
-          xl:w-48
-          h-20
-          md:h-18
-          xl:h-32
-          transform
-          transition-all
-          hover:w-52
-          hover:h-48
-        "
-      > -->
-      <div
-        ref="channelDivs"
-        v-for="(channel, index) in displayChannels"
-        :key="index"
-        class="
+      >
+        <!-- test with width and height transition -->
+        <!-- <div
+          ref="channelDivs"
+          v-for="(channel, index) in displayChannels"
+          :key="index"
+          class="
+            flex-shrink-0
+            mr-1.5
+            xl:mr-3
+            w-36
+            md:w-28
+            xl:w-48
+            h-20
+            md:h-18
+            xl:h-32
+            transform
+            transition-all
+            hover:w-52
+            hover:h-48
+          "
+        > -->
+        <div
+          ref="channelDivs"
+          v-for="(channel, index) in displayChannels"
+          :key="index"
+          class="
           flex
           items-center
           mr-1.5
@@ -103,8 +112,16 @@
           md:h-18
           xl:h-32
         "
-      >
-        <component :is="channel.componentName" v-bind="channel" :cuttedBorder="true"></component>
+        >
+          <component :is="channel.componentName" v-bind="channel" :cuttedBorder="true"></component>
+        </div>
+      </div>
+      <div class="w5-center" :class="{ sliderArrowHide:!(this.displayChannels.length > 1) }">
+        <slider-arrow
+          :isNext="true"
+          :videoType="'twitch'"
+          @arrow-clicked="forward()"
+        />
       </div>
     </div>
     <!-- <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="forward()">

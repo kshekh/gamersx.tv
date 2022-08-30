@@ -28,7 +28,7 @@ export default {
     },
 
     async hideVideo(elementId) {
-      if (!(elementId && this.embedData.elementId === elementId)) {
+      if (!(elementId && this.embedData.elementId === elementId) && this.showOnline) {
         await this.resetEmbedStyles();
         this.isEmbedVisible = false;
 
@@ -67,19 +67,21 @@ export default {
     },
 
     async resetEmbedStyles() {
-      const rootWidth = this.$refs.itemWrapper.offsetWidth;
-      const scaleSize = rootWidth / this.embedWidth;
-      this.$refs.embedWrapper.style.transformOrigin = "left center";
-      this.$refs.embedWrapper.style.transform = `translateY(-50%) scale(${scaleSize})`;
-      this.$refs.embedWrapper.style.opacity = "0";
+      if(this.showOnline){
+        const rootWidth = this.$refs.itemWrapper.offsetWidth;
+        const scaleSize = rootWidth / this.embedWidth;
+        this.$refs.embedWrapper.style.transformOrigin = "left center";
+        this.$refs.embedWrapper.style.transform = `translateY(-50%) scale(${scaleSize})`;
+        this.$refs.embedWrapper.style.opacity = "0";
 
-      await new Promise((resolve) => setTimeout( async () => {
-        this.$refs.embedWrapper.style.left = "0";
-        this.$refs.embedWrapper.style.top = "";
-        this.$refs.embedWrapper.style.right = "";
-        resolve()
-      }, 500)); // value is equal to block transition duration
-      // save top because of block jumpings
+        await new Promise((resolve) => setTimeout(async () => {
+          this.$refs.embedWrapper.style.left = "0";
+          this.$refs.embedWrapper.style.top = "";
+          this.$refs.embedWrapper.style.right = "";
+          resolve()
+        }, 500)); // value is equal to block transition duration
+        // save top because of block jumpings
+        }
     },
 
     setEmbedSizes() {

@@ -89,7 +89,7 @@
 									</button>
 								</div>
 							</div>
-							#}
+                            #}
 							{% if is_granted('ROLE_SONATA_ADMIN') %}
 							<button onclick="window.location.href='/admin/dashboard';" class="hidden xl:block">
 								<svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -97,6 +97,7 @@
 								</svg>
 							</button>
 							{% endif %}
+
 							{#
 							<button class="jsOpenBurgerButton block xl:hidden w-7 md:w-11 flex-shrink-0">
 								<span class="block h-0.75 w-full bg-purple"></span>
