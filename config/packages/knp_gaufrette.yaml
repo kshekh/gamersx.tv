@@ -1,0 +1,23 @@
+knp_gaufrette:
+    stream_wrapper: ~
+    adapters:
+        gamersx_s3:
+            aws_s3:
+                service_id: Aws\S3\S3Client
+                bucket_name: '%env(AWS_S3_BUCKET_NAME)%'
+                detect_content_type: true
+                options:
+                    create: true
+        gamersx_s3_themes:
+            aws_s3:
+                service_id: Aws\S3\S3Client
+                bucket_name: '%env(AWS_S3_BUCKET_NAME)%'
+                detect_content_type: true
+                options:
+                    create: true
+                    directory: themes
+    filesystems:
+        gamersx_s3:
+            adapter:    gamersx_s3
+        gamersx_s3_themes:
+            adapter:    gamersx_s3_themes

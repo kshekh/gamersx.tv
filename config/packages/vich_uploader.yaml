@@ -1,40 +1,44 @@
 vich_uploader:
     db_driver: orm
-    storage: flysystem
+    storage: gaufrette
 
     mappings:
        theme_banner:
-           uri_prefix: /images/themes
-           upload_destination: managed_files
-           namer:
-               service: Vich\UploaderBundle\Naming\Base64Namer
+           uri_prefix: "https://%env(AWS_S3_BUCKET_NAME)%.%env(AWS_S3_DOMAIN)%/themes"
+           upload_destination: gamersx_s3_themes
+           namer: Vich\UploaderBundle\Naming\Base64Namer
+           inject_on_load: true
+           delete_on_remove: true
        theme_embed:
-           uri_prefix: '/public/images/themes'
-           upload_destination: managed_files
+           uri_prefix: "https://%env(AWS_S3_BUCKET_NAME)%.%env(AWS_S3_DOMAIN)%/themes"
+           upload_destination: gamersx_s3_themes
            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
            inject_on_load: true
            delete_on_remove: true
-
        theme_art:
-           uri_prefix: '/public/images/themes'
-           upload_destination: managed_files
+           uri_prefix: "https://%env(AWS_S3_BUCKET_NAME)%.%env(AWS_S3_DOMAIN)%/themes"
+           upload_destination: gamersx_s3_themes
            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
            inject_on_load: true
            delete_on_remove: true
        theme_art_background:
-           uri_prefix: '/public/images/themes'
-           upload_destination: managed_files
+           uri_prefix: "https://%env(AWS_S3_BUCKET_NAME)%.%env(AWS_S3_DOMAIN)%/themes"
+           upload_destination: gamersx_s3_themes
            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
            inject_on_load: true
            delete_on_remove: true
        hri_custom:
-           uri_prefix: /images/items
-           upload_destination: managed_files
+           uri_prefix: "https://%env(AWS_S3_BUCKET_NAME)%.%env(AWS_S3_DOMAIN)%"
+           inject_on_load: true
+           delete_on_remove:   true
+           upload_destination: gamersx_s3
            namer:
                service: Vich\UploaderBundle\Naming\Base64Namer
        hri_overlay:
-           uri_prefix: /images/items
-           upload_destination: managed_files
+           uri_prefix: "https://%env(AWS_S3_BUCKET_NAME)%.%env(AWS_S3_DOMAIN)%"
+           inject_on_load: true
+           delete_on_remove: true
+           upload_destination: gamersx_s3
            namer:
                service: Vich\UploaderBundle\Naming\Base64Namer
        managed_files:
