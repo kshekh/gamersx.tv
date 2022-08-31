@@ -5,6 +5,9 @@ export default {
       isCursorHere: false,
       embedWidth: 0,
       embedHeight: 0,
+      mouseDown:false,
+      startX:0,
+      scrollLeft:0
     };
   },
   methods: {
@@ -17,7 +20,7 @@ export default {
           this.isEmbedVisible = true;
           this.$refs.embed.startPlayer();
         }
-      }, 300); // user cursor should be under block for this time period
+      }, 1000); // user cursor should be under block for this time period
     },
 
     mouseLeave() {
@@ -84,6 +87,25 @@ export default {
     setEmbedSizes() {
       this.embedWidth = window.innerWidth > 1279 ? 400 : 300;
       this.embedHeight = window.innerWidth > 1279 ? 350 : 200;
+    },
+    startDragging(e) {
+      this.$root.$emit('close-other-layouts');
+      this.mouseDown = true;
+      this.startX = e.pageX - this.$refs.channelBox.offsetLeft;
+      this.scrollLeft = this.$refs.channelBox.scrollLeft;
+      this.triggerDragging(e)
+    },
+    stopDragging(e) {
+      this.mouseDown = false;
+    },
+    triggerDragging(e) {
+      e.preventDefault();
+      if (!this.mouseDown) {
+        return;
+      }
+      const x = e.pageX - this.$refs.channelBox.offsetLeft;
+      const scroll = x - this.startX;
+      this.$refs.channelBox.scrollLeft = this.scrollLeft - scroll;
     },
   },
 

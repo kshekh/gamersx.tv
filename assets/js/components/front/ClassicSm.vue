@@ -56,6 +56,11 @@
         />
       </div>
       <div
+        @mousemove="this.triggerDragging"
+        @mousedown="this.startDragging"
+        @mouseup="this.stopDragging"
+        @mouseleave="this.stopDragging"
+        @scroll="this.handleScroll"
         ref="channelBox"
         class="
         flex
@@ -136,13 +141,14 @@ import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerClassic
 
 import SliderArrow from "../helpers/SliderArrow.vue";
 import PlayButton from "../helpers/PlayButton.vue";
-
+import embedMixin from "../../mixins/embedFrameMixin";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
 require("swiped-events");
 
 export default {
   name: "ClassicSm",
+  mixins: [embedMixin],
   components: {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
@@ -196,6 +202,9 @@ export default {
         this.$refs.channelDivs[i].style.order = j + 1;
       }
     },
+    handleScroll () {
+      this.$root.$emit('close-other-layouts');
+    }
   },
   mounted() {
     this.displayChannels = this.settings.channels.filter(this.showChannel);

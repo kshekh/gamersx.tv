@@ -48,6 +48,11 @@
         />
       </div>
       <div
+        @mousemove="this.triggerDragging"
+        @mousedown="this.startDragging"
+        @mouseup="this.stopDragging"
+        @mouseleave="this.stopDragging"
+        @scroll="this.handleScroll"
         ref="channelBox"
         class="
         flex
@@ -99,13 +104,14 @@ import EmbedContainer from "../layout/EmbedContainer/EmbedContainerClassicMd.vue
 import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerClassic.vue";
 
 import SliderArrow from "../helpers/SliderArrow.vue";
-
+import embedMixin from "../../mixins/embedFrameMixin";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
 require("swiped-events");
 
 export default {
   name: "ClassicMd",
+  mixins: [embedMixin],
   components: {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
@@ -157,6 +163,9 @@ export default {
         // Add one to j because flexbox order should start with 1, not 0
         this.$refs.channelDivs[i].style.order = j + 1;
       }
+    },
+    handleScroll () {
+      this.$root.$emit('close-other-layouts');
     }
   },
   mounted: function() {

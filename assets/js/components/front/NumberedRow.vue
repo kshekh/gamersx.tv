@@ -38,14 +38,14 @@
           @arrow-clicked="back()"
         />
       </div>
-    </div>
-    <div
-      ref="channelBox"
-      class="flex overflow-hidden custom-smooth-scroll pt-8 xl:pt-12 pb-9 md:pb-8 xl:pb-14 pl-4 xl:pl-20"
-    >
       <div
+        @mousemove="this.triggerDragging"
+        @mousedown="this.startDragging"
+        @mouseup="this.stopDragging"
+        @mouseleave="this.stopDragging"
+        @scroll="this.handleScroll"
         ref="channelBox"
-        class="flex overflow-hidden pt-8 xl:pt-12 pb-9 md:pb-8 xl:pb-14 pl-4 xl:pl-20 w90-pleft-0"
+        class="flex overflow-hidden custom-smooth-scroll pt-8 xl:pt-12 pb-9 md:pb-8 xl:pb-14 pl-4 xl:pl-0"
       >
         <div
           class="flex items-end"
@@ -68,6 +68,7 @@
             class=""
           ></component>
         </div>
+
       </div>
       <div class="w5-center" :class="{ sliderArrowHide:!(this.displayChannels.length > 1) }">
         <slider-arrow
@@ -77,12 +78,13 @@
         />
       </div>
     </div>
+
   </div>
 </template>
 <script>
 import EmbedContainer from "../layout/EmbedContainer/EmbedContainerNumbered.vue";
 import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerNumbered.vue";
-
+import embedMixin from "../../mixins/embedFrameMixin";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
 import SliderArrow from "../helpers/SliderArrow.vue";
@@ -92,6 +94,7 @@ require("swiped-events");
 
 export default {
   name: "NumberedRow",
+  mixins: [embedMixin],
   components: {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
@@ -144,6 +147,9 @@ export default {
         // Add one to j because flexbox order should start with 1, not 0
         this.$refs.channelDivs[i].style.order = j + 1;
       }
+    },
+    handleScroll () {
+      this.$root.$emit('close-other-layouts');
     },
     clickPrev() {},
     clickNext() {}
