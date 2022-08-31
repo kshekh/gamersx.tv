@@ -52,6 +52,7 @@
         @mousedown="this.startDragging"
         @mouseup="this.stopDragging"
         @mouseleave="this.stopDragging"
+        @scroll="this.handleScroll"
         ref="channelBox"
         class="
         flex
@@ -162,6 +163,9 @@ export default {
         // Add one to j because flexbox order should start with 1, not 0
         this.$refs.channelDivs[i].style.order = j + 1;
       }
+    },
+    handleScroll () {
+      this.$root.$emit('close-other-layouts');
     }
   },
   mounted: function() {

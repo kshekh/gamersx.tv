@@ -54,6 +54,7 @@
     @mousemove="this.triggerDragging"
     @mouseup="this.stopDragging"
     @mouseleave="this.stopDragging"
+    @scroll="this.handleScroll"
     ref="channelBox"
     class="
         flex
@@ -168,6 +169,9 @@ export default {
         this.$refs.channelDivs[i].style.order = j + 1;
       }
     },
+    handleScroll () {
+      this.$root.$emit('close-other-layouts');
+    }
   },
   mounted() {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
