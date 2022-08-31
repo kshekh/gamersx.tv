@@ -48,18 +48,13 @@
           @arrow-clicked="back()"
         />
       </div>
-    </div>
-    <div
-      @mousemove="this.triggerDragging"
-      @mousedown="this.startDragging"
-      @mouseup="this.stopDragging"
-      @mouseleave="this.stopDragging"
-      ref="channelBox"
-      class="flex overflow-hidden custom-smooth-scroll pt-18 md:pt-12 xl:pt-18 pb-18 md:pb-14 xl:pb-20"
-    >
       <div
+        @mousemove="this.triggerDragging"
+        @mousedown="this.startDragging"
+        @mouseup="this.stopDragging"
+        @mouseleave="this.stopDragging"
         ref="channelBox"
-        class="flex overflow-hidden pt-18 md:pt-12 xl:pt-18 pb-18 md:pb-14 xl:pb-20 w90-pleft-0"
+        class="flex overflow-hidden w-full custom-smooth-scroll pt-18 md:pt-12 xl:pt-18 pb-18 md:pb-14 xl:pb-20"
       >
         <div
           v-for="(channel, index) in displayChannels"
@@ -77,6 +72,7 @@
         >
           <component :is="channel.componentName" v-bind="channel"></component>
         </div>
+
       </div>
       <div :class="{ sliderArrowHide:!(this.displayChannels.length > 1) }" class="w5-center">
         <slider-arrow
@@ -86,6 +82,7 @@
         />
       </div>
     </div>
+
   </div>
 </template>
 <script>
@@ -152,6 +149,9 @@ export default {
         // Add one to j because flexbox order should start with 1, not 0
         this.$refs.channelDivs[i].style.order = j + 1;
       }
+    },
+    handleScroll () {
+      this.$root.$emit('close-other-layouts');
     },
     customBg: function (channel) {
       if (channel.customArt) {

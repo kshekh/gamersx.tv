@@ -20,7 +20,7 @@ export default {
           this.isEmbedVisible = true;
           this.$refs.embed.startPlayer();
         }
-      }, 300); // user cursor should be under block for this time period
+      }, 1000); // user cursor should be under block for this time period
     },
 
     mouseLeave() {
@@ -89,6 +89,7 @@ export default {
       this.embedHeight = window.innerWidth > 1279 ? 350 : 200;
     },
     startDragging(e) {
+      this.$root.$emit('close-other-layouts');
       this.mouseDown = true;
       this.startX = e.pageX - this.$refs.channelBox.offsetLeft;
       this.scrollLeft = this.$refs.channelBox.scrollLeft;
