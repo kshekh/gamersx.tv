@@ -155,7 +155,9 @@ definitions:
           - aws ecs execute-command --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --container php --command "bin/console cache:clear" --interactive --task $TASK_ID
           - echo "Fixing cache folder permissions."
           - aws ecs execute-command --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --container php --command "chown -R ec2-user:nginx /var/www/html/var/cache" --interactive --task $TASK_ID
-
+          - echo "Running custom caching command."
+          - aws ecs execute-command --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --container php --command "bin/console app:cache-home-page-containers" --interactive --task $TASK_ID
+          
     - step: &launch-environment
         name: Launch Temporary QA Environment
         # Used by the ECS strategy to automate the launch of temporary environments for QA
