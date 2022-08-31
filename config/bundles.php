@@ -27,4 +27,5 @@ return [
     Vich\UploaderBundle\VichUploaderBundle::class => ['all' => true],
     // Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle::class => ['all' => true],
     Oneup\FlysystemBundle\OneupFlysystemBundle::class => ['all' => true],
+    Knp\Bundle\GaufretteBundle\KnpGaufretteBundle::class => ['all' => true],
 ];
