@@ -8,12 +8,18 @@ parameters:
     app.theme_url: '/images/themes/'
     app.twitch_secret: '%env(resolve:TWITCH_CLIENT_SECRET)%'
     app.twitch_id: '%env(resolve:TWITCH_CLIENT_ID)%'
+    uploads_dir_name: 'uploads'
+    uploads_base_url: '%env(SITE_BASE_URL)%/%uploads_dir_name%'
 
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        public: false       # Allows optimizing the container by removing unused services; this also means
+                            # fetching services directly from the container via $container->get() won't work.
+                            # The best practice is to be explicit about your dependencies anyway.
+
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
@@ -81,3 +87,12 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, group: admin, label: Partner Roles }
         public: true
+
+    Aws\S3\S3Client:
+        arguments:
+            -
+                version: '%env(resolve:AWS_S3_VERSION)%' # or 'latest'
+                region: '%env(resolve:AWS_REGION)%' # 'eu-central-1' for example
+                credentials:
+                    key: '%env(resolve:AWS_ACCESS_KEY_ID)%'
+                    secret: '%env(resolve:AWS_SECRET_ACCESS_KEY)%'

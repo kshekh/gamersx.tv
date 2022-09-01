@@ -1,3 +1,6 @@
+ARG HOST_USER_UID=1001
+ARG HOST_USER_GID=1001
+
 ################################################
 # Stage 1 [Composer] - Install PHP Dependencies
 ################################################
@@ -28,6 +31,9 @@ RUN composer install \
 
 # Build a container to be used for development scripts
 FROM php:7.4-cli as worker
+
+ARG HOST_USER_UID
+ARG HOST_USER_GID
 
 RUN apt-get -y update && apt-get -y upgrade
 
@@ -89,6 +95,16 @@ RUN pecl install -o -f redis \
 &&  rm -rf /tmp/pear \
 &&  docker-php-ext-enable redis
 
+# Add the user that nginx will be expecting
+RUN addgroup --gid $HOST_USER_GID nginx
+RUN adduser --system --no-create-home --uid $HOST_USER_UID --ingroup nginx ec2-user
+
+# Create cache directory
+RUN mkdir -p /app/var/ && chmod -R 755 /app/var/ && chown -R ec2-user:nginx /app/var/
+
+# Copy php ini file
+COPY ./docker/php/php.ini /usr/local/etc/php/
+
 ###########################################
 # Stage 2 [PHP CLI] - Build Sonata Bundles
 ###########################################
@@ -126,6 +142,9 @@ RUN php bin/console assets:install
 
 FROM php:7.4-fpm-alpine as app
 
+ARG HOST_USER_UID
+ARG HOST_USER_GID
+
 # Install apt packages
 RUN apk upgrade --update && apk add git\
   libmcrypt-dev \
@@ -147,8 +166,8 @@ COPY ./docker/php/php-fpm.conf /usr/local/etc/
 COPY ./docker/php/entrypoint.sh /usr/local/bin/
 
 # Add the user that nginx will be expecting
-RUN addgroup --gid 1000 nginx
-RUN adduser --system --no-create-home -D --uid 1000 --ingroup nginx ec2-user
+RUN addgroup --gid $HOST_USER_GID nginx
+RUN adduser --system --no-create-home -D --uid $HOST_USER_UID --ingroup nginx ec2-user
 
 WORKDIR /var/www/html
 
@@ -183,13 +202,28 @@ CMD ["/usr/local/bin/docker-php-entrypoint","php-fpm","-F"]
 
 FROM node:lts-alpine as frontend
 
+ARG HOST_USER_UID
+ARG HOST_USER_GID
+
 WORKDIR /app
 COPY package.json postcss.config.js tailwind.config.js webpack.config.js yarn.lock /app/
 
+# Add the user that nginx will be expecting
+RUN addgroup --gid ${HOST_USER_GID} nginx
+RUN adduser --system --no-create-home --uid $HOST_USER_UID --ingroup nginx ec2-user
+
+# Create the assets directory
 RUN mkdir -p /app/assets
-COPY --from=backend /app/assets/. /app/assets
+
+# Copy the assets from the backend build stage
+COPY --from=backend --chown=ec2-user:nginx /app/assets/. /app/assets
+
+# To speed up troubleshooting, swap the call to backend stage with this command
+# COPY ./assets/. /app/assets
+
 
 RUN yarn install && yarn build
+
 
 ###############################
 # Stage 5 [Nginx] - Web Server
@@ -202,6 +236,9 @@ RUN yarn install && yarn build
 
 FROM nginx:alpine as web
 
+ARG HOST_USER_UID
+ARG HOST_USER_GID
+
 ARG UPSTREAM
 
 RUN apk add --upgrade brotli-libs
@@ -212,7 +249,7 @@ COPY ./docker/nginx/default.conf /etc/nginx/conf.d
 COPY ./docker/nginx/${UPSTREAM}.conf /etc/nginx/conf.d
 
 # Add the user that php expects to the nginx group
-RUN adduser --system --no-create-home -D --uid 1000 --ingroup nginx ec2-user
+RUN adduser --system --no-create-home -D --uid $HOST_USER_UID --ingroup nginx ec2-user
 
 # # Create the site directory
 RUN mkdir -p /var/www/html/assets
