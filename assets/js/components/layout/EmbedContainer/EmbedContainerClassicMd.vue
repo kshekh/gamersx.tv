@@ -351,6 +351,11 @@ export default {
         }
       }
     }
+  },
+  created() {
+    if(!this.showOnline && this.embedData){
+      this.mouseEntered();
+    }
   }
 };
 </script>
