@@ -93,6 +93,26 @@ definitions:
           - ecr-repo
           - aws-region
 
+    - step: &setenvdemo
+        name: Setting the Deployment for Demo
+        # Used by the ECS strategy to allow for abstraction and reuse for multiple environments
+        script:
+          - echo "gamersx-dev-demo" > ecr-repo
+          - echo "us-west-1" > aws-region
+        artifacts:
+          - ecr-repo
+          - aws-region
+
+    - step: &setenvprod
+        name: Setting the Deployment for Production
+        # Used by the ECS strategy to allow for abstraction and reuse for multiple environments
+        script:
+          - echo "gamersx-prod-prod" > ecr-repo
+          - echo "us-west-1" > aws-region
+        artifacts:
+          - ecr-repo
+          - aws-region
+
     - step: &setenvpr
         name: Setting the Environment for Pull Requests
         # Used by the ECS strategy to allow for abstraction and reuse for multiple environments
@@ -268,6 +288,14 @@ pipelines:
             <<: *codedeploy
             name: Deploy to Production
             deployment: production
+      - step: *composer
+      - step: *setenvdemo
+      - step: *container-dev
+      - step: *runscripts
+      - step: *setenvprod
+      - step: *container-dev
+      - step: *runscripts
+
   
   # This pipeline triggers the automation of temporary QA environments whenever someone opens a pull request
   # to merge into staging branch
