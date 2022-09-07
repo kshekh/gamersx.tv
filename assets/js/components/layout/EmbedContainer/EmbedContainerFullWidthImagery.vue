@@ -83,6 +83,7 @@
       >
         <div ref="embedWrapper" class="h-full w-full">
           <component
+            v-if="isEmbedVisible"
             ref="embed"
             :is="embedName"
             :embedData="embedData"

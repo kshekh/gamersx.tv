@@ -170,6 +170,7 @@
     >
       <div v-show="isEmbedVisible">
         <component
+          v-if="isEmbedVisible"
           ref="embed"
           :is="embedName"
           :embedData="embedData"
