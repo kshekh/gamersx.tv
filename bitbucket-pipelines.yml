@@ -93,6 +93,26 @@ definitions:
           - ecr-repo
           - aws-region
 
+    - step: &setenvdemo
+        name: Setting the Deployment for Demo
+        # Used by the ECS strategy to allow for abstraction and reuse for multiple environments
+        script:
+          - echo "gamersx-dev-demo" > ecr-repo
+          - echo "us-west-1" > aws-region
+        artifacts:
+          - ecr-repo
+          - aws-region
+
+    - step: &setenvprod
+        name: Setting the Deployment for Production
+        # Used by the ECS strategy to allow for abstraction and reuse for multiple environments
+        script:
+          - echo "gamersx-prod-prod" > ecr-repo
+          - echo "us-west-1" > aws-region
+        artifacts:
+          - ecr-repo
+          - aws-region
+
     - step: &setenvpr
         name: Setting the Environment for Pull Requests
         # Used by the ECS strategy to allow for abstraction and reuse for multiple environments
@@ -131,6 +151,7 @@ definitions:
           - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx
           - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:worker
           - echo "Updating the service in ECS..."
+          - aws ecs update-service --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-worker --force-new-deployment
           - aws ecs update-service --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-app --force-new-deployment
           - aws ecs wait services-stable --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --services ${AWS_IMAGE_REPO}-app
 
@@ -155,7 +176,9 @@ definitions:
           - aws ecs execute-command --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --container php --command "bin/console cache:clear" --interactive --task $TASK_ID
           - echo "Fixing cache folder permissions."
           - aws ecs execute-command --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --container php --command "chown -R ec2-user:nginx /var/www/html/var/cache" --interactive --task $TASK_ID
-
+          - echo "Running custom caching command."
+          - aws ecs execute-command --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --container php --command "bin/console app:cache-home-page-containers" --interactive --task $TASK_ID
+          
     - step: &launch-environment
         name: Launch Temporary QA Environment
         # Used by the ECS strategy to automate the launch of temporary environments for QA
@@ -265,6 +288,14 @@ pipelines:
             <<: *codedeploy
             name: Deploy to Production
             deployment: production
+      - step: *composer
+      - step: *setenvdemo
+      - step: *container-dev
+      - step: *runscripts
+      - step: *setenvprod
+      - step: *container-dev
+      - step: *runscripts
+
   
   # This pipeline triggers the automation of temporary QA environments whenever someone opens a pull request
   # to merge into staging branch
