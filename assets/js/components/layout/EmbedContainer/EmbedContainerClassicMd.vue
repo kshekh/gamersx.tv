@@ -223,6 +223,7 @@
               </h6>
             </div>
             <component
+              v-if="isEmbedVisible"
               ref="embed"
               :is="embedName"
               :embedData="embedData"
