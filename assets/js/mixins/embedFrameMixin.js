@@ -5,6 +5,9 @@ export default {
       isCursorHere: false,
       embedWidth: 0,
       embedHeight: 0,
+      mouseDown:false,
+      startX:0,
+      scrollLeft:0
     };
   },
   methods: {
@@ -17,7 +20,7 @@ export default {
           this.isEmbedVisible = true;
           this.$refs.embed.startPlayer();
         }
-      }, 300); // user cursor should be under block for this time period
+      }, 1000); // user cursor should be under block for this time period
     },
 
     mouseLeave() {
@@ -25,7 +28,7 @@ export default {
     },
 
     async hideVideo(elementId) {
-      if (!(elementId && this.embedData.elementId === elementId)) {
+      if (!(elementId && this.embedData.elementId === elementId) && this.showOnline) {
         await this.resetEmbedStyles();
         this.isEmbedVisible = false;
 
@@ -64,24 +67,45 @@ export default {
     },
 
     async resetEmbedStyles() {
-      const rootWidth = this.$refs.itemWrapper.offsetWidth;
-      const scaleSize = rootWidth / this.embedWidth;
-      this.$refs.embedWrapper.style.transformOrigin = "left center";
-      this.$refs.embedWrapper.style.transform = `translateY(-50%) scale(${scaleSize})`;
-      this.$refs.embedWrapper.style.opacity = "0";
+      if(this.showOnline){
+        const rootWidth = this.$refs.itemWrapper.offsetWidth;
+        const scaleSize = rootWidth / this.embedWidth;
+        this.$refs.embedWrapper.style.transformOrigin = "left center";
+        this.$refs.embedWrapper.style.transform = `translateY(-50%) scale(${scaleSize})`;
+        this.$refs.embedWrapper.style.opacity = "0";
 
-      await new Promise((resolve) => setTimeout( async () => {
-        this.$refs.embedWrapper.style.left = "0";
-        this.$refs.embedWrapper.style.top = "";
-        this.$refs.embedWrapper.style.right = "";
-        resolve()
-      }, 500)); // value is equal to block transition duration
-      // save top because of block jumpings
+        await new Promise((resolve) => setTimeout(async () => {
+          this.$refs.embedWrapper.style.left = "0";
+          this.$refs.embedWrapper.style.top = "";
+          this.$refs.embedWrapper.style.right = "";
+          resolve()
+        }, 500)); // value is equal to block transition duration
+        // save top because of block jumpings
+        }
     },
 
     setEmbedSizes() {
       this.embedWidth = window.innerWidth > 1279 ? 400 : 300;
       this.embedHeight = window.innerWidth > 1279 ? 350 : 200;
+    },
+    startDragging(e) {
+      this.$root.$emit('close-other-layouts');
+      this.mouseDown = true;
+      this.startX = e.pageX - this.$refs.channelBox.offsetLeft;
+      this.scrollLeft = this.$refs.channelBox.scrollLeft;
+      this.triggerDragging(e)
+    },
+    stopDragging(e) {
+      this.mouseDown = false;
+    },
+    triggerDragging(e) {
+      e.preventDefault();
+      if (!this.mouseDown) {
+        return;
+      }
+      const x = e.pageX - this.$refs.channelBox.offsetLeft;
+      const scroll = x - this.startX;
+      this.$refs.channelBox.scrollLeft = this.scrollLeft - scroll;
     },
   },
 

@@ -51,6 +51,11 @@
               :src="overlay"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
             />
+            <img
+              v-if="showEmbed && embedData"
+              src="/images/live-icon.gif"
+              class="" style="position: absolute;top: 5px;width: 50px;right: 0;"
+            />
           </div>
 
           <!-- If there's no embed, show that instead with a link first -->
@@ -267,6 +272,11 @@ export default {
           this.cornerCutStyling.outline = 'cut-edge__clipped--youtube';
         }
       }
+    }
+  },
+  created() {
+    if(!this.showOnline && this.embedData){
+      this.mouseEntered();
     }
   }
   // data() {

@@ -17,29 +17,42 @@
         {{ settings.title }}
         <title-addinional-description v-show="settings.onGamersXtv" />
       </h2>
-      <div class="flex items-center space-x-5">
+<!--      <div class="flex items-center space-x-5">-->
+<!--        <slider-arrow-->
+<!--          :isNext="false"-->
+<!--          :videoType="'twitch'"-->
+<!--          @arrow-clicked="back()"-->
+<!--        />-->
+<!--        <slider-arrow-->
+<!--          :isNext="true"-->
+<!--          :videoType="'twitch'"-->
+<!--          @arrow-clicked="forward()"-->
+<!--        />-->
+<!--      </div>-->
+    </div>
+    <div class="flex" style="align-items: center;">
+      <div class="w5-center " :class="{ sliderArrowHide:!rowIndex }">
         <slider-arrow
           :isNext="false"
           :videoType="'twitch'"
           @arrow-clicked="back()"
         />
-        <slider-arrow
-          :isNext="true"
-          :videoType="'twitch'"
-          @arrow-clicked="forward()"
-        />
       </div>
-    </div>
-    <div
-      ref="channelBox"
-      class="flex overflow-hidden pt-8 xl:pt-12 pb-9 md:pb-8 xl:pb-14 pl-4 xl:pl-20"
-    >
       <div
-        class="flex items-end"
-        ref="channelDivs"
-        v-for="(channel, index) in displayChannels"
-        :key="index"
+        @mousemove="this.triggerDragging"
+        @mousedown="this.startDragging"
+        @mouseup="this.stopDragging"
+        @mouseleave="this.stopDragging"
+        @scroll="this.handleScroll"
+        ref="channelBox"
+        class="flex overflow-hidden custom-smooth-scroll pt-8 xl:pt-12 pb-9 md:pb-8 xl:pb-14 pl-4 xl:pl-0"
       >
+        <div
+          class="flex items-end"
+          ref="channelDivs"
+          v-for="(channel, index) in displayChannels"
+          :key="index"
+        >
         <span
           :data-number="index + 1"
           class="transform translate-x-3 leading-extra-tight md:translate-x-4 xl:translate-x-5 flex-shrink-0 font-bahnschrift font-semibold text-8xl md:text-xxl xl:text-3xxl text-stroke"
@@ -49,19 +62,29 @@
         >
           {{ index + 1 }}
         </span>
-        <component
-          :is="channel.componentName"
-          v-bind="channel"
-          class=""
-        ></component>
+          <component
+            :is="channel.componentName"
+            v-bind="channel"
+            class=""
+          ></component>
+        </div>
+
+      </div>
+      <div class="w5-center" :class="{ sliderArrowHide:!(this.displayChannels.length > 1) }">
+        <slider-arrow
+          :isNext="true"
+          :videoType="'twitch'"
+          @arrow-clicked="forward()"
+        />
       </div>
     </div>
+
   </div>
 </template>
 <script>
 import EmbedContainer from "../layout/EmbedContainer/EmbedContainerNumbered.vue";
 import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerNumbered.vue";
-
+import embedMixin from "../../mixins/embedFrameMixin";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
 import SliderArrow from "../helpers/SliderArrow.vue";
@@ -71,6 +94,7 @@ require("swiped-events");
 
 export default {
   name: "NumberedRow",
+  mixins: [embedMixin],
   components: {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
@@ -123,6 +147,9 @@ export default {
         // Add one to j because flexbox order should start with 1, not 0
         this.$refs.channelDivs[i].style.order = j + 1;
       }
+    },
+    handleScroll () {
+      this.$root.$emit('close-other-layouts');
     },
     clickPrev() {},
     clickNext() {}
