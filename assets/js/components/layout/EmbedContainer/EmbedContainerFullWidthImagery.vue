@@ -31,6 +31,11 @@
           :src="overlay"
           class="-translate-y-1/2 relative top-1/2 transform w-full"
         />
+        <img
+          v-if="showEmbed && embedData"
+          src="/images/live-icon.gif"
+          class="" style="position: absolute;top: 10px;width: 100px;right: 25px;"
+        />
         <play-button
           v-if="showEmbed && embedData"
           class="
@@ -83,6 +88,7 @@
       >
         <div ref="embedWrapper" class="h-full w-full">
           <component
+            v-if="isEmbedVisible"
             ref="embed"
             :is="embedName"
             :embedData="embedData"

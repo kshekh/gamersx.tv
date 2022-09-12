@@ -188,4 +188,11 @@ class PageController extends AbstractController
 
     }
 
+    /**
+     * @Route("/access-denied", name="access_denied")
+     */
+    public function accessDenied()
+    {
+        return $this->redirectToRoute('home');
+    }
 }

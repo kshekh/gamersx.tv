@@ -24,28 +24,44 @@
         "
       >
         {{ settings.title }}
-        <title-addinional-description v-show="settings.onGamersXtv" />
+        <title-addinional-description v-show="settings.onGamersXtv"/>
       </h2>
-      <div class="flex items-center space-x-5">
+      <!--      <div class="flex items-center space-x-5">-->
+      <!--        <slider-arrow-->
+      <!--          :isNext="false"-->
+      <!--          :videoType="'twitch'"-->
+      <!--          @arrow-clicked="back()"-->
+      <!--        />-->
+      <!--        <slider-arrow-->
+      <!--          :isNext="true"-->
+      <!--          :videoType="'twitch'"-->
+      <!--          @arrow-clicked="forward()"-->
+      <!--        />-->
+      <!--      </div>-->
+    </div>
+
+    <div class="flex" style="align-items: center;">
+      <div :class="{ sliderArrowHide:!rowIndex }" class="w5-center">
         <slider-arrow
           :isNext="false"
           :videoType="'twitch'"
           @arrow-clicked="back()"
         />
-        <slider-arrow
-          :isNext="true"
-          :videoType="'twitch'"
-          @arrow-clicked="forward()"
-        />
       </div>
-    </div>
-    <div
-      ref="channelBox"
-      class="flex overflow-hidden pt-18 md:pt-12 xl:pt-18 pb-18 md:pb-14 xl:pb-20"
-    >
       <div
-        :style="customBg(channel)"
-        class="
+        @mousemove="this.triggerDragging"
+        @mousedown="this.startDragging"
+        @mouseup="this.stopDragging"
+        @mouseleave="this.stopDragging"
+        ref="channelBox"
+        class="flex overflow-hidden w-full custom-smooth-scroll pt-18 md:pt-12 xl:pt-18 pb-18 md:pb-14 xl:pb-20"
+      >
+        <div
+          v-for="(channel, index) in displayChannels"
+          :key="index"
+          ref="channelDivs"
+          :style="customBg(channel)"
+          class="
           flex-shrink-0
           bg-cover bg-no-repeat bg-center
           xl:max-w-485
@@ -53,13 +69,20 @@
           h-41 md:h-22 xl:h-41
           bg-black
         "
-        ref="channelDivs"
-        v-for="(channel, index) in displayChannels"
-        :key="index"
-      >
-        <component :is="channel.componentName" v-bind="channel"></component>
+        >
+          <component :is="channel.componentName" v-bind="channel"></component>
+        </div>
+
+      </div>
+      <div :class="{ sliderArrowHide:!(this.displayChannels.length > 1) }" class="w5-center">
+        <slider-arrow
+          :isNext="true"
+          :videoType="'twitch'"
+          @arrow-clicked="forward()"
+        />
       </div>
     </div>
+
   </div>
 </template>
 <script>
@@ -67,13 +90,14 @@ import EmbedContainer from "../layout/EmbedContainer/EmbedContainerParallax.vue"
 import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerParallax.vue";
 
 import SliderArrow from "../helpers/SliderArrow.vue";
-
+import embedMixin from "../../mixins/embedFrameMixin";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
 require("swiped-events");
 
 export default {
   name: "Parallax",
+  mixins: [embedMixin],
   components: {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
@@ -125,6 +149,9 @@ export default {
         // Add one to j because flexbox order should start with 1, not 0
         this.$refs.channelDivs[i].style.order = j + 1;
       }
+    },
+    handleScroll () {
+      this.$root.$emit('close-other-layouts');
     },
     customBg: function (channel) {
       if (channel.customArt) {

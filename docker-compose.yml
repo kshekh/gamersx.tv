@@ -1,5 +1,21 @@
 version: "3.5"
 services:
+
+  mysql:
+    container_name: gamersx_mysql
+    image: mariadb:10.5.5
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    networks:
+      - gamersx
+    volumes:
+      - mysqldata:/var/lib/mysql
+
   app:
     build:
       args:
@@ -37,6 +53,9 @@ services:
     networks:
       - gamersx
     restart: unless-stopped
+
+volumes:
+  mysqldata: {}
 
 networks:
   gamersx:

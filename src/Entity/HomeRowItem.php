@@ -39,10 +39,24 @@ class HomeRowItem implements PartneredInterface
     const TYPE_POPULAR = 'popular';
     const TYPE_YOUTUBE = 'youtube';
     const TYPE_LINK = 'link';
+    const TYPE_TWITCH_VIDEO = 'twitch-video';
+    const TYPE_TWITCH_PLAYLIST = 'twitch-playlist';
+    const TYPE_YOUTUBE_VIDEO = 'youtube-video';
+    const TYPE_YOUTUBE_PLAYLIST = 'youtube-playlist';
     /**
      * @ORM\Column(type="string", length=32)
      */
     private $itemType;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $videoId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $playlistId;
 
     /**
      * Options to be passed into Containerizer
@@ -196,6 +210,30 @@ class HomeRowItem implements PartneredInterface
     public function setItemType(string $itemType): self
     {
         $this->itemType = $itemType;
+
+        return $this;
+    }
+
+    public function getVideoId(): ?string
+    {
+        return $this->videoId;
+    }
+
+    public function setVideoId(?string $videoId): self
+    {
+        $this->videoId = $videoId;
+
+        return $this;
+    }
+
+    public function getPlaylistId(): ?string
+    {
+        return $this->playlistId;
+    }
+
+    public function setPlaylistId(?string $playlistId): self
+    {
+        $this->playlistId = $playlistId;
 
         return $this;
     }

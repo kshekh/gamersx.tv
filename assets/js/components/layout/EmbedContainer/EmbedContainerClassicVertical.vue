@@ -26,6 +26,11 @@
             :src="overlay"
             class="relative top-1/2 transform -translate-y-1/2 w-full"
           />
+          <img
+            v-if="showEmbed && embedData"
+            src="/images/live-icon.gif"
+            class="" style="position: absolute;top: 0px;width: 75px;right: 0;"
+          />
         </div>
 
         <!-- If there's no embed, show that instead with a link first -->
@@ -116,6 +121,7 @@
               </h6>
             </div>
             <component
+              v-if="isEmbedVisible"
               ref="embed"
               :is="embedName"
               :embedData="embedData"
@@ -240,6 +246,11 @@ export default {
           this.cornerCutStyling.outline = 'cut-edge__clipped--youtube';
         }
       }
+    }
+  },
+  created() {
+    if(!this.showOnline && this.embedData){
+      this.mouseEntered();
     }
   }
 };
