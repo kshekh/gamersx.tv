@@ -5,9 +5,9 @@ export default {
       isCursorHere: false,
       embedWidth: 0,
       embedHeight: 0,
-      mouseDown:false,
-      startX:0,
-      scrollLeft:0
+      mouseDown: false,
+      startX: 0,
+      scrollLeft: 0
     };
   },
   methods: {
@@ -28,7 +28,10 @@ export default {
     },
 
     async hideVideo(elementId) {
-      if (!(elementId && this.embedData.elementId === elementId) && this.showOnline) {
+      // use the condition below for the Offline embed containers to auto-play and dont get closed
+      // if (!(elementId && this.embedData.elementId === elementId) && this.showOnline) {
+      // }
+      if (!(elementId && this.embedData.elementId === elementId)) {
         await this.resetEmbedStyles();
         this.isEmbedVisible = false;
 
@@ -46,7 +49,7 @@ export default {
       const isRectInViewport =
         rect.left >= 0 &&
         rect.left + this.embedWidth + 20 <=
-          (window.innerWidth || document.documentElement.clientWidth); // 320 - video wrapper width with little extra space
+        (window.innerWidth || document.documentElement.clientWidth); // 320 - video wrapper width with little extra space
 
       this.$refs.embedWrapper.style.transform = `translateY(-50%) scale(${scaleSize})`;
       this.$refs.embedWrapper.style.opacity = "0";
@@ -67,7 +70,9 @@ export default {
     },
 
     async resetEmbedStyles() {
-      if(this.showOnline){
+      // use the condition below for the Offline embed containers to auto-play and dont get closed
+      // if (this.showOnline) {
+      // }
         const rootWidth = this.$refs.itemWrapper.offsetWidth;
         const scaleSize = rootWidth / this.embedWidth;
         this.$refs.embedWrapper.style.transformOrigin = "left center";
@@ -81,7 +86,7 @@ export default {
           resolve()
         }, 500)); // value is equal to block transition duration
         // save top because of block jumpings
-        }
+
     },
 
     setEmbedSizes() {

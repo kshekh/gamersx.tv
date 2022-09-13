@@ -47,10 +47,10 @@
             :src="overlay"
             class="relative top-1/2 transform -translate-y-1/2 w-full"
           />
-          <img
-            src="/images/live-icon.gif"
-            class="" style="position: absolute;top: 0px;width: 75px;right: 0;"
-          />
+<!--          <img-->
+<!--            src="/images/live-icon.gif"-->
+<!--            class="" style="position: absolute;top: 0px;width: 75px;right: 0;"-->
+<!--          />-->
           <play-button
             :videoType="playBtnColor"
             class="
@@ -284,10 +284,10 @@ export default {
       }
     }
   },
-  created() {
-    if(!this.showOnline && this.embedData){
-      this.mouseEntered();
-    }
-  }
+  // created() {
+  //   if(!this.showOnline && this.embedData){
+  //     this.mouseEntered();
+  //   }
+  // }
 };
 </script>
