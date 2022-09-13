@@ -122,10 +122,10 @@ export default {
     this.isOverlayVisible = this.showOverlay;
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
   },
-  created() {
-    if(!this.showOnline && this.embedData){
-      this.mouseEntered();
-    }
-  }
+  // created() {
+  //   if(!this.showOnline && this.embedData){
+  //     this.mouseEntered();
+  //   }
+  // }
 };
 </script>
