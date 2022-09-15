@@ -145,13 +145,13 @@ definitions:
           - echo "Building the container image."
           - docker build --target app --build-arg UID=1000 -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php . -f docker/Dockerfile 
           - docker build --target web --build-arg UID=1000 --build-arg UPSTREAM=fargate -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx . -f docker/Dockerfile 
-          - docker build --target worker --build-arg UID=1000 -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:worker . -f docker/Dockerfile 
+          # - docker build --target worker --build-arg UID=1000 -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:worker . -f docker/Dockerfile 
           - echo "Pushing the container image to ECR."
           - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php
           - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx
-          - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:worker
+          # - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:worker
           - echo "Updating the service in ECS..."
-          - aws ecs update-service --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-worker --force-new-deployment
+          # - aws ecs update-service --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-worker --force-new-deployment
           - aws ecs update-service --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-app --force-new-deployment
           - aws ecs wait services-stable --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --services ${AWS_IMAGE_REPO}-app
 
@@ -274,24 +274,31 @@ pipelines:
       - step: *container-dev
       - step: *runscripts
 
-    # We currently use a CodeDeploy-based strategy for deploying to production and demo environments
-    'release-v*':
+    demo-*:
       - step: *webpack
-      - step: *zip
-      - step: *upload
-      - parallel:
-        - step:
-            <<: *codedeploy
-            name: Deploy to Demo
-            deployment: demo
-        - step:
-            <<: *codedeploy
-            name: Deploy to Production
-            deployment: production
       - step: *composer
       - step: *setenvdemo
       - step: *container-dev
       - step: *runscripts
+
+    # We currently use a CodeDeploy-based strategy for deploying to production and demo environments
+    'release-v*':
+      - step: *webpack
+      # - step: *zip
+      # - step: *upload
+      # - parallel:
+      #   - step:
+      #       <<: *codedeploy
+      #       name: Deploy to Demo
+      #       deployment: demo
+      #   - step:
+      #       <<: *codedeploy
+      #       name: Deploy to Production
+      #       deployment: production
+      - step: *composer
+      # - step: *setenvdemo
+      # - step: *container-dev
+      # - step: *runscripts
       - step: *setenvprod
       - step: *container-dev
       - step: *runscripts
