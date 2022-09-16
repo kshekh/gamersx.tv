@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use Symfony\Component\HttpFoundation\File\{ File, UploadedFile };
+use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -156,8 +156,8 @@ class Theme
     {
         $this->bannerImageFile = $bannerImageFile;
 
-        if ($this->bannerImageFile instanceof UploadedFile) {
-            $this->updatedAt = new \DateTime('now');
+        if (null !== $bannerImageFile ) {
+            $this->updatedAt = new \DateTimeImmutable();
         }
 
         return $this;
@@ -183,8 +183,9 @@ class Theme
     public function setEmbedBackgroundFile(?File $embedBackgroundFile): self
     {
         $this->embedBackgroundFile = $embedBackgroundFile;
-        if ($this->embedBackgroundFile instanceof UploadedFile) {
-            $this->updatedAt = new \DateTime('now');
+
+        if (null !== $embedBackgroundFile ) {
+            $this->updatedAt = new \DateTimeImmutable();
         }
 
         return $this;
@@ -210,8 +211,9 @@ class Theme
     public function setCustomArtFile(?File $customArtFile): self
     {
         $this->customArtFile = $customArtFile;
-        if ($this->customArtFile instanceof UploadedFile) {
-            $this->updatedAt = new \DateTime('now');
+
+        if (null !== $customArtFile ) {
+            $this->updatedAt = new \DateTimeImmutable();
         }
 
         return $this;
@@ -237,8 +239,9 @@ class Theme
     public function setArtBackgroundFile(?File $artBackgroundFile): self
     {
         $this->artBackgroundFile = $artBackgroundFile;
-        if ($this->artBackgroundFile instanceof UploadedFile) {
-            $this->updatedAt = new \DateTime('now');
+
+        if (null !== $artBackgroundFile ) {
+            $this->updatedAt = new \DateTimeImmutable();
         }
 
         return $this;
