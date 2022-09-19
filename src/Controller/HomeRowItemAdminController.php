@@ -5,7 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\{ HeaderUtils, Request, Response, ResponseHeaderBag, RedirectResponse };
+use Symfony\Component\HttpFoundation\{File\File, HeaderUtils, Request, Response, ResponseHeaderBag, RedirectResponse};
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Sonata\AdminBundle\Controller\CRUDController;
@@ -112,8 +112,9 @@ class HomeRowItemAdminController extends CRUDController
                             $archiveImageName = $hashedName.'-custom.img';
                             $archive->extractTo($tmp, $archiveImageName);
 
-                            $imagePath = $this->storage->resolvePath($row, 'customArtFile', $this->admin->getClass());
-                            $this->filesystem->copy("$tmp/$archiveImageName", $imagePath, TRUE);
+                            //$imagePath = $this->storage->resolvePath($row, 'customArtFile', $this->admin->getClass());
+                            //$this->storage->upload("$tmp/$archiveImageName", $imagePath, TRUE);
+                            $row->setCustomArtFile(new File("$tmp/$archiveImageName"));
                             $this->filesystem->remove("$tmp/$archiveImageName");
                         }
 
@@ -122,8 +123,9 @@ class HomeRowItemAdminController extends CRUDController
                             $archiveImageName = $hashedName.'-overlay.img';
                             $archive->extractTo($tmp, $archiveImageName);
 
-                            $imagePath = $this->storage->resolvePath($row, 'overlayArtFile', $this->admin->getClass());
-                            $this->filesystem->copy("$tmp/$archiveImageName", $imagePath, TRUE);
+                            //$imagePath = $this->storage->resolvePath($row, 'overlayArtFile', $this->admin->getClass());
+                            //$this->filesystem->copy("$tmp/$archiveImageName", $imagePath, TRUE);
+                            $row->setOverlayArtFile(new File("$tmp/$archiveImageName"));
                             $this->filesystem->remove("$tmp/$archiveImageName");
                         }
 
@@ -169,12 +171,15 @@ class HomeRowItemAdminController extends CRUDController
                 $archive->addFromString($name.'.json', $json);
                 if ($selectedModel->getCustomArt()) {
                     $path = $this->storage->resolvePath($selectedModel, 'customArtFile', $this->admin->getClass());
-
-                    $archive->addFile($path, $name.'-custom.img');
+                    $content = file_get_contents($path);
+                    $archive->addFromString(pathinfo ( $name.'-custom.img', PATHINFO_BASENAME), $content);
+                    //$archive->addFile($path, $name.'-custom.img');
                 }
                 if ($selectedModel->getOverlayArt()) {
                     $path = $this->storage->resolvePath($selectedModel, 'overlayArtFile', $this->admin->getClass());
-                    $archive->addFile($path, $name.'-overlay.img');
+                    $content = file_get_contents($path);
+                    $archive->addFromString(pathinfo ( $name.'-overlay.img', PATHINFO_BASENAME), $content);
+                    //$archive->addFile($path, $name.'-overlay.img');
                 }
 
             }
@@ -183,7 +188,6 @@ class HomeRowItemAdminController extends CRUDController
 
         } catch (\Exception $e) {
             $this->addFlash('sonata_flash_error', 'Couldn\'t create Zip file for export');
-
             return new RedirectResponse(
                 $this->admin->generateUrl('list', [
                     'filter' => $this->admin->getFilterParameters()
