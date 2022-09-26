@@ -293,7 +293,7 @@ class HomeRowItem implements PartneredInterface
     public function setCustomArtFile(?File $customArtFile): self
     {
         $this->customArtFile = $customArtFile;
-        if ($this->customArtFile instanceof UploadedFile) {
+        if (null !== $customArtFile ) {
             $this->updatedAt = new \DateTime('now');
         }
 
@@ -320,7 +320,7 @@ class HomeRowItem implements PartneredInterface
     public function setOverlayArtFile(?File $overlayArtFile): self
     {
         $this->overlayArtFile = $overlayArtFile;
-        if ($this->overlayArtFile instanceof UploadedFile) {
+        if (null !== $overlayArtFile ) {
             $this->updatedAt = new \DateTime('now');
         }
 
