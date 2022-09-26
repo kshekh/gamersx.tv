@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Model\PartneredInterface;
-use Symfony\Component\HttpFoundation\File\{ File, UploadedFile };
+use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -167,6 +167,12 @@ class HomeRowItem implements PartneredInterface
      * )
      */
     private $isPublishedEnd;
+
+    /**
+     * @ORM\Column(type="datetime")
+     * @var \DateTime
+     */
+    private $updatedAt;
 
     /**
      * @ORM\Column(type="boolean", options={"default" : 0})
@@ -462,6 +468,22 @@ class HomeRowItem implements PartneredInterface
         $this->isPartner = $isPartner;
 
         return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+     public function getUpdatedAt(): ?\DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     */
+    public function setUpdatedAt(?\DateTime $updatedAt): void
+    {
+        $this->updatedAt = $updatedAt;
     }
 
 }
