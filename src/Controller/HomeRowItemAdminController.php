@@ -134,7 +134,7 @@ class HomeRowItemAdminController extends CRUDController
                 $archive->close();
                 $this->addFlash('sonata_flash_success', "Successfully imported $success home rows.");
             } catch (\Exception $e) {
-                $this->addFlash('sonata_flash_error', 'Couldn\'t import Home Row file');
+                $this->addFlash('sonata_flash_error', $e->getMessage());
 
                 return new RedirectResponse(
                     $this->admin->generateUrl('list', [
@@ -158,11 +158,18 @@ class HomeRowItemAdminController extends CRUDController
 
         $archive = new \ZipArchive();
         $filename = $this->filesystem->tempnam(sys_get_temp_dir(), 'export_');
-
         try {
             $archive->open($filename, \ZipArchive::CREATE);
 
             foreach ($selectedModels as $selectedModel) {
+                if (!file_exists($selectedModel->getCustomArtFile())){
+                    $selectedModel->setCustomArt(null);
+                    $selectedModel->setCustomArtFile(null);
+                }
+                if (!file_exists($selectedModel->getOverlayArtFile())){
+                    $selectedModel->setOverlayArt(null);
+                    $selectedModel->setOverlayArtFile(null);
+                }
                 $json = $this->serializer->serialize($selectedModel, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['partner', 'homeRow']]);
                 $name = 'home-row-item-'.hash('sha1', $json);
                 $archive->addFromString($name.'.json', $json);
@@ -172,19 +179,18 @@ class HomeRowItemAdminController extends CRUDController
                     $archive->addFromString(pathinfo ( $name.'-custom.img', PATHINFO_BASENAME), $content);
                     //$archive->addFile($path, $name.'-custom.img');
                 }
+
                 if ($selectedModel->getOverlayArt()) {
                     $path = $this->storage->resolvePath($selectedModel, 'overlayArtFile', $this->admin->getClass());
                     $content = file_get_contents($path);
                     $archive->addFromString(pathinfo ( $name.'-overlay.img', PATHINFO_BASENAME), $content);
                     //$archive->addFile($path, $name.'-overlay.img');
                 }
-
             }
 
             $archive->close();
-
         } catch (\Exception $e) {
-            $this->addFlash('sonata_flash_error', 'Couldn\'t create Zip file for export');
+            $this->addFlash('sonata_flash_error', $e->getMessage());
             return new RedirectResponse(
                 $this->admin->generateUrl('list', [
                     'filter' => $this->admin->getFilterParameters()
