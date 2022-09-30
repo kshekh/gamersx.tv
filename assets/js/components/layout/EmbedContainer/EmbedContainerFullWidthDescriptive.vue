@@ -220,7 +220,7 @@ export default {
   ],
   data() {
     return {
-      isEmbedVisible: false,
+      isEmbedVisible: true,
       isHideButtonClicked: false,
       isVideoBuffered: false,
       isVideoPlaying: false,
@@ -266,7 +266,8 @@ export default {
     },
     playVideo() {
       this.$root.$emit("close-other-layouts", this.embedData.elementId);
-      this.$refs.embed.startPlayer();
+      if (this.$refs.embed)
+        this.$refs.embed.startPlayer();
     },
     videoBuffered() {
       this.isVideoBuffered = true;
@@ -283,9 +284,11 @@ export default {
     },
     hideVideo(elementId) {
       if (!(elementId && this.embedData.elementId === elementId)) {
-        this.isHideButtonClicked = false;
-        this.$refs.embed.stopPlayer();
-        this.isEmbedVisible = false;
+        if (this.$refs.embed) {
+          this.isHideButtonClicked = false;
+          this.$refs.embed.stopPlayer();
+          this.isEmbedVisible = false;
+        }
       }
     },
     updateIsPlaying(newVal) {
@@ -306,7 +309,7 @@ export default {
 
         this.playVideo();
       } else {
-        if (this.$refs.embed.isPlaying()) {
+        if (this.$refs.embed && this.$refs.embed.isPlaying()) {
           this.isEmbedVisible = false;
           this.isHideButtonClicked = false;
           this.$refs.embed.stopPlayer();

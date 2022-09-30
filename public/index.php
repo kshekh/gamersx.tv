@@ -20,7 +20,7 @@ if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
     Request::setTrustedHosts([$trustedHosts]);
 }
 
-if ($_SERVER['AWS_ELB'] === "1") {
+if (isset($_SERVER['AWS_ELB']) && $_SERVER['AWS_ELB'] === "1") {
     Request::setTrustedProxies(
         ['127.0.0.1', 'REMOTE_ADDR'],
         Request::HEADER_X_FORWARDED_AWS_ELB

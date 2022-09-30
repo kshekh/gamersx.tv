@@ -30,9 +30,11 @@ export default {
     },
     startPlayer: function() {
       if (!this.embedPlaying) {
-        this.embed.playVideo();
-        this.embed.unMute();
-        this.embedPlaying = true;
+        if (this.embed) {
+          this.embed.playVideo();
+          this.embed.unMute();
+          this.embedPlaying = true;
+        }
       }
     },
     stopPlayer: function(elementId) {
