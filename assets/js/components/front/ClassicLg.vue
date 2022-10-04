@@ -56,6 +56,7 @@
     @mouseleave="this.stopDragging"
     @scroll="this.handleScroll"
     ref="channelBox"
+    style="width: 100%"
     class="
         flex
         overflow-hidden custom-smooth-scroll
@@ -65,8 +66,6 @@
         md:pb-6
         xl:pb-12
         pl-4
-        xl:pl-20
-        w90-pleft-0
       "
   >
     <div
@@ -91,7 +90,7 @@
       <component :is="channel.componentName" v-bind="channel" :cuttedBorder="true"></component>
     </div>
   </div>
-  <div class="w5-center" :class="{ sliderArrowHide:!(this.displayChannels.length > 1) }">
+  <div class="w5-center" style="right: 0" :class="{ sliderArrowHide:!(this.displayChannels.length > 1) }">
     <slider-arrow
       :isNext="true"
       :videoType="'twitch'"
