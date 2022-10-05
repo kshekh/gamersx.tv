@@ -11,7 +11,7 @@
             transition-all
             duration-300
             transform
-            hover:scale-110
+
           "
     :class="[
       videoTypeClass,
