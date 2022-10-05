@@ -41,6 +41,7 @@
 <!--            />-->
             <div
               class="
+              invisible
                 absolute
                 top-3
                 left-6

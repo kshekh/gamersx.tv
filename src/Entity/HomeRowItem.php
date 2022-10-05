@@ -300,7 +300,7 @@ class HomeRowItem implements PartneredInterface
     {
         $this->customArtFile = $customArtFile;
         if (null !== $customArtFile ) {
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->updatedAt = new \DateTime('now');
         }
 
         return $this;
@@ -327,7 +327,7 @@ class HomeRowItem implements PartneredInterface
     {
         $this->overlayArtFile = $overlayArtFile;
         if (null !== $overlayArtFile ) {
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->updatedAt = new \DateTime('now');
         }
 
         return $this;

@@ -36,10 +36,11 @@ export default {
         await this.resetEmbedStyles();
         this.isEmbedVisible = false;
 
-        if (this.$refs.embed)
+        if (this.$refs.embed) {
           if (this.$refs.embed.isPlaying()) {
             this.$refs.embed.stopPlayer();
           }
+        }
       }
     },
 
