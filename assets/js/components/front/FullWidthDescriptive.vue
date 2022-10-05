@@ -37,7 +37,7 @@
           @arrow-big-clicked="back()"
         />
 
-         <div
+        <div
           class="
             py-2
             md:pt-8
@@ -131,7 +131,7 @@ export default {
       required: true
     }
   },
-  data: function() {
+  data: function () {
     return {
       rowIndex: 0,
       displayChannels: [],
@@ -145,7 +145,7 @@ export default {
     isRowFirst() {
       return this.rowPosition === 0;
     },
-    customBg: function() {
+    customBg: function () {
       let selected = this.displayChannels[this.rowIndex];
 
       if (selected && selected.customArt) {
@@ -169,7 +169,7 @@ export default {
     }
   },
   methods: {
-    showChannel: function(channel) {
+    showChannel: function (channel) {
       return (
         (channel.showOnline &&
           (channel.onlineDisplay.showArt ||
@@ -181,15 +181,15 @@ export default {
             channel.offlineDisplay.showOverlay))
       );
     },
-    first: function() {
+    first: function () {
       this.rowIndex = 0;
       this.reorder();
     },
-    back: function() {
+    back: function () {
       this.rowIndex = (this.rowIndex - 1).mod(this.displayChannels.length);
       this.reorder();
     },
-    forward: function() {
+    forward: function () {
       this.rowIndex = (this.rowIndex + 1).mod(this.displayChannels.length);
       this.reorder();
     },
