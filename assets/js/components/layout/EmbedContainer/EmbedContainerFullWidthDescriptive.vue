@@ -34,7 +34,7 @@
         ]"
       >
         <img
-          v-if="showArt && image"
+          v-if="showArt && image && !overlay"
           :src="image.url"
           class="max-h-20 md:max-h-28 xl:max-h-52"
         />
@@ -61,7 +61,7 @@
             : 'text-xs md:text-sm xl:text-lg mb-2 xl:mb-4',
         ]"
       >
-         {{ description }}
+        {{ description }}
       </p>
 
       <div
@@ -127,9 +127,9 @@
             gradientUnits="userSpaceOnUse"
             gradientTransform="matrix(1, 0, 0, 0.999982, -2, -8.000276)"
           >
-            <stop offset="0" stop-color="#f44f5a" />
-            <stop offset="0.443" stop-color="#ee3d4a" />
-            <stop offset="1" stop-color="#e52030" />
+            <stop offset="0" stop-color="#f44f5a"/>
+            <stop offset="0.443" stop-color="#ee3d4a"/>
+            <stop offset="1" stop-color="#e52030"/>
           </linearGradient>
           <path
             fill="#FF0000"
@@ -262,7 +262,7 @@ export default {
       );
     },
     isInfoBoxHidden() {
-      return ( this.isMouseStopped || this.isHideButtonClicked ) && this.isVideoBuffered;
+      return (this.isMouseStopped || this.isHideButtonClicked) && this.isVideoBuffered;
     },
   },
   methods: {
