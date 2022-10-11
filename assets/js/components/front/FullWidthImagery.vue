@@ -55,6 +55,7 @@
                 v-show="index === rowIndex"
                 v-bind="channel"
                 @hide-controls="toggleControls(false)"
+                @show-controls="toggleControls(true)"
               ></component>
             </div>
           </div>
