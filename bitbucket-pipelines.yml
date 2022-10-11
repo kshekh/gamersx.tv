@@ -255,14 +255,24 @@ definitions:
 
 pipelines:
   branches:
+    dev:
+      - step: *webpack
+      - step: *composer
+      - step: *setenvdev
+      - step: *container-dev
+      - step: *runscripts
+    qa:
+      - step: *webpack
+      - step: *composer
+      - step: *setenvdemo
+      - step: *container-dev
+      - step: *runscripts
     main:
       - step: *webpack
-      - step: *zip
-      - step: *upload
-      - step:
-          <<: *codedeploy
-          name: Deploy to Development
-          deployment: dev
+      - step: *composer
+      - step: *setenvprod
+      - step: *container-dev
+      - step: *runscripts
 
   tags:
     # This is the new ECS strategy for deployments. Eventually, the CodeDeploy strategy will be deprecated
@@ -284,21 +294,7 @@ pipelines:
     # We currently use a CodeDeploy-based strategy for deploying to production and demo environments
     'release-v*':
       - step: *webpack
-      # - step: *zip
-      # - step: *upload
-      # - parallel:
-      #   - step:
-      #       <<: *codedeploy
-      #       name: Deploy to Demo
-      #       deployment: demo
-      #   - step:
-      #       <<: *codedeploy
-      #       name: Deploy to Production
-      #       deployment: production
       - step: *composer
-      # - step: *setenvdemo
-      # - step: *container-dev
-      # - step: *runscripts
       - step: *setenvprod
       - step: *container-dev
       - step: *runscripts
@@ -307,7 +303,7 @@ pipelines:
   # This pipeline triggers the automation of temporary QA environments whenever someone opens a pull request
   # to merge into staging branch
   pull-requests:
-    Staging:
+    main:
       - step: *setenvpr
       - step: *launch-environment
 
