@@ -11,7 +11,6 @@
       <div
         class="
           cut-edge__clipped
-          cut-edge__clipped--sm-border
           cut-edge__clipped-top-right-md
           h-full
           bg-black
