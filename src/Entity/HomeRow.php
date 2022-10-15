@@ -77,7 +77,7 @@ class HomeRow implements PartneredInterface
     * @ORM\Column(name="isPublishedStart", type="integer", nullable=true)
     *
     * @Assert\Expression(
-    *     "this.getIsPublishedStart() < this.getIsPublishedEnd()",
+    *     "this.getIsPublishedStart() <= this.getIsPublishedEnd()",
     *     message="Start time should be less than end date!"
     * )
     */
@@ -87,7 +87,7 @@ class HomeRow implements PartneredInterface
      * @ORM\Column(name="isPublishedEnd", type="integer", nullable=true)
      *
      * @Assert\Expression(
-     *     "this.getIsPublishedStart() < this.getIsPublishedEnd()",
+     *     "this.getIsPublishedStart() <= this.getIsPublishedEnd()",
      *     message="Start time should be less than end date!"
      * )
      */
