@@ -55,6 +55,20 @@ class HomeController extends AbstractController
     }
 
     /**
+     * @Route("/home/rows/api", name="home_cache_api")
+     */
+    public function apiHomeRows(): Response
+    {
+        $cache = new FilesystemAdapter();
+        $rowChannels = $cache->getItem('home');
+        return $this->json([
+            'settings' => [
+                'rows' => array_column($rowChannels->get(),"componentName")
+            ]
+        ]);
+    }
+
+    /**
      * @Route("/home/api/cache", name="home_api_cache")
      */
 //    public function apiHomeCache(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
