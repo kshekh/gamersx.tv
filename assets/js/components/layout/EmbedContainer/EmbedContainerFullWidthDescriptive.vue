@@ -45,6 +45,12 @@
           :src="overlay"
           class="max-h-20 md:max-h-28 xl:max-h-52"
         />
+        <img
+          v-else-if="overlay && offlineDisplay.showEmbed"
+          alt="Embed's Custom Overlay"
+          :src="overlay"
+          class="max-h-20 md:max-h-28 xl:max-h-52"
+        />
       </div>
 
       <p
