@@ -34,13 +34,19 @@
         ]"
       >
         <img
-          v-if="showArt && image && !overlay"
+          v-if="showArt && image"
           :src="image.url"
           class="max-h-20 md:max-h-28 xl:max-h-52"
         />
 
         <img
           v-else-if="showOverlay"
+          alt="Embed's Custom Overlay"
+          :src="overlay"
+          class="max-h-20 md:max-h-28 xl:max-h-52"
+        />
+        <img
+          v-else-if="overlay && offlineDisplay.showEmbed"
           alt="Embed's Custom Overlay"
           :src="overlay"
           class="max-h-20 md:max-h-28 xl:max-h-52"
