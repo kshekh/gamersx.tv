@@ -63,7 +63,7 @@ class HomeController extends AbstractController
         $rowChannels = $cache->getItem('home');
         return $this->json([
             'settings' => [
-                'rows' => array_column($rowChannels->get(),"componentName")
+                'rows' => array_column($rowChannels->get()??[],"componentName")
             ]
         ]);
     }
