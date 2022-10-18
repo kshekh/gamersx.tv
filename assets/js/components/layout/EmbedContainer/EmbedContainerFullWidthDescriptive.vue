@@ -34,13 +34,19 @@
         ]"
       >
         <img
-          v-if="showArt && image && !overlay"
+          v-if="showArt && image"
           :src="image.url"
           class="max-h-20 md:max-h-28 xl:max-h-52"
         />
 
         <img
           v-else-if="showOverlay"
+          alt="Embed's Custom Overlay"
+          :src="overlay"
+          class="max-h-20 md:max-h-28 xl:max-h-52"
+        />
+        <img
+          v-else-if="overlay && offlineDisplay.showEmbed"
           alt="Embed's Custom Overlay"
           :src="overlay"
           class="max-h-20 md:max-h-28 xl:max-h-52"
@@ -94,13 +100,14 @@
             transition-all
             duration-300
             bg-opacity-30
+            text-center
             hover:bg-opacity-100
           "
           :class="[
             bgColor,
             decreaseInfoBoxSize
-              ? 'text-8 md:text-xs xl:text-sm md:px-1 md:py-1 xl:py-2 xl:px-4 min-w-40 md:min-w-50 xl:min-w-75'
-              : 'text-xs md:text-sm xl:text-lg min-w-50 md:min-w-75 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6',
+              ? 'text-8 md:text-xs xl:text-sm md:px-1 md:py-1 xl:py-2 xl:px-4 min-w-50 md:min-w-90 xl:min-w-75'
+              : 'text-xs md:text-sm xl:text-lg min-w-50 min-w-70 md:min-w-75 md:min-w-90 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6',
           ]"
           target="_blank"
         >
