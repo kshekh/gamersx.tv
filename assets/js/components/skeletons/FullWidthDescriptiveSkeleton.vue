@@ -25,6 +25,7 @@
           animate-pulse
         "
       ></div>
+
     </div>
   </div>
 </template>
