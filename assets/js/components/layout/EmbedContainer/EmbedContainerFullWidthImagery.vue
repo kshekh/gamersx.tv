@@ -11,7 +11,6 @@
       <div
         class="
           cut-edge__clipped
-          cut-edge__clipped--sm-border
           cut-edge__clipped-top-right-md
           h-full
           bg-black
@@ -88,7 +87,7 @@
       >
         <div ref="embedWrapper" class="h-full w-full">
           <component
-            v-if="isEmbedVisible"
+            v-if="embedData"
             ref="embed"
             :is="embedName"
             :embedData="embedData"
@@ -178,6 +177,7 @@ export default {
         this.$refs.embed.stopPlayer();
       // }
       window.removeEventListener('scroll', this.checkIfBoxInViewPort);
+      this.$emit('show-controls');
     },
     computeGlowStyling: function () {
       if (this.isGlowStyling === "always_on" || (this.isGlowStyling === "enabled_if_live" && this.showOnline) || (this.isGlowStyling === "enabled_if_offline" && !this.showOnline)) {
@@ -243,6 +243,7 @@ export default {
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
   },
   destroyed() {
+    this.$emit('show-controls');
     this.$root.$off("close-other-layouts", this.scrollOut);
   }
 };

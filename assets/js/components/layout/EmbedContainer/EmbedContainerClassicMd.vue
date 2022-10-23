@@ -41,6 +41,7 @@
 <!--            />-->
             <div
               class="
+              invisible
                 absolute
                 top-3
                 left-6
@@ -223,7 +224,7 @@
               </h6>
             </div>
             <component
-              v-if="isEmbedVisible"
+              v-if="embedData"
               ref="embed"
               :is="embedName"
               :embedData="embedData"

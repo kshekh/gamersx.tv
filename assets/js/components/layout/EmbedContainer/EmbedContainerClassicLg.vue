@@ -141,7 +141,7 @@
               </h6>
             </div>
             <component
-              v-if="isEmbedVisible"
+              v-if="embedData"
               ref="embed"
               :is="embedName"
               :embedData="embedData"
@@ -238,20 +238,24 @@ export default {
   },
   methods: {
     computeGlowStyling: function () {
-      if (this.isGlowStyling === "always_on" || (this.isGlowStyling === "enabled_if_live" && this.showOnline) || (this.isGlowStyling === "enabled_if_offline" && !this.showOnline)) {
+      if (
+        this.isGlowStyling === "always_on" ||
+        (this.isGlowStyling === "enabled_if_live" && this.showOnline) ||
+        (this.isGlowStyling === "enabled_if_offline" && !this.showOnline)) {
         if (this.embedName === 'TwitchEmbed') {
           this.glowStyling.glow = 'cut-edge__wrapper--twitch';
-        }
-        else if (this.embedName === 'YouTubeEmbed') {
+        } else if (this.embedName === 'YouTubeEmbed') {
           this.glowStyling.glow = 'cut-edge__wrapper--youtube';
         }
       }
 
-      if (this.isCornerCut === "always_on" || (this.isCornerCut === "enabled_if_live" && this.showOnline) || (this.isCornerCut === "enabled_if_offline" && !this.showOnline)) {
+      if (
+        this.isCornerCut === "always_on" ||
+        (this.isCornerCut === "enabled_if_live" && this.showOnline) ||
+        (this.isCornerCut === "enabled_if_offline" && !this.showOnline)) {
         if (this.embedName === 'TwitchEmbed') {
           this.cornerCutStyling.outline = 'cut-edge__clipped--twitch';
-        }
-        else if (this.embedName === 'YouTubeEmbed') {
+        } else if (this.embedName === 'YouTubeEmbed') {
           this.cornerCutStyling.outline = 'cut-edge__clipped--youtube';
         }
       }

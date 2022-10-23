@@ -54,7 +54,8 @@
         @mouseup="this.stopDragging"
         @mouseleave="this.stopDragging"
         ref="channelBox"
-        class="flex overflow-hidden w-full custom-smooth-scroll pt-18 md:pt-12 xl:pt-18 pb-18 md:pb-14 xl:pb-20"
+        style="width: 100%"
+        class="flex overflow-hidden w-full custom-smooth-scroll pt-18 md:pt-12 xl:pt-18 pb-18 md:pb-14"
       >
         <div
           v-for="(channel, index) in displayChannels"
@@ -74,7 +75,7 @@
         </div>
 
       </div>
-      <div :class="{ sliderArrowHide:!(this.displayChannels.length > 1) }" class="w5-center">
+      <div :class="{ sliderArrowHide:!(this.displayChannels.length > 1) }" class="w5-center" style="right: 0;">
         <slider-arrow
           :isNext="true"
           :videoType="'twitch'"
