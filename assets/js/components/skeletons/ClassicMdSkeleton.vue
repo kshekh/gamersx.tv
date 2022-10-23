@@ -2,7 +2,7 @@
   <div>
     <!-- ClassicMdSkeleton -->
     <div>
-      <div class="pl-8 md:pl-10 xl:pl-24">
+      <div class="px-4">
         <h2
           class="
             inline-block
@@ -29,7 +29,6 @@
           md:pb-6
           xl:pb-12
           pl-4
-          xl:pl-20
         "
       >
         <div
