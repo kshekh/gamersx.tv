@@ -34,7 +34,7 @@
         ]"
       >
         <img
-          v-if="showArt && image"
+          v-if="showArt && image && !overlay"
           :src="image.url"
           class="max-h-20 md:max-h-28 xl:max-h-52"
         />

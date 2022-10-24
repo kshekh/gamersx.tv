@@ -10,9 +10,16 @@
 			{{ encore_entry_link_tags('app') }}
 		{% endblock %}
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-SRMHMJDY8E"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-SRMHMJDY8E');
+        </script>
         <link rel="icon" type="image/x-icon" href="/images/favicon.png">
-
-		{% block javascripts %}
+        {% block javascripts %}
 			<!-- Load the Twitch embed script -->
 			<script src="https://embed.twitch.tv/embed/v1.js"></script>
 			<script src="https://www.youtube.com/player_api"></script>
@@ -32,8 +39,7 @@
                 display: none;
             }
         </style>
-<<<<<<< HEAD
-=======
+
         <!-- Meta Pixel Code -->
         <script>
             !function(f,b,e,v,n,t,s)
@@ -51,7 +57,6 @@
             <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=646138676835854&ev=PageView&noscript=1" />
         </noscript>
         <!-- End Meta Pixel Code -->
->>>>>>> d253fdf3006a1a8b4fd44eaee7b38de66088b076
 	</head>
 	<body class="bg-black">
 		<div class="h-full flex flex-col">
