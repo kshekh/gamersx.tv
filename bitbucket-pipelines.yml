@@ -147,8 +147,8 @@ definitions:
           - docker info
           - docker --version
           - echo "Building the container image."
-          - docker build --target app --build-arg UID=1000 -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php . -f docker/Dockerfile 
           - docker build --target web --build-arg UID=1000 --build-arg UPSTREAM=fargate -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx . -f docker/Dockerfile 
+          - docker build --target app --build-arg UID=1000 -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php . -f docker/Dockerfile 
           # - docker build --target worker --build-arg UID=1000 -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:worker . -f docker/Dockerfile 
           - echo "Pushing the container image to ECR."
           - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php
@@ -160,12 +160,14 @@ definitions:
           - docker tag 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${MOBILE_REPO}:nginx
           - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${MOBILE_REPO}:php
           - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${MOBILE_REPO}:nginx
+          - aws ecs update-service --region ${AWS_REGION} --cluster ${MOBILE_REPO} --service ${MOBILE_REPO}-app --force-new-deployment
           - fi
           - echo "Updating the service in ECS..."
-          # - aws ecs update-service --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-worker --force-new-deployment
-          - aws ecs update-service --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-mobile-app --force-new-deployment
           - aws ecs update-service --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-app --force-new-deployment
           - aws ecs wait services-stable --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --services ${AWS_IMAGE_REPO}-app
+          - if test -f "ecr-mobile"; then
+          - aws ecs wait services-stable --region ${AWS_REGION} --cluster ${MOBILE_REPO} --services ${MOBILE_REPO}-app
+          - fi
 
     - step: &runscripts
         name: Running Migrations and Clearing Cache
