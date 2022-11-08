@@ -88,9 +88,11 @@ definitions:
         # Used by the ECS strategy to allow for abstraction and reuse for multiple environments
         script:
           - echo "gamersx-dev-dev" > ecr-repo
+          - echo "gamersx-dev-mobile" > ecr-mobile
           - echo "us-west-1" > aws-region
         artifacts:
           - ecr-repo
+          - ecr-mobile
           - aws-region
 
     - step: &setenvdemo
@@ -108,9 +110,11 @@ definitions:
         # Used by the ECS strategy to allow for abstraction and reuse for multiple environments
         script:
           - echo "gamersx-prod-prod" > ecr-repo
+          - echo "gamersx-prod-m" > ecr-mobile
           - echo "us-west-1" > aws-region
         artifacts:
           - ecr-repo
+          - ecr-mobile
           - aws-region
 
     - step: &setenvpr
@@ -149,11 +153,14 @@ definitions:
           - echo "Pushing the container image to ECR."
           - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php
           - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx
-          # - docker tag 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}-mobile:php
-          # - docker tag 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}-mobile:nginx
-          # - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}-mobile:php
-          # - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}-mobile:nginx
-          # - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:worker
+          - if test -f "ecr-mobile"; then
+          - export MOBILE_REPO=$(cat ./ecr-mobile)
+          - echo "Pushing image to mobile environment."
+          - docker tag 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${MOBILE_REPO}:php
+          - docker tag 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${MOBILE_REPO}:nginx
+          - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${MOBILE_REPO}:php
+          - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${MOBILE_REPO}:nginx
+          - fi
           - echo "Updating the service in ECS..."
           # - aws ecs update-service --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-worker --force-new-deployment
           - aws ecs update-service --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-mobile-app --force-new-deployment
