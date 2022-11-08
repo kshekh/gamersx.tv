@@ -6,7 +6,7 @@ definitions:
     - step: &webpack
         name: Webpack Build
         # Used by both deployment strategies to build frontend assets.
-        image: node:12.22
+        image: node:14
         services:
           - docker
         caches:
