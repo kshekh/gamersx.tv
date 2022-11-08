@@ -6,7 +6,7 @@ definitions:
     - step: &webpack
         name: Webpack Build
         # Used by both deployment strategies to build frontend assets.
-        image: node:14
+        image: node:16
         services:
           - docker
         caches:
@@ -88,7 +88,7 @@ definitions:
         # Used by the ECS strategy to allow for abstraction and reuse for multiple environments
         script:
           - echo "gamersx-dev-dev" > ecr-repo
-          - echo "gamersx-dev-mobile" > ecr-mobile
+          - echo "gamersx-dev-dev-mobile" > ecr-mobile
           - echo "us-west-1" > aws-region
         artifacts:
           - ecr-repo
