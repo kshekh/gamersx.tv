@@ -21,11 +21,11 @@ final class Version20220927180544 extends AbstractMigration
     {
         $this->addSql('Update home_row_item SET isPublishedStart = CASE WHEN `isPublishedStart` - 25200 < 0 THEN (`isPublishedStart` - 25200) + 86400
                             ELSE `isPublishedStart` - 25200 END,
-                         isPublishedEnd = CASE WHEN `isPublishedEnd` - 25200 < 86400 THEN (`isPublishedEnd` - 25200) + 86400
+                         isPublishedEnd = CASE WHEN `isPublishedEnd` - 25200 < 0 THEN (`isPublishedEnd` - 25200) + 86400
                             ELSE `isPublishedEnd` - 25200 END;');
         $this->addSql('Update home_row SET isPublishedStart = CASE WHEN `isPublishedStart` - 25200 < 0 THEN (`isPublishedStart` - 25200) + 86400
                             ELSE `isPublishedStart` - 25200 END,
-                         isPublishedEnd = CASE WHEN `isPublishedEnd` - 25200 < 86400 THEN (`isPublishedEnd` - 25200) + 86400
+                         isPublishedEnd = CASE WHEN `isPublishedEnd` - 25200 < 0 THEN (`isPublishedEnd` - 25200) + 86400
                             ELSE `isPublishedEnd` - 25200 END;');
     }
 
