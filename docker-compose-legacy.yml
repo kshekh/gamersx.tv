@@ -1,0 +1,64 @@
+version: "3.5"
+services:
+
+# NOTE: This compose setup has been depracated. Please use the new setup.
+
+  mysql:
+    container_name: gamersx_mysql
+    image: mariadb:10.5.5
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    networks:
+      - gamersx
+    volumes:
+      - mysqldata:/var/lib/mysql
+
+  app:
+    build:
+      args:
+        user: gamersx
+        uid: 1000
+      context: ./docker-compose/symfony/
+      dockerfile: Dockerfile
+    container_name: gamersx-php
+    volumes:
+      - ./:/var/www
+    networks:
+      - gamersx
+    restart: unless-stopped
+
+  vue:
+    image: node:lts-alpine
+    container_name: gamersx-js
+    user: '1000'
+    working_dir: /var/www
+    command: ['yarn', 'watch']
+    volumes:
+      - ./:/var/www
+    networks:
+      - gamersx
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: gamersx-web
+    ports:
+      - 8004:80
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d/
+    networks:
+      - gamersx
+    restart: unless-stopped
+
+volumes:
+  mysqldata: {}
+
+networks:
+  gamersx:
+    driver: bridge
