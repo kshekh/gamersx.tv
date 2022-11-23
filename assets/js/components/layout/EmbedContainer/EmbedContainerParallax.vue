@@ -32,6 +32,7 @@
             bg-black
           "
           :class="getOutline"
+          style="aspect-ratio: 1/2"
         >
           <!-- Show the embed with overlay if there's an embed -->
           <div
@@ -44,12 +45,14 @@
               v-if="showArt && image"
               :src="image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
+              style="height: inherit"
             />
             <img
               v-else-if="showOverlay"
               alt="Embed's Custom Overlay"
               :src="overlay"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
+              style="height: inherit"
             />
 <!--            <img-->
 <!--              v-if="showEmbed && embedData"-->
@@ -64,6 +67,7 @@
               <img
                 :src="image.url"
                 class="relative top-1/2 transform -translate-y-1/2 w-full"
+                style="height: inherit"
               />
             </a>
           </div>
@@ -75,6 +79,7 @@
                 class="relative top-1/2 transform -translate-y-1/2 w-full"
                 alt="Embed's Custom Overlay"
                 :src="overlay"
+                style="height: inherit"
               />
             </a>
           </div>

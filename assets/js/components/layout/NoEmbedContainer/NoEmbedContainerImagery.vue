@@ -22,11 +22,13 @@
           overflow-hidden
           cut-edge__clipped--twitch
         "
+        style="aspect-ratio: 3/4"
       >
         <img
           v-if="showArt && image"
           :src="image.url"
           class="-translate-y-1/2 relative top-1/2 transform w-full"
+          style="height: inherit"
         />
 
         <img

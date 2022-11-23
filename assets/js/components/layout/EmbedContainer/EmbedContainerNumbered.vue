@@ -15,6 +15,7 @@
   >
     <div
       class="cut-edge__wrapper relative w-full h-full z-10"
+      style="aspect-ratio: 3/4"
       :class="getGlow"
     >
       <div
@@ -40,6 +41,7 @@
             v-if="showArt && image"
             :src="image.url"
             class="relative top-1/2 transform -translate-y-1/2 w-full"
+            style="height: inherit"
           />
           <img
             v-else-if="showOverlay"
