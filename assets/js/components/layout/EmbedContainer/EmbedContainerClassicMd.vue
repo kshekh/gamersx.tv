@@ -27,12 +27,14 @@
               v-if="showArt && image"
               :src="image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
+              style="height: inherit"
             />
             <img
               v-else-if="showOverlay"
               alt="Embed's Custom Overlay"
               :src="overlay"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
+              style="height: inherit"
             />
 <!--            <img-->
 <!--              v-if="showEmbed && embedData"-->
@@ -124,6 +126,7 @@
               src="https://picsum.photos/id/1062/100/100"
               alt="avatar"
               class="w-9 h-9 md:w-5 md:h-5 xl:w-9 xl:h-9 rounded-full mr-1.5"
+              style="height: inherit"
             />
             <div class="overflow-hidden">
               <h5 class="text-xxs text-white font-play truncate">
@@ -142,6 +145,7 @@
             <img
               :src="image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
+              style="height: inherit"
             />
           </a>
         </div>
@@ -153,6 +157,7 @@
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               alt="Embed's Custom Overlay"
               :src="overlay"
+              style="height: inherit"
             />
           </a>
         </div>
@@ -185,6 +190,7 @@
           cut-edge__clipped-top-left-sm
           bg-black
         "
+        style="aspect-ratio: 16/9"
         :class="getOutline"
       >
         <div class="flex-grow min-h-0 relative">
@@ -193,6 +199,7 @@
               v-if="showArt && image"
               :src="image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
+              style="height: inherit"
             />
             <img
               v-else-if="showOverlay"

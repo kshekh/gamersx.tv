@@ -193,9 +193,14 @@ export default {
       if (channel.customArt) {
         return {
           backgroundImage: "url(" + channel.customArt + ")",
+          aspectRatio: 3/1,
+          height:'200px',
+          width:'600px',
         };
       } else {
-        return {};
+        return {aspectRatio: 3/1,
+          height:'200px',
+          width:'600px',};
       }
     },
   },
