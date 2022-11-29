@@ -6,9 +6,9 @@ Build the images to install necessary packages before running
 ```
 docker-compose build
 ```
-Install PHP packages using composer
+Install PHP packages using the composer installation in the worker container
 ```
-docker-compose run app composer install
+docker-compose run worker composer install
 ```
 Install packages so the image can run the yarn server
 ```
