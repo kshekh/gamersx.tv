@@ -287,4 +287,10 @@
 
          */
     </script>
+    <script>
+        if (navigator.userAgent.toLowerCase().match(/mobile/i)) {
+            if ((document.URL).includes("{{ current_domain }}"))
+                window.location.replace("{{ redirect_url }}");
+        }
+    </script>
 	</html>
