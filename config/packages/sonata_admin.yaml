@@ -32,7 +32,8 @@ sonata_admin:
 
     assets:
         extra_javascripts:
-            - 'js/custom-admin.js'  
+            - 'js/custom-admin.js'
+            - 'js/admin-login.js'
 
 sonata_block:
     blocks:
