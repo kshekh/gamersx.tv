@@ -5,7 +5,7 @@ ARG HOST_USER_GID=1001
 # Stage 1 [Composer] - Install PHP Dependencies
 ################################################
 
-# Build php depenedencies from a composer stage so we can 
+# Build php depenedencies from a composer stage so we can
 # drop all the composer stuff from the final container build
 
 FROM composer as vendor
@@ -26,7 +26,7 @@ RUN composer install \
 # Worker Stage
 ##########################
 
-# Redis cli install 
+# Redis cli install
 # gpg: command not found
 
 # Build a container to be used for development scripts
@@ -138,7 +138,7 @@ RUN php bin/console assets:install
 # - Add the web user and group.
 # - Copy all of the PHP scripts from Stage 2.
 # - Fix the permissions.
-# - Serve PHP scripts upstream to nginx with Fpm. 
+# - Serve PHP scripts upstream to nginx with Fpm.
 
 FROM php:7.4-fpm-alpine as app
 
@@ -180,7 +180,7 @@ WORKDIR /var/www/html
 # RUN curl -s https://getcomposer.org/installer | php
 # RUN alias composer='php composer.phar'
 
-# Copy the site files 
+# Copy the site files
 # COPY --from=backend --chown=ec2-user:nginx /app/. /var/www/html
 # RUN mkdir /var/www/html/vendor
 COPY --chown=ec2-user:nginx . /var/www/html/
@@ -203,8 +203,6 @@ CMD ["/usr/local/bin/docker-php-entrypoint","php-fpm","-F"]
 # - Install the node modules.
 # - Build the remaining static front end assets.
 
-# FROM node:lts-alpine as frontend
-# FROM node:14-alpine as frontend
 FROM node:16-alpine as frontend
 
 ARG HOST_USER_UID
