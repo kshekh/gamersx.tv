@@ -3,6 +3,7 @@
     <div
       class="cut-edge__wrapper w-full h-full"
       :class="getGlow"
+      style="aspect-ratio: 16/9"
     >
       <div
         class="w-full h-full cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
@@ -19,12 +20,14 @@
             v-if="showArt && image"
             :src="image.url"
             class="relative top-1/2 transform -translate-y-1/2 w-full"
+            style="height: inherit"
           />
           <img
             v-else-if="showOverlay"
             alt="Embed's Custom Overlay"
             :src="overlay"
             class="relative top-1/2 transform -translate-y-1/2 w-full"
+            style="height: inherit"
           />
 <!--          <img-->
 <!--            v-if="showEmbed && embedData"-->
@@ -39,6 +42,7 @@
             <img
               :src="image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
+              style="height: inherit"
             />
           </a>
         </div>
@@ -50,6 +54,7 @@
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               alt="Embed's Custom Overlay"
               :src="overlay"
+              style="height: inherit"
             />
           </a>
         </div>
@@ -90,12 +95,14 @@
               v-if="showArt && image"
               :src="image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
+              style="height: inherit"
             />
             <img
               v-else-if="showOverlay"
               alt="Embed's Custom Overlay"
               :src="overlay"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
+              style="height: inherit"
             />
           </div>
           <div
