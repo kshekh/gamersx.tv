@@ -288,7 +288,7 @@
     </script>
     <script>
         if (navigator.userAgent.toLowerCase().match(/mobile/i)) {
-            if ((document.URL).includes("{{ current_domain }}"))
+            if ("{{ app_env }}" === "production")
                 window.location.replace("{{ redirect_url }}");
         }
     </script>
