@@ -1,6 +1,5 @@
 twig:
     globals:
-        app_env: '%env(APP_ENV)%'
         current_domain: '%env(CURRENT_DOMAIN)%'
         redirect_url: '%env(REDIRECT_URL)%'
     default_path: '%kernel.project_dir%/templates'
