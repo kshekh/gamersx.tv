@@ -34,13 +34,19 @@
         ]"
       >
         <img
-          v-if="showArt && image"
+          v-if="showArt && image && !overlay"
           :src="image.url"
           class="max-h-20 md:max-h-28 xl:max-h-52"
         />
 
         <img
           v-else-if="showOverlay"
+          alt="Embed's Custom Overlay"
+          :src="overlay"
+          class="max-h-20 md:max-h-28 xl:max-h-52"
+        />
+        <img
+          v-else-if="overlay && offlineDisplay.showEmbed"
           alt="Embed's Custom Overlay"
           :src="overlay"
           class="max-h-20 md:max-h-28 xl:max-h-52"
@@ -55,7 +61,7 @@
             : 'text-xs md:text-sm xl:text-lg mb-2 xl:mb-4',
         ]"
       >
-         {{ description }}
+        {{ description }}
       </p>
 
       <div
@@ -94,13 +100,14 @@
             transition-all
             duration-300
             bg-opacity-30
+            text-center
             hover:bg-opacity-100
           "
           :class="[
             bgColor,
             decreaseInfoBoxSize
-              ? 'text-8 md:text-xs xl:text-sm md:px-1 md:py-1 xl:py-2 xl:px-4 min-w-40 md:min-w-50 xl:min-w-75'
-              : 'text-xs md:text-sm xl:text-lg min-w-50 md:min-w-75 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6',
+              ? 'text-8 md:text-xs xl:text-sm md:px-1 md:py-1 xl:py-2 xl:px-4 min-w-50 md:min-w-90 xl:min-w-75'
+              : 'text-xs md:text-sm xl:text-lg min-w-50 min-w-70 md:min-w-75 md:min-w-90 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6',
           ]"
           target="_blank"
         >
@@ -120,9 +127,9 @@
             gradientUnits="userSpaceOnUse"
             gradientTransform="matrix(1, 0, 0, 0.999982, -2, -8.000276)"
           >
-            <stop offset="0" stop-color="#f44f5a" />
-            <stop offset="0.443" stop-color="#ee3d4a" />
-            <stop offset="1" stop-color="#e52030" />
+            <stop offset="0" stop-color="#f44f5a"/>
+            <stop offset="0.443" stop-color="#ee3d4a"/>
+            <stop offset="1" stop-color="#e52030"/>
           </linearGradient>
           <path
             fill="#FF0000"
@@ -255,7 +262,7 @@ export default {
       );
     },
     isInfoBoxHidden() {
-      return ( this.isMouseStopped || this.isHideButtonClicked ) && this.isVideoBuffered;
+      return (this.isMouseStopped || this.isHideButtonClicked) && this.isVideoBuffered;
     },
   },
   methods: {
