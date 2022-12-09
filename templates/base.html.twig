@@ -286,4 +286,10 @@
 
          */
     </script>
+    <script>
+        if (navigator.userAgent.toLowerCase().match(/mobile/i)) {
+            if ("{{ app.environment }}" !== "dev")
+                window.location.replace("{{ redirect_url }}");
+        }
+    </script>
 	</html>
