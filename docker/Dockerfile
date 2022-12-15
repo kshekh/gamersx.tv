@@ -145,12 +145,15 @@ FROM php:7.4-fpm-alpine as app
 ARG HOST_USER_UID
 ARG HOST_USER_GID
 
+ENV TZ=America/Los_Angeles
+
 # Install apt packages
 RUN apk upgrade --update && apk add git\
   libmcrypt-dev \
   zip \
   libzip-dev \
-  unzip
+  unzip \
+  tzdata
 
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS \
         && pecl install apcu \
