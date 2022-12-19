@@ -225,8 +225,8 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'required' => false,
                 'input'  => 'timestamp',
                 'widget' => 'single_text',
-                'model_timezone' => 'UTC',
-                'view_timezone' => 'America/Los_Angeles',
+                'model_timezone' => 'America/Los_Angeles',
+                'view_timezone' => 'UTC',
                 'attr'=> [
                     'class' => 'timepicker',
                     'title'=> "Start timepicker for published",
@@ -237,8 +237,8 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'required' => false,
                 'input'  => 'timestamp',
                 'widget' => 'single_text',
-                'model_timezone' => 'UTC',
-                'view_timezone' => 'America/Los_Angeles',
+                'model_timezone' => 'America/Los_Angeles',
+                'view_timezone' => 'UTC',
                 'attr'=> [
                     'class' => 'timepicker',
                     'title'=> "End timepicker for published",
