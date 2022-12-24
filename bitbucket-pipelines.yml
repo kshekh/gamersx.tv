@@ -6,7 +6,7 @@ definitions:
     - step: &webpack
         name: Webpack Build
         # Used by both deployment strategies to build frontend assets.
-        image: node:12.22
+        image: node:16
         services:
           - docker
         caches:
@@ -88,9 +88,11 @@ definitions:
         # Used by the ECS strategy to allow for abstraction and reuse for multiple environments
         script:
           - echo "gamersx-dev-dev" > ecr-repo
+          - echo "gamersx-dev-dev-mobile" > ecr-mobile
           - echo "us-west-1" > aws-region
         artifacts:
           - ecr-repo
+          - ecr-mobile
           - aws-region
 
     - step: &setenvdemo
@@ -108,9 +110,11 @@ definitions:
         # Used by the ECS strategy to allow for abstraction and reuse for multiple environments
         script:
           - echo "gamersx-prod-prod" > ecr-repo
+          - echo "gamersx-prod-m" > ecr-mobile
           - echo "us-west-1" > aws-region
         artifacts:
           - ecr-repo
+          - ecr-mobile
           - aws-region
 
     - step: &setenvpr
@@ -143,17 +147,27 @@ definitions:
           - docker info
           - docker --version
           - echo "Building the container image."
-          - docker build --target app --build-arg UID=1000 -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php . -f docker/Dockerfile 
           - docker build --target web --build-arg UID=1000 --build-arg UPSTREAM=fargate -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx . -f docker/Dockerfile 
+          - docker build --target app --build-arg UID=1000 -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php . -f docker/Dockerfile 
           # - docker build --target worker --build-arg UID=1000 -t 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:worker . -f docker/Dockerfile 
           - echo "Pushing the container image to ECR."
           - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php
           - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx
-          # - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:worker
+          - if test -f "ecr-mobile"; then
+          - export MOBILE_REPO=$(cat ./ecr-mobile)
+          - echo "Pushing image to mobile environment."
+          - docker tag 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:php 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${MOBILE_REPO}:php
+          - docker tag 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}:nginx 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${MOBILE_REPO}:nginx
+          - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${MOBILE_REPO}:php
+          - docker push 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${MOBILE_REPO}:nginx
+          - aws ecs update-service --region ${AWS_REGION} --cluster ${MOBILE_REPO} --service ${MOBILE_REPO}-app --force-new-deployment
+          - fi
           - echo "Updating the service in ECS..."
-          # - aws ecs update-service --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-worker --force-new-deployment
           - aws ecs update-service --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-app --force-new-deployment
           - aws ecs wait services-stable --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --services ${AWS_IMAGE_REPO}-app
+          - if test -f "ecr-mobile"; then
+          - aws ecs wait services-stable --region ${AWS_REGION} --cluster ${MOBILE_REPO} --services ${MOBILE_REPO}-app
+          - fi
 
     - step: &runscripts
         name: Running Migrations and Clearing Cache
@@ -255,14 +269,24 @@ definitions:
 
 pipelines:
   branches:
+    dev:
+      - step: *webpack
+      - step: *composer
+      - step: *setenvdev
+      - step: *container-dev
+      - step: *runscripts
+    qa:
+      - step: *webpack
+      - step: *composer
+      - step: *setenvdemo
+      - step: *container-dev
+      - step: *runscripts
     main:
       - step: *webpack
-      - step: *zip
-      - step: *upload
-      - step:
-          <<: *codedeploy
-          name: Deploy to Development
-          deployment: dev
+      - step: *composer
+      - step: *setenvprod
+      - step: *container-dev
+      - step: *runscripts
 
   tags:
     # This is the new ECS strategy for deployments. Eventually, the CodeDeploy strategy will be deprecated
@@ -284,21 +308,7 @@ pipelines:
     # We currently use a CodeDeploy-based strategy for deploying to production and demo environments
     'release-v*':
       - step: *webpack
-      # - step: *zip
-      # - step: *upload
-      # - parallel:
-      #   - step:
-      #       <<: *codedeploy
-      #       name: Deploy to Demo
-      #       deployment: demo
-      #   - step:
-      #       <<: *codedeploy
-      #       name: Deploy to Production
-      #       deployment: production
       - step: *composer
-      # - step: *setenvdemo
-      # - step: *container-dev
-      # - step: *runscripts
       - step: *setenvprod
       - step: *container-dev
       - step: *runscripts
@@ -307,7 +317,7 @@ pipelines:
   # This pipeline triggers the automation of temporary QA environments whenever someone opens a pull request
   # to merge into staging branch
   pull-requests:
-    Staging:
+    main:
       - step: *setenvpr
       - step: *launch-environment
 

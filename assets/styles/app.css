@@ -12,11 +12,14 @@ html, body {
 .overBG{
   height: 40px;
   width: 40px;
+  border-radius: 50%;
+  background: #fffcfc4a!important;
 
 }
 .overBG:hover{
-  background: #2929294a!important;
+  background: rgba(0, 0, 0, 0.47) !important;
   border-radius: 50%;
+  border: 1px solid rgb(100, 65, 165);
 }
 .sliderArrowParent{
   position: absolute;
@@ -37,7 +40,9 @@ html, body {
   visibility: hidden!important;
 }
 .w5-center{
-  width: 5%; text-align: center
+  position: absolute;
+  z-index: 999999;
+  text-align: center
 }
 
 @media(max-width: 600px){

@@ -121,7 +121,7 @@
               </h6>
             </div>
             <component
-              v-if="isEmbedVisible"
+              v-if="embedData"
               ref="embed"
               :is="embedName"
               :embedData="embedData"

@@ -145,12 +145,15 @@ FROM php:7.4-fpm-alpine as app
 ARG HOST_USER_UID
 ARG HOST_USER_GID
 
+ENV TZ=America/Los_Angeles
+
 # Install apt packages
 RUN apk upgrade --update && apk add git\
   libmcrypt-dev \
   zip \
   libzip-dev \
-  unzip
+  unzip \
+  tzdata
 
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS \
         && pecl install apcu \
@@ -200,7 +203,7 @@ CMD ["/usr/local/bin/docker-php-entrypoint","php-fpm","-F"]
 # - Install the node modules.
 # - Build the remaining static front end assets.
 
-FROM node:lts-alpine as frontend
+FROM node:16-alpine as frontend
 
 ARG HOST_USER_UID
 ARG HOST_USER_GID
