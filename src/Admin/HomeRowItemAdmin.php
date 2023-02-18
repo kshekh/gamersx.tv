@@ -101,20 +101,23 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'sortable' => false,
             ])
             ->add('sortIndex', null, [
-                'editable' => TRUE,
-                'sortable' => false,
+                'editable' => true,
+                'sortable' => false
             ])
             ->add('partner')
             ->add('isPublished', null, [
+                'editable' => true,
                 'sortable' => false
             ])
             ->add('isPartner', null, [
                 'sortable' => false
             ])
             ->add('isPublishedStart', null, [
+                'editable' => true,
                 'sortable' => false
             ])
             ->add('isPublishedEnd', null, [
+                'editable' => true,
                 'sortable' => false
             ])
             ->add('_action', null, [
