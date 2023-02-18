@@ -206,6 +206,7 @@ final class HomeRowAdmin extends AbstractAdmin
                 'input'  => 'timestamp',
                 'widget' => 'single_text',
                 'model_timezone' => 'America/Los_Angeles',
+                'view_timezone' => 'UTC',
                 'attr'=> [
                     'class' => 'timepicker',
                     'title'=> "Start timepicker for published",
@@ -217,6 +218,7 @@ final class HomeRowAdmin extends AbstractAdmin
                 'input'  => 'timestamp',
                 'widget' => 'single_text',
                 'model_timezone' => 'America/Los_Angeles',
+                'view_timezone' => 'UTC',
                 'attr'=> [
                     'class' => 'timepicker',
                     'title'=> "End timepicker for published",
