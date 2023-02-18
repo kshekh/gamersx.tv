@@ -95,34 +95,49 @@ final class HomeRowAdmin extends AbstractAdmin
     {
         $listMapper
             ->add('title', null, [
+                'editable' => true,
                 'sortable' => false
             ])
             ->add('sortIndex', null, [
                 'editable' => true,
-                'sortable' => false,
+                'sortable' => false
             ])
-            ->add('layout', null, [
-                'editable' => false,
-                'sortable' => false,
+            ->add('layout', 'choice', [
+                'editable' => true,
+                'choices'=>[
+                    ['text' => 'Classic Small', 'value' => 'ClassicSm'],
+                    ['text' => 'Classic Medium', 'value' => 'ClassicMd'],
+                    ['text' => 'Classic Large', 'value' => 'ClassicLg'],
+                    ['text' => 'Classic Vertical', 'value' => 'ClassicVertical'],
+                    ['text' => 'Full Width - Descriptive', 'value' => 'FullWidthDescriptive'],
+                    ['text' => 'Full Width - Imagery', 'value' => 'FullWidthImagery'],
+                    ['text' => 'Parallax', 'value' => 'Parallax'],
+                    ['text' => 'Numbered', 'value' => 'NumberedRow']
+                ],
+                'sortable' => false
             ])
             ->add('partner')
             ->add('options', null, [
                 'editable' => false,
-                'sortable' => false,
+                'sortable' => false
             ])
             ->add('isPublished', null, [
+                'editable' => true,
                 'sortable' => false
             ])
             ->add('onGamersXtv', null, [
+                'editable' => true,
                 'sortable' => false
             ])
             ->add('isGlowStyling', null, [
                 'sortable' => false
             ])
             ->add('isPublishedStart', null, [
+                'editable' => true,
                 'sortable' => false
             ])
             ->add('isPublishedEnd', null, [
+                'editable' => true,
                 'sortable' => false
             ])
             ->add('_action', null, [
