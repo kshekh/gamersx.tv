@@ -84,7 +84,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
 
     protected function configureListFields(ListMapper $listMapper): void
     {
-        
+
         $homeRows = $this->getModelManager()->findBy(HomeRow::class);
         $homeRowsObjects = [];
         $homeRowsTitles = [];
@@ -94,7 +94,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             $homeRowsTitles[$homeRow->getId()] = $homeRow->getTitle();
             $homeRowsIds[$homeRow->getId()] = $homeRow->getId();
         }
-        
+
 
         // Create the data transformer
         /*
@@ -270,7 +270,8 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'input'  => 'timestamp',
                 'widget' => 'single_text',
                 'model_timezone' => 'America/Los_Angeles',
-                'attr' => [
+                'view_timezone' => 'UTC',
+                'attr'=> [
                     'class' => 'timepicker',
                     'title' => "Start timepicker for published",
                 ]
@@ -281,7 +282,8 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'input'  => 'timestamp',
                 'widget' => 'single_text',
                 'model_timezone' => 'America/Los_Angeles',
-                'attr' => [
+                'view_timezone' => 'UTC',
+                'attr'=> [
                     'class' => 'timepicker',
                     'title' => "End timepicker for published",
                 ]
