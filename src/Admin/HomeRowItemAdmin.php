@@ -22,6 +22,12 @@ use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
+/*
+use Doctrine\ORM\EntityManager;
+use Psr\Log\LoggerInterface;
+use App\Form\FilterFormType;
+use Doctrine\ORM\EntityManagerInterface;
+*/
 final class HomeRowItemAdmin extends AbstractAdmin
 {
 
@@ -78,10 +84,45 @@ final class HomeRowItemAdmin extends AbstractAdmin
 
     protected function configureListFields(ListMapper $listMapper): void
     {
+        
+        $homeRows = $this->getModelManager()->findBy(HomeRow::class);
+        $homeRowsObjects = [];
+        $homeRowsTitles = [];
+        $homeRowsIds = [];
+        foreach ($homeRows as $homeRow) {
+            $homeRowsObjects[$homeRow->getId()] = $homeRow;
+            $homeRowsTitles[$homeRow->getId()] = $homeRow->getTitle();
+            $homeRowsIds[$homeRow->getId()] = $homeRow->getId();
+        }
+        
+
+        // Create the data transformer
+        /*
+        $transformer = new CallbackTransformer(
+            // transform the data from the database into a format that can be used by the 'choice' field
+            function ($homeRow) {
+                return $homeRow->getTitle();
+            },
+            // transform the data from the 'choice' field into the desired object type
+            function ($title) {
+                return $this->getModelManager()->findBy(HomeRow::class, ['title' => $title]);
+            }
+        );*/
+
         $listMapper
-            ->add('homeRow', null, [
+            ->add('homeRow', 'choice', [
+                'editable' => true,
+                'choices' => $homeRowsObjects
+            ])
+            /*
+            ->add('homeRow', 'choice', [
+                'editable' => true,
+                'choices' => $homeRowsObjects,
+                'data_class' => HomeRow::class,
+                'choice_value' => 'title',
                 'sortable' => false,
             ])
+            */
             ->add('label', null, [
                 'sortable' => false,
             ])
@@ -224,25 +265,25 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'help' => 'Current Server Time: ' . date('H:i')
             ])
             ->add('isPublishedStart', TimeType::class, [
-                'label'=> 'Publish Start Time',
+                'label' => 'Publish Start Time',
                 'required' => false,
                 'input'  => 'timestamp',
                 'widget' => 'single_text',
                 'model_timezone' => 'America/Los_Angeles',
-                'attr'=> [
+                'attr' => [
                     'class' => 'timepicker',
-                    'title'=> "Start timepicker for published",
+                    'title' => "Start timepicker for published",
                 ]
             ])
             ->add('isPublishedEnd', TimeType::class, [
-                'label'=> 'Publish End Time',
+                'label' => 'Publish End Time',
                 'required' => false,
                 'input'  => 'timestamp',
                 'widget' => 'single_text',
                 'model_timezone' => 'America/Los_Angeles',
-                'attr'=> [
+                'attr' => [
                     'class' => 'timepicker',
-                    'title'=> "End timepicker for published",
+                    'title' => "End timepicker for published",
                 ]
             ])
             ->add('isPartner')
@@ -262,7 +303,6 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 }
             ))
             ;
-
     }
 
     protected function configureShowFields(ShowMapper $showMapper): void
@@ -323,5 +363,4 @@ final class HomeRowItemAdmin extends AbstractAdmin
             }
         }
     }
-
 }
