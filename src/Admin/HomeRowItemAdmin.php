@@ -9,7 +9,7 @@ use App\Entity\HomeRowItem;
 use App\Form\TopicType;
 use App\Form\SortAndTrimOptionsType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType, TimeType };
+use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, TimeType};
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\CallbackTransformer;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -22,12 +22,6 @@ use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
-/*
-use Doctrine\ORM\EntityManager;
-use Psr\Log\LoggerInterface;
-use App\Form\FilterFormType;
-use Doctrine\ORM\EntityManagerInterface;
-*/
 final class HomeRowItemAdmin extends AbstractAdmin
 {
 
@@ -38,8 +32,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
 
         return $query
             ->setSortOrder('ASC')
-            ->setSortBy([], ['fieldName' => 'sortIndex'])
-            ;
+            ->setSortBy([], ['fieldName' => 'sortIndex']);
     }
 
     protected $datagridValues = array(
@@ -78,17 +71,16 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('partner')
             ->add('homeRow')
             ->add('isPublished')
-            ->add('isPartner')
-            ;
+            ->add('isPartner');
     }
 
     protected function configureListFields(ListMapper $listMapper): void
     {
-
         $homeRows = $this->getModelManager()->findBy(HomeRow::class);
         $homeRowsObjects = [];
         $homeRowsTitles = [];
         $homeRowsIds = [];
+
         foreach ($homeRows as $homeRow) {
             $homeRowsObjects[$homeRow->getId()] = $homeRow;
             $homeRowsTitles[$homeRow->getId()] = $homeRow->getTitle();
@@ -96,33 +88,13 @@ final class HomeRowItemAdmin extends AbstractAdmin
         }
 
 
-        // Create the data transformer
-        /*
-        $transformer = new CallbackTransformer(
-            // transform the data from the database into a format that can be used by the 'choice' field
-            function ($homeRow) {
-                return $homeRow->getTitle();
-            },
-            // transform the data from the 'choice' field into the desired object type
-            function ($title) {
-                return $this->getModelManager()->findBy(HomeRow::class, ['title' => $title]);
-            }
-        );*/
-
         $listMapper
             ->add('homeRow', 'choice', [
                 'editable' => true,
-                'choices' => $homeRowsObjects
-            ])
-            /*
-            ->add('homeRow', 'choice', [
-                'editable' => true,
-                'choices' => $homeRowsObjects,
-                'data_class' => HomeRow::class,
-                'choice_value' => 'title',
+                'class' => HomeRow::class,
+                'choices' => $homeRowsTitles,
                 'sortable' => false,
             ])
-            */
             ->add('label', null, [
                 'sortable' => false,
             ])
@@ -271,7 +243,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'widget' => 'single_text',
                 'model_timezone' => 'America/Los_Angeles',
                 'view_timezone' => 'UTC',
-                'attr'=> [
+                'attr' => [
                     'class' => 'timepicker',
                     'title' => "Start timepicker for published",
                 ]
@@ -283,7 +255,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'widget' => 'single_text',
                 'model_timezone' => 'America/Los_Angeles',
                 'view_timezone' => 'UTC',
-                'attr'=> [
+                'attr' => [
                     'class' => 'timepicker',
                     'title' => "End timepicker for published",
                 ]
@@ -303,8 +275,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
 
                     return $homeRowItem;
                 }
-            ))
-            ;
+            ));
     }
 
     protected function configureShowFields(ShowMapper $showMapper): void
@@ -326,8 +297,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('partner')
             ->add('description')
             ->add('isPublished')
-            ->add('isPartner')
-            ;
+            ->add('isPartner');
     }
 
     protected function configureBatchActions($actions)
@@ -346,10 +316,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
         $collection
-            ->add('reorder', $this->getRouterIdParameter().'/reorder')
+            ->add('reorder', $this->getRouterIdParameter() . '/reorder')
             ->add('importForm')
-            ->add('import')
-            ;
+            ->add('import');
     }
 
     public function alterNewInstance(object $instance): void
