@@ -100,6 +100,10 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "test": [
+            "Composer\\Config::disableProcessTimeout",
+            "phpunit"
         ]
     },
     "conflict": {
