@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 /**
  * @Route("/api", name="twitch_")
  */
@@ -18,6 +20,11 @@ class TwitchApiController extends AbstractController
      */
     public function channelQuery(Request $request, TwitchApi $twitch, $query)
     {
+       if (!$this->isGranted('ROLE_LOCKED')) {
+            return new RedirectResponse(
+                $this->generateUrl('sonata_user_admin_security_login')
+             );
+        }
         $first = $request->get('first');
         $before = $request->get('before');
         $after = $request->get('after');
@@ -31,6 +38,12 @@ class TwitchApiController extends AbstractController
      */
     public function gameQuery(Request $request, TwitchApi $twitch, $query)
     {
+
+       if (!$this->isGranted('ROLE_LOCKED')) {
+            return new RedirectResponse(
+                $this->generateUrl('sonata_user_admin_security_login')
+             );
+        }
         $first = $request->get('first');
         $before = $request->get('before');
         $after = $request->get('after');

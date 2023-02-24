@@ -11,14 +11,24 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 
 class GameController extends AbstractController
 {
+  
     /**
      * @Route("/game/{id}", name="game")
      */
     public function index(TwitchApi $twitch, $id): Response
     {
+
+        if (!$this->isGranted('ROLE_LOCKED')) {
+            return new RedirectResponse(
+                $this->generateUrl('sonata_user_admin_security_login')
+             );
+        }
+
         return $this->render('game/index.html.twig', [
             'dataUrl' => $this->generateUrl('game_api', [
                 'id' => $id
@@ -32,6 +42,12 @@ class GameController extends AbstractController
     public function apiGame(TwitchApi $twitch, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $id): Response
     {
+        if (!$this->isGranted('ROLE_LOCKED')) {
+            return new RedirectResponse(
+                $this->generateUrl('sonata_user_admin_security_login')
+             );
+        }
+
         $gameInfo = $gamersxCache->get("game-${id}",
             function (ItemInterface $item) use ($id, $twitch, $themeInfoService) {
                 $game = $twitch->getGameInfo($id);

@@ -11,6 +11,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
+
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 class StreamerController extends AbstractController
 {
     /**
@@ -18,6 +21,13 @@ class StreamerController extends AbstractController
      */
     public function index(TwitchApi $twitch, $id): Response
     {
+        
+        if (!$this->isGranted('ROLE_LOCKED')) {
+            return new RedirectResponse(
+                $this->generateUrl('sonata_user_admin_security_login')
+             );
+        }
+
         return $this->render('streamer/index.html.twig', [
             'dataUrl' => $this->generateUrl('streamer_api', [
                 'id' => $id
@@ -31,6 +41,13 @@ class StreamerController extends AbstractController
     public function apiStreamer(TwitchApi $twitch, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $id): Response
     {
+       
+        if (!$this->isGranted('ROLE_LOCKED')) {
+            return new RedirectResponse(
+                $this->generateUrl('sonata_user_admin_security_login')
+             );
+        }
+
         $streamerInfo = $gamersxCache->get("streamer-${id}",
             function (ItemInterface $item) use ($id, $twitch, $themeInfoService) {
 
