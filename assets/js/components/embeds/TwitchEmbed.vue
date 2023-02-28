@@ -9,6 +9,8 @@ export default {
     embedData: Object,
     height: [Number, String],
     width: [Number, String],
+    info: {},
+    broadcast: {},
   },
   data: function() {
     return {

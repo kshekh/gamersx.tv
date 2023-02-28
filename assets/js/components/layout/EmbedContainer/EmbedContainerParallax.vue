@@ -1,19 +1,6 @@
 <template>
   <div class="w-full h-full flex items-center">
-    <div
-      class="
-        relative
-        left-1/3
-        md:left-1/5
-        w-22
-        md:w-12
-        xl:w-22
-        h-48
-        md:h-26
-        xl:h-48
-      "
-      ref="itemWrapper"
-    >
+    <div class="relative left-1/5 w-28 h-56" ref="itemWrapper">
       <div
         class="
           w-full
@@ -54,11 +41,11 @@
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               style="height: inherit"
             />
-<!--            <img-->
-<!--              v-if="showEmbed && embedData"-->
-<!--              src="/images/live-icon.gif"-->
-<!--              class="" style="position: absolute;top: 5px;width: 50px;right: 0;"-->
-<!--            />-->
+            <!--            <img-->
+            <!--              v-if="showEmbed && embedData"-->
+            <!--              src="/images/live-icon.gif"-->
+            <!--              class="" style="position: absolute;top: 5px;width: 50px;right: 0;"-->
+            <!--            />-->
           </div>
 
           <!-- If there's no embed, show that instead with a link first -->
@@ -96,9 +83,12 @@
         ease-linear
         duration-500
       "
-      :class="[getGlow, {
-        invisible: !isEmbedVisible,
-      }]"
+      :class="[
+        getGlow,
+        {
+          invisible: !isEmbedVisible
+        }
+      ]"
       ref="embedWrapper"
       :style="embedSize"
     >
@@ -219,7 +209,7 @@ export default {
   mixins: [embedMixin],
   components: {
     TwitchEmbed: TwitchEmbed,
-    YouTubeEmbed: YouTubeEmbed,
+    YouTubeEmbed: YouTubeEmbed
   },
   props: [
     "title",
@@ -237,48 +227,56 @@ export default {
     "liveViewerCount",
     "isGlowStyling",
     "isCornerCut",
+    "info",
+    "broadcast"
   ],
   data: function() {
     return {
       glowStyling: {
-        glow: ''
+        glow: ""
       },
       cornerCutStyling: {
-        outline: ''
+        outline: ""
       }
-    }
+    };
   },
   computed: {
-    getOutline: function () {
+    getOutline: function() {
       this.computeGlowStyling();
       return this.cornerCutStyling.outline;
     },
-    getGlow: function () {
+    getGlow: function() {
       this.computeGlowStyling();
       return this.glowStyling.glow;
     }
   },
   methods: {
-    computeGlowStyling: function () {
-      if (this.isGlowStyling === "always_on" || (this.isGlowStyling === "enabled_if_live" && this.showOnline) || (this.isGlowStyling === "enabled_if_offline" && !this.showOnline)) {
-        if (this.embedName === 'TwitchEmbed') {
-          this.glowStyling.glow = 'cut-edge__wrapper--twitch';
-        }
-        else if (this.embedName === 'YouTubeEmbed') {
-          this.glowStyling.glow = 'cut-edge__wrapper--youtube';
+    computeGlowStyling: function() {
+      if (
+        this.isGlowStyling === "always_on" ||
+        (this.isGlowStyling === "enabled_if_live" && this.showOnline) ||
+        (this.isGlowStyling === "enabled_if_offline" && !this.showOnline)
+      ) {
+        if (this.embedName === "TwitchEmbed") {
+          this.glowStyling.glow = "cut-edge__wrapper--twitch";
+        } else if (this.embedName === "YouTubeEmbed") {
+          this.glowStyling.glow = "cut-edge__wrapper--youtube";
         }
       }
 
-      if (this.isCornerCut === "always_on" || (this.isCornerCut === "enabled_if_live" && this.showOnline) || (this.isCornerCut === "enabled_if_offline" && !this.showOnline)) {
-        if (this.embedName === 'TwitchEmbed') {
-          this.cornerCutStyling.outline = 'cut-edge__clipped--twitch';
-        }
-        else if (this.embedName === 'YouTubeEmbed') {
-          this.cornerCutStyling.outline = 'cut-edge__clipped--youtube';
+      if (
+        this.isCornerCut === "always_on" ||
+        (this.isCornerCut === "enabled_if_live" && this.showOnline) ||
+        (this.isCornerCut === "enabled_if_offline" && !this.showOnline)
+      ) {
+        if (this.embedName === "TwitchEmbed") {
+          this.cornerCutStyling.outline = "cut-edge__clipped--twitch";
+        } else if (this.embedName === "YouTubeEmbed") {
+          this.cornerCutStyling.outline = "cut-edge__clipped--youtube";
         }
       }
     }
-  },
+  }
   // created() {
   //   if(!this.showOnline && this.embedData){
   //     this.mouseEntered();

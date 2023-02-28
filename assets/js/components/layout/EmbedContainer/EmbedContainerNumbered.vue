@@ -7,7 +7,7 @@
       h-24
       md:w-24
       md:h-32
-      xl:w-28
+      xl:w-30
       xl:h-40
       flex-shrink-0
     "
@@ -47,7 +47,7 @@
             v-else-if="showOverlay"
             alt="Embed's Custom Overlay"
             :src="overlay"
-            class="relative top-1/2 transform -translate-y-1/2 w-full"
+            class="relative top-1/2 transform -translate-y-1/2 w-full h-full object-cover"
           />
 <!--          <img-->
 <!--            src="/images/live-icon.gif"-->
@@ -244,6 +244,8 @@ export default {
     "liveViewerCount",
     "isGlowStyling",
     "isCornerCut",
+    'info',
+    'broadcast',
   ],
   data: function() {
     return {

@@ -70,7 +70,9 @@ export default {
     "link",
     "componentName",
     "embedName",
-    "embedData"
+    "embedData",
+    "info",
+    "broadcast",
   ],
   data: function() {
     return {

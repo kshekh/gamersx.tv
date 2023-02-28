@@ -79,12 +79,12 @@
           mr-3
           md:mr-2
           xl:mr-4
-          w-60
-          md:w-44
-          xl:w-72
-          h-40
-          md:h-28
-          xl:h-48
+          w-64
+          md:w-48
+          xl:w-96
+          h-36
+          md:h-27
+          xl:h-54
         "
     >
       <component :is="channel.componentName" v-bind="channel" :cuttedBorder="true"></component>

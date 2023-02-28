@@ -107,10 +107,10 @@
           flex-shrink-0
           w-36
           md:w-28
-          xl:w-48
+          xl:w-64
           h-20
-          md:h-18
-          xl:h-32
+          md:h-16
+          xl:h-36
         "
         >
           <component :is="channel.componentName" v-bind="channel" :cuttedBorder="true"></component>

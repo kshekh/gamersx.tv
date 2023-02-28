@@ -2,7 +2,7 @@
   <div class="w-full h-full flex flex-col">
     <div
       v-show="!isEmbedVisible"
-      class="cut-edge__wrapper flex-grow min-h-0 w-36 md:w-86 xl:w-118 relative ease-linear"
+      class="cut-edge__wrapper min-h-0 h-full w-max relative ease-linear aspect-3/4"
       :class="[getGlow, {
         'opacity-0 pointer-events-none z-negative': isEmbedVisible,
         'pointer-events-none z-negative': isEmbedVisible,

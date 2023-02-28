@@ -65,9 +65,10 @@
           class="
           flex-shrink-0
           bg-cover bg-no-repeat bg-center
-          xl:max-w-485
-          w-full md:w-1/3 xl:w-full
-          h-41 md:h-22 xl:h-41
+          w-120
+          h-40
+          xl:w-150
+          xl:h-50          
           bg-black
         "
         >

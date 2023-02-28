@@ -1,7 +1,10 @@
 const colors = require("tailwindcss/colors");
 
 module.exports = {
-  purge: [],
+  content: [
+    "./assets/js/components/**/*.{js,vue,ts}",    
+    "./templates/**/*.twig",    
+  ],
   darkMode: false, // or 'media' or 'class'
   theme: {
     colors: {
@@ -130,13 +133,20 @@ module.exports = {
         "18": "72px",
         "22": "88px",
         "26": "104px",
+        "27": "108px",
+        "30": "120px",
         "34": "136px",
         "41": "164px",
+        "45": "180px",
         "46": "184px",
         "50": "200px",
+        "54": "216px",
         "75": "300px",
         "86": "344px",
         "118": "472px",
+        "120": "480px",
+        "150": "600px",
+        "160": "640px",
         "50p": "50%",
         "110p": "110%",
         "115p": "115%",
@@ -169,6 +179,10 @@ module.exports = {
       },
       backdropBlur: {
         xs: "2px",
+      },
+      aspectRatio: {
+        '4/3': '4 / 3',
+        '3/4': '3 / 4',
       }
     }
   },
