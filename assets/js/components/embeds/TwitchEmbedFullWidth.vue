@@ -54,8 +54,8 @@ export default {
       channel: this.embedData.channel,
       video: this.embedData.video,
       layout: "video",
-      autoplay: false,
-      muted: true,
+      autoplay: true,
+      muted: false,
       controls: true,
       parent: window.location.hostname
     });
