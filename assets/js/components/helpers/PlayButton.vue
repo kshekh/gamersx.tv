@@ -10,7 +10,7 @@
       <!-- <svg class="text-white fill-current" viewBox="0 0 19 30" :class="svgClass">
         <path d="M 19 14.999 L 0 30 L 0 0 L 19 14.999 Z"/>
       </svg> -->
-      <svg class="text-white fill-current" viewBox="0 0 21 28" fill="none" :class="svgClass">
+      <svg class="fill-current" viewBox="0 0 21 28" fill="white" :class="svgClass">
         <path d="M 21 13.999 L 0 28 L 0 0 L 21 13.999 Z"/>
       </svg>
     </div>
