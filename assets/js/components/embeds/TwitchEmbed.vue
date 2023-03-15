@@ -21,7 +21,6 @@ export default {
   },
   methods: {
     embedTwitch: function () {
-      console.log("xxx twitch embed");
       this.embed = new Twitch.Embed(this.embedDataCopy.elementId, {
         width: this.width || 540,
         height: this.height || 300,
