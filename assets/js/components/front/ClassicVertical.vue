@@ -1,30 +1,13 @@
 <template>
   <div @swiped-left="forward()" @swiped-right="back()">
     <div
-      class="
-        flex
-        items-center
-        justify-between
-        pl-8
-        md:pl-10
-        xl:pl-24
-        pr-4
-        md:pr-5
-        xl:pr-12
-      "
+      class="flex items-center justify-between pl-8 md:pl-10 xl:pl-24 pr-4 md:pr-5 xl:pr-12"
     >
       <h2
-        class="
-          text-white
-          font-calibri font-bold
-          text-sm
-          md:text-2xl
-          xl:text-4xl
-          mr-2
-        "
+        class="text-white font-calibri font-bold text-sm md:text-2xl xl:text-4xl mr-2"
       >
         {{ settings.title }}
-        <title-addinional-description v-show="settings.onGamersXtv"/>
+        <title-addinional-description v-show="settings.onGamersXtv" />
       </h2>
       <!--      <div class="flex items-center space-x-5">-->
       <!--        <slider-arrow-->
@@ -39,8 +22,8 @@
       <!--        />-->
       <!--      </div>-->
     </div>
-    <div class="flex" style="align-items: center;">
-      <div ref="backArrow" class="w5-center ">
+    <div class="flex" style="align-items: center">
+      <div ref="backArrow" class="w5-center">
         <slider-arrow
           :isNext="false"
           :videoType="'twitch'"
@@ -55,40 +38,23 @@
         @scroll="this.handleScroll"
         ref="channelBox"
         style="width: 100%"
-        class="
-        flex
-        overflow-hidden custom-smooth-scroll
-        pt-5
-        xl:pt-9
-        pb-7
-        md:pb-6
-        xl:pb-12
-        pl-4
-      "
+        class="flex overflow-hidden custom-smooth-scroll pt-5 xl:pt-9 pb-7 md:pb-6 xl:pb-12 pl-4"
       >
         <div
           v-for="(channel, index) in displayChannels"
           :key="index"
           ref="channelDivs"
-          class="
-          flex
-          items-center
-          flex-shrink-0
-          mr-3
-          md:mr-2
-          xl:mr-4
-          w-26
-          md:w-36
-          xl:w-60
-          h-34
-          md:h-46
-          xl:h-80
-        "
+          class="flex items-center flex-shrink-0 mr-3 md:mr-2 xl:mr-4 w-26 md:w-36 xl:w-60 h-34 md:h-46 xl:h-80"
         >
           <component :is="channel.componentName" v-bind="channel"></component>
         </div>
       </div>
-      <div :class="{ sliderArrowHide:!(this.displayChannels.length > 1) }" ref="forwardArrow" class="w5-center" style="right: 0;">
+      <div
+        :class="{ sliderArrowHide: !(this.displayChannels.length > 1) }"
+        ref="forwardArrow"
+        class="w5-center"
+        style="right: 0"
+      >
         <slider-arrow
           :isNext="true"
           :videoType="'twitch'"
@@ -152,7 +118,7 @@ export default {
       // console.log("Back: ",this.rowIndex,this.displayChannels.length,(this.rowIndex + 1).mod(this.displayChannels.length))
       // this.rowIndex = (this.rowIndex - 1).mod(this.displayChannels.length);
       // this.reorder();
-      const content = this.$refs.channelBox
+      const content = this.$refs.channelBox;
       let content_scoll_left = content.scrollLeft;
       content_scoll_left -= 300;
       if (content_scoll_left <= 0) {
@@ -161,12 +127,11 @@ export default {
       content.scrollLeft = content_scoll_left;
     },
     forward() {
-      const content = this.$refs.channelBox
+      const content = this.$refs.channelBox;
       const content_scroll_width = content.scrollWidth;
       let content_scoll_left = content.scrollLeft;
       content_scoll_left += 300;
-      if (content_scoll_left >= content_scroll_width)
-      {
+      if (content_scoll_left >= content_scroll_width) {
         content_scoll_left = content_scroll_width;
       }
       content.scrollLeft = content_scoll_left;
@@ -179,42 +144,39 @@ export default {
       //   this.$refs.channelDivs[i].style.order = j + 1;
       // }
     },
-    hideArrows(left = true,right = true){
+    hideArrows(left = true, right = true) {
       // console.log(this.$refs)
-      if (right)
-        this.$refs.forwardArrow.classList.add("sliderArrowHide")
-      if (left)
-        this.$refs.backArrow.classList.add("sliderArrowHide")
+      if (right) this.$refs.forwardArrow.classList.add("sliderArrowHide");
+      if (left) this.$refs.backArrow.classList.add("sliderArrowHide");
     },
 
-    handleScroll () {
-      if (this.$refs.channelBox.scrollLeft == this.max_scroll_left){
-        this.$refs.forwardArrow.classList.add("sliderArrowHide")
-      }
-      else{
-        this.$refs.forwardArrow.classList.remove("sliderArrowHide")
+    handleScroll() {
+      if (this.$refs.channelBox.scrollLeft == this.max_scroll_left) {
+        this.$refs.forwardArrow.classList.add("sliderArrowHide");
+      } else {
+        this.$refs.forwardArrow.classList.remove("sliderArrowHide");
       }
 
-      if (this.$refs.channelBox.scrollLeft > 0){
-        this.$refs.backArrow.classList.remove("sliderArrowHide")
-      }else
-        this.$refs.backArrow.classList.add("sliderArrowHide")
-      this.$root.$emit('close-other-layouts');
-    }
+      if (this.$refs.channelBox.scrollLeft > 0) {
+        this.$refs.backArrow.classList.remove("sliderArrowHide");
+      } else this.$refs.backArrow.classList.add("sliderArrowHide");
+      this.$root.$emit("close-other-layouts");
+    },
   },
-  mounted: function() {
+  mounted: function () {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
-    this.$refs.channelBox.addEventListener('scroll', this.handleScroll);
+    this.$refs.channelBox.addEventListener("scroll", this.handleScroll);
     this.$refs.channelBox.scrollLeft = 0;
   },
-  updated: function() {
+  updated: function () {
     this.allowScrolling =
       this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
-    this.max_scroll_left = this.$refs.channelBox.scrollWidth - this.$refs.channelBox.clientWidth;
-    if (this.max_scroll_left == 0){
-      this.hideArrows()
+    this.max_scroll_left =
+      this.$refs.channelBox.scrollWidth - this.$refs.channelBox.clientWidth;
+    if (this.max_scroll_left == 0) {
+      this.hideArrows();
     }
-    this.hideArrows(true,false)
+    this.hideArrows(true, false);
     this.$refs.channelBox.scrollLeft = 0;
   },
 };

@@ -2,47 +2,18 @@
   <div
     @swiped-left="forward()"
     @swiped-right="back()"
-    class="
-      mb-7
-      md:mb-9
-      xl:mb-14
-      bg-cover bg-no-repeat
-      relative
-      overflow-hidden
-      min-h-mobile
-    "
+    class="mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative overflow-hidden min-h-mobile"
     :style="customBg"
   >
     <div class="container mx-auto">
       <div class="pb-50p"></div>
       <div
-        class="
-          pr-4
-          md:pr-12
-          py-2.5
-          md:py-6
-          xl:py-11
-          flex
-          items-center
-          justify-between
-          absolute
-          inset-0
-          z-10
-        "
+        class="pr-4 md:pr-12 py-2.5 md:py-6 xl:py-11 flex items-center justify-between absolute inset-0 z-10"
       >
         <div class="flex w-full h-full items-center justify-between">
           <div
             ref="channelBox"
-            class="
-              mr-5
-              md:mr-0
-              w-full
-              h-full
-              flex flex-col
-              justify-center
-              py-16
-              md:py-0
-            "
+            class="mr-5 md:mr-0 w-full h-full flex flex-col justify-center py-16 md:py-0"
           >
             <div
               ref="channelDivs"
@@ -61,15 +32,7 @@
           </div>
           <div
             v-show="isControlsShown"
-            class="
-              flex
-              items-center
-              space-x-1
-              md:space-x-2
-              relative
-              z-10
-              self-end
-            "
+            class="flex items-center space-x-1 md:space-x-2 relative z-10 self-end"
           >
             <slider-dot
               v-for="(channel, index) in displayChannels"
@@ -86,17 +49,16 @@
           v-show="isControlsShown"
           class="ml-2 md:ml-5 xl:ml-8 flex-shrink-0 relative z-10 flex"
         >
-         <slider-arrow-big
-          :isNext="false"
-          :videoType="currentChannelEmbedName"
-          @arrow-big-clicked="back()"
-        />
-         <slider-arrow-big
-          :isNext="true"
-          :videoType="currentChannelEmbedName"
-          @arrow-big-clicked="forward()"
-        />
-
+          <slider-arrow-big
+            :isNext="false"
+            :videoType="currentChannelEmbedName"
+            @arrow-big-clicked="back()"
+          />
+          <slider-arrow-big
+            :isNext="true"
+            :videoType="currentChannelEmbedName"
+            @arrow-big-clicked="forward()"
+          />
         </div>
       </div>
     </div>
@@ -118,7 +80,7 @@ export default {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
     "slider-dot": SliderDot,
-    "slider-arrow-big": SliderArrowBig
+    "slider-arrow-big": SliderArrowBig,
   },
   props: {
     settings: {
