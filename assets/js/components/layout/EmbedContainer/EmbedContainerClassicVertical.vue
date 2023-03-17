@@ -29,11 +29,11 @@
             class="relative top-1/2 transform -translate-y-1/2 w-full"
             style="height: inherit"
           />
-<!--          <img-->
-<!--            v-if="showEmbed && embedData"-->
-<!--            src="/images/live-icon.gif"-->
-<!--            class="" style="position: absolute;top: 0px;width: 75px;right: 0;"-->
-<!--          />-->
+          <!--          <img-->
+          <!--            v-if="showEmbed && embedData"-->
+          <!--            src="/images/live-icon.gif"-->
+          <!--            class="" style="position: absolute;top: 0px;width: 75px;right: 0;"-->
+          <!--          />-->
         </div>
 
         <!-- If there's no embed, show that instead with a link first -->
@@ -62,31 +62,18 @@
     </div>
     <div
       v-if="showEmbed && embedData"
-      class="
-        cut-edge__wrapper
-        absolute
-        z-30
-        transition-opacity-transform
-        ease-linear
-        duration-500
-      "
-      :class="[getGlow, {
-        invisible: !isEmbedVisible,
-      }]"
+      class="cut-edge__wrapper absolute z-30 transition-opacity-transform ease-linear duration-500"
+      :class="[
+        getGlow,
+        {
+          invisible: !isEmbedVisible,
+        },
+      ]"
       ref="embedWrapper"
       :style="embedSize"
     >
       <div
-        class="
-          w-full
-          h-full
-          flex flex-col
-          relative
-          cut-edge__clipped
-          cut-edge__clipped--sm-border
-          cut-edge__clipped-top-left-sm
-          bg-black
-        "
+        class="w-full h-full flex flex-col relative cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
         :class="getOutline"
       >
         <div class="flex-grow min-h-0 relative">
@@ -106,17 +93,7 @@
             />
           </div>
           <div
-            class="
-              relative
-              w-full
-              h-full
-              transition-opacity
-              ease-linear
-              duration-500
-              delay-750
-              opacity-0
-              bg-black
-            "
+            class="relative w-full h-full transition-opacity ease-linear duration-500 delay-750 opacity-0 bg-black"
             :class="{ 'opacity-100': isEmbedVisible }"
           >
             <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
@@ -140,37 +117,17 @@
         </div>
         <a
           :href="link"
-          class="
-            flex
-            justify-between
-            py-1
-            xl:pt-3
-            xl:pb-3
-            px-3
-            md:px-2
-            xl:px-4
-            bg-grey-900
-          "
+          class="flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
           :title="offlineDisplay.title"
         >
           <div class="mr-2 overflow-hidden">
             <h5
-              class="
-                text-xxs text-white
-                font-play
-                overflow-hidden overflow-ellipsis
-                whitespace-nowrap
-              "
+              class="text-xxs text-white font-play overflow-hidden overflow-ellipsis whitespace-nowrap"
             >
               {{ offlineDisplay.title }}
             </h5>
             <h6
-              class="
-                text-8 text-grey
-                font-play
-                overflow-hidden overflow-ellipsis
-                whitespace-nowrap
-              "
+              class="text-8 text-grey font-play overflow-hidden overflow-ellipsis whitespace-nowrap"
             >
               {{ embedData.channel }}
             </h6>
@@ -214,15 +171,15 @@ export default {
     "isGlowStyling",
     "isCornerCut",
   ],
-  data: function() {
+  data: function () {
     return {
       glowStyling: {
-        glow: ''
+        glow: "",
       },
       cornerCutStyling: {
-        outline: ''
-      }
-    }
+        outline: "",
+      },
+    };
   },
   computed: {
     getOutline: function () {
@@ -232,28 +189,34 @@ export default {
     getGlow: function () {
       this.computeGlowStyling();
       return this.glowStyling.glow;
-    }
+    },
   },
   methods: {
     computeGlowStyling: function () {
-      if (this.isGlowStyling === "always_on" || (this.isGlowStyling === "enabled_if_live" && this.showOnline) || (this.isGlowStyling === "enabled_if_offline" && !this.showOnline)) {
-        if (this.embedName === 'TwitchEmbed') {
-          this.glowStyling.glow = 'cut-edge__wrapper--twitch';
-        }
-        else if (this.embedName === 'YouTubeEmbed') {
-          this.glowStyling.glow = 'cut-edge__wrapper--youtube';
+      if (
+        this.isGlowStyling === "always_on" ||
+        (this.isGlowStyling === "enabled_if_live" && this.showOnline) ||
+        (this.isGlowStyling === "enabled_if_offline" && !this.showOnline)
+      ) {
+        if (this.embedName === "TwitchEmbed") {
+          this.glowStyling.glow = "cut-edge__wrapper--twitch";
+        } else if (this.embedName === "YouTubeEmbed") {
+          this.glowStyling.glow = "cut-edge__wrapper--youtube";
         }
       }
 
-      if (this.isCornerCut === "always_on" || (this.isCornerCut === "enabled_if_live" && this.showOnline) || (this.isCornerCut === "enabled_if_offline" && !this.showOnline)) {
-        if (this.embedName === 'TwitchEmbed') {
-          this.cornerCutStyling.outline = 'cut-edge__clipped--twitch';
-        }
-        else if (this.embedName === 'YouTubeEmbed') {
-          this.cornerCutStyling.outline = 'cut-edge__clipped--youtube';
+      if (
+        this.isCornerCut === "always_on" ||
+        (this.isCornerCut === "enabled_if_live" && this.showOnline) ||
+        (this.isCornerCut === "enabled_if_offline" && !this.showOnline)
+      ) {
+        if (this.embedName === "TwitchEmbed") {
+          this.cornerCutStyling.outline = "cut-edge__clipped--twitch";
+        } else if (this.embedName === "YouTubeEmbed") {
+          this.cornerCutStyling.outline = "cut-edge__clipped--youtube";
         }
       }
-    }
+    },
   },
   // created() {
   //   if(!this.showOnline && this.embedData){
