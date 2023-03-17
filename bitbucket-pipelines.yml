@@ -174,7 +174,7 @@ definitions:
         name: Running Migrations and Clearing Cache
         image: amazonlinux:latest
         script:
-          - yum install -y curl jq python3 py3-pip expect
+          - yum install -y curl jq python3 python3-pip expect
           - python3 -m pip install --upgrade pip
           - pip install awscli
           - curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
