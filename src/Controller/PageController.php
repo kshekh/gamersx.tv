@@ -13,6 +13,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
+
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 class PageController extends AbstractController
 {
     /**
@@ -20,6 +23,13 @@ class PageController extends AbstractController
      */
     public function channel(YouTubeApi $youtube, $id): Response
     {
+       
+       if (!$this->isGranted('ROLE_LOCKED')) {
+            return new RedirectResponse(
+                $this->generateUrl('sonata_user_admin_security_login')
+             );
+        }
+
         return $this->render('page/index.html.twig', [
             'dataUrl' => $this->generateUrl('channel_api', [
                 'id' => $id
@@ -31,6 +41,13 @@ class PageController extends AbstractController
      */
     public function query(YouTubeApi $youtube, $query): Response
     {
+        
+        if (!$this->isGranted('ROLE_LOCKED')) {
+            return new RedirectResponse(
+                $this->generateUrl('sonata_user_admin_security_login')
+             );
+        }
+
         return $this->render('page/index.html.twig', [
             'dataUrl' => $this->generateUrl('query_api', [
                 'query' => $query
