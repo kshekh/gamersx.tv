@@ -1,5 +1,5 @@
 <template>
-  <div @swiped-left="forward()" @swiped-right="back()">
+  <div>
     <div
       class="flex items-center justify-between pl-8 md:pl-10 xl:pl-24 pr-4 md:pr-5 xl:pr-12"
     >
@@ -38,7 +38,7 @@
         @scroll="this.handleScroll"
         ref="channelBox"
         style="width: 100%"
-        class="flex overflow-hidden custom-smooth-scroll pt-8 xl:pt-12 pb-9 md:pb-8 xl:pb-14 pl-4 xl:pl-0"
+        class="flex overflow-hidden custom-smooth-scroll pt-4 xl:pt-10 pb-6 md:pb-8 xl:pb-10 pl-4 xl:pl-0"
       >
         <div
           class="flex items-end"

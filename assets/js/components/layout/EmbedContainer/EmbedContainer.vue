@@ -56,7 +56,7 @@ export default {
   name: "EmbedContainer",
   components: {
     TwitchEmbed: TwitchEmbed,
-    YouTubeEmbed: YouTubeEmbed,
+    YouTubeEmbed: YouTubeEmbed
   },
   props: [
     "title",
@@ -71,23 +71,25 @@ export default {
     "componentName",
     "embedName",
     "embedData",
+    "info",
+    "broadcast",
   ],
-  data: function () {
+  data: function() {
     return {
       isOverlayVisible: true,
       isEmbedVisible: false,
-      isTitleVisible: false,
+      isTitleVisible: false
     };
   },
   methods: {
-    mouseEntered: function (e) {
+    mouseEntered: function(e) {
       if (this.showOverlay) {
         this.isOverlayVisible = false;
         this.isEmbedVisible = true;
       }
       this.$refs.embed.startPlayer();
     },
-    mouseLeft: function (e) {
+    mouseLeft: function(e) {
       if (this.showOverlay) {
         this.isOverlayVisible = true;
         this.isEmbedVisible = false;
@@ -95,30 +97,30 @@ export default {
       if (this.$refs.embed.isPlaying()) {
         this.$refs.embed.stopPlayer();
       }
-    },
+    }
   },
   computed: {
-    showEmbed: function () {
+    showEmbed: function() {
       return (
         (this.showOnline && this.onlineDisplay.showEmbed) ||
         (!this.showOnline && this.offlineDisplay.showEmbed)
       );
     },
-    showArt: function () {
+    showArt: function() {
       return (
         (this.showOnline && this.onlineDisplay.showArt) ||
         (!this.showOnline && this.offlineDisplay.showArt)
       );
     },
-    showOverlay: function () {
+    showOverlay: function() {
       return (
         this.overlay &&
         ((this.showOnline && this.onlineDisplay.showOverlay) ||
           (!this.showOnline && this.offlineDisplay.showOverlay))
       );
-    },
+    }
   },
-  mounted: function () {
+  mounted: function() {
     this.isOverlayVisible = this.showOverlay;
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
   },

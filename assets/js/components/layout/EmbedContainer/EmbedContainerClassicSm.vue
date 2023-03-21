@@ -16,14 +16,14 @@
           <img
             v-if="showArt && image"
             :src="image.url"
-            class="relative top-1/2 transform -translate-y-1/2 w-full"
+            class="relative top-1/2 transform -translate-y-1/2 w-full object-fit"
             style="height: inherit"
           />
           <img
             v-else-if="showOverlay"
             alt="Embed's Custom Overlay"
             :src="overlay"
-            class="relative top-1/2 transform -translate-y-1/2 w-full"
+            class="relative top-1/2 transform -translate-y-1/2 w-full object-cover"
             style="height: inherit"
           />
           <!--          <img-->
