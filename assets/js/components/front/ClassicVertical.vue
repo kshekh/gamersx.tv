@@ -1,5 +1,5 @@
 <template>
-  <div @swiped-left="forward()" @swiped-right="back()">
+  <div>
     <div
       class="
         flex

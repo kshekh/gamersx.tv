@@ -1,5 +1,5 @@
 <template>
-  <div @swiped-left="forward()" @swiped-right="back()">
+  <div>
     <div
       class="
         flex
@@ -55,7 +55,7 @@
         @mouseleave="this.stopDragging"
         ref="channelBox"
         style="width: 100%"
-        class="flex overflow-hidden w-full custom-smooth-scroll pt-18 md:pt-12 xl:pt-18 pb-18 md:pb-14"
+        class="flex overflow-hidden w-full custom-smooth-scroll pt-10 md:pt-16 lg:pt-12 pb-12 md:pb-14 lg:pb-18"
       >
         <div
           v-for="(channel, index) in displayChannels"
@@ -65,8 +65,8 @@
           class="
           flex-shrink-0
           bg-cover bg-no-repeat bg-center
-          w-120
-          h-40
+          w-90
+          h-30
           xl:w-150
           xl:h-50          
           bg-black
@@ -194,14 +194,10 @@ export default {
       if (channel.customArt) {
         return {
           backgroundImage: "url(" + channel.customArt + ")",
-          aspectRatio: 3/1,
-          height:'200px',
-          width:'600px',
+          class: "sm:w-20 sm:w-60"
         };
       } else {
-        return {aspectRatio: 3/1,
-          height:'200px',
-          width:'600px',};
+        return {class: "sm:w-20 sm:w-60"};
       }
     },
   },

@@ -1,5 +1,5 @@
 <template>
-  <div @swiped-left="forward()" @swiped-right="back()">
+  <div>
     <div
       class="
         flex
@@ -106,10 +106,12 @@
           xl:mr-3
           flex-shrink-0
           w-36
-          md:w-28
+          md:w-40
+          lg:w-52
           xl:w-64
           h-20
-          md:h-16
+          md:h-22
+          lg:h-30
           xl:h-36
         "
         >

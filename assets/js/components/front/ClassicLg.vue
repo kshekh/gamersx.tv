@@ -1,12 +1,12 @@
 <template>
-  <div @swiped-left="forward()" @swiped-right="back()">
+  <div>
     <div
       class="
         flex
         items-center
         justify-between
         pl-8
-        md:pl-10
+        md:pl-10flex items-center flex-shrink-0 mr-3
         xl:pl-24
         pr-4
         md:pr-5
@@ -79,11 +79,11 @@
           mr-3
           md:mr-2
           xl:mr-4
-          w-64
-          md:w-48
+          w-80
+          md:w-72
           xl:w-96
-          h-36
-          md:h-27
+          h-45
+          md:h-40
           xl:h-54
         "
     >

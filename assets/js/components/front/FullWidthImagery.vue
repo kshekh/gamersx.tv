@@ -33,15 +33,14 @@
         <div class="flex w-full h-full items-center justify-between">
           <div
             ref="channelBox"
-            class="
-              mr-5
-              md:mr-0
-              w-full
+            class="            
+              py-2.5
+              sm:py-0            
+              sm:mr-20
+              w-full            
               h-full
               flex flex-col
               justify-center
-              py-16
-              md:py-0
             "
           >
             <div

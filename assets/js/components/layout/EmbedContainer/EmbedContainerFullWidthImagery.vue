@@ -2,7 +2,7 @@
   <div class="w-full h-full flex flex-col">
     <div
       v-show="!isEmbedVisible"
-      class="cut-edge__wrapper min-h-0 h-full w-max relative ease-linear aspect-3/4"
+      class="cut-edge__wrapper h-full w-60p md:w-75 lg:w-80 xl:w-118"
       :class="[getGlow, {
         'opacity-0 pointer-events-none z-negative': isEmbedVisible,
         'pointer-events-none z-negative': isEmbedVisible,
@@ -21,20 +21,15 @@
         <img
           v-if="showArt && image"
           :src="image.url"
-          class="-translate-y-1/2 relative top-1/2 transform w-full"
+          class="-translate-y-1/2 relative top-1/2 transform w-30p h-full object-cover"
         />
 
         <img
           v-else-if="showOverlay"
           alt="Embed's Custom Overlay"
           :src="overlay"
-          class="-translate-y-1/2 relative top-1/2 transform w-full"
+          class="relative top-1/2 transform -translate-y-1/2 w-full h-full object-cover"
         />
-<!--        <img-->
-<!--          v-if="showEmbed && embedData"-->
-<!--          src="/images/live-icon.gif"-->
-<!--          class="" style="position: absolute;top: 10px;width: 100px;right: 25px;"-->
-<!--        />-->
         <play-button
           v-if="showEmbed && embedData"
           class="

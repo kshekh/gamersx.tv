@@ -1,5 +1,5 @@
 <template>
-  <div @swiped-left="forward()" @swiped-right="back()">
+  <div>
     <div
       class="
         flex
@@ -79,10 +79,12 @@
           xl:mr-4
           w-64
           md:w-48
-          xl:w-80
-          h-36
+          lg:w-60
+          xl:w-337 
+          h-48
           md:h-27
-          xl:h-45
+          lg:h-40
+          xl:h-60
         "
         >
           <component :is="channel.componentName" v-bind="channel" :cuttedBorder="true"></component>

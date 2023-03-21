@@ -1,6 +1,6 @@
 <template>
   <div class="w-full h-full flex items-center">
-    <div class="relative left-1/5 w-28 h-56" ref="itemWrapper">
+    <div class="relative left-1/5 w-20 h-40 md:w-28 md:h-56" ref="itemWrapper">
       <div
         class="
           w-full
