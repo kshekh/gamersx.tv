@@ -6,6 +6,14 @@ module.exports = {
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {
+    screens: {
+      'xs': '480px', // Your custom screen size
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
     colors: {
       purple: {
         600: "#32235B",
@@ -154,6 +162,7 @@ module.exports = {
         "92": "384px",
         "118": "472px",
         "120": "480px",
+        "127": "510px",
         "150": "600px",
         "160": "640px",
         "50p": "50%",
