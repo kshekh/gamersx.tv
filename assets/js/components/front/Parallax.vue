@@ -193,11 +193,8 @@ export default {
     customBg: function (channel) {
       if (channel.customArt) {
         return {
-          backgroundImage: "url(" + channel.customArt + ")",
-          class: "sm:w-20 sm:w-60"
+          backgroundImage: "url(" + channel.customArt + ")"
         };
-      } else {
-        return {class: "sm:w-20 sm:w-60"};
       }
     },
   },
