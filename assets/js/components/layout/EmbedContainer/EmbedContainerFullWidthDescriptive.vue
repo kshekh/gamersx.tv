@@ -27,11 +27,6 @@
     >
       <div
         class="overflow-hidden transition-all duration-300"
-        :class="[
-          decreaseInfoBoxSize
-            ? 'md:mb-1 h-11 md:h-20 xl:h-41'
-            : 'mb-1 md:mb-2 h-14 md:h-26 xl:h-52',
-        ]"
       >
         <img
           v-if="showArt && image && !overlay"
@@ -65,7 +60,7 @@
       </p>
 
       <div
-        class="mt-6 md:mt-auto transition-all duration-300 flex items-center"
+        class="mt-1 md:mt-auto transition-all duration-300 flex items-center"
         :class="[
           decreaseInfoBoxSize
             ? 'space-x-1 md:space-x-2 xl:space-x-3'
