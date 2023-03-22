@@ -86,6 +86,8 @@
             ref="embed"
             :is="embedName"
             :embedData="embedData"
+            :overlay="overlay"
+            :image="image"
             class="h-full w-full border overflow-hidden bg-black"
             :class="{
               'border-purple': embedName === 'TwitchEmbed',

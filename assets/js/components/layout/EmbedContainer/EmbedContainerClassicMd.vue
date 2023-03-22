@@ -59,7 +59,11 @@
             }"
           >
             <img
-              src="https://picsum.photos/id/1062/100/100"
+              :src="
+                streamersData.profile_image_url
+                  ? streamersData.profile_image_url
+                  : 'https://picsum.photos/id/1062/100/100'
+              "
               alt="avatar"
               class="w-9 h-9 md:w-5 md:h-5 xl:w-9 xl:h-9 rounded-full mr-1.5"
               style="height: inherit"
@@ -148,6 +152,8 @@
               ref="embed"
               :is="embedName"
               :embedData="embedData"
+              :overlay="overlay"
+              :image="image"
               class="w-full h-full"
               :width="'100%'"
               :height="'100%'"
@@ -183,6 +189,7 @@
 <script>
 import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
+import axios from "axios";
 
 import embedMixin from "../../../mixins/embedFrameMixin";
 
@@ -221,6 +228,7 @@ export default {
       cornerCutStyling: {
         outline: "",
       },
+      streamersData: {},
     };
   },
   computed: {
@@ -234,6 +242,14 @@ export default {
     },
   },
   methods: {
+    streamerInfoApi: function () {
+      axios
+        .get(`/streamer/info/${this.embedData.channel}/api`)
+        .catch((e) => console.error(e))
+        .then((response) => {
+          this.streamersData = JSON.parse(response.data.content).data[0];
+        });
+    },
     computeGlowStyling: function () {
       if (
         this.isGlowStyling === "always_on" ||
@@ -259,6 +275,9 @@ export default {
         }
       }
     },
+  },
+  beforeMount() {
+    this.streamerInfoApi();
   },
   // created() {
   //   if(!this.showOnline && this.embedData){

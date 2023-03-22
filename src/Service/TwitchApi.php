@@ -102,4 +102,13 @@ class TwitchApi
             'query' => $queryParams
         ]);
     }
+
+    public function getStreamerInfoByChannel($channelName)
+    {
+        return $this->client->request('GET', '/helix/users', [
+            'query' => [
+                'login' => $channelName
+            ]
+        ]);
+    }
 }

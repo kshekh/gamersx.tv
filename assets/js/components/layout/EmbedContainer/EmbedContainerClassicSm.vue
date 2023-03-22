@@ -124,6 +124,8 @@
               ref="embed"
               :is="embedName"
               :embedData="embedData"
+              :overlay="overlay"
+              :image="image"
               class="w-full h-full"
               :width="'100%'"
               :height="'100%'"

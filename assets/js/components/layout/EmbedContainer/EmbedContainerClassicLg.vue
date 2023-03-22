@@ -2,6 +2,7 @@
   <div class="w-full h-full flex-shrink-0" ref="itemWrapper">
     <div class="cut-edge__wrapper w-full h-full" :class="getGlow">
       <div
+        @click="onClick"
         class="w-full h-full cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
         :class="getOutline"
       >
@@ -104,6 +105,8 @@
               ref="embed"
               :is="embedName"
               :embedData="embedData"
+              :overlay="overlay"
+              :image="image"
               class="w-full h-full"
               :width="'100%'"
               :height="'100%'"
