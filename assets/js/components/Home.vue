@@ -1,7 +1,7 @@
 <template>
   <!-- remove "text-white" later -->
   <div class="text-white py-4 md:py-7">
-    <template v-if="settings.rows.length">
+    <template v-if="settings.rows && settings.rows.length">
       <div v-for="(row, index) in settings.rows" :key="row.id">
         <component
           :is="row.componentName"
@@ -33,6 +33,56 @@
       </template>
 <!--      <component v-else :is="defaultSkeleton"></component>-->
     </div>
+    <Modal
+      v-model="modal"
+      no-close-on-backdrop
+      ok-title="Continue anyway"
+      @ok="modal = false"
+    >
+      <div class="text-center p-5">
+        <div class="mb-4 text-grey-400 text-lg mx-auto max-w-[300px]">
+          Sign into
+          <span class="">
+            <a
+              href="https://twitch.tv/login"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-purple underline"
+            >
+              twitch.tv
+            </a>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 15 15"
+              class=" inline-block"
+            >
+              <path
+                fill="currentColor"
+                fill-rule="evenodd"
+                d="M3 2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V8.5a.5.5 0 0 0-1 0V12H3V3h3.5a.5.5 0 0 0 0-1H3Zm9.854.146a.5.5 0 0 1 .146.351V5.5a.5.5 0 0 1-1 0V3.707L6.854 8.854a.5.5 0 1 1-.708-.708L11.293 3H9.5a.5.5 0 0 1 0-1h3a.499.499 0 0 1 .354.146Z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </span>
+          for best viewing experience
+        </div>
+        <div class="mb-4">
+          <video
+            src="https://gamersx-dev-dev-us-west-1-storage.s3.us-west-1.amazonaws.com/Experience+Popup+1+Iteration+(720).mp4"
+            preload="metadata"
+            autoplay
+            muted
+            loop
+            width="100%"
+          ></video>
+        </div>
+        <p>
+          An active session in the background will avoid interruptions
+        </p>
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -46,6 +96,7 @@ import ClassicVerticalSkeleton from "./skeletons/ClassicVerticalSkeleton.vue";
 import NumberedRowSkeleton from "./skeletons/NumberedRowSkeleton.vue";
 import ParallaxSkeleton from "./skeletons/ParallaxSkeleton.vue";
 import FullWidthImagerySkeleton from "./skeletons/FullWidthImagerySkeleton.vue";
+import Modal from "./Modal"
 
 
 export default {
@@ -58,6 +109,7 @@ export default {
     ParallaxSkeleton: ParallaxSkeleton,
     ClassicVerticalSkeleton: ClassicVerticalSkeleton,
     FullWidthImagerySkeleton: FullWidthImagerySkeleton,
+    Modal,
 
     FullWidthDescriptive: LazyLoadComponent({
       componentFactory: () => import('./front/FullWidthDescriptive.vue'),
@@ -101,6 +153,7 @@ export default {
   },
   data: function () {
     return {
+      modal: false,
       settings: {
         rows: [],
       },
@@ -138,6 +191,7 @@ export default {
     }
   },
   mounted: function () {
+    this.modal = true;
     this.requestHomeCachedRowsApi().then(()=>{
       this.requestHomeApi();
     });
