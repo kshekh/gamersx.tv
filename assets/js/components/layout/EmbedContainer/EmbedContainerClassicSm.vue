@@ -2,6 +2,7 @@
   <div class="w-full h-full flex-shrink-0" ref="itemWrapper">
     <div class="cut-edge__wrapper w-full h-full" :class="getGlow">
       <div
+        @click="isShowTwitchEmbed = true"
         class="w-full h-full cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
         :class="getOutline"
         style="aspect-ratio: 16/9"
@@ -124,6 +125,7 @@
               ref="embed"
               :is="embedName"
               :embedData="embedData"
+              :isShowTwitchEmbed="isShowTwitchEmbed"
               class="w-full h-full"
               :width="'100%'"
               :height="'100%'"
@@ -194,6 +196,7 @@ export default {
       cornerCutStyling: {
         outline: "",
       },
+      isShowTwitchEmbed: false,
     };
   },
   computed: {

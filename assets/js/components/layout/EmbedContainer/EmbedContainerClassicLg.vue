@@ -2,6 +2,7 @@
   <div class="w-full h-full flex-shrink-0" ref="itemWrapper">
     <div class="cut-edge__wrapper w-full h-full" :class="getGlow">
       <div
+        @click="isShowTwitchEmbed = true"
         class="w-full h-full cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
         :class="getOutline"
       >
@@ -102,6 +103,7 @@
             <component
               v-if="embedData"
               ref="embed"
+              :isShowTwitchEmbed="isShowTwitchEmbed"
               :is="embedName"
               :embedData="embedData"
               class="w-full h-full"
@@ -177,6 +179,7 @@ export default {
       cornerCutStyling: {
         outline: "",
       },
+      isShowTwitchEmbed: false,
     };
   },
   computed: {

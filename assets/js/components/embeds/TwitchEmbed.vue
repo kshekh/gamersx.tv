@@ -9,6 +9,7 @@ export default {
   name: "TwitchEmbed",
   props: {
     embedData: Object,
+    isShowTwitchEmbed: Boolean,
     height: [Number, String],
     width: [Number, String],
     info: {},
@@ -70,6 +71,11 @@ export default {
   },
   watch: {
     showTwitchEmbed(newVal) {
+      if (newVal === true) {
+        this.embedTwitch();
+      }
+    },
+    isShowTwitchEmbed(newVal) {
       if (newVal === true) {
         this.embedTwitch();
       }
