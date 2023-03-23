@@ -10,7 +10,7 @@
       md:h-32
       xl:w-28
       xl:h-40
-      flex-shrink-0
+      shrink-0
       z-10
       relative
     "
@@ -25,7 +25,7 @@
         cut-edge__clipped--sm-border
         cut-edge__clipped-top-left-sm
         bg-black
-        flex-shrink-0
+        shrink-0
         cut-edge__clipped--twitch
         overflow-hidden
       "
