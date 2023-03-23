@@ -111,8 +111,6 @@
               :is="embedName"
               :embedData="embedData"
               :isShowTwitchEmbed="isShowTwitchEmbed"
-              :image="image"
-              :overlay="overlay"
               class="w-full h-full"
               :width="'100%'"
               :height="'100%'"
