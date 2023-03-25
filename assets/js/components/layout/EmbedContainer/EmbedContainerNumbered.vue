@@ -14,6 +14,7 @@
     ref="itemWrapper"
   >
     <div
+      @click="isShowTwitchEmbed = true"
       class="cut-edge__wrapper relative w-full h-full z-10"
       style="aspect-ratio: 3/4"
       :class="getGlow"
@@ -160,6 +161,7 @@
               ref="embed"
               :is="embedName"
               :embedData="embedData"
+              :isShowTwitchEmbed="isShowTwitchEmbed"
               class="w-full h-full"
               :width="'100%'"
               :height="'100%'"
@@ -253,9 +255,10 @@ export default {
         glow: ''
       },
       cornerCutStyling: {
-        outline: ''
-      }
-    }
+        outline: "",
+      },
+      isShowTwitchEmbed: false,
+    };
   },
   computed: {
     getOutline: function () {

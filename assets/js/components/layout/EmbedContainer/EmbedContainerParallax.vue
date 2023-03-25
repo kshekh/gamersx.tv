@@ -2,6 +2,7 @@
   <div class="w-full h-full flex items-center">
     <div class="relative left-1/5 w-20 h-40 md:w-28 md:h-56" ref="itemWrapper">
       <div
+        @click="isShowTwitchEmbed = true"
         class="
           w-full
           h-full
@@ -146,6 +147,7 @@
               ref="embed"
               :is="embedName"
               :embedData="embedData"
+              :isShowTwitchEmbed="isShowTwitchEmbed"
               class="w-full h-full"
               :width="'100%'"
               :height="'100%'"
@@ -236,8 +238,9 @@ export default {
         glow: ""
       },
       cornerCutStyling: {
-        outline: ""
-      }
+        outline: "",
+      },
+      isShowTwitchEmbed: false,
     };
   },
   computed: {

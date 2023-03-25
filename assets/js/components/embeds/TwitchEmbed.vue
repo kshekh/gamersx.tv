@@ -1,5 +1,5 @@
 <template>
-  <div @mouseover="showTwitchEmbed = true">
+  <div @mouseover="isShowTwitchEmbed = true">
     <div class="h-full w-full" :id="embedDataCopy.elementId"></div>
   </div>
 </template>
@@ -9,6 +9,7 @@ export default {
   name: "TwitchEmbed",
   props: {
     embedData: Object,
+    isShowTwitchEmbed: Boolean,
     height: [Number, String],
     width: [Number, String],
     info: {},
@@ -18,7 +19,6 @@ export default {
     return {
       embed: {},
       embedPlaying: false,
-      showTwitchEmbed: false,
     };
   },
   methods: {
@@ -41,7 +41,7 @@ export default {
       this.embed.addEventListener(Twitch.Player.OFFLINE, this.setIsNotPlaying);
     },
     startPlayer: function () {
-      if (!this.embedPlaying && this.showTwitchEmbed) {
+      if (!this.embedPlaying && this.isShowTwitchEmbed) {
         this.embed.play();
         this.embed.setMuted(false);
         this.embedPlaying = true;
@@ -69,7 +69,7 @@ export default {
     },
   },
   watch: {
-    showTwitchEmbed(newVal) {
+    isShowTwitchEmbed(newVal) {
       if (newVal === true) {
         this.embedTwitch();
       }
