@@ -27,6 +27,11 @@
     >
       <div
         class="overflow-hidden transition-all duration-300"
+        :class="[
+          decreaseInfoBoxSize
+            ? 'md:mb-1 h-7 md:h-10 xl:h-19'
+            : 'mb-1 md:mb-2 h-14 md:h-26 xl:h-52',
+        ]"
       >
         <img
           v-if="showArt && image && !overlay"
