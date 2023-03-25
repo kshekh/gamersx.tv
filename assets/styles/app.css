@@ -99,7 +99,7 @@ div.channel-description {
   color: #fff;
 }
 
-@variants hover {
+@layer utilities {
   .cut-edge__wrapper--twitch {
     filter: drop-shadow(0px 0px 6px rgba(100, 65, 165, 0.5));
   }

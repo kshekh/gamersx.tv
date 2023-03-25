@@ -80,8 +80,6 @@
             p-1
             transition-all
             duration-300
-            bg-opacity-30
-            hover:bg-opacity-100
           "
           :class="[
             bgColor,
@@ -99,9 +97,7 @@
             p-1
             transition-all
             duration-300
-            bg-opacity-30
             text-center
-            hover:bg-opacity-100
           "
           :class="[
             bgColor,
@@ -115,7 +111,7 @@
         </a>
         <svg
           v-if="embedName === 'YouTubeEmbed'"
-          class="w-3 md:w-6 xl:w-7 flex-shrink-0"
+          class="w-3 md:w-6 xl:w-7 shrink-0"
           viewBox="0 0 44 32"
         >
           <linearGradient
@@ -151,7 +147,7 @@
         </svg>
         <svg
           v-if="embedName === 'TwitchEmbed'"
-          class="w-3 md:w-6 xl:w-7 flex-shrink-0"
+          class="w-3 md:w-6 xl:w-7 shrink-0"
           viewBox="0 0 8 8"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -235,7 +231,7 @@ export default {
   },
   computed: {
     bgColor() {
-      return this.embedName === "TwitchEmbed" ? "bg-purple" : "bg-red";
+      return this.embedName === "TwitchEmbed" ? "bg-purple/30 hover:bg-purple" : "bg-red/30 hover:bg-red";
     },
     showEmbed() {
       return (

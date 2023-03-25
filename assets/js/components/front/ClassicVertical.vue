@@ -44,7 +44,7 @@
           v-for="(channel, index) in displayChannels"
           :key="index"
           ref="channelDivs"
-          class="flex items-center flex-shrink-0 mr-3 md:mr-2 xl:mr-4 w-26 md:w-36 xl:w-60 h-34 md:h-46 xl:h-80"
+          class="flex items-center shrink-0 mr-3 md:mr-2 xl:mr-4 w-26 md:w-36 xl:w-60 h-34 md:h-46 xl:h-80"
         >
           <component :is="channel.componentName" v-bind="channel"></component>
         </div>
