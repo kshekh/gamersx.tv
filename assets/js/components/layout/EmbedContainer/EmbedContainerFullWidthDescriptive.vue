@@ -12,9 +12,7 @@
         },
       ]"
     >
-      <div
-        class="overflow-hidden transition-all duration-300"
-      >
+      <div class="overflow-hidden transition-all duration-300">
         <img
           v-if="showArt && image && !overlay"
           :src="image.url"
@@ -224,6 +222,7 @@ export default {
       );
     },
     decreaseInfoBoxSize() {
+      this.$emit("decrease-info-box-size", this.isVideoPlaying);
       return (
         this.isVideoBuffered && (this.isVideoPlaying || this.isEmbedVisible)
       );
