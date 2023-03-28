@@ -5,7 +5,7 @@
             ml-2
             md:ml-5
             xl:ml-8
-            flex-shrink-0
+            shrink-0
             relative
             z-10
             transition-all

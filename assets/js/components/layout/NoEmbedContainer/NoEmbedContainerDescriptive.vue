@@ -80,8 +80,8 @@
             p-1
             transition-all
             duration-300
-            bg-opacity-30
-            hover:bg-opacity-100
+            bg-purple/30
+            hover:bg-purple
             text-xs
             md:text-sm
             xl:text-lg
@@ -92,7 +92,6 @@
             md:py-2
             xl:py-3
             xl:px-6
-            bg-purple
           "
           target="_blank"
         >

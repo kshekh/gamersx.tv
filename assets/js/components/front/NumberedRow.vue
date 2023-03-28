@@ -48,7 +48,7 @@
         >
           <span
             :data-number="index + 1"
-            class="transform translate-x-3 leading-extra-tight md:translate-x-4 xl:translate-x-5 flex-shrink-0 font-bahnschrift font-semibold text-8xl md:text-xxl xl:text-3xxl text-stroke"
+            class="transform translate-x-3 leading-extra-tight md:translate-x-4 xl:translate-x-5 shrink-0 font-bahnschrift font-semibold text-8xl md:text-xxl xl:text-3xxl text-stroke"
             :class="{
               'translate-x-8 md:translate-x-10 xl:translate-x-12':
                 index + 1 >= 10,

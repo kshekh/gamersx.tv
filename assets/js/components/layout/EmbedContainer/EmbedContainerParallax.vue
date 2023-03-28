@@ -2,22 +2,12 @@
   <div class="w-full h-full flex items-center">
     <div class="relative left-1/5 w-20 h-40 md:w-28 md:h-56" ref="itemWrapper">
       <div
-        class="
-          w-full
-          h-full
-          cut-edge__wrapper
-          flex-shrink-0
-        "
+        @click="isShowTwitchEmbed = true"
+        class="w-full h-full cut-edge__wrapper shrink-0"
         :class="getGlow"
       >
         <div
-          class="
-            w-full
-            h-full
-            cut-edge__clipped--sm-border
-            cut-edge__clipped-top-left-sm
-            bg-black
-          "
+          class="w-full h-full cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
           :class="getOutline"
           style="aspect-ratio: 1/2"
         >
@@ -75,34 +65,18 @@
     </div>
     <div
       v-if="showEmbed && embedData"
-      class="
-        cut-edge__wrapper
-        absolute
-        z-30
-        transition-opacity-transform
-        ease-linear
-        duration-500
-      "
+      class="cut-edge__wrapper absolute z-30 transition-opacity-transform ease-linear duration-500"
       :class="[
         getGlow,
         {
-          invisible: !isEmbedVisible
-        }
+          invisible: !isEmbedVisible,
+        },
       ]"
       ref="embedWrapper"
       :style="embedSize"
     >
       <div
-        class="
-          w-full
-          h-full
-          flex flex-col
-          relative
-          cut-edge__clipped
-          cut-edge__clipped--sm-border
-          cut-edge__clipped-top-left-sm
-          bg-black
-        "
+        class="w-full h-full flex flex-col relative cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
         :class="getOutline"
       >
         <div class="flex-grow min-h-0 relative">
@@ -120,17 +94,7 @@
             />
           </div>
           <div
-            class="
-              relative
-              w-full
-              h-full
-              transition-opacity
-              ease-linear
-              duration-500
-              delay-750
-              opacity-0
-              bg-black
-            "
+            class="relative w-full h-full transition-opacity ease-linear duration-500 delay-750 opacity-0 bg-black"
             :class="{ 'opacity-100': isEmbedVisible }"
           >
             <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
@@ -148,6 +112,7 @@
               :embedData="embedData"
               :overlay="overlay"
               :image="image"
+              :isShowTwitchEmbed="isShowTwitchEmbed"
               class="w-full h-full"
               :width="'100%'"
               :height="'100%'"
@@ -156,37 +121,17 @@
         </div>
         <a
           :href="link"
-          class="
-            flex
-            justify-between
-            py-1
-            xl:pt-3
-            xl:pb-3
-            px-3
-            md:px-2
-            xl:px-4
-            bg-grey-900
-          "
+          class="flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
           :title="offlineDisplay.title"
         >
           <div class="mr-2 overflow-hidden">
             <h5
-              class="
-                text-xxs text-white
-                font-play
-                overflow-hidden overflow-ellipsis
-                whitespace-nowrap
-              "
+              class="text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
             >
               {{ offlineDisplay.title }}
             </h5>
             <h6
-              class="
-                text-8 text-grey
-                font-play
-                overflow-hidden overflow-ellipsis
-                whitespace-nowrap
-              "
+              class="text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
             >
               {{ embedData.channel }}
             </h6>
@@ -211,7 +156,7 @@ export default {
   mixins: [embedMixin],
   components: {
     TwitchEmbed: TwitchEmbed,
-    YouTubeEmbed: YouTubeEmbed
+    YouTubeEmbed: YouTubeEmbed,
   },
   props: [
     "title",
@@ -230,30 +175,31 @@ export default {
     "isGlowStyling",
     "isCornerCut",
     "info",
-    "broadcast"
+    "broadcast",
   ],
-  data: function() {
+  data: function () {
     return {
       glowStyling: {
-        glow: ""
+        glow: "",
       },
       cornerCutStyling: {
-        outline: ""
-      }
+        outline: "",
+      },
+      isShowTwitchEmbed: false,
     };
   },
   computed: {
-    getOutline: function() {
+    getOutline: function () {
       this.computeGlowStyling();
       return this.cornerCutStyling.outline;
     },
-    getGlow: function() {
+    getGlow: function () {
       this.computeGlowStyling();
       return this.glowStyling.glow;
-    }
+    },
   },
   methods: {
-    computeGlowStyling: function() {
+    computeGlowStyling: function () {
       if (
         this.isGlowStyling === "always_on" ||
         (this.isGlowStyling === "enabled_if_live" && this.showOnline) ||
@@ -277,8 +223,8 @@ export default {
           this.cornerCutStyling.outline = "cut-edge__clipped--youtube";
         }
       }
-    }
-  }
+    },
+  },
   // created() {
   //   if(!this.showOnline && this.embedData){
   //     this.mouseEntered();

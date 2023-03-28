@@ -63,7 +63,7 @@
           ref="channelDivs"
           :style="customBg(channel)"
           class="
-          flex-shrink-0
+          shrink-0
           bg-cover bg-no-repeat bg-center
           w-90
           h-30

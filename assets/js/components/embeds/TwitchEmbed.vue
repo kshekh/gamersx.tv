@@ -26,6 +26,7 @@ export default {
     embedData: Object,
     image: Object,
     overlay: String,
+    isShowTwitchEmbed: Boolean,
     height: [Number, String],
     width: [Number, String],
     info: {},
@@ -68,7 +69,7 @@ export default {
       });
     },
     startPlayer: function () {
-      if (!this.embedPlaying && this.showTwitchEmbed) {
+      if (!this.embedPlaying && this.isShowTwitchEmbed) {
         this.embed.play();
         this.embed.setMuted(false);
         this.embedPlaying = true;
@@ -96,7 +97,7 @@ export default {
     },
   },
   watch: {
-    showTwitchEmbed(newVal) {
+    isShowTwitchEmbed(newVal) {
       if (newVal === true) {
         this.embedTwitch();
       }

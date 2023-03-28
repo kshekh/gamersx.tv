@@ -4,7 +4,6 @@ module.exports = {
     "./assets/js/components/**/*.{js,vue,ts}",    
     "./templates/**/*.twig",    
   ],
-  darkMode: false, // or 'media' or 'class'
   theme: {
     screens: {
       'xs': '480px', // Your custom screen size
@@ -26,8 +25,9 @@ module.exports = {
         DEFAULT: "#000612"
       },
       grey: {
-        600: "#C3C3C3",
         DEFAULT: "#737373",
+        400: "#dfdfdf",
+        600: "#C3C3C3",
         900: "#1e1927"
       },
       red: {
@@ -140,6 +140,7 @@ module.exports = {
       spacing: {
         "0.75": "3px",
         "18": "72px",
+        "19": "75px",
         "22": "88px",
         "25p": "25%",
         "30p": "30%",
@@ -205,17 +206,6 @@ module.exports = {
         '3/4': '3 / 4',
       }
     }
-  },
-  variants: {
-    extend: {
-      maxWidth: ["hover"],
-      width: ["hover"],
-      maxHeight: ["hover"],
-      height: ["hover"],
-      zIndex: ["hover"],
-      inset: ["hover"],
-      left: ["hover"]
-    }
-  },
+  },  
   plugins: []
 };
