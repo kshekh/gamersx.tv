@@ -69,7 +69,10 @@ export default {
       });
     },
     startPlayer: function () {
-      if (!this.embedPlaying && this.isShowTwitchEmbed) {
+      if (
+        !this.embedPlaying &&
+        (this.isShowTwitchEmbed || this.showTwitchEmbed)
+      ) {
         this.embed.play();
         this.embed.setMuted(false);
         this.embedPlaying = true;
@@ -97,6 +100,11 @@ export default {
     },
   },
   watch: {
+    showTwitchEmbed(newVal) {
+      if (newVal === true) {
+        this.embedTwitch();
+      }
+    },
     isShowTwitchEmbed(newVal) {
       if (newVal === true) {
         this.embedTwitch();

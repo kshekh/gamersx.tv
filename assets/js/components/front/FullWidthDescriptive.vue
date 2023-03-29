@@ -205,7 +205,6 @@ export default {
     },
     decreaseInfoBoxSize(status) {
       this.isVideoPlaying = status;
-      console.log("xxx status", status);
     },
   },
   mounted() {
