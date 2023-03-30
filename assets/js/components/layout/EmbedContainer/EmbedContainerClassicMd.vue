@@ -61,8 +61,8 @@
           >
             <img
               :src="
-                streamersData.profile_image_url
-                  ? streamersData.profile_image_url
+                streamersData
+                  ? streamersData
                   : 'https://picsum.photos/id/1062/100/100'
               "
               alt="avatar"
@@ -221,6 +221,7 @@ export default {
     "liveViewerCount",
     "isGlowStyling",
     "isCornerCut",
+    "info",
   ],
   data: function () {
     return {
@@ -246,12 +247,18 @@ export default {
   },
   methods: {
     streamerInfoApi: function () {
-      axios
-        .get(`/streamer/info/${this.embedData.channel}/api`)
-        .catch((e) => console.error(e))
-        .then((response) => {
-          this.streamersData = JSON.parse(response.data.content).data[0];
-        });
+      if (this.embedName === "TwitchEmbed") {
+        axios
+          .get(`/streamer/info/${this.embedData.channel}/api`)
+          .catch((e) => console.error(e))
+          .then((response) => {
+            this.streamersData = JSON.parse(
+              response.data.content
+            ).data[0].profile_image_url;
+          });
+      } else if (this.embedName === "YouTubeEmbed") {
+        this.streamersData = this.info.snippet.thumbnails.default.url;
+      }
     },
     computeGlowStyling: function () {
       if (
