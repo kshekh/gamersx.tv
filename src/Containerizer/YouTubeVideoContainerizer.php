@@ -22,7 +22,8 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
         $homeRowItem = $this->homeRowItem;
         $youtube = $this->youtube;
 
-        $videoId = $homeRowItem->getVideoId();
+        parse_str(parse_url($homeRowItem->getVideoId(), PHP_URL_QUERY), $parameters);
+        $videoId = $parameters['v'];
 
         try {
             $info = $youtube->getVideoInfo($videoId)->getItems();
@@ -55,7 +56,6 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
                 return Array();
             }
 
-
             $title = $info->getSnippet()->getTitle();
             $link = 'https://www.youtube.com/watch?v='.$info->getId();
 
@@ -81,8 +81,9 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
             }
 
             $embedData = [
-                'video' => $homeRowItem->getVideoId(),
+                'video' => $youtube,
                 'elementId' => uniqid('embed-'),
+                'url' => 'https://www.youtube.com/embed/'.$info->getId(),
             ];
 
             if ($info !== NULL) {
@@ -114,8 +115,10 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
                     'rowName' => $homeRowItem->getHomeRow()->getTitle(),
                     'sortIndex' => $homeRowItem->getSortIndex(),
                     'image' => $image ?? NULL,
-                    'overlay' => $this->uploader->asset($homeRowItem, 'overlayArtFile'),
-                    'customArt' => $this->uploader->asset($homeRowItem, 'customArtFile'),
+                    'overlay' => 'https://gamersx-dev-dev-us-west-1-storage.s3.us-west-1.amazonaws.com/2fEzW_Gq3O.jpeg',
+                    'customArt' => '',
+//                    'overlay' => $this->uploader->asset($homeRowItem, 'overlayArtFile'),
+//                    'customArt' => $this->uploader->asset($homeRowItem, 'customArtFile'),
                     'link' => $link,
                     'componentName' => 'EmbedContainer',
                     'embedName' => 'YouTubeEmbed',

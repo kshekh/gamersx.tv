@@ -165,7 +165,7 @@ class YouTubeApi
             $queryParams['nextPageToken'] = $after;
         }
 
-        return $this->service->search->listSearch('snippet', $queryParams);
+        return $this->service->search->listSearch('snippet, statistics', $queryParams);
     }
 
 }

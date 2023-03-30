@@ -5,30 +5,37 @@ namespace App\Containerizer;
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
 
-class YouTubePlayListContainerizer extends LiveContainerizer implements ContainerizerInterface
+class TwitchVideoContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
     private $homeRowItem;
-    private $youtube;
+    private $twitch;
 
-    public function __construct(HomeRowItem $homeRowItem, $youtube)
+    public function __construct(HomeRowItem $homeRowItem, $twitch)
     {
         $this->homeRowItem = $homeRowItem;
-        $this->youtube = $youtube;
+        $this->twitch = $twitch;
     }
 
     public function getContainers(): Array
     {
         $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
-        $youtube = $this->youtube;
+        $twitch = $this->twitch;
 
-        parse_str(parse_url($homeRowItem->getPlaylistId(), PHP_URL_QUERY), $parameters);
-        $playlistId = $parameters['list'];
+        $separatedUrl = explode('/', parse_url($homeRowItem->getVideoId(), PHP_URL_PATH));
+
+        if ($separatedUrl[1] == 'videos') {
+            $videoId = $separatedUrl[2];
+            $embedUrl = 'https://player.twitch.tv/?parent=gamersx.tv&video='.$videoId;
+        } else {
+            $videoId = $separatedUrl[3];
+            $embedUrl = 'https://clips.twitch.tv/embed?clip='.$videoId.'&parent=gamersx.tv';
+        }
 
         try {
-            $info = $youtube->getPlaylistInfo($playlistId)->getItems();
+            $info = $twitch->getVideoInfo($videoId)->getItems();
         } catch (\Exception $e) {
-            $this->logger->error("Call to YouTube failed with the message \"".$e->getErrors()[0]['message']."\"");
+            $this->logger->error("Call to twitch failed with the message \"".$e->getErrors()[0]['message']."\"");
             return Array();
         }
 
@@ -57,7 +64,7 @@ class YouTubePlayListContainerizer extends LiveContainerizer implements Containe
             }
 
             $title = $info->getSnippet()->getTitle();
-            $link = 'https://www.youtube.com/playlist?list='.$info->getId();
+            $link = $videoId;
 
             if ($homeRowItem->getLinkType() === HomeRowItem::LINK_TYPE_GAMERSX) {
                 $link = '/channel/'.$info->getId();
@@ -79,13 +86,16 @@ class YouTubePlayListContainerizer extends LiveContainerizer implements Containe
                 ];
             }
 
-            if ($broadcast !== NULL) {
-                $embedData = [
-                    'video' => $broadcast->getId()->getVideoId(),
-                    'elementId' => uniqid('embed-'),
-                ];
-            } else {
-                $embedData = NULL;
+            $embedData = [
+                'video' => $videoId,
+                'elementId' => uniqid('embed-'),
+                'url' => $embedUrl,
+            ];
+
+            if ($info !== NULL) {
+                if ($info->getStatistics() !== NULL) {
+                    $info['statistics_view_count'] = $info->getStatistics()->getViewCount();
+                }
             }
 
             $channels = [
@@ -115,7 +125,7 @@ class YouTubePlayListContainerizer extends LiveContainerizer implements Containe
                     'customArt' => $this->uploader->asset($homeRowItem, 'customArtFile'),
                     'link' => $link,
                     'componentName' => 'EmbedContainer',
-                    'embedName' => 'YouTubeEmbed',
+                    'embedName' => 'TwitchEmbed',
                     'embedData' => $embedData,
                     'description' => $description
                 ]
