@@ -6,7 +6,7 @@
   >
     <div class="relative w-full h-screen top-0 left-0">
       <div
-        class="absolute px-5 left-1/2 -translate-x-1/2 top-1/2 -translate-y-2/3 w-full"
+        class="absolute px-5 left-1/2 -translate-x-1/2 wide:top-0 top-10 sm:top-32 w-full max-h-screen overflow-y-auto"
         :style="{ maxWidth: width }"
       >
         <div class="gm-modal-content bg-black border-2 border-purple p-5">

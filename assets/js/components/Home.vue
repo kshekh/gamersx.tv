@@ -39,7 +39,7 @@
       ok-title="Continue anyway"
       @ok="modal = false"
     >
-      <div class="text-center p-5">
+      <div class="text-center p-0 md:p-5">
         <div class="mb-4 text-grey-400 text-lg mx-auto max-w-[300px]">
           Sign into
           <span class="">
@@ -70,16 +70,17 @@
         </div>
         <div class="mb-4">
           <video
-            src="https://gamersx-dev-dev-us-west-1-storage.s3.us-west-1.amazonaws.com/Experience+Popup+1+Iteration+(720).mp4"
-            preload="metadata"
             autoplay
             muted
             loop
             width="100%"
-          ></video>
+            playsinline
+          >
+          <source src="https://gamersx-dev-dev-us-west-1-storage.s3.us-west-1.amazonaws.com/Experience+Popup+1+Iteration+(720).mp4" type="video/mp4">
+        </video>
         </div>
         <p>
-          An active session in the background will avoid interruptions
+          An active session in the background will avoid interruptions.
         </p>
       </div>
     </Modal>
