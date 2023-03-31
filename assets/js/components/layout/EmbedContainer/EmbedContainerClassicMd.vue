@@ -222,6 +222,7 @@ export default {
     "isGlowStyling",
     "isCornerCut",
     "info",
+    "profileImageUrl",
   ],
   data: function () {
     return {
@@ -248,14 +249,7 @@ export default {
   methods: {
     streamerInfoApi: function () {
       if (this.embedName === "TwitchEmbed") {
-        axios
-          .get(`/streamer/info/${this.embedData.channel}/api`)
-          .catch((e) => console.error(e))
-          .then((response) => {
-            this.streamersData = JSON.parse(
-              response.data.content
-            ).data[0].profile_image_url;
-          });
+        this.streamersData = this.profileImageUrl;
       } else if (this.embedName === "YouTubeEmbed") {
         this.streamersData = this.info.snippet.thumbnails.default.url;
       }
