@@ -68,19 +68,25 @@ class HomeRow implements PartneredInterface
      */
     private $isGlowStyling;
 
-     /**
-      * @ORM\Column(type="string", length=50, options={"default" : 0})
-      */
+    /**
+     * @ORM\Column(type="string", length=50, options={"default" : 0})
+     */
     private $isCornerCut;
 
-   /**
-    * @ORM\Column(name="isPublishedStart", type="integer", nullable=true)
-    *
-    * @Assert\Expression(
-    *     "this.getIsPublishedStart() <= this.getIsPublishedEnd()",
-    *     message="Start time should be less than end date!"
-    * )
-    */
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $timezone;
+
+    /**
+     * @ORM\Column(name="isPublishedStart", type="integer", nullable=true)
+     *
+     * @Assert\Expression(
+     *     "this.getIsPublishedStart() <= this.getIsPublishedEnd()",
+     *     message="Start time should be less than end date!"
+     * )
+     */
+
     private $isPublishedStart;
 
     /**
@@ -243,6 +249,17 @@ class HomeRow implements PartneredInterface
         return $this;
     }
 
+    public function getTimezone(): ?string
+    {
+        return $this->timezone;
+    }
+
+    public function setTimezone(string $timezone): self
+    {
+        $this->timezone = $timezone;
+
+        return $this;
+    }
     public function getIsPublishedStart(): ?int
     {
         return $this->isPublishedStart;

@@ -9,7 +9,7 @@ use App\Entity\HomeRowItem;
 use App\Form\TopicType;
 use App\Form\SortAndTrimOptionsType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, TimeType};
+use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, DateTimeType, TimezoneType};
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\CallbackTransformer;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -125,6 +125,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPartner', null, [
                 'sortable' => false
             ])
+            ->add('timezone', null, [
+                'sortable' => false
+            ])
             ->add('isPublishedStart', null, [
                 'editable' => true,
                 'sortable' => false
@@ -152,6 +155,10 @@ final class HomeRowItemAdmin extends AbstractAdmin
 
     protected function configureFormFields(FormMapper $formMapper): void
     {
+        $admin = $this->isChild() ? $this->getParent() : $this;
+        $id = $admin->getRequest()->get('id');
+        $homeRowItem = $this->getModelManager()->find(HomeRowItem::class, $id);
+        $timezone = $homeRowItem->getTimezone();
         $formMapper
             ->add('sortIndex')
             ->add('showArt', null, [
@@ -236,46 +243,49 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPublished', null, [
                 'help' => 'Current Server Time: ' . date('H:i')
             ])
-            ->add('isPublishedStart', TimeType::class, [
+            ->add('timezone', TimezoneType::class, ['required' => false])
+            ->add('isPublishedStart', DateTimeType::class, [
                 'label' => 'Publish Start Time',
                 'required' => false,
-                'input'  => 'timestamp',
+                'input' => 'timestamp',
                 'widget' => 'single_text',
                 'model_timezone' => 'America/Los_Angeles',
-                'view_timezone' => 'UTC',
+                'view_timezone' => $timezone,
                 'attr' => [
                     'class' => 'timepicker',
                     'title' => "Start timepicker for published",
                 ]
             ])
-            ->add('isPublishedEnd', TimeType::class, [
+            ->add('isPublishedEnd', DateTimeType::class, [
                 'label' => 'Publish End Time',
                 'required' => false,
-                'input'  => 'timestamp',
+                'input' => 'timestamp',
                 'widget' => 'single_text',
                 'model_timezone' => 'America/Los_Angeles',
-                'view_timezone' => 'UTC',
+                'view_timezone' => $timezone,
                 'attr' => [
                     'class' => 'timepicker',
                     'title' => "End timepicker for published",
                 ]
             ])
             ->add('isPartner')
-            ->getFormBuilder()->addModelTransformer(new CallbackTransformer(
-                // Use the array in the form
-                function ($valuesAsArray) {
-                    return $valuesAsArray;
-                },
-                // Don't set empty values in the JSON later
-                function ($homeRowItem) {
-                    $topic = $homeRowItem->getTopic();
-                    if ($topic && array_key_exists('label', $topic)) {
-                        $homeRowItem->setLabel($topic['label']);
-                    };
+            ->getFormBuilder()->addModelTransformer(
+                new CallbackTransformer(
+                    // Use the array in the form
+                    function ($valuesAsArray) {
+                        return $valuesAsArray;
+                    },
+                    // Don't set empty values in the JSON later
+                    function ($homeRowItem) {
+                        $topic = $homeRowItem->getTopic();
+                        if ($topic && array_key_exists('label', $topic)) {
+                            $homeRowItem->setLabel($topic['label']);
+                        };
 
-                    return $homeRowItem;
-                }
-            ));
+                        return $homeRowItem;
+                    }
+                )
+            );
     }
 
     protected function configureShowFields(ShowMapper $showMapper): void

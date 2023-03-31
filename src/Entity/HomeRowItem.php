@@ -149,6 +149,11 @@ class HomeRowItem implements PartneredInterface
     private $isPublished;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $timezone;
+
+    /**
      * @ORM\Column(name="isPublishedStart", type="integer", nullable=true)
      *
      * @Assert\Expression(
@@ -167,12 +172,6 @@ class HomeRowItem implements PartneredInterface
      * )
      */
     private $isPublishedEnd;
-
-    /**
-     * @ORM\Column(type="datetime")
-     * @var \DateTime
-     */
-    private $updatedAt;
 
     /**
      * @ORM\Column(type="boolean", options={"default" : 0})
@@ -299,7 +298,7 @@ class HomeRowItem implements PartneredInterface
     public function setCustomArtFile(?File $customArtFile): self
     {
         $this->customArtFile = $customArtFile;
-        if (null !== $customArtFile ) {
+        if (null !== $customArtFile) {
             $this->updatedAt = new \DateTime('now');
         }
 
@@ -326,7 +325,7 @@ class HomeRowItem implements PartneredInterface
     public function setOverlayArtFile(?File $overlayArtFile): self
     {
         $this->overlayArtFile = $overlayArtFile;
-        if (null !== $overlayArtFile ) {
+        if (null !== $overlayArtFile) {
             $this->updatedAt = new \DateTime('now');
         }
 
@@ -414,7 +413,7 @@ class HomeRowItem implements PartneredInterface
         }
 
         if ($this->getItemType()) {
-            return ucfirst($this->getItemType() . ' \'' . $label. '\'');
+            return ucfirst($this->getItemType() . ' \'' . $label . '\'');
         } else {
             return $label;
         }
@@ -432,6 +431,17 @@ class HomeRowItem implements PartneredInterface
         return $this;
     }
 
+    public function getTimezone(): ?string
+    {
+        return $this->timezone;
+    }
+
+    public function setTimezone(string $timezone): self
+    {
+        $this->timezone = $timezone;
+
+        return $this;
+    }
     public function getIsPublishedStart(): ?int
     {
         return $this->isPublishedStart;
@@ -468,22 +478,6 @@ class HomeRowItem implements PartneredInterface
         $this->isPartner = $isPartner;
 
         return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-     public function getUpdatedAt(): ?\DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     */
-    public function setUpdatedAt(?\DateTime $updatedAt): void
-    {
-        $this->updatedAt = $updatedAt;
     }
 
 }
