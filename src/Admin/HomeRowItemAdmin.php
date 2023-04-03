@@ -9,7 +9,7 @@ use App\Entity\HomeRowItem;
 use App\Form\TopicType;
 use App\Form\SortAndTrimOptionsType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, DateTimeType, TimezoneType};
+use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, TimeType, TimezoneType};
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\CallbackTransformer;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -125,9 +125,6 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPartner', null, [
                 'sortable' => false
             ])
-            ->add('timezone', null, [
-                'sortable' => false
-            ])
             ->add('isPublishedStart', null, [
                 'editable' => true,
                 'sortable' => false
@@ -155,10 +152,13 @@ final class HomeRowItemAdmin extends AbstractAdmin
 
     protected function configureFormFields(FormMapper $formMapper): void
     {
+        $timezone = 'UTC';
         $admin = $this->isChild() ? $this->getParent() : $this;
         $id = $admin->getRequest()->get('id');
         $homeRowItem = $this->getModelManager()->find(HomeRowItem::class, $id);
-        $timezone = $homeRowItem->getTimezone();
+        if ($homeRowItem) {
+            $timezone = $homeRowItem->getTimezone();
+        }
         $formMapper
             ->add('sortIndex')
             ->add('showArt', null, [
@@ -244,7 +244,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'help' => 'Current Server Time: ' . date('H:i')
             ])
             ->add('timezone', TimezoneType::class, ['required' => false])
-            ->add('isPublishedStart', DateTimeType::class, [
+            ->add('isPublishedStart', TimeType::class, [
                 'label' => 'Publish Start Time',
                 'required' => false,
                 'input' => 'timestamp',
@@ -256,7 +256,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
                     'title' => "Start timepicker for published",
                 ]
             ])
-            ->add('isPublishedEnd', DateTimeType::class, [
+            ->add('isPublishedEnd', TimeType::class, [
                 'label' => 'Publish End Time',
                 'required' => false,
                 'input' => 'timestamp',
