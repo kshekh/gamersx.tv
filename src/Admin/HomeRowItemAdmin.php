@@ -157,7 +157,8 @@ final class HomeRowItemAdmin extends AbstractAdmin
         $id = $admin->getRequest()->get('id');
         $homeRowItem = $this->getModelManager()->find(HomeRowItem::class, $id);
         if ($homeRowItem) {
-            $timezone = $homeRowItem->getTimezone();
+            $homeTimezone = $homeRowItem->getTimezone();
+            $timezone = $homeTimezone ? $homeTimezone : 'UTC';
         }
         $formMapper
             ->add('sortIndex')

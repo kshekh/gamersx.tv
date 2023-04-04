@@ -168,7 +168,8 @@ final class HomeRowAdmin extends AbstractAdmin
         $id = $admin->getRequest()->get('id');
         $homeRow = $this->getModelManager()->find(HomeRow::class, $id);
         if ($homeRow) {
-            $timezone = $homeRow->getTimezone();
+            $homeTimezone = $homeRow->getTimezone();
+            $timezone = $homeTimezone ? $homeTimezone : 'UTC';
         }
         $formMapper
             ->add('title')
