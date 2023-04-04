@@ -244,7 +244,7 @@ class HomeRow implements PartneredInterface
         return $this->timezone;
     }
 
-    public function setTimezone(string $timezone): self
+    public function setTimezone(?string $timezone): self
     {
         $this->timezone = $timezone;
 
