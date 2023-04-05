@@ -21,13 +21,11 @@ final class Version20230330222849 extends AbstractMigration
    {
       $this->addSql('ALTER TABLE home_row ADD timezone VARCHAR(255) DEFAULT NULL');
       $this->addSql('ALTER TABLE home_row_item ADD timezone VARCHAR(255) DEFAULT NULL');
-      $this->addSql('ALTER TABLE home_row_item DROP updated_at');
    }
 
    public function down(Schema $schema): void
    {
       $this->addSql('ALTER TABLE home_row DROP timezone');
       $this->addSql('ALTER TABLE home_row_item DROP timezone');
-      $this->addSql('ALTER TABLE home_row_item ADD updated_at DATETIME DEFAULT NULL');
    }
 }

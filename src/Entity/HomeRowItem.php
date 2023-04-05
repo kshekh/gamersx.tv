@@ -164,6 +164,12 @@ class HomeRowItem implements PartneredInterface
     private $isPublishedEnd;
 
     /**
+     * @ORM\Column(type="datetime")
+     * @var \DateTime
+     */
+    private $updatedAt;
+    
+    /**
      * @ORM\Column(type="boolean", options={"default" : 0})
      */
     private $isPartner;
@@ -470,4 +476,18 @@ class HomeRowItem implements PartneredInterface
         return $this;
     }
 
+        /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt(): ?\DateTime
+    {
+        return $this->updatedAt;
+    }
+    /**
+     * @param \DateTime $updatedAt
+     */
+    public function setUpdatedAt(?\DateTime $updatedAt): void
+    {
+        $this->updatedAt = $updatedAt;
+    }
 }
