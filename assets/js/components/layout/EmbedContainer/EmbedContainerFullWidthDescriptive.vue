@@ -1,20 +1,7 @@
 <template>
   <div>
     <div
-      class="
-        relative
-        z-10
-        flex flex-col
-        opacity-1
-        transform
-        rounded-md
-        transition-all
-        duration-700
-        backdrop-filter backdrop-blur-xs
-        shadow-smooth
-        px-7
-        -mx-7
-      "
+      class="relative z-10 flex flex-col opacity-1 transform rounded-md transition-all duration-700 backdrop-filter backdrop-blur-xs shadow-smooth px-7 -mx-7"
       :class="[
         decreaseInfoBoxSize
           ? 'md:max-w-1/4 md:min-w-180'
@@ -75,12 +62,7 @@
         <button
           v-if="showEmbed && embedData"
           @click.stop="handlePlayVideo()"
-          class="
-            text-white
-            p-1
-            transition-all
-            duration-300
-          "
+          class="text-white p-1 transition-all duration-300 bg-opacity-30 hover:bg-opacity-100"
           :class="[
             bgColor,
             decreaseInfoBoxSize
@@ -92,13 +74,7 @@
         </button>
         <a
           :href="link"
-          class="
-            text-white
-            p-1
-            transition-all
-            duration-300
-            text-center
-          "
+          class="text-white p-1 transition-all duration-300 bg-opacity-30 text-center hover:bg-opacity-100"
           :class="[
             bgColor,
             decreaseInfoBoxSize
@@ -123,9 +99,9 @@
             gradientUnits="userSpaceOnUse"
             gradientTransform="matrix(1, 0, 0, 0.999982, -2, -8.000276)"
           >
-            <stop offset="0" stop-color="#f44f5a"/>
-            <stop offset="0.443" stop-color="#ee3d4a"/>
-            <stop offset="1" stop-color="#e52030"/>
+            <stop offset="0" stop-color="#f44f5a" />
+            <stop offset="0.443" stop-color="#ee3d4a" />
+            <stop offset="1" stop-color="#e52030" />
           </linearGradient>
           <path
             fill="#FF0000"
@@ -168,9 +144,7 @@
       </div>
     </div>
     <!-- Show the embed with overlay if there's an embed -->
-    <div
-      v-if="showEmbed && embedData"
-    >
+    <div v-if="showEmbed && embedData">
       <div v-show="isEmbedVisible">
         <component
           v-if="isEmbedVisible"
@@ -178,6 +152,7 @@
           :is="embedName"
           :embedData="embedData"
           :isRowFirst="isRowFirst"
+          :customBg="customBg"
           @video-buffered="videoBuffered"
           @set-is-playing="updateIsPlaying"
           class="flex-grow min-h-0 absolute inset-0"
@@ -219,7 +194,8 @@ export default {
     "isRowFirst",
     "isFirstVideoLoaded",
     "isMouseStopped",
-    "description"
+    "description",
+    "customBg",
   ],
   data() {
     return {
@@ -231,7 +207,9 @@ export default {
   },
   computed: {
     bgColor() {
-      return this.embedName === "TwitchEmbed" ? "bg-purple/30 hover:bg-purple" : "bg-red/30 hover:bg-red";
+      return this.embedName === "TwitchEmbed"
+        ? "bg-purple/30 hover:bg-purple"
+        : "bg-red/30 hover:bg-red";
     },
     showEmbed() {
       return (
@@ -253,12 +231,16 @@ export default {
       );
     },
     decreaseInfoBoxSize() {
+      this.$emit("decrease-info-box-size", this.isVideoPlaying);
       return (
         this.isVideoBuffered && (this.isVideoPlaying || this.isEmbedVisible)
       );
     },
     isInfoBoxHidden() {
-      return (this.isMouseStopped || this.isHideButtonClicked) && this.isVideoBuffered;
+      return (
+        (this.isMouseStopped || this.isHideButtonClicked) &&
+        this.isVideoBuffered
+      );
     },
   },
   methods: {
@@ -269,8 +251,7 @@ export default {
     },
     playVideo() {
       this.$root.$emit("close-other-layouts", this.embedData.elementId);
-      if (this.$refs.embed)
-        this.$refs.embed.startPlayer();
+      if (this.$refs.embed) this.$refs.embed.startPlayer();
     },
     videoBuffered() {
       this.isVideoBuffered = true;
