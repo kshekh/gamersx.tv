@@ -35,8 +35,6 @@ final class HomeRowAdmin extends AbstractAdmin
         '_sort_order' => 'ASC',
         '_sort_by' => 'sortIndex'
     );
-
-    private $timezone = 'UTC';
     public function configureActionButtons($action, $object = null)
     {
         $list = parent::configureActionButtons($action, $object);
@@ -163,6 +161,14 @@ final class HomeRowAdmin extends AbstractAdmin
 
     protected function configureFormFields(FormMapper $formMapper): void
     {
+        $timezone = 'UTC';
+        $admin = $this->isChild() ? $this->getParent() : $this;
+        $id = $admin->getRequest()->get('id');
+        $homeRow = $this->getModelManager()->find(HomeRow::class, $id);
+        if ($homeRow) {
+            $homeTimezone = $homeRow->getTimezone();
+            $timezone = $homeTimezone ? $homeTimezone : 'UTC';
+        }
         $formMapper
             ->add('title')
             ->add('sortIndex')
@@ -210,7 +216,7 @@ final class HomeRowAdmin extends AbstractAdmin
                 'input' => 'timestamp',
                 'widget' => 'single_text',
                 'model_timezone' => 'America/Los_Angeles',
-                'view_timezone' => $this->timezone,
+                'view_timezone' => $timezone,
                 'attr' => [
                     'class' => 'timepicker',
                     'title' => "Start timepicker for published",
@@ -222,7 +228,7 @@ final class HomeRowAdmin extends AbstractAdmin
                 'input' => 'timestamp',
                 'widget' => 'single_text',
                 'model_timezone' => 'America/Los_Angeles',
-                'view_timezone' => $this->timezone,
+                'view_timezone' => $timezone,
                 'attr' => [
                     'class' => 'timepicker',
                     'title' => "End timepicker for published",
@@ -234,14 +240,6 @@ final class HomeRowAdmin extends AbstractAdmin
                     'type' => 'string'
                 ])
         ;
-
-        $admin = $this->isChild() ? $this->getParent() : $this;
-        $id = $admin->getRequest()->get('id');
-        $homeRow = $this->getModelManager()->find(HomeRow::class, $id);
-        if ($homeRow) {
-            $homeTimezone = $homeRow->getTimezone();
-            $this->timezone = $homeTimezone ? $homeTimezone : 'UTC';
-        }
     }
     protected function configureShowFields(ShowMapper $showMapper): void
     {
