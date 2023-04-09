@@ -36,7 +36,11 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
         $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
         $description = $homeRowItem->getDescription();
         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
-
+        $liveViewers = 0;
+        if ($broadcast) {
+            $videoDetails = $youtube->getVideoInfo($broadcast->getId()->getVideoId())->getItems();
+            $liveViewers = $videoDetails[0]->liveStreamingDetails->concurrentViewers;
+        }
         $isPublished = $homeRowItem->getIsPublished();
 
         if (!$isPublished) {
@@ -108,7 +112,7 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
                 [
                     'info' => $info,
                     'broadcast' => $broadcast,
-                    'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
+                    'liveViewerCount' => $liveViewers,
                     'viewedCount' => isset($info['statistics_view_count']) ? (int) $info['statistics_view_count'] : 0,
                     'showOnline' => $broadcast !== NULL,
                     'onlineDisplay' => [
