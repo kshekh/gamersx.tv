@@ -51,16 +51,17 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
         $title = $broadcast === NULL ? $info['display_name'] : sprintf("%s playing %s for %d viewers",
             $broadcast['user_name'], $broadcast['game_name'], $broadcast['viewer_count']);
         $description = $homeRowItem->getDescription();
+        $timezone = $homeRowItem->getTimezone();
+        date_default_timezone_set($timezone ? $timezone : 'America/Los_Angeles');
         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
-
         $isPublished = $homeRowItem->getIsPublished();
 
         if (!$isPublished) {
             return Array();
         }
 
-        $isPublishedStartTime = $homeRowItem->getIsPublishedStart();
-        $isPublishedEndTime = $homeRowItem->getIsPublishedEnd();
+        $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
+        $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
 
         if (
             !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&

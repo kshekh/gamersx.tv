@@ -74,18 +74,18 @@ class HomeRow implements PartneredInterface
     private $isCornerCut;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $timezone;
 
     /**
-     * @ORM\Column(name="isPublishedStart", type="integer", nullable=true)
+     * @ORM\Column(name="isPublishedStart",type="string", length=255, nullable=true)
      */
 
     private $isPublishedStart;
 
     /**
-     * @ORM\Column(name="isPublishedEnd", type="integer", nullable=true)
+     * @ORM\Column(name="isPublishedEnd",type="string", length=255, nullable=true)
      */
     private $isPublishedEnd;
 
@@ -250,28 +250,26 @@ class HomeRow implements PartneredInterface
 
         return $this;
     }
-    public function getIsPublishedStart(): ?int
+    public function getIsPublishedStart(): ?string
     {
         return $this->isPublishedStart;
     }
 
-    public function setIsPublishedStart(?int $isPublishedStart): self
+    public function setIsPublishedStart(?string $isPublishedStart): self
     {
-        $isPublishedStartTime = 0;
-        $this->isPublishedStart = !empty($isPublishedStart) ? $isPublishedStart : $isPublishedStartTime;
+        $this->isPublishedStart = $isPublishedStart;
 
         return $this;
     }
 
-    public function getIsPublishedEnd(): ?int
+    public function getIsPublishedEnd(): ?string
     {
         return $this->isPublishedEnd;
     }
 
-    public function setIsPublishedEnd(?int $isPublishedEnd): self
+    public function setIsPublishedEnd(?string $isPublishedEnd): self
     {
-        $isPublishedEndTime = 86400;
-        $this->isPublishedEnd = !empty($isPublishedEnd) ? $isPublishedEnd : $isPublishedEndTime;
+        $this->isPublishedEnd = $isPublishedEnd;
 
         return $this;
     }

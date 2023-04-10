@@ -125,6 +125,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPartner', null, [
                 'sortable' => false
             ])
+            ->add('timezone', null, [
+                'sortable' => false
+            ])
             ->add('isPublishedStart', null, [
                 'editable' => true,
                 'sortable' => false
@@ -152,14 +155,6 @@ final class HomeRowItemAdmin extends AbstractAdmin
 
     protected function configureFormFields(FormMapper $formMapper): void
     {
-        $timezone = 'UTC';
-        $admin = $this->isChild() ? $this->getParent() : $this;
-        $id = $admin->getRequest()->get('id');
-        $homeRowItem = $this->getModelManager()->find(HomeRowItem::class, $id);
-        if ($homeRowItem) {
-            $homeTimezone = $homeRowItem->getTimezone();
-            $timezone = $homeTimezone ? $homeTimezone : 'UTC';
-        }
         $formMapper
             ->add('sortIndex')
             ->add('showArt', null, [
@@ -248,10 +243,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPublishedStart', TimeType::class, [
                 'label' => 'Publish Start Time',
                 'required' => false,
-                'input' => 'timestamp',
+                'input' => 'string',
+                'input_format' => 'H:i:s',
                 'widget' => 'single_text',
-                'model_timezone' => 'America/Los_Angeles',
-                'view_timezone' => $timezone,
                 'attr' => [
                     'class' => 'timepicker',
                     'title' => "Start timepicker for published",
@@ -260,10 +254,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPublishedEnd', TimeType::class, [
                 'label' => 'Publish End Time',
                 'required' => false,
-                'input' => 'timestamp',
+                'input' => 'string',
+                'input_format' => 'H:i:s',
                 'widget' => 'single_text',
-                'model_timezone' => 'America/Los_Angeles',
-                'view_timezone' => $timezone,
                 'attr' => [
                     'class' => 'timepicker',
                     'title' => "End timepicker for published",

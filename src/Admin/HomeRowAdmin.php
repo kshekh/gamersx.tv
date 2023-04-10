@@ -133,6 +133,9 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('isGlowStyling', null, [
                 'sortable' => false
             ])
+            ->add('timezone', null, [
+                'sortable' => false
+            ])
             ->add('isPublishedStart', null, [
                 'editable' => true,
                 'sortable' => false
@@ -161,14 +164,6 @@ final class HomeRowAdmin extends AbstractAdmin
 
     protected function configureFormFields(FormMapper $formMapper): void
     {
-        $timezone = 'UTC';
-        $admin = $this->isChild() ? $this->getParent() : $this;
-        $id = $admin->getRequest()->get('id');
-        $homeRow = $this->getModelManager()->find(HomeRow::class, $id);
-        if ($homeRow) {
-            $homeTimezone = $homeRow->getTimezone();
-            $timezone = $homeTimezone ? $homeTimezone : 'UTC';
-        }
         $formMapper
             ->add('title')
             ->add('sortIndex')
@@ -213,10 +208,9 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('isPublishedStart', TimeType::class, [
                 'label' => 'Publish Start Time',
                 'required' => false,
-                'input' => 'timestamp',
+                'input' => 'string',
+                'input_format' => 'H:i:s',
                 'widget' => 'single_text',
-                'model_timezone' => 'America/Los_Angeles',
-                'view_timezone' => $timezone,
                 'attr' => [
                     'class' => 'timepicker',
                     'title' => "Start timepicker for published",
@@ -225,10 +219,9 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('isPublishedEnd', TimeType::class, [
                 'label' => 'Publish End Time',
                 'required' => false,
-                'input' => 'timestamp',
+                'input' => 'string',
+                'input_format' => 'H:i:s',
                 'widget' => 'single_text',
-                'model_timezone' => 'America/Los_Angeles',
-                'view_timezone' => $timezone,
                 'attr' => [
                     'class' => 'timepicker',
                     'title' => "End timepicker for published",
