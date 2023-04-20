@@ -86,7 +86,6 @@ class TwitchApiController extends AbstractController
         if (isset($code) && isset($state) && $state == $sessionState) {
             $twitchLogin = $twitch->tryAndLoginWithTwitch($code, $redirectUri, $clientId, $clientSecret);
             if ($twitchLogin['status'] == 'ok') {
-                //$this->addFlash('success', 'okkkkkkkkk');
                 $this->session->getFlashBag()->add(
                     'loggedin',
                     $this->translator->trans('sonata_user_already_authenticated', [], 'SonataUserBundle')
