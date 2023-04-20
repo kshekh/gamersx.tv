@@ -2,7 +2,7 @@ $(document).ready(function () {
   if ((document.URL).includes("admin/login") || (document.URL).includes("admin/resetting/request")) {
     $(".login-page").css('background', "#373A41")
     let domain = (new URL(document.URL));
-
+    let twitchButton = "<div class='row' style='margin: 5px -15px;'><div class='col-xs-12'><button onclick='goTwitchLogin()' type='button' class='btn btn-block' style='background-color: #9147ff; color: white;'>Login With Twitch</button></div></div>";
     $(".login-logo img").attr('src', "/images/logo.png").css({
       width: "100%",
     })
@@ -25,5 +25,10 @@ $(document).ready(function () {
       $(".login-box-msg").text("Login").css({
         color: "white"
       })
+    $(".login-box-body form").append(twitchButton);
   }
 })
+
+function goTwitchLogin() {
+    window.location.href = '/api/twitch-login';
+}
