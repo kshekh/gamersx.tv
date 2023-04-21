@@ -83,6 +83,8 @@ class TwitchApiController extends AbstractController
         $code = $request->get('code');
         $state = $request->get('state');
         $sessionState = $this->session->get('twitch_state');
+        $this->session->set('login_required_to_connect_twitch', false);
+        $this->session->set('is_logged_in', false);
         if (isset($code) && isset($state) && $state == $sessionState) {
             $twitchLogin = $twitch->tryAndLoginWithTwitch($code, $redirectUri, $clientId, $clientSecret);
             if ($twitchLogin['status'] == 'ok') {

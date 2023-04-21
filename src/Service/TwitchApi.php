@@ -65,7 +65,6 @@ class TwitchApi
         $this->session->set('twitch_user_info', $apiUserInfo);
         $this->session->set('twitch_user_info.access_token', $clientAccessToken);
         $this->session->set('twitch_user_info.refresh_token', $refreshToken);
-        $this->session->set('login_required_to_connect_twitch', false);
 
         $userInfoWithId = $this->em->getRepository(User::class)
             ->findOneBy([
