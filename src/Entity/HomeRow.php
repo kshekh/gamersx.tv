@@ -68,28 +68,24 @@ class HomeRow implements PartneredInterface
      */
     private $isGlowStyling;
 
-     /**
-      * @ORM\Column(type="string", length=50, options={"default" : 0})
-      */
+    /**
+     * @ORM\Column(type="string", length=50, options={"default" : 0})
+     */
     private $isCornerCut;
 
-   /**
-    * @ORM\Column(name="isPublishedStart", type="integer", nullable=true)
-    *
-    * @Assert\Expression(
-    *     "this.getIsPublishedStart() <= this.getIsPublishedEnd()",
-    *     message="Start time should be less than end date!"
-    * )
-    */
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $timezone;
+
+    /**
+     * @ORM\Column(name="isPublishedStart",type="string", length=255, nullable=true)
+     */
+
     private $isPublishedStart;
 
     /**
-     * @ORM\Column(name="isPublishedEnd", type="integer", nullable=true)
-     *
-     * @Assert\Expression(
-     *     "this.getIsPublishedStart() <= this.getIsPublishedEnd()",
-     *     message="Start time should be less than end date!"
-     * )
+     * @ORM\Column(name="isPublishedEnd",type="string", length=255, nullable=true)
      */
     private $isPublishedEnd;
 
@@ -243,28 +239,37 @@ class HomeRow implements PartneredInterface
         return $this;
     }
 
-    public function getIsPublishedStart(): ?int
+    public function getTimezone(): ?string
+    {
+        return $this->timezone;
+    }
+
+    public function setTimezone(?string $timezone): self
+    {
+        $this->timezone = $timezone;
+
+        return $this;
+    }
+    public function getIsPublishedStart(): ?string
     {
         return $this->isPublishedStart;
     }
 
-    public function setIsPublishedStart(?int $isPublishedStart): self
+    public function setIsPublishedStart(?string $isPublishedStart): self
     {
-        $isPublishedStartTime = 0;
-        $this->isPublishedStart = !empty($isPublishedStart) ? $isPublishedStart : $isPublishedStartTime;
+        $this->isPublishedStart = $isPublishedStart;
 
         return $this;
     }
 
-    public function getIsPublishedEnd(): ?int
+    public function getIsPublishedEnd(): ?string
     {
         return $this->isPublishedEnd;
     }
 
-    public function setIsPublishedEnd(?int $isPublishedEnd): self
+    public function setIsPublishedEnd(?string $isPublishedEnd): self
     {
-        $isPublishedEndTime = 86400;
-        $this->isPublishedEnd = !empty($isPublishedEnd) ? $isPublishedEnd : $isPublishedEndTime;
+        $this->isPublishedEnd = $isPublishedEnd;
 
         return $this;
     }
