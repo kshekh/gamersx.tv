@@ -5,51 +5,23 @@
     @swiped-right="back()"
     @mouseenter="mouseEntered()"
     @mousemove="checkMouseActive()"
-    class="
-      home-row
-      mb-7
-      md:mb-9
-      xl:mb-14
-      bg-cover bg-no-repeat
-      relative
-      overflow-hidden
-      min-h-mobile
-    "
+    class="home-row mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative overflow-hidden min-h-mobile"
     :style="customBg"
   >
     <div class="container mx-auto">
       <div class="pb-50p"></div>
       <div
-        class="
-          px-4
-          md:px-12
-          flex
-          items-center
-          justify-between
-          absolute
-          inset-0
-          z-10
-        "
+        class="px-4 md:px-12 flex items-center justify-between absolute inset-0 z-10"
       >
-        <slider-arrow-big
+        <slider-arrow
           :isNext="false"
           :videoType="currentChannelEmbedName"
-          @arrow-big-clicked="back()"
+          @arrow-clicked="back()"
+          :style="isVideoPlaying ? { display: 'none' } : {}"
         />
 
         <div
-          class="
-            py-2
-            md:pt-8
-            xl:py-14
-            flex-grow
-            min-w-0
-            flex
-            h-full
-            items-center
-            justify-between
-            md:flex-col
-          "
+          class="py-2 md:pt-8 xl:py-14 flex-grow min-w-0 flex h-full items-center justify-between md:flex-col"
         >
           <div
             ref="channelBox"
@@ -68,9 +40,11 @@
                 :isRowFirst="isRowFirst"
                 :isFirstVideoLoaded="isFirstVideoLoaded"
                 :isMouseStopped="isMouseStopped"
+                :customBg="customBg"
                 @first-video-buffered="handleFirstVideoLoaded"
                 @activate-mouse-stopped="activateMouseStopped"
                 @reset-mouse-moving="checkMouseActive"
+                @decrease-info-box-size="decreaseInfoBoxSize"
               ></component>
             </div>
           </div>
@@ -88,10 +62,11 @@
           </div>
         </div>
 
-        <slider-arrow-big
+        <slider-arrow
           :isNext="true"
           :videoType="currentChannelEmbedName"
-          @arrow-big-clicked="forward()"
+          @arrow-clicked="forward()"
+          :style="isVideoPlaying ? { display: 'none' } : {}"
         />
       </div>
     </div>
@@ -105,7 +80,7 @@ import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerDescrip
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
 import SliderDot from "../helpers/SliderDot.vue";
-import SliderArrowBig from "../helpers/SliderArrowBig.vue";
+import SliderArrow from "../helpers/SliderArrow.vue";
 
 import isBoxInViewport from "../../mixins/isBoxInViewport";
 
@@ -119,17 +94,17 @@ export default {
     NoEmbedContainer: NoEmbedContainer,
     "title-addinional-description": TitleAdditionalDescription,
     "slider-dot": SliderDot,
-    "slider-arrow-big": SliderArrowBig
+    "slider-arrow": SliderArrow,
   },
   props: {
     settings: {
       type: Object,
-      required: true
+      required: true,
     },
     rowPosition: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
   data: function () {
     return {
@@ -138,7 +113,8 @@ export default {
       isAllowPlaying: true,
       isFirstVideoLoaded: false,
       isMouseStopped: false,
-      isMouseMovingTimeout: false
+      isMouseMovingTimeout: false,
+      isVideoPlaying: false,
     };
   },
   computed: {
@@ -151,7 +127,7 @@ export default {
       if (selected && selected.customArt) {
         return {
           // backgroundImage: "url(https://picsum.photos/2000/3000)"
-          backgroundImage: "url(" + selected.customArt + ")"
+          backgroundImage: "url(" + selected.customArt + ")",
         };
       } else {
         return {};
@@ -166,7 +142,7 @@ export default {
         // Default for now
         return "TwitchEmbed";
       }
-    }
+    },
   },
   methods: {
     showChannel: function (channel) {
@@ -226,7 +202,10 @@ export default {
       this.isMouseMovingTimeout = setTimeout(() => {
         this.isMouseStopped = true;
       }, 3000);
-    }
+    },
+    decreaseInfoBoxSize(status) {
+      this.isVideoPlaying = status;
+    },
   },
   mounted() {
     if (!this.isRowFirst) {
@@ -235,6 +214,6 @@ export default {
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
     }
     this.displayChannels = this.settings.channels.filter(this.showChannel);
-  }
+  },
 };
 </script>

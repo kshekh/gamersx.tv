@@ -45,7 +45,6 @@ export default {
 
       // Listen for other players, stop on their start
       this.$root.$on("yt-embed-playing", this.stopPlayer);
-      console.log("xxx this.embed", this.embed);
     },
     playerStateChanged: function (e) {
       if (e.data == YT.PlayerState.PAUSED) {

@@ -68,4 +68,12 @@ class StreamerController extends AbstractController
 
         return $this->json($streamerInfo);
     }
+
+    /**
+     * @Route("/streamer/info/{channel}/api", name="streamer_infor_api")
+     */
+    public function apiStreamerInfo($channel, TwitchApi $twitch): Response
+    {
+        return $this->json($twitch->getStreamerInfoByChannel($channel));
+    }
 }
