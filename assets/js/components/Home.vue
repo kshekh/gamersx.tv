@@ -184,6 +184,18 @@ export default {
           this.settings = response.data.settings;
         });
     },
+    requestSessionsApi: function () {
+      axios.get("/home/sessions/api")
+        .catch(e => console.error(e))
+        .then(response => {
+          console.log('response', response.data)
+          if (response.data.isLoggedIn && !response.data.isRequiredToLoginTwitch) {
+            this.modal = false;
+          } else {
+            this.modal = true;
+          }
+        });
+    },
     handleCloseModal() {
       // 48 hours
       Cookies.set("twitch_", "demo", { expires: 2 });
@@ -200,6 +212,7 @@ export default {
     if (!cookie) {
       this.modal = true;
     }
+    this.requestSessionsApi();
     this.requestHomeCachedRowsApi().then(() => {
       this.requestHomeApi();
     });
