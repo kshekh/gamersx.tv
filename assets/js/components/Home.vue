@@ -188,7 +188,6 @@ export default {
       axios.get("/home/sessions/api")
         .catch(e => console.error(e))
         .then(response => {
-          console.log('response', response.data)
           if (response.data.isLoggedIn && !response.data.isRequiredToLoginTwitch) {
             this.modal = false;
           } else {
