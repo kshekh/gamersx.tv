@@ -86,6 +86,7 @@ services:
       - 80:80
     volumes:
       - ./public/build/:/var/www/html/public/build/
+      - ./public/js/:/var/www/html/public/js/
       # - ./docker/nginx:/etc/nginx/conf.d/
     networks:
       - gamersx

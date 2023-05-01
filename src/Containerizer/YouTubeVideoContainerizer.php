@@ -81,7 +81,7 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
             }
 
             $embedData = [
-                'video' => $youtube,
+                'video' => $info->getId(),
                 'elementId' => uniqid('embed-'),
                 'url' => 'https://www.youtube.com/embed/'.$info->getId(),
             ];
