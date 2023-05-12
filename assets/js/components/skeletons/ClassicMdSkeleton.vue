@@ -35,7 +35,7 @@
           v-for="i in 10"
           :key="i"
           class="
-            flex-shrink-0
+            shrink-0
             bg-grey-600
             rounded-md
             animate-pulse

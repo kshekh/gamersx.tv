@@ -7,7 +7,7 @@
           w-full
           h-full
           cut-edge__wrapper
-          flex-shrink-0
+          shrink-0
         "
         :class="getGlow"
       >
@@ -174,7 +174,7 @@
               class="
                 text-xxs text-white
                 font-play
-                overflow-hidden overflow-ellipsis
+                overflow-hidden text-ellipsis
                 whitespace-nowrap
               "
             >
@@ -184,7 +184,7 @@
               class="
                 text-8 text-grey
                 font-play
-                overflow-hidden overflow-ellipsis
+                overflow-hidden text-ellipsis
                 whitespace-nowrap
               "
             >

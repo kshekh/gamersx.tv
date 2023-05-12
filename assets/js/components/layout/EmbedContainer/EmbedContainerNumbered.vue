@@ -9,7 +9,7 @@
       md:h-32
       xl:w-30
       xl:h-40
-      flex-shrink-0
+      shrink-0
     "
     ref="itemWrapper"
   >
@@ -27,7 +27,7 @@
           cut-edge__clipped--sm-border
           cut-edge__clipped-top-left-sm
           bg-black
-          flex-shrink-0
+          shrink-0
         "
         :class="getOutline"
       >
@@ -188,7 +188,7 @@
               class="
                 text-xxs text-white
                 font-play
-                overflow-hidden overflow-ellipsis
+                overflow-hidden text-ellipsis
                 whitespace-nowrap
               "
             >
@@ -198,7 +198,7 @@
               class="
                 text-8 text-grey
                 font-play
-                overflow-hidden overflow-ellipsis
+                overflow-hidden text-ellipsis
                 whitespace-nowrap
               "
             >

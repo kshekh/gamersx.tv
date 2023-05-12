@@ -5,7 +5,7 @@
           items-center
           justify-between
           pl-8
-          md:pl-10flex items-center flex-shrink-0 mr-3
+          md:pl-10 shrink-0 mr-3
           xl:pl-24
           pr-4
           md:pr-5
@@ -55,7 +55,7 @@
         <div ref="channelDivs" v-for="(channel, index) in displayChannels" :key="index" class="
             flex
             items-center
-            flex-shrink-0
+            shrink-0
             mr-3
             md:mr-2
             xl:mr-4

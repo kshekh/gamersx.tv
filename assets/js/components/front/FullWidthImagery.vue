@@ -83,7 +83,7 @@
 
         <div
           v-show="isControlsShown"
-          class="pr-8 sm:pr-0 ml-2 md:ml-5 xl:ml-8 flex-shrink-0 relative z-10 flex"
+          class="pr-8 sm:pr-0 ml-2 md:ml-5 xl:ml-8 shrink-0 relative z-10 flex"
         >
          <slider-arrow-big
           :isNext="false"
