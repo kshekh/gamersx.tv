@@ -57,6 +57,8 @@
             ref="embed"
             :is="embedName"
             :embedData="embedData"
+            :overlay="overlay"
+            :image="image"
             :isShowTwitchEmbed="isShowTwitchEmbed"
             class="h-full w-full border overflow-hidden bg-black"
             :class="{

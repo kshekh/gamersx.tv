@@ -60,7 +60,11 @@
             }"
           >
             <img
-              src="https://picsum.photos/id/1062/100/100"
+              :src="
+                streamersData
+                  ? streamersData
+                  : 'https://picsum.photos/id/1062/100/100'
+              "
               alt="avatar"
               class="w-9 h-9 md:w-5 md:h-5 xl:w-9 xl:h-9 rounded-full mr-1.5"
               style="height: inherit"
@@ -149,6 +153,8 @@
               ref="embed"
               :is="embedName"
               :embedData="embedData"
+              :overlay="overlay"
+              :image="image"
               :isShowTwitchEmbed="isShowTwitchEmbed"
               class="w-full h-full"
               :width="'100%'"
@@ -185,6 +191,7 @@
 <script>
 import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
+import axios from "axios";
 
 import embedMixin from "../../../mixins/embedFrameMixin";
 
@@ -214,6 +221,8 @@ export default {
     "liveViewerCount",
     "isGlowStyling",
     "isCornerCut",
+    "info",
+    "profileImageUrl",
   ],
   data: function () {
     return {
@@ -223,6 +232,7 @@ export default {
       cornerCutStyling: {
         outline: "",
       },
+      streamersData: {},
       isShowTwitchEmbed: false,
     };
   },
@@ -237,6 +247,13 @@ export default {
     },
   },
   methods: {
+    streamerInfoApi: function () {
+      if (this.embedName === "TwitchEmbed") {
+        this.streamersData = this.profileImageUrl;
+      } else if (this.embedName === "YouTubeEmbed") {
+        this.streamersData = this.info.snippet.thumbnails.default.url;
+      }
+    },
     computeGlowStyling: function () {
       if (
         this.isGlowStyling === "always_on" ||
@@ -262,6 +279,9 @@ export default {
         }
       }
     },
+  },
+  beforeMount() {
+    this.streamerInfoApi();
   },
   // created() {
   //   if(!this.showOnline && this.embedData){

@@ -116,6 +116,7 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
                 [
                     'info' => $info,
                     'broadcast' => $broadcast,
+                    'profileImageUrl' => $info['profile_image_url'],
                     'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
                     'viewedCount' => isset($info['view_count']) ? $info['view_count'] : 0,
                     'showOnline' => $broadcast !== NULL,
