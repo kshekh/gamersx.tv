@@ -38,7 +38,11 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
         $timezone = $homeRowItem->getTimezone();
         date_default_timezone_set($timezone ? $timezone : 'America/Los_Angeles');
         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
-
+        $liveViewers = 0;
+        if ($broadcast) {
+            $videoDetails = $youtube->getVideoInfo($broadcast->getId()->getVideoId())->getItems();
+            $liveViewers = $videoDetails[0]->liveStreamingDetails->concurrentViewers;
+        }
         $isPublished = $homeRowItem->getIsPublished();
 
         if (!$isPublished) {
@@ -110,7 +114,7 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
                 [
                     'info' => $info,
                     'broadcast' => $broadcast,
-                    'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
+                    'liveViewerCount' => $liveViewers,
                     'viewedCount' => isset($info['statistics_view_count']) ? (int) $info['statistics_view_count'] : 0,
                     'showOnline' => $broadcast !== NULL,
                     'onlineDisplay' => [
