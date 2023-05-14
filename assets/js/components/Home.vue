@@ -193,14 +193,27 @@ export default {
       // 48 hours
       Cookies.set("twitch_", "demo", { expires: 2 });
       window.open("https://twitch.tv/login", "_blank");
-    }
+    },
+    requestSessionsApi: function () {
+      axios.get("/home/sessions/api")
+        .catch(e => console.error(e))
+        .then(response => {
+            console.log('response', response.data)
+            if (response.data.isLoggedIn && !response.data.isRequiredToLoginTwitch) {
+              this.modal = false;
+            } else {
+              this.modal = true;
+            }
+        });
+    },
   },
   mounted: function() {
+    this.requestSessionsApi();
     const cookie = Cookies.get("twitch_");
     if (!cookie) {
       this.modal = true;
     }
-    this.requestHomeCachedRowsApi().then(() => {
+    this.requestHomeCachedRowsApi().then(()=>{
       this.requestHomeApi();
     });
     this.pollingApiData = window.setInterval(() => {

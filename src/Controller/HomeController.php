@@ -8,6 +8,7 @@ use App\Containerizer\ContainerizerFactory;
 use App\Service\HomeRowInfo;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -16,10 +17,12 @@ use Symfony\Component\HttpFoundation\{Response, RedirectResponse};
 class HomeController extends AbstractController
 {
 //    private $homeRowInfo;
+    private $session;
 
-    public function __construct(HomeRowInfo $homeRowInfo)
+    public function __construct(HomeRowInfo $homeRowInfo, SessionInterface $session)
     {
         $this->homeRowInfo = $homeRowInfo;
+        $this->session = $session;
     }
 
     /**
@@ -67,4 +70,79 @@ class HomeController extends AbstractController
             ]
         ]);
     }
+
+    /**
+     * @Route("/home/sessions/api", name="home_session_api")
+     */
+    public function apiSessions(): Response
+    {
+        $isLoggedIn = $this->session->get('is_logged_in');
+        $isRequiredToLoginTwitch = $this->session->get('login_required_to_connect_twitch');
+        return $this->json([
+            'isLoggedIn' => $isLoggedIn,
+            'isRequiredToLoginTwitch' => $isRequiredToLoginTwitch
+        ]);
+    }
+//    /**
+//     * @Route("/home/api/cache", name="home_api_cache")
+//     */
+//    public function apiHomeCache(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
+//    {
+//        $cache = new FilesystemAdapter();
+//
+//        // Deleting old cache
+//        $cache->delete('home');
+//
+//        $beta = 1.0;
+//        $rowChannels = $cache->get('home', function (ItemInterface $item) use ($containerizer) {
+//            //$item->expiresAfter(240); //expire cache in every 240 sec
+//            $rows = $this->getDoctrine()->getRepository(HomeRow::class)
+//                ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
+//
+//            $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+//
+//            foreach ($rows as $row) {
+//                $isPublishedStartTime = $row->getIsPublishedStart();
+//                $isPublishedEndTime = $row->getIsPublishedEnd();
+//
+//                if ($row->getIsPublished() === FALSE) {
+//                    continue;
+//                }
+//
+//                if (
+//                    !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
+//                    (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
+//                ) {
+//                    $thisRow = Array();
+//                    $thisRow['title'] = $row->getTitle();
+//                    $thisRow['sortIndex'] = $row->getSortIndex();
+//                    $thisRow['componentName'] = $row->getLayout();
+//                    $thisRow['onGamersXtv'] = $row->getonGamersXtv();
+//
+//                    $containers = Array();
+//
+//                    $containerized = $containerizer($row);
+//                    $channels = $containerized->getContainers();
+//
+//                    foreach ($channels as $key => $channel) {
+//                        $channels[$key]['isGlowStyling'] = $row->getIsGlowStyling();
+//                    }
+//
+//                    $thisRow['channels'] = $channels;
+//
+//                    $rowChannels[] = $thisRow;
+//                }
+//            }
+//
+//            if (isset($rowChannels)) {
+//                return $rowChannels;
+//            }
+//        }, $beta);
+//
+//        return $this->json([
+//            'settings' => [
+//                'rows' => $rowChannels
+//            ]
+//        ]);
+//    }
 }
