@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full flex-shrink-0" ref="itemWrapper">
+  <div class="w-full h-full shrink-0" ref="itemWrapper">
     <div
       @click="isShowTwitchEmbed = true"
       class="cut-edge__wrapper w-full h-full"
@@ -110,6 +110,8 @@
               ref="embed"
               :is="embedName"
               :embedData="embedData"
+              :overlay="overlay"
+              :image="image"
               :isShowTwitchEmbed="isShowTwitchEmbed"
               class="w-full h-full"
               :width="'100%'"
@@ -124,12 +126,12 @@
         >
           <div class="mr-2 overflow-hidden">
             <h5
-              class="text-xxs text-white font-play overflow-hidden overflow-ellipsis whitespace-nowrap"
+              class="text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
             >
               {{ offlineDisplay.title }}
             </h5>
             <h6
-              class="text-8 text-grey font-play overflow-hidden overflow-ellipsis whitespace-nowrap"
+              class="text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
             >
               {{ embedData.channel }}
             </h6>

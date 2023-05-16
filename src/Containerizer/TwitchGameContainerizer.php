@@ -85,8 +85,11 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
                 $title = sprintf("%s playing %s for %d viewers",
                     $broadcast['user_name'], $broadcast['game_name'], $broadcast['viewer_count']);
 
+                $streamerInfo = $twitch->getStreamerInfoByChannel($broadcast['user_login']);
+                $streamerInfo = $streamerInfo->toArray();
                 $channels[] = [
                     'info' => $info,
+                    'profileImageUrl' => $streamerInfo['data'][0]['profile_image_url'],
                     'broadcast' => $broadcast,
                     'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
                     'viewedCount' => isset($info['view_count']) ? $info['view_count'] : 0,

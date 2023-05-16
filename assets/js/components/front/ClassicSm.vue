@@ -39,7 +39,7 @@
 <!--        />-->
 <!--      </div>-->
     </div>
-    <!-- <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="first()">
+    <!-- <div class="w-16 h-16 shrink-0 grow-0" @click="first()">
       <img
         alt="cursor-left"
         class="cursor-pointer"
@@ -80,7 +80,7 @@
           v-for="(channel, index) in displayChannels"
           :key="index"
           class="
-            flex-shrink-0
+            shrink-0
             mr-1.5
             xl:mr-3
             w-36
@@ -104,7 +104,7 @@
           items-center
           mr-1.5
           xl:mr-3
-          flex-shrink-0
+          shrink-0
           w-36
           md:w-40
           lg:w-52
@@ -126,7 +126,7 @@
         />
       </div>
     </div>
-    <!-- <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="forward()">
+    <!-- <div class="w-16 h-16 shrink-0 grow-0" @click="forward()">
         <img
           alt="cursor-right"
           class="cursor-pointer"

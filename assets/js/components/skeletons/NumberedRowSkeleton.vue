@@ -40,7 +40,7 @@
         >
           <span
             :data-number="i"
-            class="transform translate-x-3 leading-extra-tight md:translate-x-4 xl:translate-x-5 flex-shrink-0 font-bahnschrift font-semibold text-8xl md:text-xxl xl:text-3xxl text-stroke animate-pulse"
+            class="transform translate-x-3 leading-extra-tight md:translate-x-4 xl:translate-x-5 shrink-0 font-bahnschrift font-semibold text-8xl md:text-xxl xl:text-3xxl text-stroke animate-pulse"
             :class="{
               'translate-x-8 md:translate-x-10 xl:translate-x-12': i >= 10
             }"
@@ -57,7 +57,7 @@
               md:h-32
               xl:w-28
               xl:h-40
-              flex-shrink-0
+              shrink-0
               bg-grey-600
               rounded-md
               animate-pulse
