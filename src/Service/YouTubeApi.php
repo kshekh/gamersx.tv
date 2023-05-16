@@ -126,7 +126,16 @@ class YouTubeApi
         return $this->getPaginatedQuery($queryParams, $first, $before, $after);
     }
 
-
+    public function getVideoInfo($videoIds)
+    {
+        if (is_array($videoIds)) {
+            $videoIds = implode(',', $videoIds);
+        }
+        $queryParams = [
+            'id' => $videoIds
+        ];
+        return $this->service->videos->listVideos('snippet,statistics,liveStreamingDetails', $queryParams);
+    }
 
     /**
      * Helper method for API calls that use paginated queries
