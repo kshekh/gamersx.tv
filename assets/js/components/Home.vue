@@ -185,13 +185,13 @@ export default {
         });
     },
     handleCloseModal() {
-      // 48 hours
-      Cookies.set("twitch_", "demo", { expires: 2 });
+      // 24 hours
+      Cookies.set("twitch_", "demo", { expires: 1 });
       this.modal = false;
     },
     handleLogin() {
-      // 48 hours
-      Cookies.set("twitch_", "demo", { expires: 2 });
+      // 24 hours
+      Cookies.set("twitch_", "demo", { expires: 1 });
       window.open("https://twitch.tv/login", "_blank");
     },
     requestSessionsApi: function () {
