@@ -98,7 +98,7 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
                     'broadcast' => $broadcast,
                     'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
                     'viewedCount' => isset($info['statistics_view_count']) ? (int) $info['statistics_view_count'] : 0,
-                    'showOnline' => $broadcast !== NULL,
+                    'showOnline' => TRUE,
                     'onlineDisplay' => [
                         'title' => $title,
                         'showArt' => $homeRowItem->getShowArt(),
