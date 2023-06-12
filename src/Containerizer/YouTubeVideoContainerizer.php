@@ -28,7 +28,7 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
         try {
             $info = $youtube->getVideoInfo($videoId)->getItems();
         } catch (\Exception $e) {
-            $this->logger->error("Call to YouTube failed with the message \"".$e->getErrors()[0]['message']."\"");
+            $this->logger->error("Call to YouTube failed with the message \"".$e->getMessage()."\"");
             return Array();
         }
 

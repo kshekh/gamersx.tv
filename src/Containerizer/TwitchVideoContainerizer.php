@@ -33,9 +33,13 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
         }
 
         try {
-            $info = $twitch->getVideoInfo($videoId)->toArray();
+            if ($separatedUrl[1] == 'videos') {
+                $info = $twitch->getVideoInfo($videoId)->toArray();
+            } else {
+                $info = $twitch->getClipInfo($videoId)->toArray();
+            }
         } catch (\Exception $e) {
-            $this->logger->error("Call to twitch failed with the message \"".$e->getErrors()[0]['message']."\"");
+            $this->logger->error("Call to twitch failed with the message \"".$e->getMessage()."\"");
             return Array();
         }
 
@@ -64,7 +68,7 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
             }
 
             $title = $info['title'];
-            $link = $videoId;
+            $link = $homeRowItem->getVideoId();
 
             if ($homeRowItem->getLinkType() === HomeRowItem::LINK_TYPE_GAMERSX) {
                 $link = '/channel/'.$info['id'];
