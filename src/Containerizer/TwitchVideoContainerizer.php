@@ -24,12 +24,13 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
 
         $separatedUrl = explode('/', parse_url($homeRowItem->getVideoId(), PHP_URL_PATH));
 
+        $parent = 'gamersx.tv';
         if ($separatedUrl[1] == 'videos') {
             $videoId = $separatedUrl[2];
-            $embedUrl = 'https://player.twitch.tv/?parent=gamersx.tv&video='.$videoId;
+            $embedUrl = 'https://player.twitch.tv/?parent='.$parent.'&video='.$videoId;
         } else {
             $videoId = $separatedUrl[3];
-            $embedUrl = 'https://clips.twitch.tv/embed?clip='.$videoId.'&parent=gamersx.tv';
+            $embedUrl = 'https://clips.twitch.tv/embed?clip='.$videoId.'&parent='.$parent;
         }
 
         try {
@@ -96,6 +97,7 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
                 'video' => $videoId,
                 'elementId' => uniqid('embed-'),
                 'url' => $embedUrl,
+                'type' => $separatedUrl[1] != 'videos' ? 'twitch_clip' : 'twitch_video'
             ];
 
             if ($info !== NULL) {
