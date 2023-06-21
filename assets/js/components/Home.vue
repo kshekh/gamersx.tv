@@ -185,20 +185,21 @@ export default {
         });
     },
     handleCloseModal() {
-      // 48 hours
-      Cookies.set("twitch_", "demo", { expires: 2 });
+      // 24 hours
+      Cookies.set("twitch_", "demo", { expires: 1 });
       this.modal = false;
     },
     handleLogin() {
-      // 48 hours
-      Cookies.set("twitch_", "demo", { expires: 2 });
+      // 24 hours
+      Cookies.set("twitch_", "demo", { expires: 1 });
       window.open("https://twitch.tv/login", "_blank");
     },
     requestSessionsApi: function () {
+      const cookie = Cookies.get("twitch_");
+      if (cookie) return
       axios.get("/home/sessions/api")
         .catch(e => console.error(e))
         .then(response => {
-            console.log('response', response.data)
             if (response.data.isLoggedIn && !response.data.isRequiredToLoginTwitch) {
               this.modal = false;
             } else {
@@ -209,10 +210,6 @@ export default {
   },
   mounted: function() {
     this.requestSessionsApi();
-    const cookie = Cookies.get("twitch_");
-    if (!cookie) {
-      this.modal = true;
-    }
     this.requestHomeCachedRowsApi().then(()=>{
       this.requestHomeApi();
     });
