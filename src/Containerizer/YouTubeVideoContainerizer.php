@@ -5,7 +5,7 @@ namespace App\Containerizer;
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
 
-class YouTubeChannelContainerizer extends LiveContainerizer implements ContainerizerInterface
+class YouTubeVideoContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
     private $homeRowItem;
     private $youtube;
@@ -22,35 +22,29 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
         $homeRowItem = $this->homeRowItem;
         $youtube = $this->youtube;
 
-        $channelId = $homeRowItem->getTopic()['topicId'];
+        parse_str(parse_url($homeRowItem->getVideoId(), PHP_URL_QUERY), $parameters);
+        $videoId = $parameters['v'];
 
         try {
-            $info = $youtube->getChannelInfo($channelId)->getItems();
-            $broadcast = $youtube->getLiveChannel($channelId)->getItems();
+            $info = $youtube->getVideoInfo($videoId)->getItems();
         } catch (\Exception $e) {
             $this->logger->error("Call to YouTube failed with the message \"".$e->getErrors()[0]['message']."\"");
             return Array();
         }
 
         $info = $info[0];
-        $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
+        $broadcast = null;
         $description = $homeRowItem->getDescription();
-        $timezone = $homeRowItem->getTimezone();
-        date_default_timezone_set($timezone ? $timezone : 'America/Los_Angeles');
         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
-        $liveViewers = 0;
-        if ($broadcast) {
-            $videoDetails = $youtube->getVideoInfo($broadcast->getId()->getVideoId())->getItems();
-            $liveViewers = $videoDetails[0]->liveStreamingDetails->concurrentViewers;
-        }
+
         $isPublished = $homeRowItem->getIsPublished();
 
         if (!$isPublished) {
             return Array();
         }
 
-        $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
-        $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
+        $isPublishedStartTime = $homeRowItem->getIsPublishedStart();
+        $isPublishedEndTime = $homeRowItem->getIsPublishedEnd();
 
         if (
             !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
@@ -62,18 +56,9 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
                 return Array();
             }
 
-            if ($broadcast === NULL) {
-                $title = $info->getSnippet()->getTitle();
-                if ($info->getSnippet()->getCustomURL() !== NULL) {
-                    $link = 'https://www.youtube.com/c/'.$info->getSnippet()->getCustomURL();
-                } else {
-                    $link = 'https://www.youtube.com/channel/'.$info->getId();
-                }
-            } else {
-                $title = sprintf("%s - \"%s\"",
-                    $info->getSnippet()->getTitle(), $broadcast->getSnippet()->getTitle());
-                $link = 'https://www.youtube.com/v/'.$broadcast->getId()->getVideoId();
-            }
+            $title = $info->getSnippet()->getTitle();
+            $link = 'https://www.youtube.com/watch?v='.$info->getId();
+
 
             if ($homeRowItem->getLinkType() === HomeRowItem::LINK_TYPE_GAMERSX) {
                 $link = '/channel/'.$info->getId();
@@ -95,14 +80,11 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
                 ];
             }
 
-            if ($broadcast !== NULL) {
-                $embedData = [
-                    'video' => $broadcast->getId()->getVideoId(),
-                    'elementId' => uniqid('embed-'),
-                ];
-            } else {
-                $embedData = NULL;
-            }
+            $embedData = [
+                'video' => $youtube,
+                'elementId' => uniqid('embed-'),
+                'url' => 'https://www.youtube.com/embed/'.$info->getId(),
+            ];
 
             if ($info !== NULL) {
                 if ($info->getStatistics() !== NULL) {
@@ -114,7 +96,7 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
                 [
                     'info' => $info,
                     'broadcast' => $broadcast,
-                    'liveViewerCount' => $liveViewers,
+                    'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
                     'viewedCount' => isset($info['statistics_view_count']) ? (int) $info['statistics_view_count'] : 0,
                     'showOnline' => $broadcast !== NULL,
                     'onlineDisplay' => [
@@ -133,8 +115,10 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
                     'rowName' => $homeRowItem->getHomeRow()->getTitle(),
                     'sortIndex' => $homeRowItem->getSortIndex(),
                     'image' => $image ?? NULL,
-                    'overlay' => $this->uploader->asset($homeRowItem, 'overlayArtFile'),
-                    'customArt' => $this->uploader->asset($homeRowItem, 'customArtFile'),
+                    'overlay' => 'https://gamersx-dev-dev-us-west-1-storage.s3.us-west-1.amazonaws.com/2fEzW_Gq3O.jpeg',
+                    'customArt' => '',
+//                    'overlay' => $this->uploader->asset($homeRowItem, 'overlayArtFile'),
+//                    'customArt' => $this->uploader->asset($homeRowItem, 'customArtFile'),
                     'link' => $link,
                     'componentName' => 'EmbedContainer',
                     'embedName' => 'YouTubeEmbed',

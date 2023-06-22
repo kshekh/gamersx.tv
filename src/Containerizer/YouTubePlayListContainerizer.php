@@ -5,63 +5,46 @@ namespace App\Containerizer;
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
 
-class TwitchStreamerContainerizer extends LiveContainerizer implements ContainerizerInterface
+class YouTubePlayListContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
     private $homeRowItem;
-    private $twitch;
+    private $youtube;
 
-    public function __construct(HomeRowItem $homeRowItem, $twitch)
+    public function __construct(HomeRowItem $homeRowItem, $youtube)
     {
         $this->homeRowItem = $homeRowItem;
-        $this->twitch = $twitch;
+        $this->youtube = $youtube;
     }
 
     public function getContainers(): Array
     {
         $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
-        $twitch = $this->twitch;
+        $youtube = $this->youtube;
 
-        $streamerId = $homeRowItem->getTopic()['topicId'];
+        parse_str(parse_url($homeRowItem->getPlaylistId(), PHP_URL_QUERY), $parameters);
+        $playlistId = $parameters['list'];
 
-        $infos = $twitch->getStreamerInfo($streamerId);
-        if (200 !== $infos->getStatusCode()) {
-            $this->logger->error("Call to Twitch failed with ".$infos->getStatusCode());
-            unset($infos);
-            return Array();
-        }
-
-        $broadcast = $twitch->getStreamForStreamer($streamerId);
-        if (200 !== $broadcast->getStatusCode()) {
-            $this->logger->error("Call to Twitch failed with ".$broadcast->getStatusCode());
-            unset($broadcast);
-            return Array();
-        }
-
-        $info = $infos->toArray()['data'];
-
-        if (!isset($info) || empty($info)) {
+        try {
+            $info = $youtube->getPlaylistInfo($playlistId)->getItems();
+        } catch (\Exception $e) {
+            $this->logger->error("Call to YouTube failed with the message \"".$e->getErrors()[0]['message']."\"");
             return Array();
         }
 
         $info = $info[0];
-        $broadcast = $broadcast->toArray()['data'];
-        $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
-
-        $title = $broadcast === NULL ? $info['display_name'] : sprintf("%s playing %s for %d viewers",
-            $broadcast['user_name'], $broadcast['game_name'], $broadcast['viewer_count']);
+        $broadcast = null;
         $description = $homeRowItem->getDescription();
-        $timezone = $homeRowItem->getTimezone();
-        date_default_timezone_set($timezone ? $timezone : 'America/Los_Angeles');
         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+
         $isPublished = $homeRowItem->getIsPublished();
 
         if (!$isPublished) {
             return Array();
         }
 
-        $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
-        $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
+        $isPublishedStartTime = $homeRowItem->getIsPublishedStart();
+        $isPublishedEndTime = $homeRowItem->getIsPublishedEnd();
 
         if (
             !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
@@ -73,52 +56,44 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
                 return Array();
             }
 
+            $title = $info->getSnippet()->getTitle();
+            $link = 'https://www.youtube.com/playlist?list='.$info->getId();
+
+            if ($homeRowItem->getLinkType() === HomeRowItem::LINK_TYPE_GAMERSX) {
+                $link = '/channel/'.$info->getId();
+            } elseif ($homeRowItem->getLinkType() === HomeRowItem::LINK_TYPE_CUSTOM) {
+                $link = $homeRowItem->getCustomLink();
+            }
+
             if (($broadcast === NULL && $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_ART) ||
                 $homeRowItem->getShowArt() === TRUE) {
                 // Get the sized art link
-                $imageWidth = $imageHeight = 300;
-                $imageUrl = $info['profile_image_url'];
-                $imageUrl = str_replace('{height}', $imageHeight, $imageUrl);
-                $imageUrl = str_replace('{width}', $imageWidth, $imageUrl);
+                $imageInfo = $info->getSnippet()->getThumbnails();
+                $imageInfo = $imageInfo->getMedium() ? $imageInfo->getMedium() : $imageInfo->getStandard();
 
                 $image = [
-                    'url' => $imageUrl,
+                    'url' => $imageInfo->getUrl(),
                     'class' => 'profile-pic',
-                    'width' => $imageWidth,
-                    'height' => $imageHeight,
+                    'width' => $imageInfo->getWidth(),
+                    'height' => $imageInfo->getHeight(),
                 ];
             }
 
-            if ($broadcast !== NULL || $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_STREAM) {
+            if ($broadcast !== NULL) {
                 $embedData = [
-                    'channel' => $info['login'],
+                    'video' => $broadcast->getId()->getVideoId(),
                     'elementId' => uniqid('embed-'),
                 ];
             } else {
                 $embedData = NULL;
             }
 
-            switch ($homeRowItem->getLinkType()) {
-            case HomeRowItem::LINK_TYPE_GAMERSX:
-                $link = '/streamer/'.$info['id'];
-                break;
-            case HomeRowItem::LINK_TYPE_EXTERNAL:
-                $link = 'https://www.twitch.tv/'.$info['login'];
-                break;
-            case HomeRowItem::LINK_TYPE_CUSTOM:
-                $link = $homeRowItem->getCustomLink();
-                break;
-            default:
-                $link = '#';
-            }
-
             $channels = [
                 [
                     'info' => $info,
                     'broadcast' => $broadcast,
-                    'profileImageUrl' => $info['profile_image_url'],
                     'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
-                    'viewedCount' => isset($info['view_count']) ? $info['view_count'] : 0,
+                    'viewedCount' => isset($info['statistics_view_count']) ? (int) $info['statistics_view_count'] : 0,
                     'showOnline' => $broadcast !== NULL,
                     'onlineDisplay' => [
                         'title' => $title,
@@ -127,7 +102,7 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
                         'showOverlay' => TRUE,
                     ],
                     'offlineDisplay' => [
-                        'title' => $info['login'],
+                        'title' => $info->getSnippet()->getTitle(),
                         'showArt' => $homeRowItem->getShowArt() || $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_ART,
                         'showEmbed' => $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_STREAM,
                         'showOverlay' => $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_OVERLAY,
@@ -140,7 +115,7 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
                     'customArt' => $this->uploader->asset($homeRowItem, 'customArtFile'),
                     'link' => $link,
                     'componentName' => 'EmbedContainer',
-                    'embedName' => 'TwitchEmbed',
+                    'embedName' => 'YouTubeEmbed',
                     'embedData' => $embedData,
                     'description' => $description
                 ]
