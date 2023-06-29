@@ -12,7 +12,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
-      - "3306:3306"
+      - "3308:3306"
     networks:
       - gamersx
     volumes:
@@ -22,7 +22,7 @@ services:
     container_name: gamersx-redis
     image: redis:5.0
     ports:
-      - 6379:6379
+      - 6380:6379
     networks:
       - gamersx
       
@@ -83,10 +83,9 @@ services:
       dockerfile: ./docker/Dockerfile
       target: web
     ports:
-      - 80:80
+      - 81:80
     volumes:
       - ./public/build/:/var/www/html/public/build/
-      - ./public/js/:/var/www/html/public/js/
       # - ./docker/nginx:/etc/nginx/conf.d/
     networks:
       - gamersx
