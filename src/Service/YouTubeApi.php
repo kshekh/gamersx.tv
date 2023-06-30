@@ -151,6 +151,19 @@ class YouTubeApi
         return $this->service->playlists->listPlaylists('snippet', $queryParams);
     }
 
+    public function getPlaylistItemsInfo($playlistIds)
+    {
+        if (is_array($playlistIds)) {
+            $playlistIds = implode(',', $playlistIds);
+        }
+
+        $queryParams = [
+            'playlistId' => $playlistIds
+        ];
+
+        return $this->service->playlistItems->listPlaylistItems('snippet', $queryParams);
+    }
+
     /**
      * Helper method for API calls that use paginated queries
      */

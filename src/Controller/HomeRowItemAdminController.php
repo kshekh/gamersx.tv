@@ -2,8 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\HomeRowItem;
+use App\Service\YouTubeApi;
+use Doctrine\ORM\EntityManagerInterface;
+use Sonata\AdminBundle\Exception\LockException;
+use Sonata\AdminBundle\Exception\ModelManagerException;
+use Sonata\AdminBundle\Exception\ModelManagerThrowable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Form\FormRenderer;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\{
     File\UploadedFile,
@@ -12,6 +20,8 @@ use Symfony\Component\HttpFoundation\{
     Response,
     ResponseHeaderBag,
     RedirectResponse};
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Sonata\AdminBundle\Controller\CRUDController;
@@ -24,12 +34,496 @@ class HomeRowItemAdminController extends CRUDController
     private $serializer;
     private $filesystem;
     private $storage;
+    private $youtube;
+    private $em;
 
-    public function __construct(SerializerInterface $serializer, Filesystem $filesystem, StorageInterface $storage)
+    public function __construct(SerializerInterface $serializer, Filesystem $filesystem, StorageInterface $storage,YouTubeApi $youtube, EntityManagerInterface $em)
     {
         $this->serializer = $serializer;
         $this->filesystem = $filesystem;
         $this->storage = $storage;
+        $this->youtube = $youtube;
+        $this->em = $em;
+    }
+
+    public function createAction()
+    {
+        $request = $this->getRequest();
+
+        $this->assertObjectExists($request);
+
+        $this->admin->checkAccess('create');
+
+        // the key used to lookup the template
+        $templateKey = 'edit';
+
+        $class = new \ReflectionClass($this->admin->hasActiveSubClass() ? $this->admin->getActiveSubClass() : $this->admin->getClass());
+
+        if ($class->isAbstract()) {
+            return $this->renderWithExtraParams(
+                '@SonataAdmin/CRUD/select_subclass.html.twig',
+                [
+                    'base_template' => $this->getBaseTemplate(),
+                    'admin' => $this->admin,
+                    'action' => 'create',
+                ],
+                null
+            );
+        }
+
+        $newObject = $this->admin->getNewInstance();
+
+        $preResponse = $this->preCreate($request, $newObject);
+        if (null !== $preResponse) {
+            return $preResponse;
+        }
+
+        $this->admin->setSubject($newObject);
+
+        $form = $this->admin->getForm();
+
+        $form->setData($newObject);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $isFormValid = $form->isValid();
+
+            // persist if the form was valid and if in preview mode the preview was approved
+            if ($isFormValid && (!$this->isInPreviewMode() || $this->isPreviewApproved())) {
+                /** @phpstan-var T $submittedObject */
+                $submittedObject = $form->getData();
+                $this->admin->setSubject($submittedObject);
+                $this->admin->checkAccess('create', $submittedObject);
+                if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
+                    $submittedObject->setIsPublished(false);
+                }
+                try {
+                    $newObject = $this->admin->create($submittedObject);
+
+                    if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
+                        $youtube = $this->youtube;
+                        parse_str(parse_url($submittedObject->getPlaylistId(), PHP_URL_QUERY), $parameters);
+                        $playlistId = $parameters['list'];
+
+                        $play_list_items = $youtube->getPlaylistItemsInfo($playlistId)->getItems();
+
+                        foreach ($play_list_items as $pl_item => $pl_item_data) {
+                            $videoId = $pl_item_data->getSnippet()->getResourceId()->getVideoId();
+                            $videoId_link = 'https://www.youtube.com/watch?v='.$videoId;
+
+                            $submittedObjectVideo = new HomeRowItem();
+                            $submittedObjectVideo->setHomeRow($submittedObject->getHomeRow());
+                            $submittedObjectVideo->setPartner($submittedObject->getPartner());
+                            $submittedObjectVideo->setLabel($submittedObject->getLabel());
+                            $submittedObjectVideo->setSortIndex($submittedObject->getSortIndex());
+                            $submittedObjectVideo->setItemType(HomeRowItem::TYPE_YOUTUBE_VIDEO);
+                            $submittedObjectVideo->setSortAndTrimOptions($submittedObject->getSortAndTrimOptions());
+                            $submittedObjectVideo->setShowArt($submittedObject->getShowArt());
+                            $submittedObjectVideo->setCustomArt($submittedObject->getCustomArt());
+                            $submittedObjectVideo->setOverlayArt($submittedObject->getOverlayArt());
+                            $submittedObjectVideo->setOfflineDisplayType($submittedObject->getOfflineDisplayType());
+                            $submittedObjectVideo->setLinkType($submittedObject->getLinkType());
+                            $submittedObjectVideo->setTopic($submittedObject->getTopic());
+                            $submittedObjectVideo->setCustomLink($submittedObject->getCustomLink());
+                            $submittedObjectVideo->setIsPublished(true);
+                            $submittedObjectVideo->setDescription($submittedObject->getDescription());
+                            $submittedObjectVideo->setIsPublishedStart($submittedObject->getIsPublishedStart());
+                            $submittedObjectVideo->setIsPublishedEnd($submittedObject->getIsPublishedEnd());
+                            $submittedObjectVideo->setIsPartner($submittedObject->getIsPartner());
+                            $submittedObjectVideo->setVideoId($videoId_link);
+                            $submittedObjectVideo->setPlaylistId($newObject->getId());
+                            $submittedObjectVideo->setUpdatedAt($submittedObject->getUpdatedAt());
+
+                            $this->em->persist($submittedObjectVideo);
+                            $this->em->flush();
+                        }
+                    }
+
+                    if ($this->isXmlHttpRequest()) {
+                        return $this->handleXmlHttpRequestSuccessResponse($request, $newObject);
+                    }
+
+                    $this->addFlash(
+                        'sonata_flash_success',
+                        $this->trans(
+                            'flash_create_success',
+                            ['%name%' => $this->escapeHtml($this->admin->toString($newObject))],
+                            'SonataAdminBundle'
+                        )
+                    );
+
+                    // redirect to edit mode
+                    return $this->redirectTo($newObject);
+                } catch (ModelManagerException $e) {
+                    // NEXT_MAJOR: Remove this catch.
+                    $this->handleModelManagerException($e);
+
+                    $isFormValid = false;
+                } catch (ModelManagerThrowable $e) {
+                    $this->handleModelManagerThrowable($e);
+
+                    $isFormValid = false;
+                }
+            }
+
+            // show an error message if the form failed validation
+            if (!$isFormValid) {
+                if ($this->isXmlHttpRequest() && null !== ($response = $this->handleXmlHttpRequestErrorResponse($request, $form))) {
+                    return $response;
+                }
+
+                $this->addFlash(
+                    'sonata_flash_error',
+                    $this->trans(
+                        'flash_create_error',
+                        ['%name%' => $this->escapeHtml($this->admin->toString($newObject))],
+                        'SonataAdminBundle'
+                    )
+                );
+            } elseif ($this->isPreviewRequested()) {
+                // pick the preview template if the form was valid and preview was requested
+                $templateKey = 'preview';
+                $this->admin->getShow();
+            }
+        }
+
+        $formView = $form->createView();
+        // set the theme for the current Admin Form
+        $this->setFormTheme($formView, $this->admin->getFormTheme());
+
+        // NEXT_MAJOR: Remove this line and use commented line below it instead
+        $template = $this->admin->getTemplate($templateKey);
+        // $template = $this->templateRegistry->getTemplate($templateKey);
+
+        return $this->renderWithExtraParams($template, [
+            'action' => 'create',
+            'form' => $formView,
+            'object' => $newObject,
+            'objectId' => null,
+        ]);
+    }
+
+    public function editAction($deprecatedId = null) // NEXT_MAJOR: Remove the unused $id parameter
+    {
+        if (isset(\func_get_args()[0])) {
+            @trigger_error(sprintf(
+                'Support for the "id" route param as argument 1 at `%s()` is deprecated since'
+                .' sonata-project/admin-bundle 3.62 and will be removed in 4.0,'
+                .' use `AdminInterface::getIdParameter()` instead.',
+                __METHOD__
+            ), \E_USER_DEPRECATED);
+        }
+
+        // the key used to lookup the template
+        $templateKey = 'edit';
+
+        $request = $this->getRequest();
+        $this->assertObjectExists($request, true);
+
+        $id = $request->get($this->admin->getIdParameter());
+        \assert(null !== $id);
+        $existingObject = $this->admin->getObject($id);
+        \assert(null !== $existingObject);
+
+        $this->checkParentChildAssociation($request, $existingObject);
+
+        $this->admin->checkAccess('edit', $existingObject);
+
+        $preResponse = $this->preEdit($request, $existingObject);
+        if (null !== $preResponse) {
+            return $preResponse;
+        }
+
+        $this->admin->setSubject($existingObject);
+        $objectId = $this->admin->getNormalizedIdentifier($existingObject);
+
+        $form = $this->admin->getForm();
+
+        $form->setData($existingObject);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $isFormValid = $form->isValid();
+
+            // persist if the form was valid and if in preview mode the preview was approved
+            if ($isFormValid && (!$this->isInPreviewMode() || $this->isPreviewApproved())) {
+                /** @phpstan-var T $submittedObject */
+                $submittedObject = $form->getData();
+                $this->admin->setSubject($submittedObject);
+                if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
+                    $submittedObject->setIsPublished(false);
+                }
+
+
+
+                try {
+                    $existingObject = $this->admin->update($submittedObject);
+
+                    if ($this->isXmlHttpRequest()) {
+                        return $this->handleXmlHttpRequestSuccessResponse($request, $existingObject);
+                    }
+
+                    if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
+                        $youtube = $this->youtube;
+                        parse_str(parse_url($submittedObject->getPlaylistId(), PHP_URL_QUERY), $parameters);
+                        $playlistId = $parameters['list'];
+
+                        $get_playlist_videos =  $this->em->getRepository(HomeRowItem::class)->findBy(['itemType'=>'youtube_video','playlistId'=>$submittedObject->getId()]);
+                        foreach ($get_playlist_videos as $get_playlist_video_data){
+                            $this->em->remove($get_playlist_video_data);
+                            $this->em->flush();
+                        }
+                        $play_list_items = $youtube->getPlaylistItemsInfo($playlistId)->getItems();
+
+                        foreach ($play_list_items as $pl_item => $pl_item_data) {
+                            $videoId = $pl_item_data->getSnippet()->getResourceId()->getVideoId();
+                            $videoId_link = 'https://www.youtube.com/watch?v='.$videoId;
+
+                            $submittedObjectVideo = new HomeRowItem();
+                            $submittedObjectVideo->setHomeRow($submittedObject->getHomeRow());
+                            $submittedObjectVideo->setPartner($submittedObject->getPartner());
+                            $submittedObjectVideo->setLabel($submittedObject->getLabel());
+                            $submittedObjectVideo->setSortIndex($submittedObject->getSortIndex());
+                            $submittedObjectVideo->setItemType(HomeRowItem::TYPE_YOUTUBE_VIDEO);
+                            $submittedObjectVideo->setSortAndTrimOptions($submittedObject->getSortAndTrimOptions());
+                            $submittedObjectVideo->setShowArt($submittedObject->getShowArt());
+                            $submittedObjectVideo->setCustomArt($submittedObject->getCustomArt());
+                            $submittedObjectVideo->setOverlayArt($submittedObject->getOverlayArt());
+                            $submittedObjectVideo->setOfflineDisplayType($submittedObject->getOfflineDisplayType());
+                            $submittedObjectVideo->setLinkType($submittedObject->getLinkType());
+                            $submittedObjectVideo->setTopic($submittedObject->getTopic());
+                            $submittedObjectVideo->setCustomLink($submittedObject->getCustomLink());
+                            $submittedObjectVideo->setIsPublished(true);
+                            $submittedObjectVideo->setDescription($submittedObject->getDescription());
+                            $submittedObjectVideo->setIsPublishedStart($submittedObject->getIsPublishedStart());
+                            $submittedObjectVideo->setIsPublishedEnd($submittedObject->getIsPublishedEnd());
+                            $submittedObjectVideo->setIsPartner($submittedObject->getIsPartner());
+                            $submittedObjectVideo->setVideoId($videoId_link);
+                            $submittedObjectVideo->setPlaylistId($submittedObject->getId());
+                            $submittedObjectVideo->setUpdatedAt($submittedObject->getUpdatedAt());
+
+                            $this->em->persist($submittedObjectVideo);
+                            $this->em->flush();
+                        }
+                    }
+
+                    $this->addFlash(
+                        'sonata_flash_success',
+                        $this->trans(
+                            'flash_edit_success',
+                            ['%name%' => $this->escapeHtml($this->admin->toString($existingObject))],
+                            'SonataAdminBundle'
+                        )
+                    );
+
+                    // redirect to edit mode
+                    return $this->redirectTo($existingObject);
+                } catch (ModelManagerException $e) {
+                    // NEXT_MAJOR: Remove this catch.
+                    $this->handleModelManagerException($e);
+
+                    $isFormValid = false;
+                } catch (ModelManagerThrowable $e) {
+                    $this->handleModelManagerThrowable($e);
+
+                    $isFormValid = false;
+                } catch (LockException $e) {
+                    $this->addFlash('sonata_flash_error', $this->trans('flash_lock_error', [
+                        '%name%' => $this->escapeHtml($this->admin->toString($existingObject)),
+                        '%link_start%' => sprintf('<a href="%s">', $this->admin->generateObjectUrl('edit', $existingObject)),
+                        '%link_end%' => '</a>',
+                    ], 'SonataAdminBundle'));
+                }
+            }
+
+            // show an error message if the form failed validation
+            if (!$isFormValid) {
+                if ($this->isXmlHttpRequest() && null !== ($response = $this->handleXmlHttpRequestErrorResponse($request, $form))) {
+                    return $response;
+                }
+
+                $this->addFlash(
+                    'sonata_flash_error',
+                    $this->trans(
+                        'flash_edit_error',
+                        ['%name%' => $this->escapeHtml($this->admin->toString($existingObject))],
+                        'SonataAdminBundle'
+                    )
+                );
+            } elseif ($this->isPreviewRequested()) {
+                // enable the preview template if the form was valid and preview was requested
+                $templateKey = 'preview';
+                $this->admin->getShow();
+            }
+        }
+
+        $formView = $form->createView();
+        // set the theme for the current Admin Form
+        $this->setFormTheme($formView, $this->admin->getFormTheme());
+
+        // NEXT_MAJOR: Remove this line and use commented line below it instead
+        $template = $this->admin->getTemplate($templateKey);
+        // $template = $this->templateRegistry->getTemplate($templateKey);
+
+        return $this->renderWithExtraParams($template, [
+            'action' => 'edit',
+            'form' => $formView,
+            'object' => $existingObject,
+            'objectId' => $objectId,
+        ]);
+    }
+
+    public function deleteAction($id) // NEXT_MAJOR: Remove the unused $id parameter
+    {
+        $request = $this->getRequest();
+        $this->assertObjectExists($request, true);
+
+        $id = $request->get($this->admin->getIdParameter());
+        \assert(null !== $id);
+        $object = $this->admin->getObject($id);
+        \assert(null !== $object);
+
+        $this->checkParentChildAssociation($request, $object);
+
+        $this->admin->checkAccess('delete', $object);
+
+        $preResponse = $this->preDelete($request, $object);
+        if (null !== $preResponse) {
+            return $preResponse;
+        }
+
+        if (Request::METHOD_DELETE === $request->getMethod()) {
+            // check the csrf token
+            $this->validateCsrfToken('sonata.delete');
+
+            $objectName = $this->admin->toString($object);
+
+            try {
+                $playlist_id = $object->getId();
+                $this->admin->delete($object);
+
+                if ($this->isXmlHttpRequest()) {
+                    return $this->renderJson(['result' => 'ok'], Response::HTTP_OK, []);
+                }
+
+                if($object->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
+                    $get_playlist_videos = $this->em->getRepository(HomeRowItem::class)->findBy(['itemType' => 'youtube_video', 'playlistId' => $playlist_id ]);
+                    foreach ($get_playlist_videos as $get_playlist_video_data) {
+                        $this->em->remove($get_playlist_video_data);
+                        $this->em->flush();
+                    }
+                }
+
+                $this->addFlash(
+                    'sonata_flash_success',
+                    $this->trans(
+                        'flash_delete_success',
+                        ['%name%' => $this->escapeHtml($objectName)],
+                        'SonataAdminBundle'
+                    )
+                );
+            } catch (ModelManagerException $e) {
+                // NEXT_MAJOR: Remove this catch.
+                $this->handleModelManagerException($e);
+
+                if ($this->isXmlHttpRequest()) {
+                    return $this->renderJson(['result' => 'error'], Response::HTTP_OK, []);
+                }
+
+                $this->addFlash(
+                    'sonata_flash_error',
+                    $this->trans(
+                        'flash_delete_error',
+                        ['%name%' => $this->escapeHtml($objectName)],
+                        'SonataAdminBundle'
+                    )
+                );
+            } catch (ModelManagerThrowable $e) {
+                $this->handleModelManagerThrowable($e);
+
+                if ($this->isXmlHttpRequest()) {
+                    return $this->renderJson(['result' => 'error'], Response::HTTP_OK, []);
+                }
+
+                $this->addFlash(
+                    'sonata_flash_error',
+                    $this->trans(
+                        'flash_delete_error',
+                        ['%name%' => $this->escapeHtml($objectName)],
+                        'SonataAdminBundle'
+                    )
+                );
+            }
+
+            return $this->redirectTo($object);
+        }
+
+        // NEXT_MAJOR: Remove this line and use commented line below it instead
+        $template = $this->admin->getTemplate('delete');
+        // $template = $this->templateRegistry->getTemplate('delete');
+
+        return $this->renderWithExtraParams($template, [
+            'object' => $object,
+            'action' => 'delete',
+            'csrf_token' => $this->getCsrfToken('sonata.delete'),
+        ]);
+    }
+
+    private function setFormTheme(FormView $formView, ?array $theme = null): void
+    {
+        $twig = $this->get('twig');
+
+        $twig->getRuntime(FormRenderer::class)->setTheme($formView, $theme);
+    }
+
+    private function checkParentChildAssociation(Request $request, object $object): void
+    {
+        if (!$this->admin->isChild()) {
+            return;
+        }
+
+        // NEXT_MAJOR: remove this check
+        if (!$this->admin->getParentAssociationMapping()) {
+            return;
+        }
+
+        $parentAdmin = $this->admin->getParent();
+        $parentId = $request->get($parentAdmin->getIdParameter());
+
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $propertyPath = new PropertyPath($this->admin->getParentAssociationMapping());
+
+        $parentAdminObject = $parentAdmin->getObject($parentId);
+        $objectParent = $propertyAccessor->getValue($object, $propertyPath);
+
+        // $objectParent may be an array or a Collection when the parent association is many to many.
+        $parentObjectMatches = $this->equalsOrContains($objectParent, $parentAdminObject);
+
+        if (!$parentObjectMatches) {
+            // NEXT_MAJOR: make this exception
+            @trigger_error(
+                'Accessing a child that isn\'t connected to a given parent is deprecated since sonata-project/admin-bundle 3.34 and won\'t be allowed in 4.0.',
+                \E_USER_DEPRECATED
+            );
+        }
+    }
+
+    private function equalsOrContains($haystack, object $needle): bool
+    {
+        if ($needle === $haystack) {
+            return true;
+        }
+
+        if (is_iterable($haystack)) {
+            foreach ($haystack as $haystackItem) {
+                if ($haystackItem === $needle) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public function reorderAction(Request $request, $id, $childId=null): Response
