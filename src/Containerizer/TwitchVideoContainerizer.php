@@ -24,22 +24,27 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
 
         $separatedUrl = explode('/', parse_url($homeRowItem->getVideoId(), PHP_URL_PATH));
 
+        $parent = 'gamersx.tv';
         if ($separatedUrl[1] == 'videos') {
             $videoId = $separatedUrl[2];
-            $embedUrl = 'https://player.twitch.tv/?parent=gamersx.tv&video='.$videoId;
+            $embedUrl = 'https://player.twitch.tv/?parent='.$parent.'&video='.$videoId;
         } else {
             $videoId = $separatedUrl[3];
-            $embedUrl = 'https://clips.twitch.tv/embed?clip='.$videoId.'&parent=gamersx.tv';
+            $embedUrl = 'https://clips.twitch.tv/embed?clip='.$videoId.'&parent='.$parent;
         }
 
         try {
-            $info = $twitch->getVideoInfo($videoId)->getItems();
+            if ($separatedUrl[1] == 'videos') {
+                $info = $twitch->getVideoInfo($videoId)->toArray();
+            } else {
+                $info = $twitch->getClipInfo($videoId)->toArray();
+            }
         } catch (\Exception $e) {
-            $this->logger->error("Call to twitch failed with the message \"".$e->getErrors()[0]['message']."\"");
+            $this->logger->error("Call to twitch failed with the message \"".$e->getMessage()."\"");
             return Array();
         }
 
-        $info = $info[0];
+        $info = $info['data'][0];
         $broadcast = null;
         $description = $homeRowItem->getDescription();
         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
@@ -63,11 +68,11 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
                 return Array();
             }
 
-            $title = $info->getSnippet()->getTitle();
-            $link = $videoId;
+            $title = $info['title'];
+            $link = $homeRowItem->getVideoId();
 
             if ($homeRowItem->getLinkType() === HomeRowItem::LINK_TYPE_GAMERSX) {
-                $link = '/channel/'.$info->getId();
+                $link = '/channel/'.$info['id'];
             } elseif ($homeRowItem->getLinkType() === HomeRowItem::LINK_TYPE_CUSTOM) {
                 $link = $homeRowItem->getCustomLink();
             }
@@ -75,14 +80,16 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
             if (($broadcast === NULL && $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_ART) ||
                 $homeRowItem->getShowArt() === TRUE) {
                 // Get the sized art link
-                $imageInfo = $info->getSnippet()->getThumbnails();
-                $imageInfo = $imageInfo->getMedium() ? $imageInfo->getMedium() : $imageInfo->getStandard();
+                $imageUrl = $info['thumbnail_url'];
+                $imageUrl = $imageUrl;
+                $imageWidth = '200';
+                $imageHeight = '200';
 
                 $image = [
-                    'url' => $imageInfo->getUrl(),
+                    'url' => $imageUrl,
                     'class' => 'profile-pic',
-                    'width' => $imageInfo->getWidth(),
-                    'height' => $imageInfo->getHeight(),
+                    'width' => $imageWidth,
+                    'height' => $imageHeight,
                 ];
             }
 
@@ -90,11 +97,12 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
                 'video' => $videoId,
                 'elementId' => uniqid('embed-'),
                 'url' => $embedUrl,
+                'type' => $separatedUrl[1] != 'videos' ? 'twitch_clip' : 'twitch_video'
             ];
 
             if ($info !== NULL) {
-                if ($info->getStatistics() !== NULL) {
-                    $info['statistics_view_count'] = $info->getStatistics()->getViewCount();
+                if ($info['view_count'] !== NULL) {
+                    $info['statistics_view_count'] = $info['view_count'];
                 }
             }
 
@@ -104,7 +112,7 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
                     'broadcast' => $broadcast,
                     'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
                     'viewedCount' => isset($info['statistics_view_count']) ? (int) $info['statistics_view_count'] : 0,
-                    'showOnline' => $broadcast !== NULL,
+                    'showOnline' => true, // If it true then it's show video otherwise it show Overlay
                     'onlineDisplay' => [
                         'title' => $title,
                         'showArt' => $homeRowItem->getShowArt(),
@@ -112,7 +120,7 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
                         'showOverlay' => TRUE,
                     ],
                     'offlineDisplay' => [
-                        'title' => $info->getSnippet()->getTitle(),
+                        'title' => $info['title'],
                         'showArt' => $homeRowItem->getShowArt() || $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_ART,
                         'showEmbed' => $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_STREAM,
                         'showOverlay' => $homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_OVERLAY,

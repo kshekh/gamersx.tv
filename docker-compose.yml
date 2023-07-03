@@ -12,7 +12,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
-      - "3306:3306"
+      - "3308:3306"
     networks:
       - gamersx
     volumes:
@@ -22,10 +22,10 @@ services:
     container_name: gamersx-redis
     image: redis:5.0
     ports:
-      - 6379:6379
+      - 6380:6379
     networks:
       - gamersx
-      
+
   vue:
     container_name: gamersx-js
     # image: node:lts-alpine
@@ -46,7 +46,7 @@ services:
   php:
     container_name: gamersx-php
     depends_on:
-      - mysql 
+      - mysql
       - redis
     build:
       context: .
@@ -83,12 +83,10 @@ services:
       dockerfile: ./docker/Dockerfile
       target: web
     ports:
-      - 80:80
+      - 81:80
     volumes:
       - ./public/build/:/var/www/html/public/build/
       # - ./docker/nginx:/etc/nginx/conf.d/
-      - ./public/js/:/var/www/html/public/js/:rw
-      - ./public/images/:/var/www/html/public/images/:rw
     networks:
       - gamersx
     # restart: unless-stopped

@@ -259,6 +259,12 @@ class TwitchApi
         ], $first, $before, $after);
     }
 
+    public function getClipInfo($videoId, $first=8, $before=null, $after=null)
+    {
+        return $this->getPaginatedQuery('/helix/clips', [
+            'id' => $videoId,
+        ], $first, $before, $after);
+    }
     /**
      * Helper method for API calls that use paginated queries
      */

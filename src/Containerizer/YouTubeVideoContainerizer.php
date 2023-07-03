@@ -28,7 +28,7 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
         try {
             $info = $youtube->getVideoInfo($videoId)->getItems();
         } catch (\Exception $e) {
-            $this->logger->error("Call to YouTube failed with the message \"".$e->getErrors()[0]['message']."\"");
+            $this->logger->error("Call to YouTube failed with the message \"".$e->getMessage()."\"");
             return Array();
         }
 
@@ -81,7 +81,7 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
             }
 
             $embedData = [
-                'video' => $youtube,
+                'video' => $info->getId(),
                 'elementId' => uniqid('embed-'),
                 'url' => 'https://www.youtube.com/embed/'.$info->getId(),
             ];
@@ -98,7 +98,7 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
                     'broadcast' => $broadcast,
                     'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
                     'viewedCount' => isset($info['statistics_view_count']) ? (int) $info['statistics_view_count'] : 0,
-                    'showOnline' => $broadcast !== NULL,
+                    'showOnline' => TRUE,
                     'onlineDisplay' => [
                         'title' => $title,
                         'showArt' => $homeRowItem->getShowArt(),
@@ -115,10 +115,8 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
                     'rowName' => $homeRowItem->getHomeRow()->getTitle(),
                     'sortIndex' => $homeRowItem->getSortIndex(),
                     'image' => $image ?? NULL,
-                    'overlay' => 'https://gamersx-dev-dev-us-west-1-storage.s3.us-west-1.amazonaws.com/2fEzW_Gq3O.jpeg',
-                    'customArt' => '',
-//                    'overlay' => $this->uploader->asset($homeRowItem, 'overlayArtFile'),
-//                    'customArt' => $this->uploader->asset($homeRowItem, 'customArtFile'),
+                    'overlay' => $this->uploader->asset($homeRowItem, 'overlayArtFile'),
+                    'customArt' => $this->uploader->asset($homeRowItem, 'customArtFile'),
                     'link' => $link,
                     'componentName' => 'EmbedContainer',
                     'embedName' => 'YouTubeEmbed',
