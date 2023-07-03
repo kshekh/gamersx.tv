@@ -35,6 +35,8 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
         $info = $info[0];
         $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
         $description = $homeRowItem->getDescription();
+        $timezone = $homeRowItem->getTimezone();
+        date_default_timezone_set($timezone ? $timezone : 'America/Los_Angeles');
         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
         $liveViewers = 0;
         if ($broadcast) {
@@ -47,8 +49,8 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
             return Array();
         }
 
-        $isPublishedStartTime = $homeRowItem->getIsPublishedStart();
-        $isPublishedEndTime = $homeRowItem->getIsPublishedEnd();
+        $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
+        $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
 
         if (
             !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&

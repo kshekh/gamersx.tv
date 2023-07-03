@@ -185,22 +185,32 @@ export default {
         });
     },
     handleCloseModal() {
-      // 48 hours
-      Cookies.set("twitch_", "demo", { expires: 2 });
+      // 24 hours
+      Cookies.set("twitch_", "demo", { expires: 1 });
       this.modal = false;
     },
     handleLogin() {
-      // 48 hours
-      Cookies.set("twitch_", "demo", { expires: 2 });
+      // 24 hours
+      Cookies.set("twitch_", "demo", { expires: 1 });
       window.open("https://twitch.tv/login", "_blank");
-    }
+    },
+    requestSessionsApi: function () {
+      const cookie = Cookies.get("twitch_");
+      if (cookie) return
+      axios.get("/home/sessions/api")
+        .catch(e => console.error(e))
+        .then(response => {
+            if (response.data.isLoggedIn && !response.data.isRequiredToLoginTwitch) {
+              this.modal = false;
+            } else {
+              this.modal = true;
+            }
+        });
+    },
   },
   mounted: function() {
-    const cookie = Cookies.get("twitch_");
-    if (!cookie) {
-      this.modal = true;
-    }
-    this.requestHomeCachedRowsApi().then(() => {
+    this.requestSessionsApi();
+    this.requestHomeCachedRowsApi().then(()=>{
       this.requestHomeApi();
     });
     this.pollingApiData = window.setInterval(() => {
