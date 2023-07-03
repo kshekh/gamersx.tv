@@ -98,6 +98,11 @@ class HomeRowItemAdminController extends CRUDController
                 if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
                     $submittedObject->setIsPublished(false);
                 }
+                $submittedObject->setUpdatedAt(new \DateTime());
+
+                $maxContainers = (int)$submittedObject->getSortAndTrimOptions()['maxContainers'];
+                $maxLive = (int)$submittedObject->getSortAndTrimOptions()['maxLive'];
+
                 try {
                     $newObject = $this->admin->create($submittedObject);
 
@@ -108,9 +113,45 @@ class HomeRowItemAdminController extends CRUDController
 
                         $play_list_items = $youtube->getPlaylistItemsInfo($playlistId)->getItems();
 
+                        $offline_video_array = [];
+                        $live_video_array = [];
+                        $final_video_array = [];
+
                         foreach ($play_list_items as $pl_item => $pl_item_data) {
                             $videoId = $pl_item_data->getSnippet()->getResourceId()->getVideoId();
-                            $videoId_link = 'https://www.youtube.com/watch?v='.$videoId;
+                            $videoId_link = 'https://www.youtube.com/watch?v=' . $videoId;
+
+                            $channelId = $pl_item_data->getSnippet()->getVideoOwnerChannelId();
+                            $broadcast = $youtube->getLiveChannel($channelId)->getItems();
+                            $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
+                            if ($broadcast) {
+                                $live_video_array[] = [
+                                    'video_link' => $videoId_link,
+                                    'channel_id' => $channelId
+                                ];
+                            } else {
+                                $offline_video_array[] = [
+                                    'video_link' => $videoId_link,
+                                    'channel_id' => $channelId
+                                ];
+                            }
+                        }
+
+                        foreach ($live_video_array as $live_item => $live_data) {
+                            if((count($final_video_array) <= $maxLive) && (count($final_video_array) <= $maxContainers) && !empty($maxLive)) {
+                                $final_video_array[] = $live_data;
+                            }
+                        }
+
+                        foreach ($offline_video_array as $offline_item => $offline_data) {
+                            if((count($final_video_array) < $maxContainers) && !empty($maxContainers)) {
+                                $final_video_array[] = $offline_data;
+                            }
+                        }
+
+                        foreach ($final_video_array as $final_item => $final_data) {
+
+                            $videoId_link = $final_data['video_link'];
 
                             $submittedObjectVideo = new HomeRowItem();
                             $submittedObjectVideo->setHomeRow($submittedObject->getHomeRow());
@@ -255,7 +296,8 @@ class HomeRowItemAdminController extends CRUDController
                     $submittedObject->setIsPublished(false);
                 }
 
-
+                $maxContainers = (int)$submittedObject->getSortAndTrimOptions()['maxContainers'];
+                $maxLive = (int)$submittedObject->getSortAndTrimOptions()['maxLive'];
 
                 try {
                     $existingObject = $this->admin->update($submittedObject);
@@ -276,10 +318,45 @@ class HomeRowItemAdminController extends CRUDController
                         }
                         $play_list_items = $youtube->getPlaylistItemsInfo($playlistId)->getItems();
 
+                        $offline_video_array = [];
+                        $live_video_array = [];
+                        $final_video_array = [];
+
                         foreach ($play_list_items as $pl_item => $pl_item_data) {
                             $videoId = $pl_item_data->getSnippet()->getResourceId()->getVideoId();
-                            $videoId_link = 'https://www.youtube.com/watch?v='.$videoId;
+                            $videoId_link = 'https://www.youtube.com/watch?v=' . $videoId;
 
+                            $channelId = $pl_item_data->getSnippet()->getVideoOwnerChannelId();
+                            $broadcast = $youtube->getLiveChannel($channelId)->getItems();
+                            $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
+                            if ($broadcast) {
+                                $live_video_array[] = [
+                                    'video_link' => $videoId_link,
+                                    'channel_id' => $channelId
+                                ];
+                            } else {
+                                $offline_video_array[] = [
+                                    'video_link' => $videoId_link,
+                                    'channel_id' => $channelId
+                                ];
+                            }
+                        }
+
+                        foreach ($live_video_array as $live_item => $live_data) {
+                            if((count($final_video_array) <= $maxLive) && (count($final_video_array) <= $maxContainers) && !empty($maxLive)) {
+                                $final_video_array[] = $live_data;
+                            }
+                        }
+
+                        foreach ($offline_video_array as $offline_item => $offline_data) {
+                            if((count($final_video_array) < $maxContainers) && !empty($maxContainers)) {
+                                $final_video_array[] = $offline_data;
+                            }
+                        }
+
+                        foreach ($final_video_array as $final_item => $final_data) {
+
+                            $videoId_link = $final_data['video_link'];
                             $submittedObjectVideo = new HomeRowItem();
                             $submittedObjectVideo->setHomeRow($submittedObject->getHomeRow());
                             $submittedObjectVideo->setPartner($submittedObject->getPartner());
