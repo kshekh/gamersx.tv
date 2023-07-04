@@ -98,6 +98,15 @@ class HomeRowItemAdminController extends CRUDController
                 if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
                     $submittedObject->setIsPublished(false);
                 }
+                /*This condition added to initialize default value of youtube video and playlist*/
+                if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO  || $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO  || $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_PLAYLIST) {
+                    if($submittedObject->getIsPublishedStart() == '') {
+                        $submittedObject->setIsPublishedStart('00:00:00');
+                    }
+                    if($submittedObject->getIsPublishedEnd() == '') {
+                        $submittedObject->setIsPublishedEnd('23:59:59');
+                    }
+                }
                 $submittedObject->setUpdatedAt(new \DateTime());
 
                 $maxContainers = (int)$submittedObject->getSortAndTrimOptions()['maxContainers'];
@@ -295,7 +304,15 @@ class HomeRowItemAdminController extends CRUDController
                 if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
                     $submittedObject->setIsPublished(false);
                 }
-
+                /*This condition added to initialize default value of youtube video and playlist*/
+                if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO  || $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO  || $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_PLAYLIST) {
+                    if($submittedObject->getIsPublishedStart() == '') {
+                        $submittedObject->setIsPublishedStart('00:00:00');
+                    }
+                    if($submittedObject->getIsPublishedEnd() == '') {
+                        $submittedObject->setIsPublishedEnd('23:59:59');
+                    }
+                }
                 $maxContainers = (int)$submittedObject->getSortAndTrimOptions()['maxContainers'];
                 $maxLive = (int)$submittedObject->getSortAndTrimOptions()['maxLive'];
 

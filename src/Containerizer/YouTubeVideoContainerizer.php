@@ -43,8 +43,8 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
             return Array();
         }
 
-        $isPublishedStartTime = $homeRowItem->getIsPublishedStart();
-        $isPublishedEndTime = $homeRowItem->getIsPublishedEnd();
+        $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
+        $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
 
         if (
             !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
