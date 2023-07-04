@@ -37,11 +37,10 @@ final class HomeRowItemAdmin extends AbstractAdmin
 
         $query->where($query->expr()->andX(
             $query->expr()->eq($rootAlias.'.itemType', ':itemType'),
-            $query->expr()->eq($rootAlias.'.playlistId', ':playlistId')
+            $query->expr()->isNull($rootAlias.'.playlistId')
         ));
         $query->orWhere($rootAlias.'.itemType != :itemType');
         $query->setParameter(':itemType', 'youtube_video');
-        $query->setParameter(':playlistId', '');
 
         return $query;
     }
