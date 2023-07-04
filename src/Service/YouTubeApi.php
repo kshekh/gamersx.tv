@@ -131,25 +131,10 @@ class YouTubeApi
         if (is_array($videoIds)) {
             $videoIds = implode(',', $videoIds);
         }
-
         $queryParams = [
             'id' => $videoIds
         ];
-
         return $this->service->videos->listVideos('snippet,statistics,liveStreamingDetails', $queryParams);
-    }
-
-    public function getPlaylistInfo($playlistIds)
-    {
-        if (is_array($playlistIds)) {
-            $playlistIds = implode(',', $playlistIds);
-        }
-
-        $queryParams = [
-            'id' => $playlistIds
-        ];
-
-        return $this->service->playlists->listPlaylists('snippet', $queryParams);
     }
 
     /**
@@ -165,7 +150,7 @@ class YouTubeApi
             $queryParams['nextPageToken'] = $after;
         }
 
-        return $this->service->search->listSearch('snippet, statistics', $queryParams);
+        return $this->service->search->listSearch('snippet', $queryParams);
     }
 
 }

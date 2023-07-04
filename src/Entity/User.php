@@ -25,21 +25,6 @@ class User extends BaseUser
      */
     private $partnerRoles;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $twitchUserId;
-
-    /**
-     * @ORM\Column(type="string", length=500)
-     */
-    private $twitchAccessToken;
-
-    /**
-     * @ORM\Column(type="string", length=500)
-     */
-    private $twitchRefreshToken;
-
     public function __construct()
     {
         parent::__construct();
@@ -77,42 +62,6 @@ class User extends BaseUser
                 $partnerRole->setUser(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getTwitchUserId(): ?string
-    {
-        return $this->twitchUserId;
-    }
-
-    public function setTwitchUserId(string $twitchUserId): self
-    {
-        $this->twitchUserId = $twitchUserId;
-
-        return $this;
-    }
-
-    public function getTwitchAccessToken(): ?string
-    {
-        return $this->twitchAccessToken;
-    }
-
-    public function setTwitchAccessToken(string $twitchAccessToken): self
-    {
-        $this->twitchAccessToken = $twitchAccessToken;
-
-        return $this;
-    }
-
-    public function getTwitchRefreshToken(): ?string
-    {
-        return $this->twitchRefreshToken;
-    }
-
-    public function setTwitchRefreshToken(string $twitchRefreshToken): self
-    {
-        $this->twitchRefreshToken = $twitchRefreshToken;
 
         return $this;
     }

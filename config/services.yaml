@@ -11,7 +11,6 @@ parameters:
     uploads_dir_name: 'uploads'
     uploads_base_url: '%env(SITE_BASE_URL)%/%uploads_dir_name%'
     timezone: '%env(APP_TIMEZONE)%'
-    app.twitch_redirect_uri: '%env(TWITCH_REDIRECT_URI)%'
 
 services:
     # default configuration for services in *this* file

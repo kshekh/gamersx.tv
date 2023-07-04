@@ -12,9 +12,6 @@ module.exports = {
       'lg': '1024px',
       'xl': '1280px',
       '2xl': '1536px',
-      'wide': {
-          'raw': `only screen and (max-height: 480px) and (max-width: 960px)`
-      },
     },
     colors: {
       purple: {
