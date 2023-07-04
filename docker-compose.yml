@@ -87,8 +87,6 @@ services:
     volumes:
       - ./public/build/:/var/www/html/public/build/
       # - ./docker/nginx:/etc/nginx/conf.d/
-      - ./public/js/:/var/www/html/public/js/:rw
-      - ./public/images/:/var/www/html/public/images/:rw
     networks:
       - gamersx
     # restart: unless-stopped

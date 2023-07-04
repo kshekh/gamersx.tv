@@ -32,8 +32,6 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
 
         $query = $homeRowItem->getTopic()['topicId'];
         $description = $homeRowItem->getDescription();
-        $timezone = $homeRowItem->getTimezone();
-        date_default_timezone_set($timezone ? $timezone : 'America/Los_Angeles');
         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
 
         $isPublished = $homeRowItem->getIsPublished();
@@ -42,8 +40,8 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
             return Array();
         }
 
-        $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
-        $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
+        $isPublishedStartTime = $homeRowItem->getIsPublishedStart();
+        $isPublishedEndTime = $homeRowItem->getIsPublishedEnd();
 
         if (
             !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
