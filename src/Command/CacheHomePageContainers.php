@@ -57,12 +57,11 @@ class CacheHomePageContainers extends Command
                 $rows = $em->getRepository(HomeRow::class)
                     ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
 
+                $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+
                 foreach ($rows as $row) {
-                    $isPublishedStartTime = $this->homeRowInfo->convertHoursMinutesToSeconds($row->getIsPublishedStart());
-                    $isPublishedEndTime = $this->homeRowInfo->convertHoursMinutesToSeconds($row->getIsPublishedEnd());
-                    $timezone = $row->getTimezone();
-                    date_default_timezone_set($timezone ? $timezone : 'America/Los_Angeles');
-                    $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+                    $isPublishedStartTime = $row->getIsPublishedStart();
+                    $isPublishedEndTime = $row->getIsPublishedEnd();
 
                     if ($row->getIsPublished() === FALSE) {
                         continue;
