@@ -55,6 +55,15 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
                 $broadcast === NULL) {
                 return Array();
             }
+            /*Get channel's profile picture*/
+            $channel_id = $info->getSnippet()->getChannelId();
+            try {
+                $channel_info = $youtube->getChannelInfo($channel_id)->getItems();
+            } catch (\Exception $e) {
+            }
+
+            $channelThumbnails = $channel_info[0]->getSnippet()->getThumbnails();
+            $channelThumbnailInfo = $channelThumbnails->getMedium() ? $channelThumbnails->getMedium() : $channelThumbnails->getDefault();
 
             $title = $info->getSnippet()->getTitle();
             $link = 'https://www.youtube.com/watch?v='.$info->getId();
@@ -91,13 +100,19 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
                     $info['statistics_view_count'] = $info->getStatistics()->getViewCount();
                 }
             }
-
+            /*Fetch viewer count and display in container*/
+            $viewer_count = $broadcast ? $broadcast['viewer_count'] : 0;
+            $statistics_view_count = isset($info['statistics_view_count']) ? (int) $info['statistics_view_count'] : 0;
+            if($viewer_count == 0) {
+                $viewer_count = $statistics_view_count;
+            }
             $channels = [
                 [
                     'info' => $info,
                     'broadcast' => $broadcast,
-                    'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
-                    'viewedCount' => isset($info['statistics_view_count']) ? (int) $info['statistics_view_count'] : 0,
+                    'profileImageUrl' => $channelThumbnailInfo->getUrl(),
+                    'liveViewerCount' => $viewer_count,
+                    'viewedCount' => $statistics_view_count,
                     'showOnline' => TRUE,
                     'onlineDisplay' => [
                         'title' => $title,
