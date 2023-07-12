@@ -83,6 +83,7 @@ class HomeController extends AbstractController
             'isRequiredToLoginTwitch' => $isRequiredToLoginTwitch
         ]);
     }
+
 //    /**
 //     * @Route("/home/api/cache", name="home_api_cache")
 //     */

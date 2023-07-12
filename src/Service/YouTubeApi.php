@@ -131,7 +131,6 @@ class YouTubeApi
         if (is_array($videoIds)) {
             $videoIds = implode(',', $videoIds);
         }
-
         $queryParams = [
             'id' => $videoIds
         ];
@@ -149,6 +148,7 @@ class YouTubeApi
         ];
 
         return $this->service->playlists->listPlaylists('snippet', $queryParams);
+
     }
 
     public function getPlaylistItemsInfo($playlistIds)
@@ -177,7 +177,7 @@ class YouTubeApi
             $queryParams['nextPageToken'] = $after;
         }
 
-        return $this->service->search->listSearch('snippet', $queryParams);
+        return $this->service->search->listSearch('snippet, statistics', $queryParams);
     }
 
 }
