@@ -28,7 +28,7 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
         try {
             $info = $youtube->getVideoInfo($videoId)->getItems();
         } catch (\Exception $e) {
-            $this->logger->error("Call to YouTube failed with the message \"".$e->getErrors()[0]['message']."\"");
+            $this->logger->error("Call to YouTube failed with the message \"".$e->getMessage()."\"");
             return Array();
         }
 
@@ -43,8 +43,8 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
             return Array();
         }
 
-        $isPublishedStartTime = $homeRowItem->getIsPublishedStart();
-        $isPublishedEndTime = $homeRowItem->getIsPublishedEnd();
+        $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
+        $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
 
         if (
             !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
@@ -55,6 +55,15 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
                 $broadcast === NULL) {
                 return Array();
             }
+            /*Get channel's profile picture*/
+            $channel_id = $info->getSnippet()->getChannelId();
+            try {
+                $channel_info = $youtube->getChannelInfo($channel_id)->getItems();
+            } catch (\Exception $e) {
+            }
+
+            $channelThumbnails = $channel_info[0]->getSnippet()->getThumbnails();
+            $channelThumbnailInfo = $channelThumbnails->getMedium() ? $channelThumbnails->getMedium() : $channelThumbnails->getDefault();
 
             $title = $info->getSnippet()->getTitle();
             $link = 'https://www.youtube.com/watch?v='.$info->getId();
@@ -81,7 +90,7 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
             }
 
             $embedData = [
-                'video' => $youtube,
+                'video' => $info->getId(),
                 'elementId' => uniqid('embed-'),
                 'url' => 'https://www.youtube.com/embed/'.$info->getId(),
             ];
@@ -91,14 +100,20 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
                     $info['statistics_view_count'] = $info->getStatistics()->getViewCount();
                 }
             }
-
+            /*Fetch viewer count and display in container*/
+            $viewer_count = $broadcast ? $broadcast['viewer_count'] : 0;
+            $statistics_view_count = isset($info['statistics_view_count']) ? (int) $info['statistics_view_count'] : 0;
+            if($viewer_count == 0) {
+                $viewer_count = $statistics_view_count;
+            }
             $channels = [
                 [
                     'info' => $info,
                     'broadcast' => $broadcast,
-                    'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
-                    'viewedCount' => isset($info['statistics_view_count']) ? (int) $info['statistics_view_count'] : 0,
-                    'showOnline' => $broadcast !== NULL,
+                    'profileImageUrl' => $channelThumbnailInfo->getUrl(),
+                    'liveViewerCount' => $viewer_count,
+                    'viewedCount' => $statistics_view_count,
+                    'showOnline' => TRUE,
                     'onlineDisplay' => [
                         'title' => $title,
                         'showArt' => $homeRowItem->getShowArt(),
@@ -115,10 +130,8 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
                     'rowName' => $homeRowItem->getHomeRow()->getTitle(),
                     'sortIndex' => $homeRowItem->getSortIndex(),
                     'image' => $image ?? NULL,
-                    'overlay' => 'https://gamersx-dev-dev-us-west-1-storage.s3.us-west-1.amazonaws.com/2fEzW_Gq3O.jpeg',
-                    'customArt' => '',
-//                    'overlay' => $this->uploader->asset($homeRowItem, 'overlayArtFile'),
-//                    'customArt' => $this->uploader->asset($homeRowItem, 'customArtFile'),
+                    'overlay' => $this->uploader->asset($homeRowItem, 'overlayArtFile'),
+                    'customArt' => $this->uploader->asset($homeRowItem, 'customArtFile'),
                     'link' => $link,
                     'componentName' => 'EmbedContainer',
                     'embedName' => 'YouTubeEmbed',
