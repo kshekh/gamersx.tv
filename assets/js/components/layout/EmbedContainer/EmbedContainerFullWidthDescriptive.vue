@@ -237,10 +237,7 @@ export default {
       );
     },
     isInfoBoxHidden() {
-      return (
-        (this.isMouseStopped || this.isHideButtonClicked) &&
-        this.isVideoBuffered
-      );
+      return this.isVideoPlaying;
     },
   },
   methods: {
