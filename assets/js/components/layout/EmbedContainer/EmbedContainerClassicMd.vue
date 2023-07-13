@@ -45,7 +45,7 @@
             <div
               class="absolute bottom-1.5 right-6 md:right-2 xl:right-6 py-px px-1.5 bg-red text-white text-xxs text-center font-play min-w-40"
             >
-              <span>Online</span>
+              <!--<span>Online</span>-->
             </div>
             <play-button
               class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none"
