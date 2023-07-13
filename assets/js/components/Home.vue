@@ -1,6 +1,6 @@
 <template>
   <!-- remove "text-white" later -->
-  <div class="text-white py-4 md:py-7">
+  <div class="text-white">
     <template v-if="settings.rows && settings.rows.length">
       <div v-for="(row, index) in settings.rows" :key="row.id">
         <component
