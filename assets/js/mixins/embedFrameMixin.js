@@ -98,8 +98,8 @@ export default {
     },
 
     setEmbedSizes() {
-      this.embedWidth = window.innerWidth > 1279 ? 400 : 300;
-      this.embedHeight = window.innerWidth > 1279 ? 350 : 200;
+      this.embedWidth = window.innerWidth > 1279 ? 400 : 355;
+      this.embedHeight = window.innerWidth > 1279 ? 350 : 311;
     },
     startDragging(e) {
       this.$root.$emit('close-other-layouts');
