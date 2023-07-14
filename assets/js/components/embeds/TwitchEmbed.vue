@@ -11,22 +11,7 @@
       :src="overlay"
       class="relative top-1/2 transform -translate-y-1/2 w-full"
     />
-    <iframe
-      v-if="embedDataCopy.type === 'twitch_clip'"
-      :id="embedDataCopy.elementId"
-      ref="videoIframe"
-      class="h-full w-full"
-      :style="isBuffering ? { display: 'none' } : { display: 'block' }"
-      :src="`${embedDataCopy.url}&autoplay=true`"
-      @load="handleIframeLoad"
-      width="854"
-      height="480"
-      frameborder="0"
-      allowfullscreen="true"
-      scrolling="no"
-    ></iframe>
     <div
-      v-else
       :id="embedDataCopy.elementId"
       class="h-full w-full"
       :style="isBuffering ? { display: 'none' } : { display: 'block' }"
@@ -45,18 +30,18 @@ export default {
     height: [Number, String],
     width: [Number, String],
     info: {},
-    broadcast: {}
+    broadcast: {},
   },
-  data: function() {
+  data: function () {
     return {
       embed: {},
       embedPlaying: false,
       showTwitchEmbed: false,
-      isBuffering: true
+      isBuffering: true,
     };
   },
   methods: {
-    embedTwitch: function() {
+    embedTwitch: function () {
       this.embed = new Twitch.Embed(this.embedDataCopy.elementId, {
         width: this.width || 540,
         height: this.height || 300,
@@ -66,7 +51,7 @@ export default {
         autoplay: true,
         muted: false,
         // controls: false,
-        parent: window.location.hostname
+        parent: window.location.hostname,
       });
 
       this.embed.addEventListener(Twitch.Player.PLAY, this.setIsPlaying);
@@ -83,7 +68,7 @@ export default {
         this.isBuffering = false;
       });
     },
-    startPlayer: function() {
+    startPlayer: function () {
       if (
         !this.embedPlaying &&
         (this.isShowTwitchEmbed || this.showTwitchEmbed)
@@ -93,45 +78,26 @@ export default {
         this.embedPlaying = true;
       }
     },
-    stopPlayer: function() {
+    stopPlayer: function () {
       if (this.embedPlaying) {
         this.embed.pause();
         this.embedPlaying = false;
       }
     },
-    isPlaying: function() {
+    isPlaying: function () {
       return this.embedPlaying;
     },
-    setIsPlaying: function() {
+    setIsPlaying: function () {
       this.embedPlaying = true;
     },
-    setIsNotPlaying: function() {
+    setIsNotPlaying: function () {
       this.embedPlaying = false;
     },
-    handlePlayerStateChanged(event) {
-      const { video_id, play, play_reason } = event.detail;
-
-      if (video_id === this.embedDataCopy.elementId) {
-        if (play && play_reason === "auto") {
-          this.embedPlaying = true;
-          this.isBuffering = false;
-        } else if (!play && play_reason === "buffering") {
-          this.embedPlaying = false;
-          this.isBuffering = true;
-        } else {
-          this.embedPlaying = false;
-          this.isBuffering = false;
-        }
-      }
-    },
-    handleIframeLoad(e) {
-      this.isBuffering = false;
-    }
   },
   computed: {
     embedDataCopy() {
       return { ...this.embedData };
-    }
+    },
   },
   watch: {
     showTwitchEmbed(newVal) {
@@ -143,8 +109,8 @@ export default {
       if (newVal === true) {
         this.embedTwitch();
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

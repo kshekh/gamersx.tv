@@ -39,10 +39,10 @@ class HomeRowItem implements PartneredInterface
     const TYPE_POPULAR = 'popular';
     const TYPE_YOUTUBE = 'youtube';
     const TYPE_LINK = 'link';
-    const TYPE_TWITCH_VIDEO = 'twitch_video';
-    const TYPE_TWITCH_PLAYLIST = 'twitch_playlist';
-    const TYPE_YOUTUBE_VIDEO = 'youtube_video';
-    const TYPE_YOUTUBE_PLAYLIST = 'youtube_playlist';
+    const TYPE_TWITCH_VIDEO = 'twitch-video';
+    const TYPE_TWITCH_PLAYLIST = 'twitch-playlist';
+    const TYPE_YOUTUBE_VIDEO = 'youtube-video';
+    const TYPE_YOUTUBE_PLAYLIST = 'youtube-playlist';
     /**
      * @ORM\Column(type="string", length=32)
      */

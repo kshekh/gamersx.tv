@@ -29,20 +29,10 @@ final class HomeRowItemAdmin extends AbstractAdmin
     {
         /** @var ProxyQuery $query */
         $query = parent::createQuery($context);
-        $rootAlias = $query->getRootAliases()[0];
 
-        $query
+        return $query
             ->setSortOrder('ASC')
             ->setSortBy([], ['fieldName' => 'sortIndex']);
-
-        $query->where($query->expr()->andX(
-            $query->expr()->eq($rootAlias.'.itemType', ':itemType'),
-            $query->expr()->isNull($rootAlias.'.playlistId')
-        ));
-        $query->orWhere($rootAlias.'.itemType != :itemType');
-        $query->setParameter(':itemType', 'youtube_video');
-
-        return $query;
     }
 
     protected $datagridValues = array(
