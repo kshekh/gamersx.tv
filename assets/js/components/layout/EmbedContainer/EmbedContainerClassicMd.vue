@@ -42,11 +42,11 @@
             >
               <span>{{ liveViewerCount }} views</span>
             </div>
-            <div
+            <!--<div
               class="absolute bottom-1.5 right-6 md:right-2 xl:right-6 py-px px-1.5 bg-red text-white text-xxs text-center font-play min-w-40"
             >
               <span>Online</span>
-            </div>
+            </div>-->
             <play-button
               class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none"
               :videoType="playBtnColor"
@@ -251,7 +251,8 @@ export default {
       if (this.embedName === "TwitchEmbed") {
         this.streamersData = this.profileImageUrl;
       } else if (this.embedName === "YouTubeEmbed") {
-        this.streamersData = this.info.snippet.thumbnails.default.url;
+        // this.streamersData = this.info.snippet.thumbnails.default.url;   //This is video thumbnail, channel profile send as following key
+        this.streamersData = this.profileImageUrl;
       }
     },
     computeGlowStyling: function () {
