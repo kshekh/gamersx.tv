@@ -104,7 +104,7 @@ class TwitchApi
             $this->session->set('user_info', $user);
         }
         $this->em->flush();
-    } 
+    }
     public function getUserInfo($clientId, $accessToken) {
         $endpoint = self::TWITCH_API_DOMAIN . 'users';
         $apiParams = array(

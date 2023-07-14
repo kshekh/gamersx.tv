@@ -135,6 +135,7 @@ class YouTubeApi
         $queryParams = [
             'id' => $videoIds
         ];
+
         return $this->service->videos->listVideos('snippet,statistics,liveStreamingDetails', $queryParams);
     }
 

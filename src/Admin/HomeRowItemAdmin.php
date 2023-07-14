@@ -9,7 +9,7 @@ use App\Entity\HomeRowItem;
 use App\Form\TopicType;
 use App\Form\SortAndTrimOptionsType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, TimeType, TimezoneType};
+use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, TimeType};
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\CallbackTransformer;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -135,9 +135,6 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPartner', null, [
                 'sortable' => false
             ])
-            ->add('timezone', null, [
-                'sortable' => false
-            ])
             ->add('isPublishedStart', null, [
                 'editable' => true,
                 'sortable' => false
@@ -249,13 +246,13 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPublished', null, [
                 'help' => 'Current Server Time: ' . date('H:i')
             ])
-            ->add('timezone', TimezoneType::class, ['required' => false])
             ->add('isPublishedStart', TimeType::class, [
                 'label' => 'Publish Start Time',
                 'required' => false,
-                'input' => 'string',
-                'input_format' => 'H:i:s',
+                'input'  => 'timestamp',
                 'widget' => 'single_text',
+                'model_timezone' => 'America/Los_Angeles',
+                'view_timezone' => 'UTC',
                 'attr' => [
                     'class' => 'timepicker',
                     'title' => "Start timepicker for published",
@@ -264,32 +261,31 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPublishedEnd', TimeType::class, [
                 'label' => 'Publish End Time',
                 'required' => false,
-                'input' => 'string',
-                'input_format' => 'H:i:s',
+                'input'  => 'timestamp',
                 'widget' => 'single_text',
+                'model_timezone' => 'America/Los_Angeles',
+                'view_timezone' => 'UTC',
                 'attr' => [
                     'class' => 'timepicker',
                     'title' => "End timepicker for published",
                 ]
             ])
             ->add('isPartner')
-            ->getFormBuilder()->addModelTransformer(
-                new CallbackTransformer(
-                    // Use the array in the form
-                    function ($valuesAsArray) {
-                        return $valuesAsArray;
-                    },
-                    // Don't set empty values in the JSON later
-                    function ($homeRowItem) {
-                        $topic = $homeRowItem->getTopic();
-                        if ($topic && array_key_exists('label', $topic)) {
-                            $homeRowItem->setLabel($topic['label']);
-                        };
+            ->getFormBuilder()->addModelTransformer(new CallbackTransformer(
+                // Use the array in the form
+                function ($valuesAsArray) {
+                    return $valuesAsArray;
+                },
+                // Don't set empty values in the JSON later
+                function ($homeRowItem) {
+                    $topic = $homeRowItem->getTopic();
+                    if ($topic && array_key_exists('label', $topic)) {
+                        $homeRowItem->setLabel($topic['label']);
+                    };
 
-                        return $homeRowItem;
-                    }
-                )
-            );
+                    return $homeRowItem;
+                }
+            ));
     }
 
     protected function configureShowFields(ShowMapper $showMapper): void
