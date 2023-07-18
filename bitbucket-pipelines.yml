@@ -13,8 +13,6 @@ definitions:
           - docker
           - node
         script:
-          - rm yarn.lock
-          - rm -rf node_modules
           - yarn install
           - yarn build-noprogress
         artifacts:
