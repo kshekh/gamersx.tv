@@ -61,6 +61,9 @@
 	</head>
 	<body class="bg-black">
 		<div class="h-full flex flex-col">
+			{% set isLoggedIn = app.session.get('is_logged_in') %}
+			{% set isRequiredToLoginTwitch = app.session.get('login_required_to_connect_twitch') %}
+			{% set twitchUserInfo = app.session.get('twitch_user_info') %}
 			{% block header %}
 				<div class="w-full shadow-base">
 					<header
@@ -116,14 +119,16 @@
 								</div>
 							</div>
                             #}
-							{% if is_granted('ROLE_SONATA_ADMIN') %}
-							<button onclick="window.location.href='/admin/dashboard';" class="hidden xl:block">
-								<svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-									<path d="M35.8493 6.15074C31.8829 2.1844 26.6092 0 21 0C15.3905 0 10.1171 2.1844 6.15074 6.15074C2.1844 10.1171 0 15.3905 0 21C0 26.6092 2.1844 31.8829 6.15074 35.8493C10.1171 39.8156 15.3905 42 21 42C26.6092 42 31.8829 39.8156 35.8493 35.8493C39.8156 31.8829 42 26.6092 42 21C42 15.3905 39.8156 10.1171 35.8493 6.15074ZM10.5279 36.2895C11.4062 31.2324 15.7885 27.5023 21 27.5023C26.2119 27.5023 30.5938 31.2324 31.4721 36.2895C28.4905 38.3381 24.883 39.5391 21 39.5391C17.117 39.5391 13.5095 38.3381 10.5279 36.2895ZM14.3228 18.3641C14.3228 14.682 17.3182 11.6869 21 11.6869C24.6818 11.6869 27.6772 14.6823 27.6772 18.3641C27.6772 22.0459 24.6818 25.0413 21 25.0413C17.3182 25.0413 14.3228 22.0459 14.3228 18.3641ZM33.6037 34.5826C32.9413 32.2283 31.6259 30.0923 29.7822 28.4238C28.651 27.4 27.3635 26.5922 25.9792 26.0228C28.4812 24.3908 30.1385 21.5675 30.1385 18.3641C30.1385 13.3253 26.0388 9.22595 21 9.22595C15.9612 9.22595 11.8618 13.3253 11.8618 18.3641C11.8618 21.5675 13.5191 24.3908 16.0208 26.0228C14.6368 26.5922 13.349 27.3997 12.2178 28.4235C10.3744 30.092 9.05869 32.228 8.39635 34.5823C4.7482 31.1943 2.46094 26.3596 2.46094 21C2.46094 10.7775 10.7775 2.46094 21 2.46094C31.2225 2.46094 39.5391 10.7775 39.5391 21C39.5391 26.3599 37.2518 31.1946 33.6037 34.5826Z" fill="#6441A5"/>
-								</svg>
-							</button>
+							{% if isLoggedIn and  isRequiredToLoginTwitch == false %}
+							<a href="https://www.twitch.tv/settings/profile" class="hidden xl:block">
+								<img src="{{ twitchUserInfo['profile_image_url'] }}" class="twitch-profile-picture">
+							</a>
+							{% else %}
+							<a href="api/twitch-login" class="flex items-center elementor-button" role="button" onmouseover="changeBtnColor()" onmouseout="changeNormalBtnColor()">
+								<span class="elementor-button-text">Login With Twitch</span>
+								<img src="/images/twitch-icon-white.png" class="ml-2" id="twitch-btn-icon">
+							</a>
 							{% endif %}
-
 							{#
 							<button class="jsOpenBurgerButton block xl:hidden w-7 md:w-11 shrink-0">
 								<span class="block h-0.75 w-full bg-purple"></span>
@@ -167,6 +172,21 @@
 						</div>
 						#}
 					</header>
+					{% for message in app.flashes('loggedin') %}
+					<div id="toast-warning" class="fixed top-5 right-5 flex items-center w-full max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800" role="alert">
+						<div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-orange-500 bg-orange-100 rounded-lg dark:bg-orange-700 dark:text-orange-200">
+							<svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+							<span class="sr-only">Warning icon</span>
+						</div>
+						<div class="ml-3 text-sm font-normal">{{ message }}</div>
+						<button type="button" onclick="closeToast()" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" data-dismiss-target="#toast-warning" aria-label="Close">
+							<span class="sr-only">Close</span>
+							<svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+						</button>
+					</div>
+
+					<div class="max-w-xs bg-white border rounded-md shadow-lg dark:bg-gray-800 dark:border-gray-700" role="alert">
+					{% endfor %}
 				</div>
 			{% endblock %}
 			<div class="w-full mx-auto flex-grow">
@@ -245,6 +265,20 @@
 		</div>
 		</body>
     <script>
+		function closeToast() {
+			document.getElementById("toast-warning").style.display = "none";
+		}
+
+		function changeBtnColor() {
+			$imgForBtn = document.getElementById("twitch-btn-icon");
+			$imgForBtn.setAttribute("src", "/images/twitch-icon-black.png");
+		}
+
+		function changeNormalBtnColor() {
+			$imgForBtn = document.getElementById("twitch-btn-icon");
+			$imgForBtn.setAttribute("src", "/images/twitch-icon-white.png");
+		}
+
         /*
         window.onload = function () {
             const draggableRows = document.getElementsByClassName('custom-smooth-scroll');

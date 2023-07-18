@@ -137,6 +137,33 @@ class YouTubeApi
         return $this->service->videos->listVideos('snippet,statistics,liveStreamingDetails', $queryParams);
     }
 
+    public function getPlaylistInfo($playlistIds)
+    {
+        if (is_array($playlistIds)) {
+            $playlistIds = implode(',', $playlistIds);
+        }
+
+        $queryParams = [
+            'id' => $playlistIds
+        ];
+
+        return $this->service->playlists->listPlaylists('snippet', $queryParams);
+
+    }
+
+    public function getPlaylistItemsInfo($playlistIds)
+    {
+        if (is_array($playlistIds)) {
+            $playlistIds = implode(',', $playlistIds);
+        }
+
+        $queryParams = [
+            'playlistId' => $playlistIds
+        ];
+
+        return $this->service->playlistItems->listPlaylistItems('snippet', $queryParams);
+    }
+
     /**
      * Helper method for API calls that use paginated queries
      */

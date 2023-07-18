@@ -8,6 +8,7 @@ use App\Containerizer\ContainerizerFactory;
 use App\Service\HomeRowInfo;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -16,10 +17,12 @@ use Symfony\Component\HttpFoundation\{Response, RedirectResponse};
 class HomeController extends AbstractController
 {
 //    private $homeRowInfo;
+    private $session;
 
-    public function __construct(HomeRowInfo $homeRowInfo)
+    public function __construct(HomeRowInfo $homeRowInfo, SessionInterface $session)
     {
         $this->homeRowInfo = $homeRowInfo;
+        $this->session = $session;
     }
 
     /**
@@ -69,8 +72,21 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @Route("/home/api/cache", name="home_api_cache")
+     * @Route("/home/sessions/api", name="home_session_api")
      */
+    public function apiSessions(): Response
+    {
+        $isLoggedIn = $this->session->get('is_logged_in');
+        $isRequiredToLoginTwitch = $this->session->get('login_required_to_connect_twitch');
+        return $this->json([
+            'isLoggedIn' => $isLoggedIn,
+            'isRequiredToLoginTwitch' => $isRequiredToLoginTwitch
+        ]);
+    }
+
+//    /**
+//     * @Route("/home/api/cache", name="home_api_cache")
+//     */
 //    public function apiHomeCache(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
 //    {
 //        $cache = new FilesystemAdapter();
