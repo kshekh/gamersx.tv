@@ -71,7 +71,7 @@
           </video>
         </div>
         <p>
-          An active session in the background will avoid interruptions..
+          An active session in the background will avoid interruptions
         </p>
       </div>
     </Modal>
