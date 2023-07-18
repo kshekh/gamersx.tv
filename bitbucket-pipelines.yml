@@ -13,6 +13,7 @@ definitions:
           - docker
           - node
         script:
+          - npm i js-cookie
           - yarn install
           - yarn build-noprogress
         artifacts:
