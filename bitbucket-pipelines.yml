@@ -13,7 +13,9 @@ definitions:
           - docker
           - node
         script:
-          - npm install
+          - rm package-lock.json
+          - rm yarn.lock
+          - rm -rf node_modules
           - yarn install
           - yarn build-noprogress
         artifacts:
