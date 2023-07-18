@@ -13,7 +13,6 @@ definitions:
           - docker
           - node
         script:
-          - rm package-lock.json
           - rm yarn.lock
           - rm -rf node_modules
           - yarn install
