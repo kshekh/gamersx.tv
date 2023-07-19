@@ -44,6 +44,15 @@ class ContainerizerFactory
             case HomeRowItem::TYPE_LINK:
                 $containerized = new NoEmbedContainer($toBeContainerized);
                 break;
+            case HomeRowItem::TYPE_YOUTUBE_VIDEO:
+                $containerized = new YouTubeVideoContainerizer($toBeContainerized, $this->youtube);
+                break;
+            case HomeRowItem::TYPE_YOUTUBE_PLAYLIST:
+                $containerized = new YouTubePlayListContainerizer($toBeContainerized, $this->youtube);
+                break;
+            case HomeRowItem::TYPE_TWITCH_VIDEO:
+                $containerized = new TwitchVideoContainerizer($toBeContainerized, $this->twitch);
+                break;
             default:
                 break;
             }

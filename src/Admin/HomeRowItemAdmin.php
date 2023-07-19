@@ -9,7 +9,7 @@ use App\Entity\HomeRowItem;
 use App\Form\TopicType;
 use App\Form\SortAndTrimOptionsType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, TimeType};
+use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, TimeType, TimezoneType};
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\CallbackTransformer;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -29,10 +29,20 @@ final class HomeRowItemAdmin extends AbstractAdmin
     {
         /** @var ProxyQuery $query */
         $query = parent::createQuery($context);
+        $rootAlias = $query->getRootAliases()[0];
 
-        return $query
+        $query
             ->setSortOrder('ASC')
             ->setSortBy([], ['fieldName' => 'sortIndex']);
+
+        $query->where($query->expr()->andX(
+            $query->expr()->eq($rootAlias.'.itemType', ':itemType'),
+            $query->expr()->isNull($rootAlias.'.playlistId')
+        ));
+        $query->orWhere($rootAlias.'.itemType != :itemType');
+        $query->setParameter(':itemType', 'youtube_video');
+
+        return $query;
     }
 
     protected $datagridValues = array(
@@ -123,6 +133,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'sortable' => false
             ])
             ->add('isPartner', null, [
+                'sortable' => false
+            ])
+            ->add('timezone', null, [
                 'sortable' => false
             ])
             ->add('isPublishedStart', null, [
@@ -236,13 +249,15 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPublished', null, [
                 'help' => 'Current Server Time: ' . date('H:i')
             ])
+            ->add('timezone', TimezoneType::class, ['required' => false])
             ->add('isPublishedStart', TimeType::class, [
                 'label' => 'Publish Start Time',
                 'required' => false,
-                'input'  => 'timestamp',
+                'input' => 'string',
+                'input_format' => 'H:i:s',
                 'widget' => 'single_text',
-                'model_timezone' => 'America/Los_Angeles',
-                'view_timezone' => 'UTC',
+//                'model_timezone' => 'America/Los_Angeles',
+//                'view_timezone' => 'UTC',
                 'attr' => [
                     'class' => 'timepicker',
                     'title' => "Start timepicker for published",
@@ -251,10 +266,11 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPublishedEnd', TimeType::class, [
                 'label' => 'Publish End Time',
                 'required' => false,
-                'input'  => 'timestamp',
+                'input' => 'string',
+                'input_format' => 'H:i:s',
                 'widget' => 'single_text',
-                'model_timezone' => 'America/Los_Angeles',
-                'view_timezone' => 'UTC',
+//                'model_timezone' => 'America/Los_Angeles',
+//                'view_timezone' => 'UTC',
                 'attr' => [
                     'class' => 'timepicker',
                     'title' => "End timepicker for published",
