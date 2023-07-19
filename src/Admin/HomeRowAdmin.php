@@ -7,7 +7,7 @@ namespace App\Admin;
 use App\Entity\HomeRow;
 use App\Form\SortAndTrimOptionsType;
 use Knp\Menu\ItemInterface as MenuItemInterface;
-use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType, NumberType, TimeType };
+use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, NumberType, TimeType, TimezoneType};
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -19,7 +19,6 @@ use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 
 final class HomeRowAdmin extends AbstractAdmin
 {
-
     public function createQuery($context = 'list'): ProxyQuery
     {
         /** @var ProxyQuery $query */
@@ -36,8 +35,6 @@ final class HomeRowAdmin extends AbstractAdmin
         '_sort_order' => 'ASC',
         '_sort_by' => 'sortIndex'
     );
-
-
     public function configureActionButtons($action, $object = null)
     {
         $list = parent::configureActionButtons($action, $object);
@@ -58,9 +55,11 @@ final class HomeRowAdmin extends AbstractAdmin
         return $actions;
     }
 
-    protected function configureTabMenu(MenuItemInterface $menu, $action,
-        AdminInterface $childAdmin = null)
-    {
+    protected function configureTabMenu(
+        MenuItemInterface $menu,
+        $action,
+        AdminInterface $childAdmin = null
+    ) {
         if (!$childAdmin && !in_array($action, ['edit', 'show'])) {
             return;
         }
@@ -75,8 +74,10 @@ final class HomeRowAdmin extends AbstractAdmin
         }
 
         if ($this->isGranted('LIST')) {
-            $menu->addChild('Manage Items',
-                $admin->generateMenuUrl('admin.home_row_item.list', ['id' => $id]));
+            $menu->addChild(
+                'Manage Items',
+                $admin->generateMenuUrl('admin.home_row_item.list', ['id' => $id])
+            );
         }
     }
 
@@ -88,7 +89,7 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('isPublished')
             ->add('isGlowStyling')
             ->add('onGamersXtv')
-            ;
+        ;
     }
 
     protected function configureListFields(ListMapper $listMapper): void
@@ -104,7 +105,7 @@ final class HomeRowAdmin extends AbstractAdmin
             ])
             ->add('layout', 'choice', [
                 'editable' => true,
-                'choices'=>[
+                'choices' => [
                     ['text' => 'Classic Small', 'value' => 'ClassicSm'],
                     ['text' => 'Classic Medium', 'value' => 'ClassicMd'],
                     ['text' => 'Classic Large', 'value' => 'ClassicLg'],
@@ -132,6 +133,9 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('isGlowStyling', null, [
                 'sortable' => false
             ])
+            ->add('timezone', null, [
+                'sortable' => false
+            ])
             ->add('isPublishedStart', null, [
                 'editable' => true,
                 'sortable' => false
@@ -155,7 +159,7 @@ final class HomeRowAdmin extends AbstractAdmin
                     ],
                 ],
             ])
-            ;
+        ;
     }
 
     protected function configureFormFields(FormMapper $formMapper): void
@@ -200,38 +204,36 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('isPublished', null, [
                 'help' => 'Current Server Time: ' . date('H:i')
             ])
+            ->add('timezone', TimezoneType::class, ['required' => false])
             ->add('isPublishedStart', TimeType::class, [
-                'label'=> 'Publish Start Time',
+                'label' => 'Publish Start Time',
                 'required' => false,
-                'input'  => 'timestamp',
+                'input' => 'string',
+                'input_format' => 'H:i:s',
                 'widget' => 'single_text',
-                'model_timezone' => 'America/Los_Angeles',
-                'view_timezone' => 'UTC',
-                'attr'=> [
+                'attr' => [
                     'class' => 'timepicker',
-                    'title'=> "Start timepicker for published",
+                    'title' => "Start timepicker for published",
                 ]
             ])
             ->add('isPublishedEnd', TimeType::class, [
-                'label'=> 'Publish End Time',
+                'label' => 'Publish End Time',
                 'required' => false,
-                'input'  => 'timestamp',
+                'input' => 'string',
+                'input_format' => 'H:i:s',
                 'widget' => 'single_text',
-                'model_timezone' => 'America/Los_Angeles',
-                'view_timezone' => 'UTC',
-                'attr'=> [
+                'attr' => [
                     'class' => 'timepicker',
-                    'title'=> "End timepicker for published",
+                    'title' => "End timepicker for published",
                 ]
             ])
-             ->add('onGamersXtv', null, [
+            ->add('onGamersXtv', null, [
                 'label' => 'add \'on GamersX TV\' to end of row title'
             ], [
                 'type' => 'string'
             ])
-            ;
+        ;
     }
-
     protected function configureShowFields(ShowMapper $showMapper): void
     {
         $showMapper
@@ -243,7 +245,7 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('isPublished')
             ->add('isGlowStyling')
             ->add('onGamersXtv')
-            ;
+        ;
     }
 
     protected function configureBatchActions($actions)
@@ -262,10 +264,10 @@ final class HomeRowAdmin extends AbstractAdmin
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
         $collection
-            ->add('reorder', $this->getRouterIdParameter().'/reorder')
+            ->add('reorder', $this->getRouterIdParameter() . '/reorder')
             ->add('importForm')
             ->add('import')
-            ;
+        ;
     }
 
     public function alterNewInstance(object $instance): void
