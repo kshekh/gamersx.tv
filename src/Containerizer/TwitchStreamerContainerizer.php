@@ -59,8 +59,8 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
             return Array();
         }
 
-        $isPublishedStartTime = $homeRowItem->getIsPublishedStart();
-        $isPublishedEndTime = $homeRowItem->getIsPublishedEnd();
+        $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
+        $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
 
         if (
             !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
