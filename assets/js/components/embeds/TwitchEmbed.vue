@@ -11,7 +11,22 @@
       :src="overlay"
       class="relative top-1/2 transform -translate-y-1/2 w-full"
     />
+    <iframe
+      v-if="embedDataCopy.type === 'twitch_clip'"
+      :id="embedDataCopy.elementId"
+      ref="videoIframe"
+      class="h-full w-full"
+      :style="isBuffering ? { display: 'none' } : { display: 'block' }"
+      :src="`${embedDataCopy.url}&autoplay=true`"
+      @load="handleIframeLoad"
+      width="854"
+      height="480"
+      frameborder="0"
+      allowfullscreen="true"
+      scrolling="no"
+    ></iframe>
     <div
+      v-else
       :id="embedDataCopy.elementId"
       class="h-full w-full"
       :style="isBuffering ? { display: 'none' } : { display: 'block' }"
@@ -93,6 +108,24 @@ export default {
     setIsNotPlaying: function () {
       this.embedPlaying = false;
     },
+    handlePlayerStateChanged(event) {
+      const { video_id, play, play_reason } = event.detail;
+      if (video_id === this.embedDataCopy.elementId) {
+        if (play && play_reason === "auto") {
+          this.embedPlaying = true;
+          this.isBuffering = false;
+        } else if (!play && play_reason === "buffering") {
+          this.embedPlaying = false;
+          this.isBuffering = true;
+        } else {
+          this.embedPlaying = false;
+          this.isBuffering = false;
+        }
+      }
+    },
+    handleIframeLoad(e) {
+      this.isBuffering = false;
+    }
   },
   computed: {
     embedDataCopy() {
