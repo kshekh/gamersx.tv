@@ -5,7 +5,7 @@
     @swiped-right="back()"
     @mouseenter="mouseEntered()"
     @mousemove="checkMouseActive()"
-    class="home-row mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative overflow-hidden min-h-mobile"
+    class="home-row mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative min-h-mobile"
     :style="customBg"
   >
     <div class="container mx-auto">
@@ -49,7 +49,7 @@
             </div>
           </div>
           <div
-            class="flex items-center space-x-1 md:space-x-2 relative z-10 self-end md:self-center"
+            class="flex items-center space-x-1 md:space-x-2 z-10 self-end md:self-center absolute -bottom-[30px]"
           >
             <slider-dot
               v-for="(channel, index) in displayChannels"
