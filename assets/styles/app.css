@@ -4,6 +4,7 @@
 
 @import url("../fonts/fonts.css");
 @import url("./text-stroke.css");
+@import url("./custom/elementor.css");
 
 @layer base {
   html,
