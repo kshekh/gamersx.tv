@@ -99,7 +99,9 @@ div.big-number {
 div.channel-description {
   color: #fff;
 }
-
+div.full-width-embed-first-row iframe{
+  background: #000000;
+}
 @layer utilities {
   .cut-edge__wrapper--twitch {
     filter: drop-shadow(0px 0px 6px rgba(100, 65, 165, 0.5));

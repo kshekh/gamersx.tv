@@ -155,7 +155,7 @@
           :customBg="customBg"
           @video-buffered="videoBuffered"
           @set-is-playing="updateIsPlaying"
-          class="flex-grow min-h-0 absolute inset-0"
+          class="flex-grow min-h-0 absolute inset-0 full-width-embed-first-row"
           :width="'100%'"
           :height="'100%'"
         ></component>
