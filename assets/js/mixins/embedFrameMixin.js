@@ -21,7 +21,7 @@ export default {
           if (this.$refs.embed)
             this.$refs.embed.startPlayer();
         }
-      }, 1000); // user cursor should be under block for this time period
+      }, 30); // user cursor should be under block for this time period
     },
 
     mouseLeave() {
@@ -49,6 +49,7 @@ export default {
       const rootHeight = this.$refs.itemWrapper.offsetHeight;
       const rootWidth = this.$refs.itemWrapper.offsetWidth;
       const scaleSize = rootWidth / this.embedWidth; // 300 - video wrapper width
+      this.$refs.embedWrapper.style.filter = "drop-shadow(10px 20px 20px rgba(255, 0, 0, 0.6))"; 
       const isRectInViewport =
         rect.left >= 0 &&
         rect.left + this.embedWidth + 20 <=
@@ -97,8 +98,8 @@ export default {
     },
 
     setEmbedSizes() {
-      this.embedWidth = window.innerWidth > 1279 ? 400 : 300;
-      this.embedHeight = window.innerWidth > 1279 ? 350 : 200;
+      this.embedWidth = window.innerWidth > 1279 ? 400 : 355;
+      this.embedHeight = window.innerWidth > 1279 ? 350 : 311;
     },
     startDragging(e) {
       this.$root.$emit('close-other-layouts');

@@ -15,7 +15,7 @@
       v-if="embedDataCopy.type === 'twitch_clip'"
       :id="embedDataCopy.elementId"
       ref="videoIframe"
-      class="h-full w-full"
+      class="h-full w-full m-w-[355px] m-h-[311px]"
       :style="isBuffering ? { display: 'none' } : { display: 'block' }"
       :src="`${embedDataCopy.url}&autoplay=true`"
       @load="handleIframeLoad"
@@ -28,7 +28,7 @@
     <div
       v-else
       :id="embedDataCopy.elementId"
-      class="h-full w-full"
+      class="h-full w-full m-w-[355px] m-h-[311px]"
       :style="isBuffering ? { display: 'none' } : { display: 'block' }"
     ></div>
   </div>
