@@ -37,7 +37,8 @@ module.exports = {
         500: "rgb(132 204 22)"
       },
       red: {
-        DEFAULT: "#FF0000"
+        DEFAULT: "#FF0000",
+        600: "#7F0000"
       },
       transparent: {
         DEFAULT: "transparent"

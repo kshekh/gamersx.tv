@@ -4,9 +4,9 @@
       class="rounded-full m-auto h-1.5 md:h-2 xl:h-3 transition-all"
       :class="{
         'w-3 md:w-4 xl:w-8': isDotActive,
-        'bg-red w-1.5 md:w-2 xl:w-3': !isDotActive,
-        'bg-orange-400': isDotActive && embedType === 'TwitchEmbed',
-        'bg-lime-500': isDotActive && embedType === 'YouTubeEmbed'
+        'bg-grey w-1.5 md:w-2 xl:w-3': !isDotActive,
+        'bg-purple': isDotActive && embedType === 'TwitchEmbed',
+        'bg-red': isDotActive && embedType === 'YouTubeEmbed'
       }"
     ></span>
   </button>
