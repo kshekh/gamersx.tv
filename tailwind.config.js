@@ -1,8 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./assets/js/components/**/*.{js,vue,ts}",    
-    "./templates/**/*.twig",    
+    "./assets/js/components/**/*.{js,vue,ts}",
+    "./templates/**/*.twig",
   ],
   theme: {
     screens: {
@@ -29,6 +29,12 @@ module.exports = {
         400: "#dfdfdf",
         600: "#C3C3C3",
         900: "#1e1927"
+      },
+      orange: {
+        400: "rgb(251 146 60)"
+      },
+      lime: {
+        500: "rgb(132 204 22)"
       },
       red: {
         DEFAULT: "#FF0000"
@@ -206,6 +212,6 @@ module.exports = {
         '3/4': '3 / 4',
       }
     }
-  },  
+  },
   plugins: []
 };
