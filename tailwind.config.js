@@ -33,6 +33,12 @@ module.exports = {
         600: "#C3C3C3",
         900: "#1e1927"
       },
+      orange: {
+        400: "rgb(251 146 60)"
+      },
+      lime: {
+        500: "rgb(132 204 22)"
+      },
       red: {
         DEFAULT: "#FF0000"
       },
