@@ -44,14 +44,13 @@
             Skip the breaks* when you login with Twitch
           </div>
           <br>
-          <br>
           <!-- "Continue anyway" button placed directly below the text -->
           <div class="flex">
-            <button class="elementor-button-x" @click="handleCloseModal">
+            <button class="elementor-button-x text-xxs sm:text-xs md:text-sm lg:text-sm xl:text-md mx-2 sm:py-0 h-7 sm:h-10 xs:px-3 md:px-6" @click="handleCloseModal">
               <span class="elementor-button-text">Watch With Breaks</span>
             </button>
             <a href="api/twitch-login" @click="handleTwitchLogin"
-              class="flex items-center elementor-button text-[5px] sm:text-base py-1 px-2 sm:py-0 sm:px-[40px] h-7 sm:h-10"
+              class="flex items-center elementor-button text-xxs sm:text-xs md:text-sm lg:text-sm xl:text-md mx-2 sm:py-0 h-7 sm:h-10 xs:px-3 md:px-6"
               role="button" onmouseover="changeBtnColor(event)" onmouseout="changeNormalBtnColor(event)">
               <span class="elementor-button-text">Login With Twitch</span>
               <img src="/images/twitch-icon-white.png" class="ml-2 w-2.5 h-2.5 sm:w-5 sm:h-5 twitch-btn-icon">
