@@ -269,13 +269,13 @@
 			document.getElementById("toast-warning").style.display = "none";
 		}
 
-		function changeBtnColor() {
-			$imgForBtn = document.getElementById("twitch-btn-icon");
+		function changeBtnColor(event) {
+			var $imgForBtn = event.currentTarget.querySelector(".twitch-btn-icon");
 			$imgForBtn.setAttribute("src", "/images/twitch-icon-black.png");
 		}
 
-		function changeNormalBtnColor() {
-			$imgForBtn = document.getElementById("twitch-btn-icon");
+		function changeNormalBtnColor(event) {
+			var $imgForBtn = event.currentTarget.querySelector(".twitch-btn-icon");
 			$imgForBtn.setAttribute("src", "/images/twitch-icon-white.png");
 		}
 

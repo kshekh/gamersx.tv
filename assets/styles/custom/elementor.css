@@ -1,7 +1,7 @@
 .elementor-button {
     color: #FFFFFF;
     background-color: #02010100;
-    border: 1px solid #E2012D;
+    border: 1px solid #6441A5;
     border-radius: 20px 5px 20px 20px;
     padding: 0 40px;
     transition-duration: .3s;
@@ -12,9 +12,27 @@
   }
   .elementor-button:hover {
     color: #000000;
-    background-color: #E2012D;
+    background-color: #6441A5;
     transform: scale(0.97);
   }
+
+  .elementor-button-x {
+    color: #FFFFFF;
+    background-color: #02010100;
+    border: none;
+    padding: 0 40px;
+    transition-duration: .3s;
+    transition-property: transform;
+    height: 40px;
+    letter-spacing: 1.7px;
+    text-transform: uppercase;
+  }
+  .elementor-button-x:hover {
+    color: #FFFFFF;
+    background-color: #02010100;
+    transform: scale(0.97);
+  }
+
   .twitch-profile-picture {
     width: 42px;
     height: 42px;

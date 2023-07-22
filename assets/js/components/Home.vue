@@ -33,20 +33,27 @@
           </video>
         </div>
         <div class="w-full md:w-2/3 space-y-4">
-          <br />
+          <div class="p-1"></div>
           <div class="text-lg">
             Sign into
-            <span target="_blank" rel="noopener noreferrer" class="text-purple underline"
-              @click="handleLogin">twitch.tv</span> for best viewing experience
-              <!--Enjoy uninterrupted live streams when you log in with Twitch-->
+            <!--<span target="_blank" rel="noopener noreferrer" class="text-purple underline"
+              @click="handleLogin">twitch.tv</span> for best viewing experience-->
+            Enjoy uninterrupted live streams when you log in with Twitch
           </div>
-          <p> </p>
+          <br>
 
           <!-- "Continue anyway" button placed directly below the text -->
-          <button
-            class="px-4 py-2 text-purple hover:bg-purple hover:text-white border border-purple leading-none transition-all"
-            @click="handleCloseModal">continue anyway
-          </button>
+          <div class="flex">
+            <button class="elementor-button-x" @click="handleCloseModal">
+              <span class="elementor-button-text">Watch With Breaks</span>
+            </button>
+            <a href="api/twitch-login"
+              class="flex items-center elementor-button text-[5px] sm:text-base py-1 px-2 sm:py-0 sm:px-[40px] h-7 sm:h-10"
+              role="button" onmouseover="changeBtnColor(event)" onmouseout="changeNormalBtnColor(event)">
+              <span class="elementor-button-text">Login With Twitch</span>
+              <img src="/images/twitch-icon-white.png" class="ml-2 w-2.5 h-2.5 sm:w-5 sm:h-5 twitch-btn-icon">
+            </a>
+          </div>
         </div>
       </div>
     </Modal>
