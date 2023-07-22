@@ -25,33 +25,26 @@
     </div>
     <Modal v-model="modal" @update:modelValue="handleModalUpdate" no-close-on-backdrop ok-title="Continue anyway"
       @ok="handleCloseModal">
-      <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:items-start md:justify-between">
-        <div class="w-full md:w-1/3 mb-3 md:mb-0 md:mr-5">
-          <video autoplay muted loop playsinline class="h-full w-full md:max-w-sm object-cover">
+      <div class="flex flex-col md:flex-row items-center justify-start">
+        <div class="w-full md:w-1/3 flex items-center justify-center md:justify-start">
+          <video autoplay="autoplay" muted="muted" loop="loop" playsinline="" class="h-full md:w-full object-cover">
             <source
               src="https://gamersx-dev-dev-us-west-1-storage.s3.us-west-1.amazonaws.com/Experience+Popup+1+Iteration+(720).mp4"
-              type="video/mp4" />
+              type="video/mp4">
           </video>
         </div>
-        <div class="w-full md:w-2/3 space-y-4">
-          <div class="p-1"></div>
-          <div class="text-lg">
-            <!--Sign into
-            <span target="_blank" rel="noopener noreferrer" class="text-purple underline"
-              @click="handleLogin">twitch.tv</span> for best viewing experience-->
-            <!--Enjoy uninterrupted live streams when you log in with Twitch-->
-            <!--Skip ad breaks and enjoy non-stop streaming by logging in with Twitch Turbo.-->
+        <div class="flex-grow flex flex-col items-center justify-center md:justify-start xs:p-4 md:p-0 md:m-2">
+          <div class="text-xl xl:text-2xl text-center md:text-left xs:mb-2 sm:mb-2 md:mb-4 lg:mb-6">
             Skip the breaks* when you login with Twitch
           </div>
-          <br>
-          <!-- "Continue anyway" button placed directly below the text -->
-          <div class="flex">
-            <button class="elementor-button-x text-xxs sm:text-xs md:text-sm lg:text-sm xl:text-md mx-2 sm:py-0 h-7 sm:h-10 xs:px-3 md:px-6" @click="handleCloseModal">
+          <div class="flex justify-center space-x-1 sm:space-x-4 md:justify-start xs:mt-2 sm:mt-6 md:mt-4 lg:mt-6">
+            <button @click="handleCloseModal"
+              class="elementor-button-x text-xxs xs:text-xxs sm:text-xs md:text-sm lg:text-sm xl:text-xl xxl:text-lg mx-2 sm:py-0 h-7 sm:h-10 xxs:px-0 xs:px-1 md:px-6">
               <span class="elementor-button-text">Watch With Breaks</span>
             </button>
-            <a href="api/twitch-login" @click="handleTwitchLogin"
-              class="flex items-center elementor-button text-xxs sm:text-xs md:text-sm lg:text-sm xl:text-md mx-2 sm:py-0 h-7 sm:h-10 xs:px-3 md:px-6"
-              role="button" onmouseover="changeBtnColor(event)" onmouseout="changeNormalBtnColor(event)">
+            <a href="api/twitch-login" @click="handleTwitchLogin" role="button" onmouseover="changeBtnColor(event)"
+              onmouseout="changeNormalBtnColor(event)"
+              class="flex items-center elementor-button text-xxs xs:text-xxs sm:text-xs md:text-sm lg:text-sm xl:text-xl xxl:text-lg mx-2 sm:py-0 h-7 sm:h-10 xxs:px-0 xs:-x-1 md:px-6">
               <span class="elementor-button-text">Login With Twitch</span>
               <img src="/images/twitch-icon-white.png" class="ml-2 w-2.5 h-2.5 sm:w-5 sm:h-5 twitch-btn-icon">
             </a>

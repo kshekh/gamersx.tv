@@ -16,7 +16,7 @@
 
 /* blur experience pop-up bg */
 .backdrop-filter {
-  backdrop-filter: blur(2px); 
+  backdrop-filter: blur(3px); 
 }
 
 /* new arrows style */
@@ -115,6 +115,19 @@ div.channel-description {
 
 div.full-width-embed-first-row iframe {
   background: #000000;
+}
+
+@media (max-width: 425px) {
+  .responsive-container {
+    flex-direction: column;
+    align-item: center;
+    text-align: center;
+  }
+  .responsive-btn {
+    margin: 5px 0 !important;
+    padding: 0 15px !important;
+    font-size: 10px !important;
+  }
 }
 
 @layer utilities {
