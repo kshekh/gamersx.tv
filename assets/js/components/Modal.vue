@@ -1,31 +1,11 @@
 <template>
-  <div
-    v-if="value"
-    class="fixed min-w-full min-h-full top-0 left-0 bg-black/[.84] z-50"
-    @click="handleClickModal"
-  >
-    <div class="relative w-full h-screen top-0 left-0">
-      <div
-        class="absolute px-5 left-1/2 -translate-x-1/2 top-1/2 -translate-y-2/3 w-full"
-        :style="{ maxWidth: width }"
-      >
-        <div class="gm-modal-content bg-black border-2 border-purple p-5">
-          <div class="gm-modal-header" v-if="title">{{ title }}</div>
-          <div class="gm-modal-body">
-            <slot></slot>
-          </div>
-          <div class="gm-modal-footer">
-            <slot name="footer">
-              <div class="flex justify-center items-center pt-5">
-                <button
-                  class="border-2 border-purple px-4 py-3 text-purple hover:bg-purple hover:text-white leading-none transition-all"
-                  @click="$emit('ok')"
-                >
-                  {{ okTitle }}
-                </button>
-              </div>
-            </slot>
-          </div>
+  <div v-if="value" class="fixed inset-0 flex items-end justify-center bg-black/[.35] z-50" @click="handleClickModal">
+    <div class="absolute p-5 w-full bg-black border border-purple border-b-0 space-y-3"
+      :style="{ maxWidth: '100%' }">
+      <div class="gm-modal-content flex flex-col h-full overflow-hidden" :style="{ paddingBottom: '0'}">
+        <div class="gm-modal-body flex flex-col md:flex-row space-y-4 md:space-y-0 md:items-start md:justify-start">
+          <slot></slot>
+          <slot name="buttonSlot"></slot> <!-- adding an additional slot -->
         </div>
       </div>
     </div>

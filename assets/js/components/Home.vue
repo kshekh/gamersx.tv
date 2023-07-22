@@ -3,11 +3,7 @@
   <div class="text-white">
     <template v-if="settings.rows && settings.rows.length">
       <div v-for="(row, index) in settings.rows" :key="row.id">
-        <component
-          :is="row.componentName"
-          :settings="row"
-          :rowPosition="index"
-        ></component>
+        <component :is="row.componentName" :settings="row" :rowPosition="index"></component>
       </div>
     </template>
     <div v-else>
@@ -27,52 +23,31 @@
       </template>
       <!--      <component v-else :is="defaultSkeleton"></component>-->
     </div>
-    <Modal
-      v-model="modal"
-      no-close-on-backdrop
-      ok-title="Continue anyway"
-      @ok="handleCloseModal"
-    >
-      <div class="text-center p-0 md:p-5">
-        <div class="mb-4 text-grey-400 text-lg mx-auto max-w-[300px]">
-          Sign into
-          <span class="">
-            <span
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-purple underline"
-              @click="handleLogin"
-            >
-              twitch.tv
-            </span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 15 15"
-              class=" inline-block"
-            >
-              <path
-                fill="currentColor"
-                fill-rule="evenodd"
-                d="M3 2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V8.5a.5.5 0 0 0-1 0V12H3V3h3.5a.5.5 0 0 0 0-1H3Zm9.854.146a.5.5 0 0 1 .146.351V5.5a.5.5 0 0 1-1 0V3.707L6.854 8.854a.5.5 0 1 1-.708-.708L11.293 3H9.5a.5.5 0 0 1 0-1h3a.499.499 0 0 1 .354.146Z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </span>
-          for best viewing experience
-        </div>
-        <div class="mb-4">
-          <video autoplay muted loop width="100%" playsinline>
+    <Modal v-model="modal" no-close-on-backdrop ok-title="Continue anyway" @ok="handleCloseModal">
+      <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:items-start md:justify-between">
+        <div class="w-full md:w-1/3 mb-3 md:mb-0 md:mr-5">
+          <video autoplay muted loop playsinline class="h-full w-full md:max-w-sm object-cover">
             <source
               src="https://gamersx-dev-dev-us-west-1-storage.s3.us-west-1.amazonaws.com/Experience+Popup+1+Iteration+(720).mp4"
-              type="video/mp4"
-            />
+              type="video/mp4" />
           </video>
         </div>
-        <p>
-          An active session in the background will avoid interruptions
-        </p>
+        <div class="w-full md:w-2/3 space-y-4">
+          <br />
+          <div class="text-lg">
+            Sign into
+            <span target="_blank" rel="noopener noreferrer" class="text-purple underline"
+              @click="handleLogin">twitch.tv</span> for best viewing experience
+              <!--Enjoy uninterrupted live streams when you log in with Twitch-->
+          </div>
+          <p> </p>
+
+          <!-- "Continue anyway" button placed directly below the text -->
+          <button
+            class="px-4 py-2 text-purple hover:bg-purple hover:text-white border border-purple leading-none transition-all"
+            @click="handleCloseModal">continue anyway
+          </button>
+        </div>
       </div>
     </Modal>
   </div>
@@ -135,7 +110,7 @@ export default {
       loading: ClassicLgSkeleton
     })
   },
-  data: function() {
+  data: function () {
     return {
       modal: false,
       settings: {
@@ -211,21 +186,21 @@ export default {
         });
     },
   },
-  mounted: function() {
+  mounted: function () {
     this.requestSessionsApi();
-    this.requestHomeCachedRowsApi().then(()=>{
+    this.requestHomeCachedRowsApi().then(() => {
       this.requestHomeApi();
     });
     this.pollingApiData = window.setInterval(() => {
       this.requestHomeApi();
     }, this.requestPollingDelay);
   },
-  destroyed: function() {
+  destroyed: function () {
     window.clearInterval(this.pollingApiData);
   }
 };
 /** We use this a lot for scrolling because JS % is remainder, not modulo **/
-Number.prototype.mod = function(n) {
+Number.prototype.mod = function (n) {
   return ((this % n) + n) % n;
 };
 </script>
