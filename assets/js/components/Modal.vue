@@ -1,5 +1,6 @@
 <template>
-  <div v-if="value" class="fixed inset-0 flex items-end justify-center bg-black/[.35] z-50 backdrop-filter backdrop-blur"
+  <div v-show="show" :class="{ 'opacity-0': !value, 'opacity-100': value }"
+    class="transition-opacity duration-500 fixed inset-0 flex items-end justify-center bg-black/[.35] z-50 backdrop-filter backdrop-blur"
     @click="handleClickModal">
     <div class="absolute p-5 w-full bg-black border-2 border-purple/[.5] border-b-0 border-l-0 border-r-0 space-y-3"
       :style="{ maxWidth: '100%' }">
@@ -36,6 +37,25 @@ export default {
       if (!this.noCloseOnBackdrop && !e.target.closest(".gm-modal-content")) {
         this.$emit("input", false);
       }
+    }
+  },
+  data: function () {
+    return {
+      show: false
+    };
+  },
+  watch: {
+    value: {
+      handler(isVisible) {
+        if (isVisible) {
+          this.show = true;
+        } else {
+          setTimeout(() => {
+            this.show = false;
+          }, 500); // this setTimeout will sync with transition-duration value in the modal wrapper class. They should be the same.
+        }
+      },
+      immediate: true
     }
   }
 };

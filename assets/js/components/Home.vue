@@ -23,7 +23,8 @@
       </template>
       <!--      <component v-else :is="defaultSkeleton"></component>-->
     </div>
-    <Modal v-model="modal" no-close-on-backdrop ok-title="Continue anyway" @ok="handleCloseModal">
+    <Modal v-model="modal" @update:modelValue="handleModalUpdate" no-close-on-backdrop ok-title="Continue anyway"
+      @ok="handleCloseModal">
       <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:items-start md:justify-between">
         <div class="w-full md:w-1/3 mb-3 md:mb-0 md:mr-5">
           <video autoplay muted loop playsinline class="h-full w-full md:max-w-sm object-cover">
@@ -184,15 +185,27 @@ export default {
         }
       });
     },
+    handleModalUpdate(val) {
+      // This condition avoids abruptly removing DOM in Modal when directly changing v-model value.
+      if (!val) {
+        setTimeout(() => {
+          this.modal = false;
+        }, 500);
+      } else {
+        this.modal = true;
+      }
+    },
     handleCloseModal() {
       // 24 hours
       Cookies.set("twitch_", "demo", { expires: 1 });
       this.modal = false;
+      this.handleModalUpdate(false);
     },
     handleTwitchLogin() {
       // 24 hours
       Cookies.set("twitch_", "demo", { expires: 1 });
       this.modal = false;
+      this.handleModalUpdate(false);
     },
   },
   mounted: function () {

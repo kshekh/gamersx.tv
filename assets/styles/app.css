@@ -16,7 +16,7 @@
 
 /* blur experience pop-up bg */
 .backdrop-filter {
-  backdrop-filter: blur(3px); 
+  backdrop-filter: blur(2px); 
 }
 
 /* new arrows style */
