@@ -35,19 +35,21 @@
         <div class="w-full md:w-2/3 space-y-4">
           <div class="p-1"></div>
           <div class="text-lg">
-            Sign into
-            <!--<span target="_blank" rel="noopener noreferrer" class="text-purple underline"
+            <!--Sign into
+            <span target="_blank" rel="noopener noreferrer" class="text-purple underline"
               @click="handleLogin">twitch.tv</span> for best viewing experience-->
-            Enjoy uninterrupted live streams when you log in with Twitch
+            <!--Enjoy uninterrupted live streams when you log in with Twitch-->
+            <!--Skip ad breaks and enjoy non-stop streaming by logging in with Twitch Turbo.-->
+            Skip the breaks* when you login with Twitch
           </div>
           <br>
-
+          <br>
           <!-- "Continue anyway" button placed directly below the text -->
           <div class="flex">
             <button class="elementor-button-x" @click="handleCloseModal">
               <span class="elementor-button-text">Watch With Breaks</span>
             </button>
-            <a href="api/twitch-login"
+            <a href="api/twitch-login" @click="handleTwitchLogin"
               class="flex items-center elementor-button text-[5px] sm:text-base py-1 px-2 sm:py-0 sm:px-[40px] h-7 sm:h-10"
               role="button" onmouseover="changeBtnColor(event)" onmouseout="changeNormalBtnColor(event)">
               <span class="elementor-button-text">Login With Twitch</span>
@@ -158,39 +160,39 @@ export default {
           this.settings = response.data.settings;
         });
     },
-    requestSessionsApi: function () {
-      axios.get("/home/sessions/api")
-        .catch(e => console.error(e))
-        .then(response => {
-          if (response.data.isLoggedIn && !response.data.isRequiredToLoginTwitch) {
-            this.modal = false;
-          } else {
-            this.modal = true;
-          }
-        });
+    requestSessionsApi() {
+      return new Promise((resolve, reject) => {
+        if (!Cookies.get("twitch_")) {
+          axios.get("/home/sessions/api")
+            .then(response => {
+              if (response.data.isLoggedIn && !response.data.isRequiredToLoginTwitch) {
+                this.modal = false;
+              } else {
+                // Immediately after setting `modal` to `true`, request Vue to wait for next DOM update cycle
+                this.$nextTick(() => {
+                  this.modal = true;
+                });
+              }
+              resolve(response);
+            })
+            .catch(error => {
+              console.error(error);
+              reject(error);
+            })
+        } else {
+          resolve();
+        }
+      });
     },
     handleCloseModal() {
       // 24 hours
       Cookies.set("twitch_", "demo", { expires: 1 });
       this.modal = false;
     },
-    handleLogin() {
+    handleTwitchLogin() {
       // 24 hours
       Cookies.set("twitch_", "demo", { expires: 1 });
-      window.open("https://twitch.tv/login", "_blank");
-    },
-    requestSessionsApi: function () {
-      const cookie = Cookies.get("twitch_");
-      if (cookie) return
-      axios.get("/home/sessions/api")
-        .catch(e => console.error(e))
-        .then(response => {
-          if (response.data.isLoggedIn && !response.data.isRequiredToLoginTwitch) {
-            this.modal = false;
-          } else {
-            this.modal = true;
-          }
-        });
+      this.modal = false;
     },
   },
   mounted: function () {
