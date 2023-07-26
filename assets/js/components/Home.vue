@@ -163,7 +163,7 @@ export default {
               } else {
                 // Immediately after setting `modal` to `true`, request Vue to wait for next DOM update cycle
                 this.$nextTick(() => {
-                  this.modal = true; //false here will disable the modal entirely, helpful to disable when developing
+                  this.modal = false; //false here will disable the modal entirely, helpful to disable when developing
                 });
               }
               resolve(response);
