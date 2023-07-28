@@ -315,7 +315,7 @@
          */
     </script>
     <script>
-        if ("{{ app.environment }}" !== "dev" && "{{ app.request.schemeAndHttpHost }}" == "https://gamersx.tv/"  && navigator.userAgent.toLowerCase().match(/mobile/i)){
+        if ("{{ app.environment }}" != "dev" && "{{ app.request.schemeAndHttpHost }}" == "https://gamersx.tv"  && navigator.userAgent.toLowerCase().match(/mobile/i)){
             window.location.replace("{{ redirect_url }}");
         }
     </script>
