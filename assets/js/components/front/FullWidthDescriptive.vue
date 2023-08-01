@@ -17,7 +17,6 @@
           :isNext="false"
           :videoType="currentChannelEmbedName"
           @arrow-clicked="back()"
-          :style="isVideoPlaying ? { display: 'none' } : {}"
         />
 
         <div
@@ -44,7 +43,6 @@
                 @first-video-buffered="handleFirstVideoLoaded"
                 @activate-mouse-stopped="activateMouseStopped"
                 @reset-mouse-moving="checkMouseActive"
-                @decrease-info-box-size="decreaseInfoBoxSize"
               ></component>
             </div>
           </div>
@@ -66,7 +64,6 @@
           :isNext="true"
           :videoType="currentChannelEmbedName"
           @arrow-clicked="forward()"
-          :style="isVideoPlaying ? { display: 'none' } : {}"
         />
       </div>
     </div>
@@ -114,7 +111,6 @@ export default {
       isFirstVideoLoaded: false,
       isMouseStopped: false,
       isMouseMovingTimeout: false,
-      isVideoPlaying: false,
     };
   },
   computed: {
@@ -202,9 +198,6 @@ export default {
       this.isMouseMovingTimeout = setTimeout(() => {
         this.isMouseStopped = true;
       }, 3000);
-    },
-    decreaseInfoBoxSize(status) {
-      this.isVideoPlaying = status;
     },
   },
   mounted() {
