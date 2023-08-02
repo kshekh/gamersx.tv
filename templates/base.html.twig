@@ -119,6 +119,7 @@
 								</div>
 							</div>
                             #}
+                        {% if  app.request.schemeAndHttpHost != "https://m.gamersx.tv" %}
 							{% if isLoggedIn and  isRequiredToLoginTwitch == false %}
 							<a href="https://www.twitch.tv/settings/profile" class="hidden xl:block">
 								<img src="{{ twitchUserInfo['profile_image_url'] }}" class="twitch-profile-picture">
@@ -129,6 +130,7 @@
 								<img src="/images/twitch-icon-white.png" class="ml-2 w-2.5 h-2.5 sm:w-5 sm:h-5" id="twitch-btn-icon">
 							</a>
 							{% endif %}
+                        {% endif %}
 							{#
 							<button class="jsOpenBurgerButton block xl:hidden w-7 md:w-11 shrink-0">
 								<span class="block h-0.75 w-full bg-purple"></span>
