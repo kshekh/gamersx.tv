@@ -231,7 +231,6 @@ export default {
       );
     },
     decreaseInfoBoxSize() {
-      this.$emit("decrease-info-box-size", this.isVideoPlaying);
       return (
         this.isVideoBuffered && (this.isVideoPlaying || this.isEmbedVisible)
       );
