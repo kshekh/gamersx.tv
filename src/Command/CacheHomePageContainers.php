@@ -49,11 +49,11 @@ class CacheHomePageContainers extends Command
             $cache = new FilesystemAdapter();
 
             // Deleting old cache
-            $cache->delete('home');
+            $cache->delete('home_item');
 
             $beta = 1.0;
             $em = $this->container->get('doctrine')->getManager();
-            $rowChannels = $cache->get('home', function (ItemInterface $item) use ($containerizer, $em) {
+            $rowChannels = $cache->get('home_item', function (ItemInterface $item) use ($containerizer, $em) {
                 $rows = $em->getRepository(HomeRow::class)
                     ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
 
@@ -98,6 +98,19 @@ class CacheHomePageContainers extends Command
                     return $rowChannels;
                 }
             }, $beta);
+
+            $homeItemCache = $cache->getItem('home_item');
+            $homeCache = $cache->getItem('home');
+
+            if ($homeItemCache->isHit()) {
+                $homeItemCacheValue = $homeItemCache->get();
+                $homeCacheArr = ['home_container_refreshed_at' => date('Y-m-d H:i:s'),'rows_data'=>$homeItemCacheValue];
+                $homeCache->set($homeCacheArr);
+                $cache->save($homeCache);
+            }
+
+            // Deleting cache
+            $cache->delete('home_item');
             $message = "Containers Cached successfully";;
             $io->success($message);
             return 0;

@@ -49,10 +49,19 @@ class HomeController extends AbstractController
         $cache = new FilesystemAdapter();
 
         $rowChannels = $cache->getItem('home');
+        $home_container_refreshed_at = null;
+        $rows = null;
+
+        if ($rowChannels->isHit()) {
+            $rowChannelsData = $rowChannels->get();
+            $rows = $rowChannelsData['rows_data']??null;
+            $home_container_refreshed_at = $rowChannelsData['home_container_refreshed_at']??null;
+        }
 
         return $this->json([
             'settings' => [
-                'rows' => $rowChannels->get()
+                'rows' => $rows,
+                'home_container_refreshed_at' => $home_container_refreshed_at
             ]
         ]);
     }
@@ -64,9 +73,14 @@ class HomeController extends AbstractController
     {
         $cache = new FilesystemAdapter();
         $rowChannels = $cache->getItem('home');
+        $rows = [];
+        if ($rowChannels->isHit()) {
+            $rowChannelsData = $rowChannels->get();
+            $rows = array_column($rowChannelsData['rows_data']??[],"componentName");
+        }
         return $this->json([
             'settings' => [
-                'rows' => array_column($rowChannels->get()??[],"componentName")
+                'rows' => $rows
             ]
         ]);
     }
