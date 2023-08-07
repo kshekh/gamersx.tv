@@ -19,6 +19,7 @@ final class SiteSettingsAdmin extends AbstractAdmin
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
         $row = $this->getConfigurationPool()->getContainer()->get('doctrine')->getManager()->getRepository(SiteSettings::class)->findOneBy([]);
+        $collection->add('save_theme_setting','save_theme_setting');
         $collection->remove('export');
 
         if (isset($row) && $row->getId() == true) {
