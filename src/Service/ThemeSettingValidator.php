@@ -20,17 +20,18 @@ class ThemeSettingValidator
 
         $validate_arr = [
             'border' =>  [
-                new Assert\NotBlank()
+                new Assert\NotBlank(),
+                new Assert\PositiveOrZero()
             ],
             'border_radius' =>  [
-                new Assert\NotBlank()
+                new Assert\NotBlank(),
+                new Assert\PositiveOrZero()
             ],
-
         ];
         if(isset($requestParams['header_logo'])) {
             $validate_arr['header_logo'] = [
                 new File([
-                    'maxSize' => '1024k',
+                    'maxSize' => '2048k',
                     'mimeTypes' => [
                         'image/*',
                     ],

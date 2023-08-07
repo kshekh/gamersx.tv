@@ -27,7 +27,30 @@
 			{{ encore_entry_script_tags('app') }}
 			{{ encore_entry_script_tags('main') }}
 		{% endblock %}
+        {% set get_theme_setting = theme_setting.findAll() %}
+        {% set get_theme_setting_array = [] %}
+        {% for ts_data in get_theme_setting %}
+            {% set get_theme_setting_array = get_theme_setting_array|merge({ (ts_data.name) :ts_data.value}) %}
+        {% endfor %}
         <style>
+            :root {
+                --site_background_color: {{ (get_theme_setting_array['background_color'] is defined and get_theme_setting_array['background_color']!='')?get_theme_setting_array['background_color']:'black' }};
+                --site_color: {{ (get_theme_setting_array['color'] is defined and get_theme_setting_array['color']!='')?get_theme_setting_array['color']:'white' }};
+                --site_border_color: {{ (get_theme_setting_array['border_color'] is defined and get_theme_setting_array['border_color']!='')?get_theme_setting_array['border_color']:'#6441A5' }};
+                --site_border_width: {{ (get_theme_setting_array['border'] is defined and get_theme_setting_array['border']!='')?get_theme_setting_array['border']:'1' }}px;
+                --site_border_radius: {{ (get_theme_setting_array['border_radius'] is defined and get_theme_setting_array['border_radius']!='')?get_theme_setting_array['border_radius']:'20' }}px;
+            }
+            .bg-black {
+                background-color: var(--site_background_color);
+            }
+            .text-white,.text-stroke, .text-grey, .elementor-button-text {
+                color: var(--site_color);
+            }
+            .elementor-button {
+                border-color: var(--site_border_color);
+                border-width: var(--site_border_width);
+                border-radius: var(--site_border_radius);
+            }
             .custom-smooth-scroll {
                 overflow-x: auto;
                 display: flex;
@@ -72,7 +95,8 @@
 							px-4 md:px-6 xl:px-20 pb-3 md:pb-6 pt-6 xl:py-7
 							mx-auto max-w-full-hd"
 					>
-						<img src="/images/logo.png" class="shrink-0 w-24 md:w-72 mr-3 md:mr-14 xl:mr-4"/>
+                        {% set header_logo = (get_theme_setting_array['header_logo'] is defined and get_theme_setting_array['header_logo'] != '')? get_theme_setting_array['header_logo'] :'logo.png' %}
+                        <img src="{{ asset('images/'~header_logo) }}" class="shrink-0 w-24 md:w-72 mr-3 md:mr-14 xl:mr-4"/>
 						{#
 						<div class="flex flex-grow items-center justify-between xl:justify-end ml-auto">
 							<nav class="hidden xl:block">
