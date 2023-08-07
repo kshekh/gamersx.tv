@@ -51,7 +51,8 @@ class HomeController extends AbstractController
         $rowChannels = $cache->getItem('home');
         $home_container_refreshed_at = null;
         $rows = null;
-
+        // get cache from home -> rows_data
+        // home_container_refreshed_at managed to get time of last cache clear
         if ($rowChannels->isHit()) {
             $rowChannelsData = $rowChannels->get();
             $rows = $rowChannelsData['rows_data']??null;
@@ -74,6 +75,7 @@ class HomeController extends AbstractController
         $cache = new FilesystemAdapter();
         $rowChannels = $cache->getItem('home');
         $rows = [];
+        // get cache from new rows_data key
         if ($rowChannels->isHit()) {
             $rowChannelsData = $rowChannels->get();
             $rows = array_column($rowChannelsData['rows_data']??[],"componentName");

@@ -49,6 +49,8 @@ class CacheHomePageContainers extends Command
             $cache = new FilesystemAdapter();
 
             // Deleting old cache
+            //Previously `home` cache delete directly, now `home_item` item used to save temporary cache.
+            //If `home_item` contain cache then first delete it, generate new save into it and at the end assign `home_item` into `home`
             $cache->delete('home_item');
 
             $beta = 1.0;
