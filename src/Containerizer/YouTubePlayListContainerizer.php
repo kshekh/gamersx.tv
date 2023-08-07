@@ -18,6 +18,8 @@ class YouTubePlayListContainerizer extends LiveContainerizer implements Containe
 
     public function getContainers(): Array
     {
+        return Array();
+        //Following code not needed as playlist are not showing in front-end+video already extracted from admin
         $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
         $youtube = $this->youtube;

@@ -1,20 +1,17 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./assets/js/components/**/*.{js,vue,ts}",    
-    "./templates/**/*.twig",    
+    "./assets/js/components/**/*.{js,vue,ts}",
+    "./templates/**/*.twig",
   ],
   theme: {
     screens: {
-      'xs': '480px', // Your custom screen size
+      'xs': '450px', // Your custom screen size
       'sm': '640px',
-      'md': '768px',
+      'md': '815px',
       'lg': '1024px',
       'xl': '1280px',
       '2xl': '1536px',
-      'wide': {
-          'raw': `only screen and (max-height: 480px) and (max-width: 960px)`
-      },
     },
     colors: {
       purple: {
@@ -40,7 +37,8 @@ module.exports = {
         500: "rgb(132 204 22)"
       },
       red: {
-        DEFAULT: "#FF0000"
+        DEFAULT: "#FF0000",
+        600: "#7F0000"
       },
       transparent: {
         DEFAULT: "transparent"
@@ -215,6 +213,6 @@ module.exports = {
         '3/4': '3 / 4',
       }
     }
-  },  
+  },
   plugins: []
 };

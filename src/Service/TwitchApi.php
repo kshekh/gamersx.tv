@@ -78,9 +78,9 @@ class TwitchApi
         if ($userInfoWithId || ($userInfoWithEmail && !$userInfoWithEmail->getPassword())) {
             $userId = $userInfoWithId ? $userInfoWithId->getId() : $userInfoWithEmail->getId();
             $userWithId = $this->em->getRepository(User::class)
-            ->findOneBy([
-                'id' => $userId
-            ]);
+                ->findOneBy([
+                    'id' => $userId
+                ]);
             $userWithId->setTwitchUserId($apiUserInfo['id']);
             $userWithId->setTwitchAccessToken($clientAccessToken);
             $userWithId->setTwitchRefreshToken($refreshToken);
@@ -104,7 +104,7 @@ class TwitchApi
             $this->session->set('user_info', $user);
         }
         $this->em->flush();
-    } 
+    }
     public function getUserInfo($clientId, $accessToken) {
         $endpoint = self::TWITCH_API_DOMAIN . 'users';
         $apiParams = array(

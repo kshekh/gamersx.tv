@@ -251,7 +251,7 @@ export default {
       if (this.embedName === "TwitchEmbed") {
         this.streamersData = this.profileImageUrl;
       } else if (this.embedName === "YouTubeEmbed") {
-        // this.streamersData = this.info.snippet.thumbnails.default.url;   //This is video thumbnail, channel profile send as following key
+        // this.streamersData = this.info.snippet.thumbnails.default.url;   //This is video thumbnail but we need channel profile which can get from following key
         this.streamersData = this.profileImageUrl;
       }
     },

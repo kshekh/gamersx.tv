@@ -51,9 +51,8 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
 
         $rowName = $homeRowItem->getHomeRow()->getTitle();
         $description = $homeRowItem->getDescription();
-        $timezone = $homeRowItem->getTimezone();
-        date_default_timezone_set($timezone ? $timezone : 'America/Los_Angeles');
         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+
         $isPublished = $homeRowItem->getIsPublished();
 
         if (!$isPublished) {
@@ -62,6 +61,7 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
 
         $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
         $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
+
         if (
             !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
             (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))

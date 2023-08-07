@@ -27,7 +27,7 @@ class TwitchApiController extends AbstractController
      */
     private $translator;
 
-     /**
+    /**
      * @var UrlGeneratorInterface
      */
     private $urlGenerator;
@@ -59,10 +59,10 @@ class TwitchApiController extends AbstractController
      */
     public function channelQuery(Request $request, TwitchApi $twitch, $query)
     {
-       if (!$this->isGranted('ROLE_LOCKED')) {
+        if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
                 $this->generateUrl('sonata_user_admin_security_login')
-             );
+            );
         }
         $first = $request->get('first');
         $before = $request->get('before');
@@ -92,14 +92,14 @@ class TwitchApiController extends AbstractController
                     'loggedin',
                     $this->translator->trans('sonata_user_already_authenticated', [], 'SonataUserBundle')
                 );
-    
+
                 return new RedirectResponse($this->urlGenerator->generate('home'));
             } else {
                 return new RedirectResponse($this->urlGenerator->generate('sonata_user_admin_security_login'));
             }
         }
         $twitchLoginUrl = $twitch->getLoginUrl($redirectUri,  $clientId);
-    
+
         return new RedirectResponse($twitchLoginUrl);
     }
 
@@ -109,10 +109,10 @@ class TwitchApiController extends AbstractController
     public function gameQuery(Request $request, TwitchApi $twitch, $query)
     {
 
-       if (!$this->isGranted('ROLE_LOCKED')) {
+        if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
                 $this->generateUrl('sonata_user_admin_security_login')
-             );
+            );
         }
         $first = $request->get('first');
         $before = $request->get('before');

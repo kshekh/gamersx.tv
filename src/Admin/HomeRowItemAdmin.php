@@ -256,6 +256,8 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'input' => 'string',
                 'input_format' => 'H:i:s',
                 'widget' => 'single_text',
+//                'model_timezone' => 'America/Los_Angeles',
+//                'view_timezone' => 'UTC',
                 'attr' => [
                     'class' => 'timepicker',
                     'title' => "Start timepicker for published",
@@ -267,29 +269,29 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 'input' => 'string',
                 'input_format' => 'H:i:s',
                 'widget' => 'single_text',
+//                'model_timezone' => 'America/Los_Angeles',
+//                'view_timezone' => 'UTC',
                 'attr' => [
                     'class' => 'timepicker',
                     'title' => "End timepicker for published",
                 ]
             ])
             ->add('isPartner')
-            ->getFormBuilder()->addModelTransformer(
-                new CallbackTransformer(
-                    // Use the array in the form
-                    function ($valuesAsArray) {
-                        return $valuesAsArray;
-                    },
-                    // Don't set empty values in the JSON later
-                    function ($homeRowItem) {
-                        $topic = $homeRowItem->getTopic();
-                        if ($topic && array_key_exists('label', $topic)) {
-                            $homeRowItem->setLabel($topic['label']);
-                        };
+            ->getFormBuilder()->addModelTransformer(new CallbackTransformer(
+                // Use the array in the form
+                function ($valuesAsArray) {
+                    return $valuesAsArray;
+                },
+                // Don't set empty values in the JSON later
+                function ($homeRowItem) {
+                    $topic = $homeRowItem->getTopic();
+                    if ($topic && array_key_exists('label', $topic)) {
+                        $homeRowItem->setLabel($topic['label']);
+                    };
 
-                        return $homeRowItem;
-                    }
-                )
-            );
+                    return $homeRowItem;
+                }
+            ));
     }
 
     protected function configureShowFields(ShowMapper $showMapper): void

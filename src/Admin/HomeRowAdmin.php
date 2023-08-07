@@ -27,7 +27,7 @@ final class HomeRowAdmin extends AbstractAdmin
         return $query
             ->setSortOrder('ASC')
             ->setSortBy([], ['fieldName' => 'sortIndex'])
-        ;
+            ;
     }
 
     protected $datagridValues = array(
@@ -230,8 +230,8 @@ final class HomeRowAdmin extends AbstractAdmin
             ->add('onGamersXtv', null, [
                 'label' => 'add \'on GamersX TV\' to end of row title'
             ], [
-                    'type' => 'string'
-                ])
+                'type' => 'string'
+            ])
         ;
     }
     protected function configureShowFields(ShowMapper $showMapper): void

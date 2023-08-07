@@ -635,7 +635,7 @@ class HomeRowItemAdminController extends CRUDController
             ->from('App:HomeRowItem', 'hri')
             ->where('hri.homeRow = :rowId')
             ->setParameter('rowId', $object->getHomeRow())
-            ;
+        ;
 
         if ($direction === 'down') {
             $qb->andWhere('hri.sortIndex >= :thisSort')

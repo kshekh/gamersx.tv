@@ -45,18 +45,18 @@ export default {
     height: [Number, String],
     width: [Number, String],
     info: {},
-    broadcast: {}
+    broadcast: {},
   },
-  data: function() {
+  data: function () {
     return {
       embed: {},
       embedPlaying: false,
       showTwitchEmbed: false,
-      isBuffering: true
+      isBuffering: true,
     };
   },
   methods: {
-    embedTwitch: function() {
+    embedTwitch: function () {
       this.embed = new Twitch.Embed(this.embedDataCopy.elementId, {
         width: this.width || 540,
         height: this.height || 300,
@@ -66,7 +66,7 @@ export default {
         autoplay: true,
         muted: false,
         // controls: false,
-        parent: window.location.hostname
+        parent: window.location.hostname,
       });
 
       this.embed.addEventListener(Twitch.Player.PLAY, this.setIsPlaying);
@@ -83,7 +83,7 @@ export default {
         this.isBuffering = false;
       });
     },
-    startPlayer: function() {
+    startPlayer: function () {
       if (
         !this.embedPlaying &&
         (this.isShowTwitchEmbed || this.showTwitchEmbed)
@@ -93,24 +93,23 @@ export default {
         this.embedPlaying = true;
       }
     },
-    stopPlayer: function() {
+    stopPlayer: function () {
       if (this.embedPlaying) {
         this.embed.pause();
         this.embedPlaying = false;
       }
     },
-    isPlaying: function() {
+    isPlaying: function () {
       return this.embedPlaying;
     },
-    setIsPlaying: function() {
+    setIsPlaying: function () {
       this.embedPlaying = true;
     },
-    setIsNotPlaying: function() {
+    setIsNotPlaying: function () {
       this.embedPlaying = false;
     },
     handlePlayerStateChanged(event) {
       const { video_id, play, play_reason } = event.detail;
-
       if (video_id === this.embedDataCopy.elementId) {
         if (play && play_reason === "auto") {
           this.embedPlaying = true;
@@ -131,7 +130,7 @@ export default {
   computed: {
     embedDataCopy() {
       return { ...this.embedData };
-    }
+    },
   },
   watch: {
     showTwitchEmbed(newVal) {
@@ -143,8 +142,8 @@ export default {
       if (newVal === true) {
         this.embedTwitch();
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

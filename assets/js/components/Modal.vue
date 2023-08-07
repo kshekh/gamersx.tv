@@ -1,31 +1,13 @@
 <template>
-  <div
-    v-if="value"
-    class="fixed min-w-full min-h-full top-0 left-0 bg-black/[.84] z-50"
-    @click="handleClickModal"
-  >
-    <div class="relative w-full h-screen top-0 left-0">
-      <div
-        class="absolute px-5 left-1/2 -translate-x-1/2 wide:top-0 top-10 sm:top-32 w-full max-h-screen overflow-y-auto"
-        :style="{ maxWidth: width }"
-      >
-        <div class="gm-modal-content bg-black border-2 border-purple p-5">
-          <div class="gm-modal-header" v-if="title">{{ title }}</div>
-          <div class="gm-modal-body">
-            <slot></slot>
-          </div>
-          <div class="gm-modal-footer">
-            <slot name="footer">
-              <div class="flex justify-center items-center pt-5">
-                <button
-                  class="border-2 border-purple px-4 py-3 text-purple hover:bg-purple hover:text-white leading-none transition-all"
-                  @click="$emit('ok')"
-                >
-                  {{ okTitle }}
-                </button>
-              </div>
-            </slot>
-          </div>
+  <div v-show="show" :class="{ 'opacity-0': !value, 'opacity-100': value }"
+    class="transition-opacity duration-500 fixed inset-0 flex items-end justify-center bg-black/[.35] z-50 backdrop-filter backdrop-blur"
+    @click="handleClickModal">
+    <div class="absolute p-5 w-full bg-black border-2 border-purple/[.5] border-b-0 border-l-0 border-r-0 space-y-3"
+      :style="{ maxWidth: '100%' }">
+      <div class="gm-modal-content flex flex-col h-full overflow-hidden" :style="{ paddingBottom: '0' }">
+        <div class="gm-modal-body flex flex-col md:flex-row space-y-4 md:space-y-0 md:items-start md:justify-start">
+          <slot></slot>
+          <slot name="buttonSlot"></slot> <!-- adding an additional slot -->
         </div>
       </div>
     </div>
@@ -48,10 +30,6 @@ export default {
     },
     title: {
       type: String
-    },
-    okTitle: {
-      type: String,
-      default: "OK"
     }
   },
   methods: {
@@ -59,6 +37,25 @@ export default {
       if (!this.noCloseOnBackdrop && !e.target.closest(".gm-modal-content")) {
         this.$emit("input", false);
       }
+    }
+  },
+  data: function () {
+    return {
+      show: false
+    };
+  },
+  watch: {
+    value: {
+      handler(isVisible) {
+        if (isVisible) {
+          this.show = true;
+        } else {
+          setTimeout(() => {
+            this.show = false;
+          }, 500); // this setTimeout will sync with transition-duration value in the modal wrapper class. They should be the same.
+        }
+      },
+      immediate: true
     }
   }
 };

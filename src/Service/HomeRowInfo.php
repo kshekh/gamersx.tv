@@ -12,6 +12,5 @@ class HomeRowInfo
         }else{
             return $time;
         }
-
     }
 }

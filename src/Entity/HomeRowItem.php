@@ -168,7 +168,7 @@ class HomeRowItem implements PartneredInterface
      * @var \DateTime
      */
     private $updatedAt;
-    
+
     /**
      * @ORM\Column(type="boolean", options={"default" : 0})
      */
@@ -409,7 +409,7 @@ class HomeRowItem implements PartneredInterface
         }
 
         if ($this->getItemType()) {
-            return ucfirst($this->getItemType() . ' \'' . $label . '\'');
+            return ucfirst($this->getItemType() . ' \'' . $label. '\'');
         } else {
             return $label;
         }
@@ -474,7 +474,7 @@ class HomeRowItem implements PartneredInterface
         return $this;
     }
 
-        /**
+    /**
      * @return \DateTime
      */
     public function getUpdatedAt(): ?\DateTime

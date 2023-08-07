@@ -3,11 +3,7 @@
   <div class="text-white">
     <template v-if="settings.rows && settings.rows.length">
       <div v-for="(row, index) in settings.rows" :key="row.id">
-        <component
-          :is="row.componentName"
-          :settings="row"
-          :rowPosition="index"
-        ></component>
+        <component :is="row.componentName" :settings="row" :rowPosition="index"></component>
       </div>
     </template>
     <div v-else>
@@ -27,52 +23,33 @@
       </template>
       <!--      <component v-else :is="defaultSkeleton"></component>-->
     </div>
-    <Modal
-      v-model="modal"
-      no-close-on-backdrop
-      ok-title="Continue anyway"
-      @ok="handleCloseModal"
-    >
-      <div class="text-center p-0 md:p-5">
-        <div class="mb-4 text-grey-400 text-lg mx-auto max-w-[300px]">
-          Sign into
-          <span class="">
-            <span
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-purple underline"
-              @click="handleLogin"
-            >
-              twitch.tv
-            </span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 15 15"
-              class=" inline-block"
-            >
-              <path
-                fill="currentColor"
-                fill-rule="evenodd"
-                d="M3 2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V8.5a.5.5 0 0 0-1 0V12H3V3h3.5a.5.5 0 0 0 0-1H3Zm9.854.146a.5.5 0 0 1 .146.351V5.5a.5.5 0 0 1-1 0V3.707L6.854 8.854a.5.5 0 1 1-.708-.708L11.293 3H9.5a.5.5 0 0 1 0-1h3a.499.499 0 0 1 .354.146Z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </span>
-          for best viewing experience
-        </div>
-        <div class="mb-4">
-          <video autoplay muted loop width="100%" playsinline>
+    <Modal v-model="modal" @update:modelValue="handleModalUpdate" no-close-on-backdrop ok-title="Continue anyway"
+      @ok="handleCloseModal">
+      <div class="flex flex-col md:flex-row items-center justify-start">
+        <div class="w-full md:w-1/3 flex items-center justify-center md:justify-start">
+          <video autoplay="autoplay" muted="muted" loop="loop" playsinline="" class="h-full md:w-full object-cover">
             <source
               src="https://gamersx-dev-dev-us-west-1-storage.s3.us-west-1.amazonaws.com/Experience+Popup+1+Iteration+(720).mp4"
-              type="video/mp4"
-            />
+              type="video/mp4">
           </video>
         </div>
-        <p>
-          An active session in the background will avoid interruptions..
-        </p>
+        <div class="flex-grow flex flex-col items-center justify-center md:justify-start xs:p-4 md:p-0 md:m-2">
+          <div class="text-xl xl:text-2xl text-center md:text-left xs:mb-2 sm:mb-2 md:mb-4 lg:mb-6">
+            Skip the breaks* when you login with Twitch
+          </div>
+          <div class="flex justify-center space-x-1 sm:space-x-4 md:justify-start xs:mt-2 sm:mt-6 md:mt-4 lg:mt-6">
+            <button @click="handleCloseModal"
+              class="elementor-button-x text-xxs xs:text-xxs sm:text-xs md:text-sm lg:text-sm xl:text-xl xxl:text-lg mx-2 sm:py-0 h-7 sm:h-10 xxs:px-0 xs:px-1 md:px-6">
+              <span class="elementor-button-text">Watch With Breaks</span>
+            </button>
+            <a href="api/twitch-login" @click="handleTwitchLogin" role="button" onmouseover="changeBtnColor(event)"
+              onmouseout="changeNormalBtnColor(event)"
+              class="flex items-center elementor-button text-xxs xs:text-xxs sm:text-xs md:text-sm lg:text-sm xl:text-xl xxl:text-lg mx-2 sm:py-0 h-7 sm:h-10 xxs:px-0 xs:-x-1 md:px-6">
+              <span class="elementor-button-text">Login With Twitch</span>
+              <img src="/images/twitch-icon-white.png" class="ml-2 w-2.5 h-2.5 sm:w-5 sm:h-5 twitch-btn-icon">
+            </a>
+          </div>
+        </div>
       </div>
     </Modal>
   </div>
@@ -135,7 +112,7 @@ export default {
       loading: ClassicLgSkeleton
     })
   },
-  data: function() {
+  data: function () {
     return {
       modal: false,
       settings: {
@@ -176,56 +153,68 @@ export default {
           this.settings = response.data.settings;
         });
     },
-    requestSessionsApi: function () {
-      axios.get("/home/sessions/api")
-        .catch(e => console.error(e))
-        .then(response => {
-          if (response.data.isLoggedIn && !response.data.isRequiredToLoginTwitch) {
-            this.modal = false;
-          } else {
-            this.modal = true;
-          }
-        });
+    requestSessionsApi() {
+      return new Promise((resolve, reject) => {
+        if (!Cookies.get("twitch_")) {
+          axios.get("/home/sessions/api")
+            .then(response => {
+              if (response.data.isLoggedIn && !response.data.isRequiredToLoginTwitch) {
+                this.modal = false;
+              } else {
+                // Immediately after setting `modal` to `true`, request Vue to wait for next DOM update cycle
+                this.$nextTick(() => {
+                  this.modal = false; //false here will disable the modal entirely, helpful to disable when developing
+                });
+              }
+              resolve(response);
+            })
+            .catch(error => {
+              console.error(error);
+              reject(error);
+            })
+        } else {
+          resolve();
+        }
+      });
+    },
+    handleModalUpdate(val) {
+      // This condition avoids abruptly removing DOM in Modal when directly changing v-model value.
+      if (!val) {
+        setTimeout(() => {
+          this.modal = false;
+        }, 500);
+      } else {
+        this.modal = true;
+      }
     },
     handleCloseModal() {
       // 24 hours
       Cookies.set("twitch_", "demo", { expires: 1 });
       this.modal = false;
+      this.handleModalUpdate(false);
     },
-    handleLogin() {
+    handleTwitchLogin() {
       // 24 hours
       Cookies.set("twitch_", "demo", { expires: 1 });
-      window.open("https://twitch.tv/login", "_blank");
-    },
-    requestSessionsApi: function () {
-      const cookie = Cookies.get("twitch_");
-      if (cookie) return
-      axios.get("/home/sessions/api")
-        .catch(e => console.error(e))
-        .then(response => {
-          if (response.data.isLoggedIn && !response.data.isRequiredToLoginTwitch) {
-            this.modal = false;
-          } else {
-            this.modal = true;
-          }
-        });
+      this.modal = false;
+      this.handleModalUpdate(false);
     },
   },
-  mounted: function() {
+  mounted: function () {
     this.requestSessionsApi();
-    this.requestHomeCachedRowsApi().then(()=>{
+    this.requestHomeCachedRowsApi().then(() => {
       this.requestHomeApi();
     });
     this.pollingApiData = window.setInterval(() => {
       this.requestHomeApi();
     }, this.requestPollingDelay);
   },
-  destroyed: function() {
+  destroyed: function () {
     window.clearInterval(this.pollingApiData);
   }
 };
 /** We use this a lot for scrolling because JS % is remainder, not modulo **/
-Number.prototype.mod = function(n) {
+Number.prototype.mod = function (n) {
   return ((this % n) + n) % n;
 };
 </script>

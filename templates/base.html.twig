@@ -119,16 +119,18 @@
 								</div>
 							</div>
                             #}
+                        {% if  app.request.schemeAndHttpHost != "https://m.gamersx.tv" %}
 							{% if isLoggedIn and  isRequiredToLoginTwitch == false %}
 							<a href="https://www.twitch.tv/settings/profile" class="hidden xl:block">
 								<img src="{{ twitchUserInfo['profile_image_url'] }}" class="twitch-profile-picture">
 							</a>
 							{% else %}
-							<a href="api/twitch-login" class="flex items-center elementor-button text-[5px] sm:text-base py-1 px-2 sm:py-0 sm:px-[40px] h-7 sm:h-10 " role="button" onmouseover="changeBtnColor()" onmouseout="changeNormalBtnColor()">								
+							<a href="api/twitch-login" class="flex items-center elementor-button text-[5px] sm:text-base py-1 px-2 sm:py-0 sm:px-[40px] h-7 sm:h-10 " role="button" onmouseover="changeBtnColor()" onmouseout="changeNormalBtnColor()">
 								<span class="elementor-button-text">Login With Twitch</span>
-								<img src="/images/twitch-icon-white.png" class="ml-2 w-2.5 h-2.5 sm:w-5 sm:h-5" id="twitch-btn-icon">							
+								<img src="/images/twitch-icon-white.png" class="ml-2 w-2.5 h-2.5 sm:w-5 sm:h-5" id="twitch-btn-icon">
 							</a>
 							{% endif %}
+                        {% endif %}
 							{#
 							<button class="jsOpenBurgerButton block xl:hidden w-7 md:w-11 shrink-0">
 								<span class="block h-0.75 w-full bg-purple"></span>
@@ -269,16 +271,16 @@
 			document.getElementById("toast-warning").style.display = "none";
 		}
 
-		function changeBtnColor() {
-			$imgForBtn = document.getElementById("twitch-btn-icon");
+		function changeBtnColor(event) {
+			var $imgForBtn = event.currentTarget.querySelector(".twitch-btn-icon");
 			$imgForBtn.setAttribute("src", "/images/twitch-icon-black.png");
 		}
 
-		function changeNormalBtnColor() {
-			$imgForBtn = document.getElementById("twitch-btn-icon");
+		function changeNormalBtnColor(event) {
+			var $imgForBtn = event.currentTarget.querySelector(".twitch-btn-icon");
 			$imgForBtn.setAttribute("src", "/images/twitch-icon-white.png");
 		}
-		
+
         /*
         window.onload = function () {
             const draggableRows = document.getElementsByClassName('custom-smooth-scroll');
@@ -315,10 +317,8 @@
          */
     </script>
     <script>
-        {% set not_mobile_domain = redirect_url not in app.request.schemeAndHttpHost %}
-        if ({{ not_mobile_domain }} && navigator.userAgent.toLowerCase().match(/mobile/i)) {
-            if ("{{ app.environment }}" !== "dev")
-                window.location.replace("{{ redirect_url }}");
+        if ("{{ app.environment }}" != "dev" && "{{ app.request.schemeAndHttpHost }}" == "https://gamersx.tv"  && navigator.userAgent.toLowerCase().match(/mobile/i)){
+            window.location.replace("{{ redirect_url }}");
         }
     </script>
 	</html>
