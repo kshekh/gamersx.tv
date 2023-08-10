@@ -267,7 +267,7 @@
                                     </div>
                                     <div id="header_background_response">
                                         {% set header_background = get_theme_setting_array['header_background']??'' %}
-                                        <img src="{{ asset('images/'~header_background) }}" class="{{ (header_background=='')?'none':'' }}">
+                                        <a href="{{ asset('images/'~header_background) }}" class="btn_preview_image {{ (header_background=='')?'hide':'' }}">View Image</a>
                                     </div>
                                 </div>
                                 <div class="form-group bg_type_image hide">
@@ -276,9 +276,9 @@
                                         <input type="file" name="form[body_background]" class="form-control" accept="image/*">
                                         <span class="errors error-bodybackground"></span>
                                     </div>
-                                    <div id="header_background_response">
+                                    <div id="body_background_response">
                                         {% set body_background = get_theme_setting_array['body_background']??'' %}
-                                        <img src="{{ asset('images/'~body_background) }}" class="{{ (body_background=='')?'none':'' }}">
+                                        <a href="{{ asset('images/'~body_background) }}" class="btn_preview_image {{ (body_background=='')?'hide':'' }}">View Image</a>
                                     </div>
                                 </div>
                                 <div class="form-group bg_type_image hide">
@@ -287,9 +287,9 @@
                                         <input type="file" name="form[footer_background]" class="form-control" accept="image/*">
                                         <span class="errors error-footerbackground"></span>
                                     </div>
-                                    <div id="header_background_response">
+                                    <div id="footer_background_response">
                                         {% set footer_background = get_theme_setting_array['footer_background']??'' %}
-                                        <img src="{{ asset('images/'~footer_background) }}" class="{{ (footer_background=='')?'none':'' }}">
+                                        <a href="{{ asset('images/'~footer_background) }}" class="btn_preview_image {{ (footer_background=='')?'hide':'' }}">View Image</a>
                                     </div>
                                 </div>
                                 <div class="form-group bg_type_color hide">
@@ -404,13 +404,33 @@
                                     </div>
                                     <div id="header_logo_response">
                                         {% set header_logo = get_theme_setting_array['header_logo']??'' %}
-                                        <img src="{{ asset('images/'~header_logo) }}" class="{{ (header_logo=='')?'none':'' }}">
+                                        <a href="{{ asset('images/'~header_logo) }}" class="btn_preview_image {{ (header_logo=='')?'hide':'' }}">View Image</a>
                                     </div>
                                 </div>
                             </div>
                             <button class="btn btn-success" type="submit" id="btn_save" ><i class="fa fa-save" aria-hidden="true"></i> Save</button>
                             <div id="response_msg"></div>
                         </form>
+
+                        <div class="modal fade" id="previewImageModal" tabindex="-1" role="dialog" aria-labelledby="previewImageModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <h5 class="modal-title" id="previewImageModalLabel"></h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        <img id="preview_img" src="" class="img-responsive">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -460,6 +480,15 @@
                 }
             });
 
+            $(".btn_preview_image ").click(function(e){
+                e.preventDefault();
+                $("#previewImageModal").modal('show');
+                let preview_img = $(this).attr('href');
+                let image_label = $(this).closest('.form-group').find('label').text();
+                $("#previewImageModalLabel").text(image_label);
+                $("#preview_img").attr('src',preview_img);
+            });
+
             $("#frm_theme_setting").on('submit',function(e){
                 e.preventDefault();
                 $(".content-wrapper .content").find('.alert').remove();
@@ -485,22 +514,26 @@
                         if(response.status == 1 ) {
                             $(".content-wrapper .content").prepend('<div class="alert alert-success alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true" aria-label="Close">×</button>'+response.msg+'</div>');
                             if(response.data.header_background != '') {
-                                $("#header_background_response img").attr('src',response.data.header_background);
-                                $("#header_background_response img").removeClass('none');
+                                $("#header_background_response a").attr('href',response.data.header_background);
+                                $("#header_background_response a").removeClass('hide');
                             }
                             if(response.data.body_background != '') {
-                                $("#body_background_response img").attr('src',response.data.body_background);
-                                $("#body_background_response img").removeClass('none');
+                                $("#body_background_response a").attr('href',response.data.body_background);
+                                $("#body_background_response a").removeClass('hide');
                             }
                             if(response.data.footer_background != '') {
-                                $("#footer_background_response img").attr('src',response.data.footer_background);
-                                $("#footer_background_response img").removeClass('none');
+                                $("#footer_background_response a").attr('href',response.data.footer_background);
+                                $("#footer_background_response a").removeClass('hide');
                             }
                             if(response.data.header_logo != '') {
-                                $("#header_logo_response img").attr('src',response.data.header_logo);
-                                $("#header_logo_response img").removeClass('none');
+                                $("#header_logo_response a").attr('href',response.data.header_logo);
+                                $("#header_logo_response a").removeClass('hide');
                             }
                             $("html, body").animate({ scrollTop: 0 }, "slow");
+                            $("input[name='form[header_logo]']").val('');
+                            $("input[name='form[header_background]']").val('');
+                            $("input[name='form[body_background]']").val('');
+                            $("input[name='form[footer_background]']").val('');
                         }
 
                         if(response.status == 0 ) {

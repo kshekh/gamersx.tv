@@ -32,21 +32,23 @@
         {% for ts_data in get_theme_setting %}
             {% set get_theme_setting_array = get_theme_setting_array|merge({ (ts_data.name) :ts_data.value}) %}
         {% endfor %}
+        {% set site_header_background = (get_theme_setting_array['header_background'] is defined and get_theme_setting_array['header_background']!='')? asset('images/'~get_theme_setting_array['header_background']):'' %}
+        {% set site_body_background = (get_theme_setting_array['body_background'] is defined and get_theme_setting_array['body_background']!='')? asset('images/'~get_theme_setting_array['body_background']):'' %}
+        {% set site_footer_background = (get_theme_setting_array['footer_background'] is defined and get_theme_setting_array['footer_background']!='')? asset('images/'~get_theme_setting_array['footer_background']): asset('images/footer-border.png') %}
+        {% set background_type = get_theme_setting_array['background_type']??'' %}
+        {% set font_type = get_theme_setting_array['font_type']??'' %}
         <style>
             :root {
                 --site_header_color: {{ (get_theme_setting_array['header_color'] is defined and get_theme_setting_array['header_color']!='')?get_theme_setting_array['header_color']:'black' }};
                 --site_body_color: {{ (get_theme_setting_array['body_color'] is defined and get_theme_setting_array['body_color']!='')?get_theme_setting_array['body_color']:'black' }};
                 --site_footer_color: {{ (get_theme_setting_array['footer_color'] is defined and get_theme_setting_array['footer_color']!='')?get_theme_setting_array['footer_color']:'black' }};
-                --site_header_background: {{ (get_theme_setting_array['header_background'] is defined and get_theme_setting_array['header_background']!='')? 'images/'~get_theme_setting_array['header_background']:'' }};
-                --site_body_background: {{ (get_theme_setting_array['body_background'] is defined and get_theme_setting_array['body_background']!='')? 'images/'~get_theme_setting_array['body_background']:'' }};
-                --site_footer_background: {{ (get_theme_setting_array['footer_background'] is defined and get_theme_setting_array['footer_background']!='')? 'images/'~get_theme_setting_array['footer_background']:'' }};
                 --site_color: {{ (get_theme_setting_array['color'] is defined and get_theme_setting_array['color']!='')?get_theme_setting_array['color']:'white' }};
                 --site_border_color: {{ (get_theme_setting_array['border_color'] is defined and get_theme_setting_array['border_color']!='')?get_theme_setting_array['border_color']:'#6441A5' }};
                 --site_border_width: {{ (get_theme_setting_array['border'] is defined and get_theme_setting_array['border']!='')?get_theme_setting_array['border']:'1' }}px;
-                --border_radius_top_left: {{ (get_theme_setting_array['border_radius_top_left'] is defined and get_theme_setting_array['border_radius_top_left']!='')?get_theme_setting_array['border_radius_top_left']:'0' }}px;
-                --border_radius_top_right: {{ (get_theme_setting_array['border_radius_top_right'] is defined and get_theme_setting_array['border_radius_top_right']!='')?get_theme_setting_array['border_radius_top_right']:'0' }}px;
-                --border_radius_bottom_right: {{ (get_theme_setting_array['border_radius_bottom_right'] is defined and get_theme_setting_array['border_radius_bottom_right']!='')?get_theme_setting_array['border_radius_bottom_right']:'0' }}px;
-                --border_radius_bottom_left: {{ (get_theme_setting_array['border_radius_bottom_left'] is defined and get_theme_setting_array['border_radius_bottom_left']!='')?get_theme_setting_array['border_radius_bottom_left']:'0' }}px;
+                --border_radius_top_left: {{ (get_theme_setting_array['border_radius_top_left'] is defined and get_theme_setting_array['border_radius_top_left']!='')?get_theme_setting_array['border_radius_top_left']:'20' }}px;
+                --border_radius_top_right: {{ (get_theme_setting_array['border_radius_top_right'] is defined and get_theme_setting_array['border_radius_top_right']!='')?get_theme_setting_array['border_radius_top_right']:'5' }}px;
+                --border_radius_bottom_right: {{ (get_theme_setting_array['border_radius_bottom_right'] is defined and get_theme_setting_array['border_radius_bottom_right']!='')?get_theme_setting_array['border_radius_bottom_right']:'20' }}px;
+                --border_radius_bottom_left: {{ (get_theme_setting_array['border_radius_bottom_left'] is defined and get_theme_setting_array['border_radius_bottom_left']!='')?get_theme_setting_array['border_radius_bottom_left']:'20' }}px;
                 --site_font_family: {{ (get_theme_setting_array['font_family'] is defined and get_theme_setting_array['font_family']!='')?get_theme_setting_array['font_family']:'' }};
                 --site_remote_font_name: {{ (get_theme_setting_array['remote_font_name'] is defined and get_theme_setting_array['remote_font_name']!='')?get_theme_setting_array['remote_font_name']:'' }};
                 --site_arrow_color: {{ (get_theme_setting_array['arrow_color'] is defined and get_theme_setting_array['arrow_color']!='')?get_theme_setting_array['arrow_color']:'#fff' }};
@@ -54,10 +56,18 @@
             .text-white,.text-stroke, .text-grey, .elementor-button-text {
                 color: var(--site_color);
             }
-            .elementor-button {
-                border-color: var(--site_border_color);
+            .elementor-button, .elementor-button-x, .query_input {
+                border-style: solid;
+                border-color: var(--site_border_color) !important;
                 border-width: var(--site_border_width);
                 border-radius: var(--border_radius_top_left) var(--border_radius_top_right) var(--border_radius_bottom_right) var(--border_radius_bottom_left);
+            }
+
+            .query_input > button > svg > path {
+                fill: var(--site_color);
+            }
+            .query_input:after {
+                background-color: unset;
             }
 
             .slider_arrow,.slider_arrow:hover {
@@ -74,34 +84,33 @@
             .slider_arrow_big > svg > path {
                 fill: var(--site_arrow_color);
             }
-            {% if(get_theme_setting_array['background_type'] is defined) %}
-                {% if(get_theme_setting_array['background_type'] == 'color') %}
-                    #app-home, .bg-black {
-                        background-color: var(--site_body_color);
-                    }
-                    header {
-                        background-color: var(--site_header_color);
-                    }
-                    footer {
-                        background-color: var(--site_footer_color);
-                    }
-                {% elseif(get_theme_setting_array['background_type'] == 'image') %}
-                    header {
-                      background-image: var(--site_header_background);
-                      background-size: 100% 100%;
-                      background-repeat: no-repeat;
-                    }
-                    #app-home, .bg-black {
-                      background-image: var(--site_body_background);
-                      background-size: 100% 100%;
-                      background-repeat: no-repeat;
-                    }
-                    footer {
-                      background-image: var(--site_footer_background);
-                      background-size: 100% 100%;
-                      background-repeat: no-repeat;
-                    }
-                {% endif %}
+            {% if(background_type == 'color') %}
+                #app-home {
+                    background-color: var(--site_body_color);
+                }
+                header {
+                    background-color: var(--site_header_color);
+                }
+                footer {
+                    background-color: var(--site_footer_color);
+                }
+            {% elseif(background_type == 'image') %}
+                header {
+                  background-image: url({{ site_header_background }});
+                  background-size: 100% 100%;
+                  background-repeat: no-repeat;
+                }
+                #app-home {
+                  background-image: url({{ site_body_background }});
+                  background-size: cover;
+                  background-repeat: no-repeat;
+                  background-position: center;
+                }
+                footer {
+                  background-image: url({{ site_footer_background }});
+                  background-size: 100% 100%;
+                  background-repeat: no-repeat;
+                }
             {% endif %}
 
             .custom-smooth-scroll {
@@ -117,23 +126,21 @@
             }
         </style>
 
-        {% if(get_theme_setting_array['font_type'] is defined) %}
-            {% if(get_theme_setting_array['font_type'] == 'remote' and get_theme_setting_array['remote_font_url'] is defined and get_theme_setting_array['remote_font_url'] !='') %}
-                <link rel="preconnect" href="https://fonts.googleapis.com">
-                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-                <link href="{{ get_theme_setting_array['remote_font_url']??'' }}" rel="stylesheet">
-                <style>
-                    body {
-                        font-family: var(--site_remote_font_name);
-                    }
-                </style>
-            {% elseif(get_theme_setting_array['font_type'] == 'local'  and get_theme_setting_array['font_family'] is defined and get_theme_setting_array['font_family'] !='') %}
-                <style>
-                    body {
-                        font-family: var(--site_font_family);
-                    }
-                </style>
-            {% endif %}
+        {% if(font_type == 'remote' and get_theme_setting_array['remote_font_url'] is defined and get_theme_setting_array['remote_font_url'] !='') %}
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="{{ get_theme_setting_array['remote_font_url']??'' }}" rel="stylesheet">
+            <style>
+                body {
+                    font-family: var(--site_remote_font_name);
+                }
+            </style>
+        {% elseif(font_type == 'local'  and get_theme_setting_array['font_family'] is defined and get_theme_setting_array['font_family'] !='') %}
+            <style>
+                body {
+                    font-family: var(--site_font_family);
+                }
+            </style>
         {% endif %}
 
         <!-- Meta Pixel Code -->
@@ -190,7 +197,7 @@
 							<div class="w-full xl:max-w-xs
 								mr-9 md:mr-24 xl:mr-8
 								cut-edge__wrapper">
-								<div class="h-7 md:h-8 xl:h-9 cut-edge__clipped cut-edge__clipped--md-border cut-edge__clipped--twitch cut-edge__clipped-bottom-left-md flex items-center">
+								<div class="query_input h-7 md:h-8 xl:h-9 cut-edge__clipped cut-edge__clipped--md-border cut-edge__clipped--twitch cut-edge__clipped-bottom-left-md flex items-center">
 									<input id="query"
 										class="
 										w-full bg-transparent
@@ -291,7 +298,7 @@
 				{% block body %}{% endblock %}
 			</div>
 			{% block footer %}
-				<footer class="mb-2 bg-full bg-left-bottom bg-no-repeat xl:pt-10" style="background-image: url('/images/footer-border.png')">
+				<footer class="mb-2 bg-full bg-left-bottom bg-no-repeat xl:pt-10">
 					<div>
 						<div class="px-4 md:px-6 xl:px-20 py-5 pb-3 mx-auto max-w-full-hd flex flex-col items-center md:relative md:py-10 xl:py-12">
 							<ul class="flex items-center space-x-1 mb-2 md:mb-0 md:absolute md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 md:space-x-2 xl:space-x-4">
