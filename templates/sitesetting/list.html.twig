@@ -457,7 +457,7 @@
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                        <h5 class="modal-title" id="previewImageModalLabel"></h5>
+                                        <h5 class="modal-title" id="previewImageModalLabel">Selected Background</h5>
                                     </div>
                                     <div class="modal-body">
                                         <img id="preview_img" src="" class="img-responsive">
@@ -544,8 +544,6 @@
             e.preventDefault();
             $("#previewImageModal").modal('show');
             let preview_img = $(this).attr('href');
-            let image_label = $(this).closest('.form-group').find('label').text();
-            $("#previewImageModalLabel").text(image_label);
             $("#preview_img").attr('src',preview_img);
         });
 
