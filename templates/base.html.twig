@@ -35,7 +35,9 @@
         {% set site_header_background = (get_theme_setting_array['header_background'] is defined and get_theme_setting_array['header_background']!='')? asset('images/'~get_theme_setting_array['header_background']):'' %}
         {% set site_body_background = (get_theme_setting_array['body_background'] is defined and get_theme_setting_array['body_background']!='')? asset('images/'~get_theme_setting_array['body_background']):'' %}
         {% set site_footer_background = (get_theme_setting_array['footer_background'] is defined and get_theme_setting_array['footer_background']!='')? asset('images/'~get_theme_setting_array['footer_background']): asset('images/footer-border.png') %}
-        {% set background_type = get_theme_setting_array['background_type']??'' %}
+        {% set header_background_type = get_theme_setting_array['header_background_type']??'' %}
+        {% set body_background_type = get_theme_setting_array['body_background_type']??'' %}
+        {% set footer_background_type = get_theme_setting_array['footer_background_type']??'' %}
         {% set font_type = get_theme_setting_array['font_type']??'' %}
         <style>
             :root {
@@ -84,32 +86,40 @@
             .slider_arrow_big > svg > path {
                 fill: var(--site_arrow_color);
             }
-            {% if(background_type == 'color') %}
-                #app-home {
-                    background-color: var(--site_body_color);
-                }
+            {% if(header_background_type == 'color') %}
                 header {
                     background-color: var(--site_header_color);
                 }
-                footer {
-                    background-color: var(--site_footer_color);
-                }
-            {% elseif(background_type == 'image') %}
+            {% elseif(header_background_type == 'image') %}
                 header {
                   background-image: url({{ site_header_background }});
                   background-size: 100% 100%;
                   background-repeat: no-repeat;
                 }
+            {% endif %}
+
+            {% if(body_background_type == 'color') %}
                 #app-home {
-                  background-image: url({{ site_body_background }});
-                  background-size: cover;
-                  background-repeat: no-repeat;
-                  background-position: center;
+                    background-color: var(--site_body_color);
                 }
+            {% elseif(body_background_type == 'image') %}
+                #app-home {
+                    background-image: url({{ site_body_background }});
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    background-position: center;
+                }
+            {% endif %}
+
+            {% if(footer_background_type == 'color') %}
                 footer {
-                  background-image: url({{ site_footer_background }});
-                  background-size: 100% 100%;
-                  background-repeat: no-repeat;
+                    background-color: var(--site_footer_color);
+                }
+            {% elseif(footer_background_type == 'image') %}
+                footer {
+                    background-image: url({{ site_footer_background }});
+                    background-size: 100% 100%;
+                    background-repeat: no-repeat;
                 }
             {% endif %}
 

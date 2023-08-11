@@ -58,7 +58,7 @@ class ThemeSettingValidator
             ];
         }
 
-        if(isset($requestParams['header_background'])) {
+        if(isset($requestParams['header_background_type']) && $requestParams['header_background_type']=='image' && isset($requestParams['header_background'])) {
             $validate_arr['header_background'] = [
                 new File([
                     'maxSize' => '2048k',
@@ -70,7 +70,7 @@ class ThemeSettingValidator
             ];
         }
 
-        if(isset($requestParams['body_background'])) {
+        if(isset($requestParams['body_background_type']) && $requestParams['body_background_type']=='image' && isset($requestParams['body_background'])) {
             $validate_arr['body_background'] = [
                 new File([
                     'maxSize' => '2048k',
@@ -82,7 +82,7 @@ class ThemeSettingValidator
             ];
         }
 
-        if(isset($requestParams['footer_background'])) {
+        if(isset($requestParams['footer_background_type']) && $requestParams['footer_background_type']=='image' && isset($requestParams['footer_background'])) {
             $validate_arr['footer_background'] = [
                 new File([
                     'maxSize' => '2048k',
@@ -105,13 +105,13 @@ class ThemeSettingValidator
         if(isset($requestParams['header_logo'])) {
             $req_arr['header_logo'] = $requestParams['header_logo'];
         }
-        if(isset($requestParams['header_background'])) {
+        if(isset($requestParams['header_background_type']) && $requestParams['header_background_type']=='image' && isset($requestParams['header_background'])) {
             $req_arr['header_background'] = $requestParams['header_background'];
         }
-        if(isset($requestParams['body_background'])) {
+        if(isset($requestParams['body_background_type']) && $requestParams['body_background_type']=='image' && isset($requestParams['body_background'])) {
             $req_arr['body_background'] = $requestParams['body_background'];
         }
-        if(isset($requestParams['footer_background'])) {
+        if(isset($requestParams['footer_background_type']) && $requestParams['footer_background_type']=='image' && isset($requestParams['footer_background'])) {
             $req_arr['footer_background'] = $requestParams['footer_background'];
         }
         if(isset($requestParams['font_type']) && $requestParams['font_type'] == 'remote') {
