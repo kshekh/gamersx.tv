@@ -80,7 +80,7 @@
           w-64
           md:w-48
           lg:w-60
-          xl:w-337 
+          xl:w-337
           h-48
           md:h-27
           lg:h-40
@@ -210,6 +210,9 @@ export default {
     this.$refs.channelBox.scrollLeft = 0;
   },
   updated: function() {
+    if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels)){
+      this.displayChannels = this.settings.channels.filter(this.showChannel);
+    }
     this.allowScrolling =
       this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
     this.max_scroll_left = this.$refs.channelBox.scrollWidth - this.$refs.channelBox.clientWidth;
