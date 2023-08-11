@@ -5,6 +5,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     app.theme_path: '%kernel.project_dir%/public/images/themes/'
+    app.images: '%kernel.project_dir%/public/images/'
     app.theme_url: '/images/themes/'
     app.twitch_secret: '%env(resolve:TWITCH_CLIENT_SECRET)%'
     app.twitch_id: '%env(resolve:TWITCH_CLIENT_ID)%'
@@ -71,7 +72,9 @@ services:
 
     admin.site_settings:
         class: App\Admin\SiteSettingsAdmin
-        arguments: [ ~, App\Entity\SiteSettings, ~ ]
+        arguments: [ ~, App\Entity\SiteSettings, App\Controller\ThemeSettingAdminController ]
+        calls:
+            - [ setTemplate, [ 'list', 'sitesetting/list.html.twig' ] ]
         tags:
             - { name: sonata.admin, manager_type: orm, group: admin, label: Site Settings }
         public: true
