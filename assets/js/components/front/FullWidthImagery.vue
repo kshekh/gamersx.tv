@@ -197,11 +197,11 @@ export default {
   mounted: function () {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
   },
-  // updated: function () {
-  //   if (JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels)) {
-  //     this.displayChannels = this.settings.channels.filter(this.showChannel);
-  //   }
-  // },
+  updated: function () {
+    if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels.filter(this.showChannel))){
+      this.displayChannels = this.settings.channels.filter(this.showChannel);
+    }
+  },
 };
 </script>
 <style scoped></style>

@@ -249,7 +249,7 @@ export default {
     this.$refs.channelBox.scrollLeft = 0;
   },
   updated: function() {
-    if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels)){
+    if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels.filter(this.showChannel))){
       this.displayChannels = this.settings.channels.filter(this.showChannel);
     }
     this.allowScrolling =
