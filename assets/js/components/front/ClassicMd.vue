@@ -210,9 +210,9 @@ export default {
     this.$refs.channelBox.scrollLeft = 0;
   },
   updated: function() {
-    // if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels)){
-    //   this.displayChannels = this.settings.channels.filter(this.showChannel);
-    // }
+    if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels)){
+      this.displayChannels = this.settings.channels.filter(this.showChannel);
+    }
     this.allowScrolling =
       this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
     this.max_scroll_left = this.$refs.channelBox.scrollWidth - this.$refs.channelBox.clientWidth;
