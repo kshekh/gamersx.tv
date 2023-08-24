@@ -11,3 +11,29 @@ terms:
 
         # whether or not caching should apply for client caches only
         private: true
+privacy_policy:
+    path:          /privacy-policy
+    controller:    Symfony\Bundle\FrameworkBundle\Controller\TemplateController
+    defaults:
+        # the path of the template to render
+        template:  'static/privacy_policy.html.twig'
+
+        # special options defined by Symfony to set the page cache
+        maxAge:    86400
+        sharedAge: 86400
+
+        # whether or not caching should apply for client caches only
+        private: true
+cookie_consent:
+    path:          /cookie-consent
+    controller:    Symfony\Bundle\FrameworkBundle\Controller\TemplateController
+    defaults:
+        # the path of the template to render
+        template:  'static/cookie_consent.html.twig'
+
+        # special options defined by Symfony to set the page cache
+        maxAge:    86400
+        sharedAge: 86400
+
+        # whether or not caching should apply for client caches only
+        private: true
