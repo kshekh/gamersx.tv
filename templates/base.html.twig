@@ -72,16 +72,9 @@
                 background-color: unset;
             }
 
-            .slider_arrow,.slider_arrow:hover {
-                border-color: var(--site_border_color);
-                border-width: var(--site_border_width);
-            }
             .slider_arrow > svg > path {
                 fill: var(--site_arrow_color);
                 stroke: var(--site_arrow_color);
-            }
-            .slider_arrow_big > svg > g {
-                color: var(--site_border_color);
             }
             .slider_arrow_big > svg > path {
                 fill: var(--site_arrow_color);
@@ -99,11 +92,11 @@
             {% endif %}
 
             {% if(body_background_type == 'color') %}
-                #app-home {
+                #app-body {
                     background-color: var(--site_body_color);
                 }
             {% elseif(body_background_type == 'image') %}
-                #app-home {
+                #app-body {
                     background-image: url({{ site_body_background }});
                     background-size: cover;
                     background-repeat: no-repeat;
@@ -304,7 +297,7 @@
 					{% endfor %}
 				</div>
 			{% endblock %}
-			<div class="w-full mx-auto flex-grow">
+			<div id="app-body" class="w-full mx-auto flex-grow">
 				{% block body %}{% endblock %}
 			</div>
 			{% block footer %}
