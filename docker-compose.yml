@@ -25,7 +25,7 @@ services:
       - 6379:6379
     networks:
       - gamersx
-      
+
   vue:
     container_name: gamersx-js
     # image: node:lts-alpine
@@ -46,7 +46,7 @@ services:
   php:
     container_name: gamersx-php
     depends_on:
-      - mysql 
+      - mysql
       - redis
     build:
       context: .
@@ -85,6 +85,7 @@ services:
     ports:
       - 80:80
     volumes:
+      - ./public/images/:/var/www/html/public/images/
       - ./public/build/:/var/www/html/public/build/
       # - ./docker/nginx:/etc/nginx/conf.d/
     networks:
