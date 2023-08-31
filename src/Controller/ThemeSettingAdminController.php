@@ -73,7 +73,7 @@ class ThemeSettingAdminController extends CRUDController
         $getMasterTheme = $this->em->getRepository(MasterTheme::class)->findAll();
         if(empty($getMasterTheme)) {
             $masterTheme = new MasterTheme();
-            $masterTheme->setName('Default Theme');
+            $masterTheme->setName('Default');
             $masterTheme->setStatus(1);
             $this->em->persist($masterTheme);
             $this->em->flush();
@@ -134,7 +134,16 @@ class ThemeSettingAdminController extends CRUDController
         } else {
 
             // get default theme data for assignment
-            $selectedTheme = $this->em->getRepository(MasterTheme::class)->findOneBy(['name'=> 'Default Theme']);
+            $selectedTheme = $this->em->getRepository(MasterTheme::class)->findOneBy(['name'=> 'Default']);
+
+            if(empty($selectedTheme)) {
+                $masterTheme = new MasterTheme();
+                $masterTheme->setName('Default');
+                $masterTheme->setStatus(1);
+                $this->em->persist($masterTheme);
+                $this->em->flush();
+                $selectedTheme =  $masterTheme;
+            }
 
             // getting selected theme data in assigning it to default theme
             $getMasterSetting = $this->em->getRepository(MasterSetting::class)->findBy(['master_theme' => $theme_id]);
@@ -219,7 +228,6 @@ class ThemeSettingAdminController extends CRUDController
                         $file_header_background_temp_src = $getfile->getPathname(); // The S3 object key
                         // Upload the file to S3
                         $return = $awsS3Service->uploadFile($bucketName, $field_value, $file_header_background_temp_src);
-                        dd($return);
                     }
                     if ($field_name == 'font_family') {
                         $field_value = @implode(',',$field_value);
@@ -265,7 +273,13 @@ class ThemeSettingAdminController extends CRUDController
                 }
                 $return_data[$setting_name] = $setting_value;
             }
-            $return = ['status'=> 1,'msg'=>'Theme setting saved.','data'=>$return_data];
+            $msg = '';
+            if($action_type == 'apply') {
+                $msg = '"'.$selectedTheme->getName().'" theme has been applied successfully.';
+            } else {
+                $msg = 'Default theme settings has been applied successfully.';
+            }
+            $return = ['status'=> 1,'msg'=>$msg,'data'=>$return_data];
         }
         catch (\Exception $e) {
             $return = ['status'=> 0,'msg'=> $e->getMessage()];
@@ -293,7 +307,7 @@ class ThemeSettingAdminController extends CRUDController
                 $this->em->persist($masterTheme);
                 $this->em->flush();
                 $return_data = ['id' => $masterTheme->getId(),'name' => $masterTheme->getName()];
-                $return = ['status'=> 1,'msg'=> 'Theme saved','data'=>$return_data];
+                $return = ['status'=> 1,'msg'=> '"'.$masterTheme->getName().'" theme saved successfully. To apply in front, select and click on apply button.','data'=>$return_data];
             }
         } else {
             $return = ['errors'=> ['themename'=>'The theme name is required.']];

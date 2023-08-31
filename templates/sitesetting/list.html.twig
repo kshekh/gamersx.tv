@@ -276,7 +276,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-md-2 form-group mt-5">
-                                                            <button class="btn btn-success" type="button" data-action_type="apply" id="btn_apply_theme" ><i class="fa fa-save" aria-hidden="true"></i> Apply</button>
+                                                            <button class="btn btn-success mt-2" type="button" data-action_type="apply" id="btn_apply_theme" ><i class="fa fa-save" aria-hidden="true"></i> Apply</button>
                                                         </div>
                                                     </div>
                                                     <div class="tab-pane" id="custom-tabs-save" role="tabpanel" aria-labelledby="custom-tabs-save-tab">
@@ -290,7 +290,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-md-2 form-group mt-5">
-                                                            <button class="btn btn-success" type="button" id="btn_save_theme"><i class="fa fa-save" aria-hidden="true"></i> Save</button>
+                                                            <button class="btn btn-success mt-2" type="button" id="btn_save_theme"><i class="fa fa-save" aria-hidden="true"></i> Save</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -699,9 +699,12 @@
                 contentType: false,
                 processData: false,
                 beforeSend:function () {
+                    $("#btn_apply_theme").attr('disabled',true);
+                    $("#btn_without_preset").attr('disabled',true);
+                    $("#btn_save_theme").attr('disabled',true);
                 },
                 success:function (response) {
-                    $("#btn_save").removeAttr('disabled');
+                    $("#btn_apply_theme").removeAttr('disabled');
                     $("#btn_without_preset").removeAttr('disabled');
                     $("#btn_save_theme").removeAttr('disabled');
                     if(response.errors) {
@@ -767,18 +770,24 @@
                             $("#opt_header_background_color").iCheck('check');
                         } else if(response.data.header_background_type && response.data.header_background_type == 'image') {
                             $("#opt_header_background_image").iCheck('check');
+                        } else {
+                            $("#opt_header_background_color").iCheck('check');
                         }
 
                         if(response.data.body_background_type && (response.data.body_background_type == '' || response.data.body_background_type == 'color')) {
                             $("#opt_body_background_color").iCheck('check');
                         } else if(response.data.body_background_type && response.data.body_background_type == 'image') {
                             $("#opt_body_background_image").iCheck('check');
+                        } else {
+                            $("#opt_body_background_color").iCheck('check');
                         }
 
                         if(response.data.footer_background_type && (response.data.footer_background_type == '' || response.data.footer_background_type == 'color')) {
                             $("#opt_footer_background_color").iCheck('check');
                         } else if(response.data.footer_background_type && response.data.footer_background_type == 'image') {
                             $("#opt_footer_background_image").iCheck('check');
+                        } else {
+                            $("#opt_footer_background_color").iCheck('check');
                         }
 
                         if(response.data.font_type && (response.data.font_type == '' || response.data.font_type == 'local')) {
@@ -793,6 +802,8 @@
                         } else if(response.data.font_type && response.data.font_type == 'remote') {
                             $("#opt_font_remote").iCheck('check');
                             $("input[name='form[remote_font_url]']").val(response.data.remote_font_url);
+                        }  else {
+                            $("#opt_font_local").iCheck('check');
                         }
 
 
@@ -934,6 +945,7 @@
                 dataType:'JSON',
                 data: {theme_name:theme_name},
                 beforeSend:function () {
+                    $("#btn_save_theme").attr('disabled',true);
                 },
                 success:function (response) {
                     $("#btn_save_theme").removeAttr('disabled');
