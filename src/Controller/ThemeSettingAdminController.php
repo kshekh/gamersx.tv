@@ -3,9 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\MasterSetting;
+use App\Entity\MasterTheme;
+use App\Service\AwsS3Service;
 use App\Service\ThemeSettingValidator;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\{HeaderUtils,
+use Symfony\Component\HttpFoundation\{File\UploadedFile,
+    HeaderUtils,
     JsonResponse,
     Request,
     Response,
@@ -13,6 +16,13 @@ use Symfony\Component\HttpFoundation\{HeaderUtils,
     RedirectResponse};
 use Sonata\AdminBundle\Controller\CRUDController;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
+use Symfony\Component\Form\FormRenderer;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Vich\UploaderBundle\Form\Type\VichImageType;
+use Vich\UploaderBundle\Handler\UploadHandler;
+use Vich\UploaderBundle\Storage\StorageInterface;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class ThemeSettingAdminController extends CRUDController
 {
@@ -27,15 +37,141 @@ class ThemeSettingAdminController extends CRUDController
     }
 
     /**
+     * List action.
+     *
+     * @throws AccessDeniedException If access is not granted
+     *
+     * @return Response
+     */
+    public function listAction()
+    {
+        $request = $this->getRequest();
+
+        $this->assertObjectExists($request);
+
+        $this->admin->checkAccess('list');
+
+        $preResponse = $this->preList($request);
+        if (null !== $preResponse) {
+            return $preResponse;
+        }
+
+        if ($listMode = $request->get('_list_mode')) {
+            $this->admin->setListMode($listMode);
+        }
+
+        $datagrid = $this->admin->getDatagrid();
+        $formView = $datagrid->getForm()->createView();
+
+        // set the theme for the current Admin Form
+        $this->setFormTheme($formView, $this->admin->getFilterTheme());
+
+        // NEXT_MAJOR: Remove this line and use commented line below it instead
+        $template = $this->admin->getTemplate('list');
+        // $template = $this->templateRegistry->getTemplate('list');
+
+        $getMasterTheme = $this->em->getRepository(MasterTheme::class)->findAll();
+        if(empty($getMasterTheme)) {
+            $masterTheme = new MasterTheme();
+            $masterTheme->setName('Default Theme');
+            $masterTheme->setStatus(1);
+            $this->em->persist($masterTheme);
+            $this->em->flush();
+            $getMasterTheme = $this->em->getRepository(MasterTheme::class)->findAll();
+        }
+
+        return $this->renderWithExtraParams($template, [
+            'action' => 'list',
+            'form' => $formView,
+            'masterThemes' => $getMasterTheme,
+            'datagrid' => $datagrid,
+            'csrf_token' => $this->getCsrfToken('sonata.batch'),
+            'export_formats' => $this->has('sonata.admin.admin_exporter.do-not-use') ?
+                $this->get('sonata.admin.admin_exporter.do-not-use')->getAvailableFormats($this->admin) :
+                $this->admin->getExportFormats(),
+        ]);
+    }
+
+    /**
+     * Sets the admin form theme to form view. Used for compatibility between Symfony versions.
+     */
+    private function setFormTheme(FormView $formView, ?array $theme = null): void
+    {
+        $twig = $this->get('twig');
+
+        $twig->getRuntime(FormRenderer::class)->setTheme($formView, $theme);
+    }
+
+    /**
      * @param $id
      */
-    public function saveThemeSettingAction(Request $request): JsonResponse
+    public function saveThemeSettingAction(Request $request,AwsS3Service $awsS3Service): JsonResponse
     {
         $data = $request->request->all();
+        $image_dir = $this->getParameter('app.images');
         $header_logo = $request->files->get('form')['header_logo'];
         $header_background = $request->files->get('form')['header_background'];
         $body_background = $request->files->get('form')['body_background'];
         $footer_background = $request->files->get('form')['footer_background'];
+        $bucketName = $this->getParameter('app.aws_s3_bucket_name');
+        $s3_custom_url = $this->getParameter('app.aws_s3_custom.uri_prefix');
+
+        $action_type = $data['action_type']??'';
+        $theme_id = $data['theme']??'';
+        $selectedTheme = null;
+        if($action_type == 'apply') {
+            // Curruent theme apply
+            $getMasterTheme = $this->em->getRepository(MasterTheme::class)->findAll();
+            foreach ($getMasterTheme as $getMasterSettingData) {
+                if($getMasterSettingData->getId() == $theme_id) {
+                    $getMasterSettingData->setStatus(1);
+                    $selectedTheme = $getMasterSettingData;
+                } else {
+                    $getMasterSettingData->setStatus(0);
+                }
+                $this->em->flush();
+            }
+        } else {
+
+            // get default theme data for assignment
+            $selectedTheme = $this->em->getRepository(MasterTheme::class)->findOneBy(['name'=> 'Default Theme']);
+
+            // getting selected theme data in assigning it to default theme
+            $getMasterSetting = $this->em->getRepository(MasterSetting::class)->findBy(['master_theme' => $theme_id]);
+            foreach ($getMasterSetting as $getMasterSettingData) {
+                if (
+                    $getMasterSettingData->getName() == 'header_background' ||
+                    $getMasterSettingData->getName() == 'body_background' ||
+                    $getMasterSettingData->getName() == 'footer_background' ||
+                    $getMasterSettingData->getName() == 'header_logo'
+                ) {
+                    $getMasterSetting = $this->em->getRepository(MasterSetting::class)->findOneBy(['name'=>$getMasterSettingData->getName(),'master_theme'=>$selectedTheme->getId()]);
+                    if($getMasterSetting != null) {
+                        $getMasterSetting->setValue($getMasterSettingData->getValue());
+                        $this->em->flush();
+                    } else {
+                        $masterSetting = new MasterSetting();
+                        $masterSetting->setName($getMasterSettingData->getName());
+                        $masterSetting->setValue($getMasterSettingData->getValue());
+                        $masterSetting->setMasterTheme($selectedTheme);
+                        $this->em->persist($masterSetting);
+                        $this->em->flush();
+                    }
+                }
+            }
+
+            $getMasterTheme = $this->em->getRepository(MasterTheme::class)->findAll();
+            foreach ($getMasterTheme as $getMasterSettingData) {
+                if($getMasterSettingData->getId() == $selectedTheme->getId()) {
+                    $getMasterSettingData->setStatus(1);
+                    $theme_id = $selectedTheme->getId();
+                } else {
+                    $getMasterSettingData->setStatus(0);
+                }
+                $this->em->flush();
+            }
+        }
+
         if ($header_logo) {
             $data['form']['header_logo'] = $header_logo;
         }
@@ -49,7 +185,7 @@ class ThemeSettingAdminController extends CRUDController
             $data['form']['footer_background'] = $footer_background;
         }
         $data['form']['font_family'] = $data['form']['font_family']??'';
-        $image_dir = $this->getParameter('app.images');
+
         $errorMessages = $this->themeSettingValidator->validateData($data['form']);
         if ($errorMessages) {
             $return = ['errors'=> $errorMessages];
@@ -73,23 +209,23 @@ class ThemeSettingAdminController extends CRUDController
 
         try {
             foreach ($data['form'] as $field_name => $field_value) {
-                $getMasterSetting = $this->em->getRepository(MasterSetting::class)->findOneBy(['name'=>$field_name]);
+                $getMasterSetting = $this->em->getRepository(MasterSetting::class)->findOneBy(['name'=>$field_name,'master_theme'=>$theme_id]);
                 if($getMasterSetting != null) {
                     if ($field_name == 'header_logo' || $field_name == 'header_background' || $field_name == 'body_background' || $field_name == 'footer_background') {
                         $getfile = $request->files->get('form')[$field_name];
                         $originalFilename = pathinfo($getfile->getClientOriginalName(), PATHINFO_FILENAME);
                         $field_value = $originalFilename.'-'.uniqid().'.'.$getfile->guessExtension();
-                        @unlink($image_dir.'/'.$getMasterSetting->getValue());
-                        // Move the file to the directory where images are stored
-                        $getfile->move(
-                            $image_dir,
-                            $field_value
-                        );
+
+                        $file_header_background_temp_src = $getfile->getPathname(); // The S3 object key
+                        // Upload the file to S3
+                        $return = $awsS3Service->uploadFile($bucketName, $field_value, $file_header_background_temp_src);
+                        dd($return);
                     }
                     if ($field_name == 'font_family') {
                         $field_value = @implode(',',$field_value);
                     }
                     $getMasterSetting->setValue($field_value);
+                    $getMasterSetting->setMasterTheme($selectedTheme);
                     $this->em->flush();
                 } else {
                     $masterSetting = new MasterSetting();
@@ -98,16 +234,17 @@ class ThemeSettingAdminController extends CRUDController
                         $getfile = $request->files->get('form')[$field_name];
                         $originalFilename = pathinfo($getfile->getClientOriginalName(), PATHINFO_FILENAME);
                         $field_value = $originalFilename.'-'.uniqid().'.'.$getfile->guessExtension();
-                        // Move the file to the directory where images are stored
-                        $getfile->move(
-                            $image_dir,
-                            $field_value
-                        );
+
+                        $file_header_background_temp_src = $getfile->getPathname(); // The S3 object key
+                        // Upload the file to S3
+                        $return = $awsS3Service->uploadFile($bucketName, $field_value, $file_header_background_temp_src);
+
                     }
                     if ($field_name == 'font_family') {
                         $field_value = @implode(',',$field_value);
                     }
                     $masterSetting->setValue($field_value);
+                    $masterSetting->setMasterTheme($selectedTheme);
                     $this->em->persist($masterSetting);
                     $this->em->flush();
                 }
@@ -124,7 +261,7 @@ class ThemeSettingAdminController extends CRUDController
                     $setting_name == 'body_background' ||
                     $setting_name == 'footer_background'
                 ) {
-                    $setting_value = '/images/'.$setting_value;
+                    $setting_value = $s3_custom_url.'/'.$setting_value;
                 }
                 $return_data[$setting_name] = $setting_value;
             }
@@ -137,6 +274,54 @@ class ThemeSettingAdminController extends CRUDController
             $return = ['status'=> 0,'msg'=> $e->getMessage()];
         }
 
+        return new JsonResponse($return);
+    }
+
+    public function saveThemeAction(Request $request): JsonResponse
+    {
+        $data = $request->request->all();
+        $theme_name = $data['theme_name']??'';
+        $return_data = [];
+        if($theme_name != '') {
+            $getMasterTheme = $this->em->getRepository(MasterTheme::class)->findOneBy(['name' => $theme_name]);
+            if($getMasterTheme != null) {
+                $return = ['errors'=> ['themename'=>'The theme name is already taken.']];
+            } else {
+                $masterTheme = new MasterTheme();
+                $masterTheme->setName($theme_name);
+                $masterTheme->setStatus(0);
+                $this->em->persist($masterTheme);
+                $this->em->flush();
+                $return_data = ['id' => $masterTheme->getId(),'name' => $masterTheme->getName()];
+                $return = ['status'=> 1,'msg'=> 'Theme saved','data'=>$return_data];
+            }
+        } else {
+            $return = ['errors'=> ['themename'=>'The theme name is required.']];
+        }
+        return new JsonResponse($return);
+    }
+
+    public function getThemeSettingAction(Request $request): JsonResponse
+    {
+        $data = $request->request->all();
+        $s3_custom_url = $this->getParameter('app.aws_s3_custom.uri_prefix');
+        $theme_id = $data['theme_id']??'';
+        // Fetch setting data and pass it to response
+        $return_data = [];
+        $getMasterSetting = $this->em->getRepository(MasterSetting::class)->findBy(['master_theme'=>$theme_id]);
+        foreach ($getMasterSetting as $getMasterSettingData) {
+            $setting_name = $getMasterSettingData->getName();
+            $setting_value = $getMasterSettingData->getValue();
+            if ($setting_name == 'header_logo' ||
+                $setting_name == 'header_background' ||
+                $setting_name == 'body_background' ||
+                $setting_name == 'footer_background'
+            ) {
+                $setting_value = $s3_custom_url.'/'.$setting_value;
+            }
+            $return_data[$setting_name] = $setting_value;
+        }
+        $return = ['status'=> 1,'msg'=>'Success.','data'=>$return_data];
         return new JsonResponse($return);
     }
 }

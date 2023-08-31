@@ -27,6 +27,11 @@ class MasterSetting
      */
     private $value;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=MasterTheme::class, inversedBy="masterSettings")
+     */
+    private $master_theme;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,6 +57,18 @@ class MasterSetting
     public function setValue(?string $value): self
     {
         $this->value = $value;
+
+        return $this;
+    }
+
+    public function getMasterTheme(): ?MasterTheme
+    {
+        return $this->master_theme;
+    }
+
+    public function setMasterTheme(?MasterTheme $master_theme): self
+    {
+        $this->master_theme = $master_theme;
 
         return $this;
     }

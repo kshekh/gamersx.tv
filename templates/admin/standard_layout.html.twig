@@ -6,6 +6,46 @@
         .errors{
             color: red;
         }
+        .section-divider {
+            width: 100%;
+            text-align: center;
+            margin: 16px 0;
+            position: relative;
+        }
+        .section-divider span {
+            font-size: 16px;
+            background-color: #ddd;
+            padding: 5px 10px;
+            line-height: normal;
+            border-radius: 5px;
+            position: relative;
+            z-index: 9;
+        }
+        .section-divider:after {
+            position: absolute;
+            content: '';
+            width: 100%;
+            height: 1px;
+            background: #ddd;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .mt-5 {
+            margin-top: 3rem!important;
+        }
+        .mt-4 {
+            margin-top: 1.5rem!important;
+        }
+        .mt-3 {
+            margin-top: 1rem!important;
+        }
+        .mt-2 {
+            margin-top: 0.5rem!important;
+        }
+        .mt-1 {
+            margin-top: 0.25rem!important;
+        }
     </style>
 {% endblock %}
 {% block sonata_nav %}

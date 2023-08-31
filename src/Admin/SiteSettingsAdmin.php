@@ -10,6 +10,7 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 final class SiteSettingsAdmin extends AbstractAdmin
 {
@@ -20,6 +21,8 @@ final class SiteSettingsAdmin extends AbstractAdmin
     {
         $row = $this->getConfigurationPool()->getContainer()->get('doctrine')->getManager()->getRepository(SiteSettings::class)->findOneBy([]);
         $collection->add('save_theme_setting','save_theme_setting');
+        $collection->add('save_theme','save_theme');
+        $collection->add('get_theme_setting','get_theme_setting');
         $collection->remove('export');
 
         if (isset($row) && $row->getId() == true) {

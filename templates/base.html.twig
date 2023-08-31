@@ -38,18 +38,24 @@
 			{{ encore_entry_script_tags('app') }}
 			{{ encore_entry_script_tags('main') }}
 		{% endblock %}
-        {% set get_theme_setting = theme_setting.findAll() %}
+        {% set get_active_theme = master_theme.findOneBy({'status':1}) %}
+        {% set get_theme_setting = [] %}
+        {% if get_active_theme is defined and get_active_theme.id is defined %}
+            {% set get_theme_setting = theme_setting.findBy({'master_theme':get_active_theme.id}) %}
+        {% endif %}
         {% set get_theme_setting_array = [] %}
         {% for ts_data in get_theme_setting %}
             {% set get_theme_setting_array = get_theme_setting_array|merge({ (ts_data.name) :ts_data.value}) %}
         {% endfor %}
-        {% set site_header_background = (get_theme_setting_array['header_background'] is defined and get_theme_setting_array['header_background']!='')? asset('images/'~get_theme_setting_array['header_background']):'' %}
-        {% set site_body_background = (get_theme_setting_array['body_background'] is defined and get_theme_setting_array['body_background']!='')? asset('images/'~get_theme_setting_array['body_background']):'' %}
-        {% set site_footer_background = (get_theme_setting_array['footer_background'] is defined and get_theme_setting_array['footer_background']!='')? asset('images/'~get_theme_setting_array['footer_background']): asset('images/footer-border.png') %}
+        {% set site_header_background = (get_theme_setting_array['header_background'] is defined and get_theme_setting_array['header_background']!='')? aws_s3_custom_uri_prefix~'/'~get_theme_setting_array['header_background']:'' %}
+        {% set site_body_background = (get_theme_setting_array['body_background'] is defined and get_theme_setting_array['body_background']!='')? aws_s3_custom_uri_prefix~'/'~get_theme_setting_array['body_background']:'' %}
+        {% set site_footer_background = (get_theme_setting_array['footer_background'] is defined and get_theme_setting_array['footer_background']!='')? aws_s3_custom_uri_prefix~'/'~get_theme_setting_array['footer_background']: asset('images/footer-border.png') %}
         {% set header_background_type = get_theme_setting_array['header_background_type']??'' %}
         {% set body_background_type = get_theme_setting_array['body_background_type']??'' %}
         {% set footer_background_type = get_theme_setting_array['footer_background_type']??'' %}
         {% set font_type = get_theme_setting_array['font_type']??'' %}
+
+        {% set current_path = app.request.get('_route') %}
         <style>
             :root {
                 --site_header_color: {{ (get_theme_setting_array['header_color'] is defined and get_theme_setting_array['header_color']!='')?get_theme_setting_array['header_color']:'black' }};
@@ -65,10 +71,30 @@
                 --site_font_family: {{ (get_theme_setting_array['font_family'] is defined and get_theme_setting_array['font_family']!='')?get_theme_setting_array['font_family']:'' }};
                 --site_remote_font_name: {{ (get_theme_setting_array['remote_font_name'] is defined and get_theme_setting_array['remote_font_name']!='')?get_theme_setting_array['remote_font_name']:'' }};
                 --site_arrow_color: {{ (get_theme_setting_array['arrow_color'] is defined and get_theme_setting_array['arrow_color']!='')?get_theme_setting_array['arrow_color']:'#fff' }};
+                --site_numbered_row_color: {{ (get_theme_setting_array['numbered_row_color'] is defined and get_theme_setting_array['numbered_row_color']!='')?get_theme_setting_array['numbered_row_color']:'#bababa' }};
+                --site_numbered_row_outline_color: {{ (get_theme_setting_array['numbered_row_outline_color'] is defined and get_theme_setting_array['numbered_row_outline_color']!='')?get_theme_setting_array['numbered_row_outline_color']:'#595959' }};
+                --site_twitch_glow_color: {{ (get_theme_setting_array['twitch_glow_color'] is defined and get_theme_setting_array['twitch_glow_color']!='')?get_theme_setting_array['twitch_glow_color']:'rgba(100, 65, 165, 0.5)' }};
+                --site_youtube_glow_color: {{ (get_theme_setting_array['youtube_glow_color'] is defined and get_theme_setting_array['youtube_glow_color']!='')?get_theme_setting_array['youtube_glow_color']:'rgba(255, 0, 0, 0.6)' }};
+                --site_privacy_background_color: {{ (get_theme_setting_array['privacy_background_color'] is defined and get_theme_setting_array['privacy_background_color']!='')?get_theme_setting_array['privacy_background_color']:'#000' }};
+                --site_privacy_label_font_color: {{ (get_theme_setting_array['privacy_label_font_color'] is defined and get_theme_setting_array['privacy_label_font_color']!='')?get_theme_setting_array['privacy_label_font_color']:'#e11616' }};
+                --site_privacy_regular_font_color: {{ (get_theme_setting_array['privacy_regular_font_color'] is defined and get_theme_setting_array['privacy_regular_font_color']!='')?get_theme_setting_array['privacy_regular_font_color']:'#6441A5' }};
             }
-            .text-white,.text-stroke, .text-grey, .elementor-button-text {
+            .text-white, .text-grey, .elementor-button-text {
                 color: var(--site_color);
             }
+            .text-stroke {
+                color: var(--site_numbered_row_color);
+            }
+            .text-stroke::before {
+                -webkit-text-stroke-color: var(--site_numbered_row_outline_color);
+            }
+            .cut-edge__wrapper--twitch {
+                filter: drop-shadow(0px 0px 6px var(--site_twitch_glow_color));
+            }
+            .cut-edge__wrapper--youtube {
+                filter: drop-shadow(0px 0px 10px var(--site_youtube_glow_color));
+            }
+
             .elementor-button, .elementor-button-x, .query_input {
                 border-style: solid;
                 border-color: var(--site_border_color) !important;
@@ -124,6 +150,32 @@
                     background-image: url({{ site_footer_background }});
                     background-size: 100% 100%;
                     background-repeat: no-repeat;
+                }
+            {% endif %}
+
+            {% if(current_path == 'terms' or current_path == 'privacy_policy') %}
+                #app-body {
+                    background-color: var(--site_privacy_background_color);
+                }
+
+                #app-body .text-red-600,
+                #app-body .text-xl,
+                #app-body strong,
+                #app-body h4,#app-body h5,
+                #app-body li::marker,
+                #app-body .text-heading
+                {
+                    color: var(--site_privacy_label_font_color);
+                }
+
+                #app-body table th,
+                #app-body table td {
+                    border-color: var(--site_privacy_regular_font_color);
+                }
+                #app-body p,
+                #app-body .list-inside,
+                #app-body table {
+                    color: var(--site_privacy_regular_font_color);
                 }
             {% endif %}
 
@@ -194,7 +246,7 @@
 							mx-auto max-w-full-hd"
 					>
                         {% set header_logo = (get_theme_setting_array['header_logo'] is defined and get_theme_setting_array['header_logo'] != '')? get_theme_setting_array['header_logo'] :'logo.png' %}
-                        <img src="{{ asset('images/'~header_logo) }}" class="shrink-0 w-24 md:w-72 mr-3 md:mr-14 xl:mr-4"/>
+                        <img src="{{ aws_s3_custom_uri_prefix~'/'~header_logo }}" class="shrink-0 w-24 md:w-72 mr-3 md:mr-14 xl:mr-4"/>
 						{#
 						<div class="flex flex-grow items-center justify-between xl:justify-end ml-auto">
 							<nav class="hidden xl:block">
