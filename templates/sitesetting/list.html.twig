@@ -699,9 +699,12 @@
                 contentType: false,
                 processData: false,
                 beforeSend:function () {
+                    $("#btn_apply_theme").attr('disabled',true);
+                    $("#btn_without_preset").attr('disabled',true);
+                    $("#btn_save_theme").attr('disabled',true);
                 },
                 success:function (response) {
-                    $("#btn_save").removeAttr('disabled');
+                    $("#btn_apply_theme").removeAttr('disabled');
                     $("#btn_without_preset").removeAttr('disabled');
                     $("#btn_save_theme").removeAttr('disabled');
                     if(response.errors) {
@@ -942,6 +945,7 @@
                 dataType:'JSON',
                 data: {theme_name:theme_name},
                 beforeSend:function () {
+                    $("#btn_save_theme").attr('disabled',true);
                 },
                 success:function (response) {
                     $("#btn_save_theme").removeAttr('disabled');
