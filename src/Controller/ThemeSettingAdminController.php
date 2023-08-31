@@ -113,17 +113,8 @@ class ThemeSettingAdminController extends CRUDController
         $header_background = $request->files->get('form')['header_background'];
         $body_background = $request->files->get('form')['body_background'];
         $footer_background = $request->files->get('form')['footer_background'];
-
-        /*$bucketName = 'gamersx-dev-dev-us-west-1-storage';
-        $file_temp_src = $header_background->getPathname(); // The S3 object key
-        // Upload the file to S3
-        $originalFilename = pathinfo($header_background->getClientOriginalName(), PATHINFO_FILENAME).'.'.$header_background->guessExtension();
-        $return = $awsS3Service->uploadFile($bucketName, $originalFilename, $file_temp_src);
-        if(!empty($return['ObjectURL'])) {
-            $s3_file_link = $return['ObjectURL'];
-        } else {
-            $api_error = 'Upload Failed! S3 Object URL not found.';
-        }*/
+        $bucketName = $this->getParameter('app.aws_s3_bucket_name');
+        $s3_custom_url = $this->getParameter('app.aws_s3_custom.uri_prefix');
 
         $action_type = $data['action_type']??'';
         $theme_id = $data['theme']??'';
@@ -224,12 +215,11 @@ class ThemeSettingAdminController extends CRUDController
                         $getfile = $request->files->get('form')[$field_name];
                         $originalFilename = pathinfo($getfile->getClientOriginalName(), PATHINFO_FILENAME);
                         $field_value = $originalFilename.'-'.uniqid().'.'.$getfile->guessExtension();
-                        @unlink($image_dir.'/'.$getMasterSetting->getValue());
-                        // Move the file to the directory where images are stored
-                        $getfile->move(
-                            $image_dir,
-                            $field_value
-                        );
+
+                        $file_header_background_temp_src = $getfile->getPathname(); // The S3 object key
+                        // Upload the file to S3
+                        $return = $awsS3Service->uploadFile($bucketName, $field_value, $file_header_background_temp_src);
+                        dd($return);
                     }
                     if ($field_name == 'font_family') {
                         $field_value = @implode(',',$field_value);
@@ -244,11 +234,11 @@ class ThemeSettingAdminController extends CRUDController
                         $getfile = $request->files->get('form')[$field_name];
                         $originalFilename = pathinfo($getfile->getClientOriginalName(), PATHINFO_FILENAME);
                         $field_value = $originalFilename.'-'.uniqid().'.'.$getfile->guessExtension();
-                        // Move the file to the directory where images are stored
-                        $getfile->move(
-                            $image_dir,
-                            $field_value
-                        );
+
+                        $file_header_background_temp_src = $getfile->getPathname(); // The S3 object key
+                        // Upload the file to S3
+                        $return = $awsS3Service->uploadFile($bucketName, $field_value, $file_header_background_temp_src);
+
                     }
                     if ($field_name == 'font_family') {
                         $field_value = @implode(',',$field_value);
@@ -271,7 +261,7 @@ class ThemeSettingAdminController extends CRUDController
                     $setting_name == 'body_background' ||
                     $setting_name == 'footer_background'
                 ) {
-                    $setting_value = '/images/'.$setting_value;
+                    $setting_value = $s3_custom_url.'/'.$setting_value;
                 }
                 $return_data[$setting_name] = $setting_value;
             }
@@ -314,6 +304,7 @@ class ThemeSettingAdminController extends CRUDController
     public function getThemeSettingAction(Request $request): JsonResponse
     {
         $data = $request->request->all();
+        $s3_custom_url = $this->getParameter('app.aws_s3_custom.uri_prefix');
         $theme_id = $data['theme_id']??'';
         // Fetch setting data and pass it to response
         $return_data = [];
@@ -326,7 +317,7 @@ class ThemeSettingAdminController extends CRUDController
                 $setting_name == 'body_background' ||
                 $setting_name == 'footer_background'
             ) {
-                $setting_value = '/images/'.$setting_value;
+                $setting_value = $s3_custom_url.'/'.$setting_value;
             }
             $return_data[$setting_name] = $setting_value;
         }

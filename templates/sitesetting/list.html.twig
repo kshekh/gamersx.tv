@@ -541,6 +541,33 @@
 
                                 <div class="row">
                                     <div class="section-divider">
+                                        <span>Privacy policy / Terms of service</span>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        <label class="control-label" >Background Color</label>
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <input type="color" name="form[privacy_background_color]"  class="form-control" value="">
+                                            <span class="errors error-privacybackgroundcolor"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        <label class="control-label" >Label/Numeric Font Color</label>
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <input type="color" name="form[privacy_label_font_color]"  class="form-control" value="">
+                                            <span class="errors error-privacylabelfontcolor"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        <label class="control-label" >Regular Font Color</label>
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <input type="color" name="form[privacy_regular_font_color]"  class="form-control" value="">
+                                            <span class="errors error-privacyregularfontcolor"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="section-divider">
                                         <span>Other</span>
                                     </div>
                                     <div class="col-md-6 form-group">
@@ -870,6 +897,24 @@
                             $("#header_logo_response a").removeClass('hide');
                         } else {
                             $("#header_logo_response a").addClass('hide');
+                        }
+
+                        if(response.data.privacy_background_color && response.data.privacy_background_color != '') {
+                            $("input[name='form[privacy_background_color]']").val(response.data.privacy_background_color);
+                        } else {
+                            $("input[name='form[privacy_background_color]']").val("#000");
+                        }
+
+                        if(response.data.privacy_label_font_color && response.data.privacy_label_font_color != '') {
+                            $("input[name='form[privacy_label_font_color]']").val(response.data.privacy_label_font_color);
+                        } else {
+                            $("input[name='form[privacy_label_font_color]']").val("#000");
+                        }
+
+                        if(response.data.privacy_regular_font_color && response.data.privacy_regular_font_color != '') {
+                            $("input[name='form[privacy_regular_font_color]']").val(response.data.privacy_regular_font_color);
+                        } else {
+                            $("input[name='form[privacy_regular_font_color]']").val("#000");
                         }
                     }
 
