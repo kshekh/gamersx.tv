@@ -290,7 +290,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-md-2 form-group mt-5">
-                                                            <button class="btn btn-success mt-2" type="button" id="btn_save_theme"><i class="fa fa-save" aria-hidden="true"></i> Save</button>
+                                                            <button class="btn btn-success mt-2" type="submit" data-action_type="save_theme" id="btn_save_theme" ><i class="fa fa-save" aria-hidden="true"></i> Save</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -683,7 +683,7 @@
             $("#preview_img").attr('src',preview_img);
         });
 
-        $("#btn_apply_theme,#btn_without_preset").on('click',function(e){
+        $("#btn_apply_theme,#btn_without_preset,#btn_save_theme").on('click',function(e){
             e.preventDefault();
             var action_type = $(this).data('action_type');
             $(".content-wrapper .content").find('.alert').remove();
@@ -731,10 +731,15 @@
                             $("#header_logo_response a").removeClass('hide');
                         }
                         $("html, body").animate({ scrollTop: 0 }, "slow");
+                        $("input[name='theme_name']").val('');
                         $("input[name='form[header_logo]']").val('');
                         $("input[name='form[header_background]']").val('');
                         $("input[name='form[body_background]']").val('');
                         $("input[name='form[footer_background]']").val('');
+
+                        if(response.data.theme_data) {
+                            $('#theme').append(`<option value="` + response.data.theme_data.id + `">` + response.data.theme_data.name + `</option>`);
+                        }
                     }
 
                     if(response.status == 0 ) {
@@ -935,41 +940,7 @@
                 },
             });
         }
-        $("#btn_save_theme").on('click',function(){
-            $(".content-wrapper .content").find('.alert').remove();
-            $("#frm_theme_setting .errors").text('');
-            var theme_name = $("input[name='theme_name']").val();
-            $.ajax({
-                type: 'POST',
-                url: '{{ admin.generateUrl('save_theme') }}',
-                dataType:'JSON',
-                data: {theme_name:theme_name},
-                beforeSend:function () {
-                    $("#btn_save_theme").attr('disabled',true);
-                },
-                success:function (response) {
-                    $("#btn_save_theme").removeAttr('disabled');
-                    if(response.errors) {
-                        $.each(response.errors,function(field_name,error_message){
-                            $("#frm_theme_setting .error-"+field_name).html(error_message);
-                        });
-                    }
-                    if(response.status == 1 ) {
-                        $(".content-wrapper .content").prepend('<div class="alert alert-success alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true" aria-label="Close">×</button>'+response.msg+'</div>');
-                        $("html, body").animate({ scrollTop: 0 }, "slow");
-                        $("input[name='theme_name']").val('');
-                        $('#theme').append(`<option value="`+response.data.id+`">`+response.data.name+`</option>`);
-                    }
 
-                    if(response.status == 0 ) {
-                        $(".content-wrapper .content").prepend('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true" aria-label="Close">×</button>'+response.msg+'</div>');
-                        $("html, body").animate({ scrollTop: 0 }, "slow");
-                    }
-                },
-            });
-
-
-        });
     </script>
 
 {% endblock %}

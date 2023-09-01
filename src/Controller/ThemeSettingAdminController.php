@@ -131,7 +131,7 @@ class ThemeSettingAdminController extends CRUDController
                 }
                 $this->em->flush();
             }
-        } else {
+        } else if($action_type == 'without_preset') {
 
             // get default theme data for assignment
             $selectedTheme = $this->em->getRepository(MasterTheme::class)->findOneBy(['name'=> 'Default']);
@@ -195,9 +195,33 @@ class ThemeSettingAdminController extends CRUDController
         }
         $data['form']['font_family'] = $data['form']['font_family']??'';
 
+        $theme_name = $data['theme_name']??'';
+        $return_errors = [];
+        if($action_type == 'save_theme') {
+            if ($theme_name != '') {
+                $getMasterTheme = $this->em->getRepository(MasterTheme::class)->findOneBy(['name' => $theme_name]);
+                if ($getMasterTheme != null) {
+                    $return_errors['themename'] = 'The theme name is already taken.';
+                } else {
+                    $masterTheme = new MasterTheme();
+                    $masterTheme->setName($theme_name);
+                    $masterTheme->setStatus(0);
+                    $this->em->persist($masterTheme);
+                    $this->em->flush();
+                    $selectedTheme =  $masterTheme;
+                }
+            } else {
+                $return_errors['themename'] = 'The theme name is required.';
+            }
+        }
+
         $errorMessages = $this->themeSettingValidator->validateData($data['form']);
-        if ($errorMessages) {
-            $return = ['errors'=> $errorMessages];
+        if ($errorMessages || $return_errors) {
+            if(!empty($return_errors)) {
+                $return = ['errors'=> array_merge($return_errors,$errorMessages)];
+            } else {
+                $return = ['errors'=> $errorMessages];
+            }
             return new JsonResponse($return);
         }
 
@@ -273,9 +297,14 @@ class ThemeSettingAdminController extends CRUDController
                 }
                 $return_data[$setting_name] = $setting_value;
             }
+            if($action_type == 'save_theme') {
+                $return_data['theme_data'] = ['id' => $selectedTheme->getId(),'name' => $selectedTheme->getName()];
+            }
             $msg = '';
             if($action_type == 'apply') {
                 $msg = '"'.$selectedTheme->getName().'" theme has been applied successfully.';
+            } else if($action_type == 'save_theme') {
+                $msg = '"'.$selectedTheme->getName().'" theme saved successfully. To apply in front, select and click on apply button.';
             } else {
                 $msg = 'Default theme settings has been applied successfully.';
             }
