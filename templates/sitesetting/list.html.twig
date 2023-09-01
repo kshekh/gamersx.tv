@@ -280,7 +280,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="tab-pane" id="custom-tabs-save" role="tabpanel" aria-labelledby="custom-tabs-save-tab">
-                                                        <div class="col-md-4 form-group">
+                                                        <div class="col-md-12 form-group">
                                                             <div class="form-group mt-3">
                                                                 <div class="sonata-ba-field sonata-ba-field-standard-natural">
                                                                     <label class="control-label" >Theme Name</label>
@@ -289,9 +289,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-2 form-group mt-5">
-                                                            <button class="btn btn-success mt-2" type="submit" data-action_type="save_theme" id="btn_save_theme" ><i class="fa fa-save" aria-hidden="true"></i> Save</button>
-                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -581,6 +579,7 @@
 
                             </div>
 
+                            <button class="btn btn-success hide" type="submit" data-action_type="save_theme" id="btn_save_theme" ><i class="fa fa-save" aria-hidden="true"></i> Save</button>
                             <button class="btn btn-success" type="submit" data-action_type="without_preset" id="btn_without_preset" ><i class="fa fa-save" aria-hidden="true"></i> Without Preset</button>
                             <div id="response_msg"></div>
                         </form>
@@ -681,6 +680,15 @@
             $("#previewImageModal").modal('show');
             let preview_img = $(this).attr('href');
             $("#preview_img").attr('src',preview_img);
+        });
+
+        $("#custom-tabs-one-tab > li > a").click(function() {
+            let active_tab = $(this).attr("href").replace("#", "");
+            if(active_tab == 'custom-tabs-save') {
+                $("#btn_save_theme").removeClass('hide');
+            } else {
+                $("#btn_save_theme").addClass('hide');
+            }
         });
 
         $("#btn_apply_theme,#btn_without_preset,#btn_save_theme").on('click',function(e){
