@@ -16,7 +16,7 @@
 
 /* blur experience pop-up bg */
 .backdrop-filter {
-  backdrop-filter: blur(3px); 
+  backdrop-filter: blur(3px);
 }
 
 /* new arrows style */
@@ -267,5 +267,36 @@ div.full-width-embed-first-row iframe {
     top: 12px;
     left: -7px;
     transform: rotateZ(135deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .home-row .md\:flex-col {
+    flex-direction: column;
+  }
+  .home-row .md\:self-center {
+    align-self: center;
+  }
+  .home-row {
+    margin-bottom: 3rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .slider_arrow_big {
+    margin-left: 5px;
+  }
+  .slider_arrow_big svg{
+      height: 45px;
+      width: 45px;
+  }
+}
+@media (max-width: 320px) {
+  .slider_arrow_big {
+    margin-left: 2px;
+  }
+  .slider_arrow_big svg{
+    height: 35px;
+    width: 35px;
   }
 }
