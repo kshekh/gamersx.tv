@@ -68,7 +68,7 @@
           w-90
           h-30
           xl:w-150
-          xl:h-50          
+          xl:h-50
           bg-black
         "
         >
@@ -204,6 +204,9 @@ export default {
     this.$refs.channelBox.scrollLeft = 0;
   },
   updated: function() {
+    if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels.filter(this.showChannel))){
+      this.displayChannels = this.settings.channels.filter(this.showChannel);
+    }
     this.allowScrolling =
       this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
     this.max_scroll_left = this.$refs.channelBox.scrollWidth - this.$refs.channelBox.clientWidth;
