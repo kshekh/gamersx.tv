@@ -70,10 +70,6 @@
         </noscript>
         <!-- End Meta Pixel Code -->
 
-        <!-- Consent Database -->
-        <script type="text/javascript">var _iub = _iub || {}; _iub.cons_instructions = _iub.cons_instructions || []; _iub.cons_instructions.push(["init", {api_key: "OtoQgEq0B6MuIn8WNGNUNH0dwy4tDtei"}]);</script>
-        <script type="text/javascript" src="https://cdn.iubenda.com/cons/iubenda_cons.js" async></script>
-        <!-- End Consent Database -->
 	</head>
 	<body class="bg-black">
 		<div class="h-full flex flex-col">
@@ -337,36 +333,4 @@
             window.location.replace("{{ redirect_url }}");
         }
     </script>
-    <!--  Consent Database -->
-    <script type="text/javascript">
-        _iub.cons_instructions.push(["load", {
-            submitElement: document.getElementById("btn_submit_cookie_consent"),
-            form: {
-                selector: document.getElementById("cookie-consent-form"),
-                map: {
-                    subject: {
-                        full_name: "your-name",
-                        email: "your-email"
-                    },
-                    preferences: {
-                        generic: "generic",
-                    }
-                }
-            },
-            consent: {
-                legal_notices: [
-                    {
-                        identifier: "privacy_policy",
-                    },
-                    {
-                        identifier: 'cookie_policy',
-                    },
-                    {
-                        identifier: "terms",
-                    }
-                ],
-            }
-        }])
-    </script>
-    <!-- End Consent Database -->
 	</html>
