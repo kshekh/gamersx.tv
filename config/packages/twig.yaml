@@ -2,6 +2,9 @@ twig:
     globals:
         current_domain: '%env(CURRENT_DOMAIN)%'
         redirect_url: '%env(REDIRECT_URL)%'
+        theme_setting: '@App\Repository\MasterSettingRepository'
+        master_theme: '@App\Repository\MasterThemeRepository'
+        aws_s3_custom_uri_prefix: '%app.aws_s3_custom.uri_prefix%'
     default_path: '%kernel.project_dir%/templates'
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
