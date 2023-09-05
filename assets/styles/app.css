@@ -282,7 +282,25 @@ div.full-width-embed-first-row iframe {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 1024px) and (orientation: portrait){
+  .slider_arrow {
+    display: none;
+  }
+  .home-row .slider_arrow {
+    display: block;
+  }
+}
+
+@media (max-width: 1366px) and (orientation: landscape){
+  .slider_arrow {
+    display: none;
+  }
+  .home-row .slider_arrow {
+    display: block;
+  }
+}
+
+@media (max-width: 415px) and (orientation: portrait){
   .slider_arrow_big {
     margin-left: 5px;
   }
@@ -291,6 +309,17 @@ div.full-width-embed-first-row iframe {
       width: 45px;
   }
 }
+
+@media (max-width: 424px) and (orientation: landscape){
+  .slider_arrow_big {
+    margin-left: 5px;
+  }
+  .slider_arrow_big svg{
+    height: 45px;
+    width: 45px;
+  }
+}
+
 @media (max-width: 320px) {
   .slider_arrow_big {
     margin-left: 2px;
