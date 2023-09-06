@@ -15,6 +15,9 @@
 }
 
 /* blur experience pop-up bg */
+.home-banner-section {
+  height: 100vh;
+}
 .backdrop-filter {
   backdrop-filter: blur(3px);
 }
@@ -327,5 +330,11 @@ div.full-width-embed-first-row iframe {
   .slider_arrow_big svg{
     height: 35px;
     width: 35px;
+  }
+}
+
+@media (max-width: 320px) {
+  .home-banner-section {
+    height: auto;
   }
 }
