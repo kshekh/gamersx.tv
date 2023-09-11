@@ -111,9 +111,15 @@
                 }
             {% elseif(header_background_type == 'image') %}
                 header {
-                  background-image: url({{ site_header_background }});
-                  background-size: 100% 100%;
-                  background-repeat: no-repeat;
+                    position: relative;
+                }
+                .header_background {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: -1;
                 }
             {% endif %}
 
@@ -123,7 +129,7 @@
                 }
             {% elseif(body_background_type == 'image') %}
                 #app-body {
-                    background-image: url({{ site_body_background }});
+                    background-image: url("{{ site_body_background }}");
                     background-size: cover;
                     background-repeat: no-repeat;
                     background-position: center;
@@ -136,7 +142,7 @@
                 }
             {% elseif(footer_background_type == 'image') %}
                 footer {
-                    background-image: url({{ site_footer_background }});
+                    background-image: url("{{ site_footer_background }}");
                     background-size: 100% 100%;
                     background-repeat: no-repeat;
                 }
@@ -227,9 +233,12 @@
 					<header
 						id="header"
 						class="flex items-center justify-between
-							px-4 md:px-6 xl:px-20 pb-3 md:pb-6 pt-6 xl:py-7
+							px-4 md:px-6 xl:px-20 py-2 md:py-6 xl:py-7
 							mx-auto max-w-full-hd"
 					>
+                        {% if(header_background_type == 'image') %}
+                            <img src="{{ site_header_background }}" class="shrink-0 w-24 md:w-72 mr-3 md:mr-14 xl:mr-4 header_background">
+                        {% endif %}
                         {% set header_logo = (get_theme_setting_array['header_logo'] is defined and get_theme_setting_array['header_logo'] != '')? get_theme_setting_array['header_logo'] :'logo.png' %}
                         <img src="{{ aws_s3_custom_uri_prefix~'/'~header_logo }}" class="shrink-0 w-24 md:w-72 mr-3 md:mr-14 xl:mr-4"/>
 						{#
