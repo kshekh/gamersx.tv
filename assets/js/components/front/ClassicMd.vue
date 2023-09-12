@@ -11,6 +11,7 @@
         pr-4
         md:pr-5
         xl:pr-12
+        custom-row-padding
       "
     >
       <h2
@@ -80,7 +81,7 @@
           w-64
           md:w-48
           lg:w-60
-          xl:w-337 
+          xl:w-337
           h-48
           md:h-27
           lg:h-40
