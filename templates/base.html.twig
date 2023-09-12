@@ -39,6 +39,7 @@
 			{{ encore_entry_script_tags('main') }}
 		{% endblock %}
         {% set get_active_theme = master_theme.findOneBy({'status':1}) %}
+        {% set get_site_setting = site_settings.find(1) %}
         {% set get_theme_setting = [] %}
         {% if get_active_theme is defined and get_active_theme.id is defined %}
             {% set get_theme_setting = theme_setting.findBy({'master_theme':get_active_theme.id}) %}
@@ -78,6 +79,8 @@
                 --site_privacy_background_color: {{ (get_theme_setting_array['privacy_background_color'] is defined and get_theme_setting_array['privacy_background_color']!='')?get_theme_setting_array['privacy_background_color']:'#000' }};
                 --site_privacy_label_font_color: {{ (get_theme_setting_array['privacy_label_font_color'] is defined and get_theme_setting_array['privacy_label_font_color']!='')?get_theme_setting_array['privacy_label_font_color']:'#e11616' }};
                 --site_privacy_regular_font_color: {{ (get_theme_setting_array['privacy_regular_font_color'] is defined and get_theme_setting_array['privacy_regular_font_color']!='')?get_theme_setting_array['privacy_regular_font_color']:'#6441A5' }};
+                --site_row_padding_top: {{ (get_site_setting.getRowPaddingTop() is defined and get_site_setting.getRowPaddingTop()!='')?get_site_setting.getRowPaddingTop():'0' }}px;
+                --site_row_padding_bottom: {{ (get_site_setting.getRowPaddingTop() is defined and get_site_setting.getRowPaddingBottom()!='')?get_site_setting.getRowPaddingBottom():'0' }}px;
             }
             .text-white, .text-grey, .elementor-button-text {
                 color: var(--site_color);
@@ -183,6 +186,13 @@
                 #app-body .list-inside,
                 #app-body table {
                     color: var(--site_privacy_regular_font_color);
+                }
+            {% endif %}
+
+            {% if(get_site_setting is defined) %}
+                #app-body .custom-row-padding{
+                    padding-top: var(--site_row_padding_top);
+                    padding-bottom: var(--site_row_padding_bottom);
                 }
             {% endif %}
 

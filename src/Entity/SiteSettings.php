@@ -21,6 +21,16 @@ class SiteSettings
      */
     private $disableHomeAccess;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $row_padding_top;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $row_padding_bottom;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -34,6 +44,30 @@ class SiteSettings
     public function setDisableHomeAccess(bool $disableHomeAccess): self
     {
         $this->disableHomeAccess = $disableHomeAccess;
+
+        return $this;
+    }
+
+    public function getRowPaddingTop(): ?int
+    {
+        return $this->row_padding_top;
+    }
+
+    public function setRowPaddingTop(?int $row_padding_top): self
+    {
+        $this->row_padding_top = $row_padding_top;
+
+        return $this;
+    }
+
+    public function getRowPaddingBottom(): ?int
+    {
+        return $this->row_padding_bottom;
+    }
+
+    public function setRowPaddingBottom(?int $row_padding_bottom): self
+    {
+        $this->row_padding_bottom = $row_padding_bottom;
 
         return $this;
     }
