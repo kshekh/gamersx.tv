@@ -10,7 +10,6 @@
           pr-4
           md:pr-5
           xl:pr-12
-          custom-row-padding
         ">
       <h2 class="
             text-white

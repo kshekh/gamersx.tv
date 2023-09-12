@@ -79,6 +79,8 @@ class CacheHomePageContainers extends Command
                         $thisRow['sortIndex'] = $row->getSortIndex();
                         $thisRow['componentName'] = $row->getLayout();
                         $thisRow['onGamersXtv'] = $row->getonGamersXtv();
+                        $thisRow['rowPaddingTop'] = ($row->getRowPaddingTop() != null)? $row->getRowPaddingTop(): 0;
+                        $thisRow['rowPaddingBottom'] = ($row->getRowPaddingBottom() != null)? $row->getRowPaddingBottom(): 0;
 
                         $containers = array();
                         $containerized = $containerizer($row);

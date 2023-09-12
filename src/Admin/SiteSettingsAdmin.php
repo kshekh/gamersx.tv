@@ -41,14 +41,6 @@ final class SiteSettingsAdmin extends AbstractAdmin
                     'editable' => true,
                     'label' => 'Disable HomePage Access'
                 ])
-                ->add('row_padding_top', null, [
-                    'editable' => true,
-                    'label' => 'Row Padding Top(In px)'
-                ])
-                ->add('row_padding_bottom', null, [
-                    'editable' => true,
-                    'label' => 'Row Padding Bottom(In px)'
-                ])
             ;
         }
     }

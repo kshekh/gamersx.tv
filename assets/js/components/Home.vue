@@ -2,7 +2,7 @@
   <!-- remove "text-white" later -->
   <div class="text-white">
     <template v-if="settings.rows && settings.rows.length">
-      <div v-for="(row, index) in settings.rows" :key="row.id">
+      <div v-for="(row, index) in settings.rows" :key="row.id" :style="{paddingTop:row.rowPaddingTop+'px',paddingBottom:row.rowPaddingBottom+'px'}">
         <component :is="row.componentName" :settings="row" :rowPosition="index"></component>
       </div>
     </template>
