@@ -4,7 +4,7 @@
         <!--  Privacy Controls and Cookie Solution -->
         <script type="text/javascript">
             var _iub = _iub || [];
-            _iub.csConfiguration = {"askConsentAtCookiePolicyUpdate":true,"countryDetection":true,"enableLgpd":true,"enableTcf":true,"enableUspr":true,"floatingPreferencesButtonDisplay":"bottom-left","gdprAppliesGlobally":false,"googleAdditionalConsentMode":true,"lang":"en-GB","lgpdAppliesGlobally":false,"perPurposeConsent":true,"purposes":"4,5,1","siteId":3228129,"tcfPurposes":{"2":"consent_only","3":"consent_only","4":"consent_only","5":"consent_only","6":"consent_only","7":"consent_only","8":"consent_only","9":"consent_only","10":"consent_only"},"usprPurposes":"s,sh,adv","whitelabel":false,"cookiePolicyId":32231057, "banner":{ "acceptButtonDisplay":true,"backgroundOverlay":true,"closeButtonDisplay":false,"customizeButtonDisplay":true,"explicitWithdrawal":true,"listPurposes":true,"position":"float-top-center","rejectButtonDisplay":true }};
+            _iub.csConfiguration = {"applyGdprForCH":false,"askConsentAtCookiePolicyUpdate":true,"countryDetection":true,"enableFadp":true,"enableLgpd":true,"enableTcf":true,"enableUspr":true,"floatingPreferencesButtonDisplay":false,"gdprAppliesGlobally":false,"googleAdditionalConsentMode":true,"lang":"en-GB","lgpdAppliesGlobally":false,"logLevel":"info","perPurposeConsent":true,"preferenceCookie":{"expireAfter":180},"siteId":3228129,"showBannerForUS":true,"tcfPurposes":{"2":"consent_only","3":"consent_only","4":"consent_only","5":"consent_only","6":"consent_only","7":"consent_only","8":"consent_only","9":"consent_only","10":"consent_only"},"usprPurposes":"s,sh,adv","whitelabel":false,"cookiePolicyId":32231057, "banner":{ "acceptButtonDisplay":true,"backgroundOverlay":true,"closeButtonDisplay":false,"customizeButtonDisplay":true,"explicitWithdrawal":true,"listPurposes":true,"position":"float-top-center","prependOnBody":true,"rejectButtonDisplay":true,"showPurposesToggles":true }};
         </script>
         <script type="text/javascript" src="https://cs.iubenda.com/autoblocking/3228129.js"></script>
         <script type="text/javascript" src="//cdn.iubenda.com/cs/tcf/stub-v2.js"></script>
@@ -270,6 +270,9 @@
 									<a class="text-grey text-xxs md:text-sm" href="{{ path('terms') }}">Terms of Service</a>
                                     <span class="w-1px h-2 bg-grey md:h-3"></span>
                                     <a class="text-grey text-xxs md:text-sm" href="{{ path('privacy_policy') }}">Privacy Policy</a>
+                                    <span class="w-1px h-2 bg-grey md:h-3"></span>
+                                    <!-- This button added to allow user to select privacy and hide US widget from middle of screen-->
+                                    <a href="#" class="text-grey text-xxs md:text-sm iubenda-advertising-preferences-link">Your Privacy Choices</a>
 								</div>
 							</div>
 						</div>
