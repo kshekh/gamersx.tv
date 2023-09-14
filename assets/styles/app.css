@@ -333,7 +333,7 @@ div.full-width-embed-first-row iframe {
   }
 }
 
-@media (max-width: 320px) {
+@media (max-width: 991px) {
   .home-banner-section {
     height: auto;
   }
