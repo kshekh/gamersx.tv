@@ -17,8 +17,8 @@
         <div
           v-if="showEmbed && embedData"
           class="w-full h-full overflow-hidden"
-          @mouseover="mouseEntered"
-          @mouseout="mouseLeave"
+          v-on:mouseenter="mouseEntered"
+          v-on:mouseleave="mouseLeave"
         >
           <img
             v-if="showArt && image"
