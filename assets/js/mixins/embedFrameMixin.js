@@ -12,7 +12,7 @@ export default {
   },
   methods: {
     mouseEntered() {
-      console.log('In mouseEntered', mouseEntered);
+      console.log('In mouseEntered');
       this.isCursorHere = true;
       console.log('this.isCursorHere 1', this.isCursorHere);
       setTimeout(() => {
@@ -29,7 +29,7 @@ export default {
     },
 
     mouseLeave() {
-      console.log('In mouseEntered', mouseEntered);
+      console.log('In mouseLeave');
       this.isCursorHere = false;
     },
 
