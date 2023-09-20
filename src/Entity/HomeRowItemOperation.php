@@ -50,12 +50,12 @@ class HomeRowItemOperation
     /**
      * @ORM\Column(type="smallint", nullable=true)
      */
-    private $is_backlisted;
+    private $is_blacklisted;
 
     /**
      * @ORM\Column(type="smallint", nullable=true)
      */
-    private $is_full_site_backlisted;
+    private $is_full_site_blacklisted;
 
     public function getId(): ?int
     {
@@ -134,26 +134,26 @@ class HomeRowItemOperation
         return $this;
     }
 
-    public function getIsBacklisted(): ?int
+    public function getIsBlacklisted(): ?int
     {
-        return $this->is_backlisted;
+        return $this->is_blacklisted;
     }
 
-    public function setIsBacklisted(?int $is_backlisted): self
+    public function setIsBlacklisted(?int $is_blacklisted): self
     {
-        $this->is_backlisted = $is_backlisted;
+        $this->is_blacklisted = $is_blacklisted;
 
         return $this;
     }
 
-    public function getIsFullSiteBacklisted(): ?int
+    public function getIsFullSiteBlacklisted(): ?int
     {
-        return $this->is_full_site_backlisted;
+        return $this->is_full_site_blacklisted;
     }
 
-    public function setIsFullSiteBacklisted(?int $is_full_site_backlisted): self
+    public function setIsFullSiteBlacklisted(?int $is_full_site_blacklisted): self
     {
-        $this->is_full_site_backlisted = $is_full_site_backlisted;
+        $this->is_full_site_blacklisted = $is_full_site_blacklisted;
 
         return $this;
     }

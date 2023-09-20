@@ -181,6 +181,11 @@ class HomeRowItem implements PartneredInterface
      */
     private $homeRowItemOperations;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default" : 0})
+     */
+    private $is_unique_container;
+
     public function __construct()
     {
         $this->homeRowItemOperations = new ArrayCollection();
@@ -527,6 +532,18 @@ class HomeRowItem implements PartneredInterface
                 $homeRowItemOperation->setHomeRowItem(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIsUniqueContainer(): ?bool
+    {
+        return $this->is_unique_container;
+    }
+
+    public function setIsUniqueContainer(bool $is_unique_container): self
+    {
+        $this->is_unique_container = $is_unique_container;
 
         return $this;
     }

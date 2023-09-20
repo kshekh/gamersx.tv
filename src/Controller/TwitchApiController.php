@@ -156,7 +156,7 @@ class TwitchApiController extends AbstractController
             foreach ($getSelectedRowItemOperation as $getSelectedOprData) {
                 $selectedStreamerArr[$getSelectedOprData->getStreamerId()] = [
                     'is_whitelisted' => $getSelectedOprData->getIsWhitelisted(),
-                    'is_blacklisted' => $getSelectedOprData->getIsBacklisted(),
+                    'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
                     'priority' => $getSelectedOprData->getPriority()
                 ];
             }

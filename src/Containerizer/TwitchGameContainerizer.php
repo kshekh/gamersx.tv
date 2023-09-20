@@ -3,6 +3,7 @@
 namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
+use App\Entity\HomeRowItemOperation;
 use App\Service\HomeRowInfo;
 
 class TwitchGameContainerizer extends LiveContainerizer implements ContainerizerInterface
@@ -48,6 +49,37 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
 
         // Get every broadcast
         $broadcasts = $broadcasts->toArray()['data'];
+
+        // getting selected game streamers
+        $getSelectedRowItemOperation =  $homeRowItem->getHomeRowItemOperations();
+        $selectedStreamerArr = [];
+        if(!empty($getSelectedRowItemOperation)) {
+            foreach ($getSelectedRowItemOperation as $getSelectedOprData) {
+                $selectedStreamerArr[$getSelectedOprData->getStreamerId()] = [
+                    'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
+                    'priority' => $getSelectedOprData->getPriority()
+                ];
+            }
+        }
+
+        // sorting streamers based on priority
+        if(isset($broadcasts)) {
+            foreach ($broadcasts as $res_key => $res_data) {
+                if(isset($selectedStreamerArr[$res_data['id']])) {
+                    $is_blacklisted =  $selectedStreamerArr[$res_data['id']]['is_blacklisted'];
+                    $priority = $selectedStreamerArr[$res_data['id']]['priority'];
+                    if($is_blacklisted == 1) {
+                        unset($broadcasts[$res_key]);
+                    } else {
+                        $broadcasts[$res_key]['priority'] = $priority;
+                    }
+                } else {
+                    $broadcasts[$res_key]['priority'] = ($res_key+1);
+                }
+            }
+            $priority = array_column($broadcasts, 'priority');
+            array_multisort($priority, SORT_ASC, $broadcasts);
+        }
 
         $rowName = $homeRowItem->getHomeRow()->getTitle();
         $description = $homeRowItem->getDescription();

@@ -277,6 +277,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 ]
             ])
             ->add('isPartner')
+            ->add('is_unique_container')
             ->getFormBuilder()->addModelTransformer(new CallbackTransformer(
                 // Use the array in the form
                 function ($valuesAsArray) {

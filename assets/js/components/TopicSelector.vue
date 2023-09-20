@@ -57,11 +57,13 @@ export default {
         document.querySelector('input.topic-label').value = row.label;
       }
 
-      let rowData = {
-          'game_id':row.id,
-          'game_name':row.label,
-      };
-      EventBus.$emit('selected-game', rowData);
+      if (this.itemType === 'game') {
+        let rowData = {
+          'game_id': row.id,
+          'game_name': row.label,
+        };
+        EventBus.$emit('selected-game', rowData);
+      }
     },
     /* Clicking on the search button */
     search: function() {

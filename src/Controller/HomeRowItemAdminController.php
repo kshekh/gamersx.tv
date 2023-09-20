@@ -135,7 +135,7 @@ class HomeRowItemAdminController extends CRUDController
                                 $homeRowItemOperation->setPriority($priority);
                                 $homeRowItemOperation->setItemType('streamer');
                                 $homeRowItemOperation->setStreamerId($streamerId);
-                                $homeRowItemOperation->setIsBacklisted($is_blacklisted);
+                                $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
 
                                 $this->em->persist($homeRowItemOperation);
                                 $this->em->flush();
@@ -371,7 +371,7 @@ class HomeRowItemAdminController extends CRUDController
                                 $homeRowItemOperation->setPriority($priority);
                                 $homeRowItemOperation->setItemType('streamer');
                                 $homeRowItemOperation->setStreamerId($streamerId);
-                                $homeRowItemOperation->setIsBacklisted($is_blacklisted);
+                                $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
 
                                 $this->em->persist($homeRowItemOperation);
                                 $this->em->flush();
