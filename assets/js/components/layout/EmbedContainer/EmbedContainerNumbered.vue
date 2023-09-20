@@ -193,8 +193,9 @@
             'pointer-events-none z-negative': !isEmbedVisible,
           },
         ]"
+        style="top: 50%;left: 0;transform: translateY(-50%);z-index: 99;display: flex;align-items: center;"
       >
-        <div ref="embedWrapper" class="h-full w-full">
+        <div ref="embedWrapper" class="w-full main-parent">
           <component
             v-if="embedData"
             ref="embed"
