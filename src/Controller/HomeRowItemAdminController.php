@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\HomeRowItem;
+use App\Entity\HomeRowItemOperation;
 use App\Service\YouTubeApi;
 use Doctrine\ORM\EntityManagerInterface;
 use Sonata\AdminBundle\Exception\LockException;
@@ -93,6 +94,7 @@ class HomeRowItemAdminController extends CRUDController
             if ($isFormValid && (!$this->isInPreviewMode() || $this->isPreviewApproved())) {
                 /** @phpstan-var T $submittedObject */
                 $submittedObject = $form->getData();
+                $requestData = $request->request->all();
                 $this->admin->setSubject($submittedObject);
                 $this->admin->checkAccess('create', $submittedObject);
                 if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
@@ -114,6 +116,33 @@ class HomeRowItemAdminController extends CRUDController
 
                 try {
                     $newObject = $this->admin->create($submittedObject);
+                    if($submittedObject->getItemType() == HomeRowItem::TYPE_GAME) {
+
+
+
+                        $streamerIndexArr = $requestData['streamer_index'];
+                        if (!empty($streamerIndexArr)) {
+                            $priority = 0;
+                            foreach ($streamerIndexArr as $streamerId) {
+                                $priority++;
+                                $is_blacklisted = 0;
+                                if (isset($requestData['is_blacklisted_' . $streamerId])) {
+                                    $is_blacklisted = 1;
+                                }
+
+                                $homeRowItemOperation = new HomeRowItemOperation();
+                                $homeRowItemOperation->setHomeRowItem($newObject);
+                                $homeRowItemOperation->setPriority($priority);
+                                $homeRowItemOperation->setItemType('streamer');
+                                $homeRowItemOperation->setStreamerId($streamerId);
+                                $homeRowItemOperation->setIsBacklisted($is_blacklisted);
+
+                                $this->em->persist($homeRowItemOperation);
+                                $this->em->flush();
+
+                            }
+                        }
+                    }
 
                     if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
                         $youtube = $this->youtube;
@@ -300,6 +329,7 @@ class HomeRowItemAdminController extends CRUDController
             if ($isFormValid && (!$this->isInPreviewMode() || $this->isPreviewApproved())) {
                 /** @phpstan-var T $submittedObject */
                 $submittedObject = $form->getData();
+                $requestData = $request->request->all();
                 $this->admin->setSubject($submittedObject);
                 if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
                     $submittedObject->setIsPublished(false);
@@ -321,6 +351,33 @@ class HomeRowItemAdminController extends CRUDController
 
                     if ($this->isXmlHttpRequest()) {
                         return $this->handleXmlHttpRequestSuccessResponse($request, $existingObject);
+                    }
+
+
+                    if($existingObject->getItemType() == HomeRowItem::TYPE_GAME) {
+                        $delete_home_row_item =  $this->em->getRepository(HomeRowItemOperation::class)->deleteByHomeRowItem($existingObject->getId());
+                        $streamerIndexArr = $requestData['streamer_index'];
+                        if (!empty($streamerIndexArr)) {
+                            $priority = 0;
+                            foreach ($streamerIndexArr as  $streamerId) {
+                                $priority++;
+                                $is_blacklisted = 0;
+                                if (isset($requestData['is_blacklisted_' . $streamerId])) {
+                                    $is_blacklisted = 1;
+                                }
+
+                                $homeRowItemOperation = new HomeRowItemOperation();
+                                $homeRowItemOperation->setHomeRowItem($existingObject);
+                                $homeRowItemOperation->setPriority($priority);
+                                $homeRowItemOperation->setItemType('streamer');
+                                $homeRowItemOperation->setStreamerId($streamerId);
+                                $homeRowItemOperation->setIsBacklisted($is_blacklisted);
+
+                                $this->em->persist($homeRowItemOperation);
+                                $this->em->flush();
+
+                            }
+                        }
                     }
 
                     if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {

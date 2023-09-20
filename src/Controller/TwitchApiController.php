@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\HomeRowItemOperation;
 use App\Service\TwitchApi;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,11 +33,14 @@ class TwitchApiController extends AbstractController
      * @var UrlGeneratorInterface
      */
     private $urlGenerator;
+    private EntityManagerInterface $em;
+
     public function __construct(
         ParameterBagInterface $params,
         SessionInterface $session,
         ?TranslatorInterface $translator = null,
-        UrlGeneratorInterface $urlGenerator
+        UrlGeneratorInterface $urlGenerator,
+        EntityManagerInterface $em
     )
     {
         $this->params = $params;
@@ -53,6 +58,7 @@ class TwitchApiController extends AbstractController
         $this->translator = $translator;
         $this->urlGenerator = $urlGenerator;
 
+        $this->em = $em;
     }
     /**
      * @Route("/query/streamer/{query}", name="queryStreamer")
@@ -135,4 +141,44 @@ class TwitchApiController extends AbstractController
         return $this->json($result->toArray());
     }
 
+    /**
+     * @Route("/streams/{gameId}", name="gameStreamers")
+     */
+    public function getGameStreamers($gameId,Request $request, TwitchApi $twitch)
+    {
+        $first = $request->get('first');
+        $before = $request->get('before');
+        $after = $request->get('after');
+        $how_row_item_id = $request->get('how_row_item_id');
+        $getSelectedRowItemOperation =  $this->em->getRepository(HomeRowItemOperation::class)->findBy(['home_row_item'=>$how_row_item_id]);
+        $selectedStreamerArr = [];
+        if(!empty($getSelectedRowItemOperation)) {
+            foreach ($getSelectedRowItemOperation as $getSelectedOprData) {
+                $selectedStreamerArr[$getSelectedOprData->getStreamerId()] = [
+                    'is_whitelisted' => $getSelectedOprData->getIsWhitelisted(),
+                    'is_blacklisted' => $getSelectedOprData->getIsBacklisted(),
+                    'priority' => $getSelectedOprData->getPriority()
+                ];
+            }
+        }
+
+        $result = $twitch->getTopLiveBroadcastForGame($gameId, $first);
+        $resultArr =  $result->toArray();
+        if(isset($resultArr['data'])) {
+            foreach ($resultArr['data'] as $res_key => $res_data) {
+                if(isset($selectedStreamerArr[$res_data['id']])) {
+                    $resultArr['data'][$res_key]['is_whitelisted'] = $selectedStreamerArr[$res_data['id']]['is_whitelisted'];
+                    $resultArr['data'][$res_key]['is_blacklisted'] = $selectedStreamerArr[$res_data['id']]['is_blacklisted'];
+                    $resultArr['data'][$res_key]['priority'] = $selectedStreamerArr[$res_data['id']]['priority'];
+                } else {
+                    $resultArr['data'][$res_key]['is_whitelisted'] = NULL;
+                    $resultArr['data'][$res_key]['is_blacklisted'] = NULL;
+                    $resultArr['data'][$res_key]['priority'] = ($res_key+1);
+                }
+            }
+            $priority = array_column($resultArr['data'], 'priority');
+            array_multisort($priority, SORT_ASC, $resultArr['data']);
+        }
+        return $this->json($resultArr);
+    }
 }

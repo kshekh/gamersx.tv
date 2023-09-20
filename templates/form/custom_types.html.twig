@@ -3,6 +3,9 @@
 {{ encore_entry_script_tags('topic-selector') }}
 {{ encore_entry_link_tags('topic-selector') }}
 
+{{ encore_entry_script_tags('streamer-selector') }}
+{{ encore_entry_link_tags('streamer-selector') }}
+
 {% set searchType = value.itemType ?? form.searchType.vars.value %}
 <div class="box">
     <div class="box-header">
@@ -21,6 +24,9 @@
             {{ form_errors(child) }}
         </div>
         {% endfor %}
+        <div id="app-streamer-selector" data-item-type="{{ searchType }}">
+            <streamer-selector></streamer-selector>
+        </div>
     </div>
 </div>
 {% endblock %}

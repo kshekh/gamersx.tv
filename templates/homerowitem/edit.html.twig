@@ -1,0 +1,6 @@
+{% extends '@SonataAdmin/CRUD/base_edit.html.twig' %}
+
+{% block form %}
+    <input type="hidden" id="how_row_item_id" value="{{ objectId }}">
+    {{ block('parentForm') }}
+{% endblock %}

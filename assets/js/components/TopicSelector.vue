@@ -56,6 +56,12 @@ export default {
         document.querySelector('input.topic-id').value = row.id;
         document.querySelector('input.topic-label').value = row.label;
       }
+
+      let rowData = {
+          'game_id':row.id,
+          'game_name':row.label,
+      };
+      EventBus.$emit('selected-game', rowData);
     },
     /* Clicking on the search button */
     search: function() {
@@ -76,6 +82,7 @@ export default {
     clear: function() {
       document.querySelector('input.topic-id').value = null;
       document.querySelector('input.topic-label').value = null;
+      EventBus.$emit('clear-game-streamers');
     },
     /** == Call the API to get various kinds of results, then process them == **/
     getSearchResults: function(params) {
