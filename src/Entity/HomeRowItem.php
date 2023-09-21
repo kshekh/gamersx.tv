@@ -9,9 +9,9 @@ use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-
+use App\Repository\HomeRowItemRepository;
 /**
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass=HomeRowItemRepository::class)
  * @Vich\Uploadable
  */
 class HomeRowItem implements PartneredInterface

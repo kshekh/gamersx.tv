@@ -95,6 +95,51 @@ class HomeRowItemAdminController extends CRUDController
                 /** @phpstan-var T $submittedObject */
                 $submittedObject = $form->getData();
                 $requestData = $request->request->all();
+
+                if (
+                    $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO ||
+                    $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO ||
+                    $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_PLAYLIST ||
+                    $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST
+                ) {
+                    $qb = $this->admin->getModelManager()->getEntityManager('App:HomeRowItem')
+                        ->createQueryBuilder()
+                        ->addSelect('hri')
+                        ->from('App:HomeRowItem', 'hri')
+                        ->andWhere('hri.is_unique_container = 0');
+
+                    if($submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO) {
+                        $qb->andWhere('hri.videoId = :videoId');
+                        $qb->setParameter('videoId', $submittedObject->getVideoId());
+                    } else if($submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_PLAYLIST || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
+                        $qb->andWhere('hri.playlistId = :playlistId');
+                        $qb->setParameter('playlistId', $submittedObject->getPlaylistId());
+                    }
+                    $check_unique_item = $qb->getQuery()->getResult();
+                } else {
+                    $topic_id = $submittedObject->getTopic()['topicId'];
+                    $check_unique_item =  $this->em->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
+                }
+
+                if(!empty($check_unique_item)) {
+                    $this->addFlash(
+                        'sonata_flash_error',
+                        'Selected video/game already exists in another container. Please select different one or allow this one to repeat.'
+                    );
+                    $formView = $form->createView();
+                    // set the theme for the current Admin Form
+                    $this->setFormTheme($formView, $this->admin->getFormTheme());
+                    // NEXT_MAJOR: Remove this line and use commented line below it instead
+                    $template = $this->admin->getTemplate($templateKey);
+
+                    return $this->renderWithExtraParams($template, [
+                        'action' => 'create',
+                        'form' => $formView,
+                        'object' => $newObject,
+                        'objectId' => null,
+                    ]);
+                }
+
                 $this->admin->setSubject($submittedObject);
                 $this->admin->checkAccess('create', $submittedObject);
                 if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
@@ -120,7 +165,7 @@ class HomeRowItemAdminController extends CRUDController
 
 
 
-                        $streamerIndexArr = $requestData['streamer_index'];
+                        $streamerIndexArr = $requestData['streamer_index']??[];
                         if (!empty($streamerIndexArr)) {
                             $priority = 0;
                             foreach ($streamerIndexArr as $streamerId) {
@@ -330,6 +375,56 @@ class HomeRowItemAdminController extends CRUDController
                 /** @phpstan-var T $submittedObject */
                 $submittedObject = $form->getData();
                 $requestData = $request->request->all();
+
+                if (
+                    $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO ||
+                    $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO ||
+                    $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_PLAYLIST ||
+                    $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST
+                ) {
+
+                    $qb = $this->admin->getModelManager()->getEntityManager('App:HomeRowItem')
+                        ->createQueryBuilder()
+                        ->addSelect('hri')
+                        ->from('App:HomeRowItem', 'hri')
+                        ->where('hri.id != :id')
+                        ->setParameter('id', $id)
+                        ->andWhere('hri.is_unique_container = 0');
+
+                    if($submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO) {
+                        $qb->andWhere('hri.videoId = :videoId');
+                        $qb->setParameter('videoId', $submittedObject->getVideoId());
+                    } else if($submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_PLAYLIST || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
+                        $qb->andWhere('hri.playlistId = :playlistId');
+                        $qb->setParameter('playlistId', $submittedObject->getPlaylistId());
+                    }
+                    $check_unique_item = $qb->getQuery()->getResult();
+                } else {
+                    $topic_id = $submittedObject->getTopic()['topicId'];
+                    $check_unique_item =  $this->em->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id,$id);
+                }
+
+                if(!empty($check_unique_item)) {
+                    $this->addFlash(
+                        'sonata_flash_error',
+                        'Selected video/game already exists in another container. Please select different one or allow this one to repeat.'
+                    );
+
+                    $formView = $form->createView();
+                    // set the theme for the current Admin Form
+                    $this->setFormTheme($formView, $this->admin->getFormTheme());
+                    // NEXT_MAJOR: Remove this line and use commented line below it instead
+                    $template = $this->admin->getTemplate($templateKey);
+                    // $template = $this->templateRegistry->getTemplate($templateKey);
+
+                    return $this->renderWithExtraParams($template, [
+                        'action' => 'edit',
+                        'form' => $formView,
+                        'object' => $existingObject,
+                        'objectId' => $objectId,
+                    ]);
+                }
+
                 $this->admin->setSubject($submittedObject);
                 if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
                     $submittedObject->setIsPublished(false);
@@ -356,7 +451,7 @@ class HomeRowItemAdminController extends CRUDController
 
                     if($existingObject->getItemType() == HomeRowItem::TYPE_GAME) {
                         $delete_home_row_item =  $this->em->getRepository(HomeRowItemOperation::class)->deleteByHomeRowItem($existingObject->getId());
-                        $streamerIndexArr = $requestData['streamer_index'];
+                        $streamerIndexArr = $requestData['streamer_index']??[];
                         if (!empty($streamerIndexArr)) {
                             $priority = 0;
                             foreach ($streamerIndexArr as  $streamerId) {

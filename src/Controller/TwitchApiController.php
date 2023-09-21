@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\HomeRowItem;
 use App\Entity\HomeRowItemOperation;
 use App\Service\TwitchApi;
 use Doctrine\ORM\EntityManagerInterface;
@@ -180,5 +181,24 @@ class TwitchApiController extends AbstractController
             array_multisort($priority, SORT_ASC, $resultArr['data']);
         }
         return $this->json($resultArr);
+    }
+
+    /**
+     * @Route("/check_unique_container", name="checkIsUniqueContainer")
+     */
+    public function checkIsUniqueContainer(Request $request)
+    {
+        $item_type = $request->get('item_type');
+        $topic_id = $request->get('topic_id');
+        $how_row_item_id = $request->get('how_row_item_id');
+
+        $getHomeRowItem =  $this->em->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id,$how_row_item_id);
+        $return = [];
+        if(!empty($getHomeRowItem)) {
+            $return = ['is_unique_container'=> true];
+        } else {
+            $return = ['is_unique_container'=> false];
+        }
+        return $this->json($return);
     }
 }

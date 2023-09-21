@@ -3,4 +3,15 @@
 {% block form %}
     <input type="hidden" id="how_row_item_id" value="{{ objectId }}">
     {{ block('parentForm') }}
+    <script>
+        setTimeout(function () {
+            $(".switch").parent().closest('.checkbox').addClass('switch_checkbox');
+            $(".switch").before('<label>Unique</label>');
+            $(".switch").find('.icheckbox_square-blue').append('<span class="slider round"></span>');
+            $(".switch").after('<label>Allow Repeat</label>');
+            $(".switch").find('.iCheck-helper').remove();
+            $(".switch").find('.control-label__text').remove();
+            $(".switch").find('.icheckbox_square-blue').removeClass();
+        },100);
+    </script>
 {% endblock %}
