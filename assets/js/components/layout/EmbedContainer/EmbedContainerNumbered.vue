@@ -204,6 +204,7 @@
             :overlay="overlay"
             :image="image"
             :isShowTwitchEmbed="isShowTwitchEmbed"
+            :isMobileDevice="isMobileDevice"
             class="h-full w-full border overflow-hidden bg-black"
             :class="{
               'border-purple': embedName === 'TwitchEmbed',
@@ -368,11 +369,11 @@ export default {
       this.$emit("hide-controls");
     },
     scrollOut() {
-      if (this.showOverlay || this.showArt) {
+            if (this.showOverlay || this.showArt) {
         this.isOverlayVisible = true;
         this.isEmbedVisible = false;
       }
-      // if (this.$refs.embed.isPlaying()) {
+            // if (this.$refs.embed.isPlaying()) {
       this.$refs.embed.stopPlayer();
       // }
       window.removeEventListener("scroll", this.checkIfBoxInViewPort);
