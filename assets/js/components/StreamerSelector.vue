@@ -10,11 +10,14 @@
       <tbody>
         <tr v-for="row in rows" @click="selectRow(row)">
           <template v-for="field in row.fields">
-            <td class="sonata-ba-list-field handle"><i class="fa fa-arrows"></i> {{ field.streamer }}</td>
-            <td class="sonata-ba-list-field">{{ field.viewer_count }}</td>
+            <td class="sonata-ba-list-field handle"><i class="fa fa-arrows"></i> {{ field.streamer }} <sup v-if="field.is_from_database">*</sup> </td>
+            <td class="sonata-ba-list-field">{{ field.viewer_count }} <sup v-if="field.is_from_database">#</sup></td>
             <td class="sonata-ba-list-field">
               <input type="hidden" name="streamer_index[]" :value="row.id" >
               <input type="checkbox" :name="'is_blacklisted_'+row.id" :checked="field.is_blacklisted" >
+              <input type="hidden" :name="'priority_'+row.id" :value="field.priority">
+              <input type="hidden" :name="'streamer_name_'+row.id" :value="field.streamer">
+              <input type="hidden" :name="'viewer_'+row.id" :value="field.viewer_count">
             </td>
           </template>
         </tr>
@@ -94,6 +97,8 @@ export default {
               'streamer':stream.user_name,
               'viewer_count': stream.viewer_count,
               'is_blacklisted': stream.is_blacklisted,
+              'priority': stream.priority,
+              'is_from_database': stream.is_from_database,
             }
           ]
         };
@@ -133,9 +138,14 @@ export default {
         onlyBody: true,
         animation: 300
       });
-      dragger.on('drop',function(from, to){
-        console.log(from);
-        console.log(to);
+      dragger.on('drop', (from, to, el, mode) => {
+        console.log(`drop ${el.nodeName} from ${from} ${mode} to ${to} ${mode}`);
+        var to_priority = to;
+        var element_index = (to-1);
+        var table_row = $("#streamer-table tbody tr:eq("+element_index+")");
+        var streamer_index = $(table_row).find('input[name="streamer_index[]"]').val();
+        $(table_row).find('input[name="priority_'+streamer_index+'"]').val(to_priority);
+
       });
     }
   },

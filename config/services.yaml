@@ -92,6 +92,13 @@ services:
             - { name: sonata.admin, manager_type: orm, group: admin, label: Partner Roles }
         public: true
 
+    admin.container_access_control:
+        class: App\Admin\ContainerAccessControlAdmin
+        arguments: [ ~, App\Entity\HomeRowItemOperation, ~ ]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: admin, label: Container access control }
+        public: true
+
     Aws\S3\S3Client:
         arguments:
             -

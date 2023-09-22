@@ -1,0 +1,6 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+{% block field %}
+    {% if object.isBlacklisted() == 1 %}
+    <button class="btn btn-danger" data-item-id="{{ admin.id(object) }}" >Remove</button>
+    {% endif %}
+{% endblock %}

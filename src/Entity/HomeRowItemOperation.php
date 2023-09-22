@@ -57,6 +57,21 @@ class HomeRowItemOperation
      */
     private $is_full_site_blacklisted;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $streamer_name;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $game_name;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $viewer;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -154,6 +169,42 @@ class HomeRowItemOperation
     public function setIsFullSiteBlacklisted(?int $is_full_site_blacklisted): self
     {
         $this->is_full_site_blacklisted = $is_full_site_blacklisted;
+
+        return $this;
+    }
+
+    public function getStreamerName(): ?string
+    {
+        return $this->streamer_name;
+    }
+
+    public function setStreamerName(?string $streamer_name): self
+    {
+        $this->streamer_name = $streamer_name;
+
+        return $this;
+    }
+
+    public function getGameName(): ?string
+    {
+        return $this->game_name;
+    }
+
+    public function setGameName(?string $game_name): self
+    {
+        $this->game_name = $game_name;
+
+        return $this;
+    }
+
+    public function getViewer(): ?string
+    {
+        return $this->viewer;
+    }
+
+    public function setViewer(?string $viewer): self
+    {
+        $this->viewer = $viewer;
 
         return $this;
     }

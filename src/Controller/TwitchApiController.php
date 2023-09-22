@@ -153,33 +153,59 @@ class TwitchApiController extends AbstractController
         $how_row_item_id = $request->get('how_row_item_id');
         $getSelectedRowItemOperation =  $this->em->getRepository(HomeRowItemOperation::class)->findBy(['home_row_item'=>$how_row_item_id]);
         $selectedStreamerArr = [];
+        $old_streamer_ids = [];
         if(!empty($getSelectedRowItemOperation)) {
             foreach ($getSelectedRowItemOperation as $getSelectedOprData) {
                 $selectedStreamerArr[$getSelectedOprData->getStreamerId()] = [
-                    'is_whitelisted' => $getSelectedOprData->getIsWhitelisted(),
+                    'user_name' => $getSelectedOprData->getStreamerName(),
+                    'viewer_count' => $getSelectedOprData->getViewer(),
                     'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
-                    'priority' => $getSelectedOprData->getPriority()
+                    'priority' => $getSelectedOprData->getPriority(),
+                    'sort_priority' => $getSelectedOprData->getPriority(),
+                    'is_from_database' => true,
+                ];
+                $old_streamer_ids[$getSelectedOprData->getStreamerId()] = [
+                    'user_name' => $getSelectedOprData->getStreamerName(),
+                    'viewer_count' => $getSelectedOprData->getViewer(),
+                    'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
+                    'priority' => $getSelectedOprData->getPriority(),
+                    'sort_priority' => $getSelectedOprData->getPriority(),
+                    'is_from_database' => true,
                 ];
             }
         }
-
         $result = $twitch->getTopLiveBroadcastForGame($gameId, $first);
         $resultArr =  $result->toArray();
         if(isset($resultArr['data'])) {
             foreach ($resultArr['data'] as $res_key => $res_data) {
+                if(isset($old_streamer_ids[$res_data['id']])) {
+                    unset($old_streamer_ids[$res_data['id']]);
+                }
                 if(isset($selectedStreamerArr[$res_data['id']])) {
-                    $resultArr['data'][$res_key]['is_whitelisted'] = $selectedStreamerArr[$res_data['id']]['is_whitelisted'];
                     $resultArr['data'][$res_key]['is_blacklisted'] = $selectedStreamerArr[$res_data['id']]['is_blacklisted'];
-                    $resultArr['data'][$res_key]['priority'] = $selectedStreamerArr[$res_data['id']]['priority'];
+                    $priority = $selectedStreamerArr[$res_data['id']]['priority'];
+                    $resultArr['data'][$res_key]['priority'] = $priority;
+                    $sort_priority = $priority;
+                    if(empty($sort_priority)) {
+                        $sort_priority = count($resultArr['data'])+1;
+                    }
+                    $resultArr['data'][$res_key]['sort_priority'] = $sort_priority;
                 } else {
-                    $resultArr['data'][$res_key]['is_whitelisted'] = NULL;
                     $resultArr['data'][$res_key]['is_blacklisted'] = NULL;
-                    $resultArr['data'][$res_key]['priority'] = ($res_key+1);
+                    $resultArr['data'][$res_key]['priority'] = NULL;
+                    $resultArr['data'][$res_key]['sort_priority'] = count($resultArr['data'])+1;
+                    $resultArr['data'][$res_key]['is_from_database'] = false;
                 }
             }
-            $priority = array_column($resultArr['data'], 'priority');
-            array_multisort($priority, SORT_ASC, $resultArr['data']);
+
+            foreach ($old_streamer_ids as $streamer_id => $old_streamer_data) {
+                $resultArr['data'][] = $old_streamer_data;
+            }
         }
+
+        $sort_priority = array_column($resultArr['data'], 'sort_priority');
+        array_multisort($sort_priority, SORT_ASC, $resultArr['data']);
+
         return $this->json($resultArr);
     }
 

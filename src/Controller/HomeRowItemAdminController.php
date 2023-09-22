@@ -163,27 +163,43 @@ class HomeRowItemAdminController extends CRUDController
                     $newObject = $this->admin->create($submittedObject);
                     if($submittedObject->getItemType() == HomeRowItem::TYPE_GAME) {
 
-
-
+                        $game_name = $submittedObject->getTopic()['label']??'';
+                        $game_id = $submittedObject->getTopic()['topicId']??'';
                         $streamerIndexArr = $requestData['streamer_index']??[];
                         if (!empty($streamerIndexArr)) {
-                            $priority = 0;
-                            foreach ($streamerIndexArr as $streamerId) {
-                                $priority++;
+                            foreach ($streamerIndexArr as  $streamerId) {
                                 $is_blacklisted = 0;
                                 if (isset($requestData['is_blacklisted_' . $streamerId])) {
                                     $is_blacklisted = 1;
                                 }
 
-                                $homeRowItemOperation = new HomeRowItemOperation();
-                                $homeRowItemOperation->setHomeRowItem($newObject);
-                                $homeRowItemOperation->setPriority($priority);
-                                $homeRowItemOperation->setItemType('streamer');
-                                $homeRowItemOperation->setStreamerId($streamerId);
-                                $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
+                                if ((isset($requestData['priority_' . $streamerId]) && !empty($requestData['priority_' . $streamerId])) || $is_blacklisted == 1) {
+                                    $priority = NULL;
+                                    if(!empty($requestData['priority_' . $streamerId])) {
+                                        $priority = $requestData['priority_' . $streamerId];
+                                    }
+                                    $streamer_name = '';
+                                    if (isset($requestData['streamer_name_' . $streamerId])) {
+                                        $streamer_name = $requestData['streamer_name_' . $streamerId];
+                                    }
+                                    $viewer = '';
+                                    if (isset($requestData['viewer_' . $streamerId])) {
+                                        $viewer = $requestData['viewer_' . $streamerId];
+                                    }
+                                    $homeRowItemOperation = new HomeRowItemOperation();
+                                    $homeRowItemOperation->setHomeRowItem($existingObject);
+                                    $homeRowItemOperation->setPriority($priority);
+                                    $homeRowItemOperation->setItemType('streamer');
+                                    $homeRowItemOperation->setStreamerId($streamerId);
+                                    $homeRowItemOperation->setGameId($game_id);
+                                    $homeRowItemOperation->setGameName($game_name);
+                                    $homeRowItemOperation->setStreamerName($streamer_name);
+                                    $homeRowItemOperation->setViewer($viewer);
+                                    $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
 
-                                $this->em->persist($homeRowItemOperation);
-                                $this->em->flush();
+                                    $this->em->persist($homeRowItemOperation);
+                                    $this->em->flush();
+                                }
 
                             }
                         }
@@ -451,25 +467,43 @@ class HomeRowItemAdminController extends CRUDController
 
                     if($existingObject->getItemType() == HomeRowItem::TYPE_GAME) {
                         $delete_home_row_item =  $this->em->getRepository(HomeRowItemOperation::class)->deleteByHomeRowItem($existingObject->getId());
+                        $game_name = $submittedObject->getTopic()['label']??'';
+                        $game_id = $submittedObject->getTopic()['topicId']??'';
                         $streamerIndexArr = $requestData['streamer_index']??[];
                         if (!empty($streamerIndexArr)) {
-                            $priority = 0;
                             foreach ($streamerIndexArr as  $streamerId) {
-                                $priority++;
                                 $is_blacklisted = 0;
                                 if (isset($requestData['is_blacklisted_' . $streamerId])) {
                                     $is_blacklisted = 1;
                                 }
 
-                                $homeRowItemOperation = new HomeRowItemOperation();
-                                $homeRowItemOperation->setHomeRowItem($existingObject);
-                                $homeRowItemOperation->setPriority($priority);
-                                $homeRowItemOperation->setItemType('streamer');
-                                $homeRowItemOperation->setStreamerId($streamerId);
-                                $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
+                                if ((isset($requestData['priority_' . $streamerId]) && !empty($requestData['priority_' . $streamerId])) || $is_blacklisted == 1) {
+                                    $priority = NULL;
+                                    if(!empty($requestData['priority_' . $streamerId])) {
+                                        $priority = $requestData['priority_' . $streamerId];
+                                    }
+                                    $streamer_name = '';
+                                    if (isset($requestData['streamer_name_' . $streamerId])) {
+                                        $streamer_name = $requestData['streamer_name_' . $streamerId];
+                                    }
+                                    $viewer = '';
+                                    if (isset($requestData['viewer_' . $streamerId])) {
+                                        $viewer = $requestData['viewer_' . $streamerId];
+                                    }
+                                    $homeRowItemOperation = new HomeRowItemOperation();
+                                    $homeRowItemOperation->setHomeRowItem($existingObject);
+                                    $homeRowItemOperation->setPriority($priority);
+                                    $homeRowItemOperation->setItemType('streamer');
+                                    $homeRowItemOperation->setStreamerId($streamerId);
+                                    $homeRowItemOperation->setGameId($game_id);
+                                    $homeRowItemOperation->setGameName($game_name);
+                                    $homeRowItemOperation->setStreamerName($streamer_name);
+                                    $homeRowItemOperation->setViewer($viewer);
+                                    $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
 
-                                $this->em->persist($homeRowItemOperation);
-                                $this->em->flush();
+                                    $this->em->persist($homeRowItemOperation);
+                                    $this->em->flush();
+                                }
 
                             }
                         }

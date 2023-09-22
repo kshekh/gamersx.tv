@@ -62,24 +62,6 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
             }
         }
 
-        // sorting streamers based on priority
-        if(isset($broadcasts)) {
-            foreach ($broadcasts as $res_key => $res_data) {
-                if(isset($selectedStreamerArr[$res_data['id']])) {
-                    $is_blacklisted =  $selectedStreamerArr[$res_data['id']]['is_blacklisted'];
-                    $priority = $selectedStreamerArr[$res_data['id']]['priority'];
-                    if($is_blacklisted == 1) {
-                        unset($broadcasts[$res_key]);
-                    } else {
-                        $broadcasts[$res_key]['priority'] = $priority;
-                    }
-                } else {
-                    $broadcasts[$res_key]['priority'] = ($res_key+1);
-                }
-            }
-            $priority = array_column($broadcasts, 'priority');
-            array_multisort($priority, SORT_ASC, $broadcasts);
-        }
 
         $rowName = $homeRowItem->getHomeRow()->getTitle();
         $description = $homeRowItem->getDescription();
@@ -159,6 +141,26 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
             $this->options = $homeRowItem->getSortAndTrimOptions();
 
             $this->sort();
+
+            // sorting streamers based on priority
+            if(isset($this->items)) {
+                foreach ($this->items as $res_key => $res_data) {
+                    $broadcast_data = $res_data['broadcast'];
+                    if(isset($selectedStreamerArr[$broadcast_data['id']])) {
+                        $is_blacklisted =  $selectedStreamerArr[$broadcast_data['id']]['is_blacklisted'];
+                        $priority = $selectedStreamerArr[$broadcast_data['id']]['priority'];
+                        if($is_blacklisted == 1) {
+                            unset($this->items[$res_key]);
+                        } else {
+                            $this->items[$res_key]['priority'] = $priority;
+                        }
+                    } else {
+                        $this->items[$res_key]['priority'] = ($res_key+1);
+                    }
+                }
+                $priority = array_column($this->items, 'priority');
+                array_multisort($priority, SORT_ASC, $this->items);
+            }
 
             // If showArt is checked, add the art to the very first item
             if ($homeRowItem->getShowArt() === TRUE) {
