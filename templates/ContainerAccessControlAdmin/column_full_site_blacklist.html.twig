@@ -1,4 +1,4 @@
 {% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
 {% block field %}
-    <input type="checkbox" data-item-id="{{ admin.id(object) }}" {{ (object.isFullSiteBlacklisted() == 1)?'checked':'' }}>
+    <input type="checkbox" data-item-id="{{ admin.id(object) }}" class="chk_full_site_blacklist" data-url="{{ admin.generateObjectUrl('full_site_blacklisted_container', object) }}" {{ (object.isFullSiteBlacklisted() == 1)?'checked':'' }}>
 {% endblock %}

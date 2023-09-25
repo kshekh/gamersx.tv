@@ -23,11 +23,15 @@ final class ContainerAccessControlAdmin extends AbstractAdmin
     {
         /** @var ProxyQuery $query */
         $query = parent::createQuery($context);
-
-        return $query
+        $rootAlias = $query->getRootAliases()[0];
+        $query
             ->setSortOrder('ASC')
-            ->setSortBy([], ['fieldName' => 'id'])
-            ;
+            ->setSortBy([], ['fieldName' => 'id']);
+
+        $query->where($rootAlias.'.is_blacklisted = 1');
+        $query->orWhere($rootAlias.'.is_full_site_blacklisted = 1');
+
+        return $query;
     }
 
     protected $datagridValues = array(
@@ -42,6 +46,8 @@ final class ContainerAccessControlAdmin extends AbstractAdmin
         $collection
             ->remove('create')
             ->remove('delete')
+            ->add('remove_blacklisted_container',$this->getRouterIdParameter().'/remove_blacklisted_container')
+            ->add('full_site_blacklisted_container',$this->getRouterIdParameter().'/full_site_blacklisted_container');
         ;
     }
 

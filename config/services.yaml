@@ -94,9 +94,11 @@ services:
 
     admin.container_access_control:
         class: App\Admin\ContainerAccessControlAdmin
-        arguments: [ ~, App\Entity\HomeRowItemOperation, ~ ]
+        arguments: [~, App\Entity\HomeRowItemOperation, App\Controller\ContainerAccessControlController ]
         tags:
             - { name: sonata.admin, manager_type: orm, group: admin, label: Container access control }
+        calls:
+            - [ setTemplate, [ 'list', 'ContainerAccessControlAdmin/list.html.twig' ] ]
         public: true
 
     Aws\S3\S3Client:

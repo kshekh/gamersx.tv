@@ -157,6 +157,7 @@ class TwitchApiController extends AbstractController
         if(!empty($getSelectedRowItemOperation)) {
             foreach ($getSelectedRowItemOperation as $getSelectedOprData) {
                 $selectedStreamerArr[$getSelectedOprData->getStreamerId()] = [
+                    'id' => $getSelectedOprData->getStreamerId(),
                     'user_name' => $getSelectedOprData->getStreamerName(),
                     'viewer_count' => $getSelectedOprData->getViewer(),
                     'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
@@ -165,6 +166,7 @@ class TwitchApiController extends AbstractController
                     'is_from_database' => true,
                 ];
                 $old_streamer_ids[$getSelectedOprData->getStreamerId()] = [
+                    'id' => $getSelectedOprData->getStreamerId(),
                     'user_name' => $getSelectedOprData->getStreamerName(),
                     'viewer_count' => $getSelectedOprData->getViewer(),
                     'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
