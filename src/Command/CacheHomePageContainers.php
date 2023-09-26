@@ -100,8 +100,20 @@ class CacheHomePageContainers extends Command
                             }
                         }
                         if(!empty($priority_Arr)) {
-                            $key_values = array_column($priority_Arr, 'priority');
-                            array_multisort($key_values, SORT_ASC, $priority_Arr);
+                            $options =  $row->getOptions();
+                            if (array_key_exists('itemSortType', $options)) {
+                                $sort = $options['itemSortType'];
+                                if ($sort === HomeRow::SORT_ASC) {
+                                    $key_values = array_column($priority_Arr, 'priority');
+                                    array_multisort($key_values, SORT_ASC, $priority_Arr);
+                                } elseif ($sort === HomeRow::SORT_DESC) {
+                                    $key_values = array_column($priority_Arr, 'priority');
+                                    array_multisort($key_values, SORT_DESC, $priority_Arr);
+                                } elseif ($sort === HomeRow::SORT_FIXED) {
+                                    $key_values = array_column($priority_Arr, 'sortIndex');
+                                    array_multisort($key_values, SORT_ASC, $priority_Arr);
+                                }
+                            }
                             $channels = array_merge($priority_Arr,$without_priority_Arr);
                         }
                         $thisRow['channels'] = $channels;
