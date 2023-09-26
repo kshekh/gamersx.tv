@@ -160,7 +160,7 @@
           <!-- Show the embed with overlay if there's an embed -->
           <div
             v-if="showEmbed && embedData"
-            class="w-full h-full relative overflow-hidden"
+            class="w-full h-full overflow-hidden"
             @mouseenter="mouseEntered"
             @mouseleave="mouseLeave"
           >
@@ -184,7 +184,7 @@
             <a :href="link" class="block w-full h-full overflow-hidden">
               <img
                 :src="image.url"
-                class="relative top-1/2 transform -translate-y-1/2 w-full"
+                class="relative  w-full"
                 style="height: inherit"
               />
             </a>
@@ -194,7 +194,7 @@
           <div v-else-if="showOverlay" class="w-full h-full">
             <a :href="link" class="block w-full h-full overflow-hidden">
               <img
-                class="relative top-1/2 transform -translate-y-1/2 w-full"
+                class="relative w-full"
                 alt="Embed's Custom Overlay"
                 :src="overlay"
                 style="height: inherit"
@@ -214,8 +214,10 @@
 
       </div>
 
-      <!-- Show the embed with overlay if there's an embed -->
-      <div v-if="showEmbed && embedData">
+      
+    </div>
+    <!-- Show the embed with overlay if there's an embed, section moved to make it absolute of parent relative -->
+    <div v-if="showEmbed && embedData">
         <div
           class="cut-edge__wrapper flex-grow min-h-0 absolute inset-0 z-20 py-5 md:py-8 xl:py-12 px-4 md:px-18 xl:px-32 opacity-0 transition-opacity duration-300 ease-linear"
           :class="[
@@ -236,6 +238,7 @@
               :overlay="overlay"
               :image="image"
               :isShowTwitchEmbed="isShowTwitchEmbed"
+              :isMobileDevice="isMobileDevice"
               class="h-full w-full border overflow-hidden bg-black"
               :class="{
                 'border-purple': embedName === 'TwitchEmbed',
@@ -247,8 +250,6 @@
           </div>
         </div>
       </div>
-    </div>
-
   </div>
 </template>
 

@@ -58,31 +58,37 @@ export default {
   },
   methods: {
     embedTwitch: function () {
-      this.embed = new Twitch.Embed(this.embedDataCopy.elementId, {
-        width: this.width || 540,
-        height: this.height || 300,
-        channel: this.embedDataCopy.channel,
-        video: this.embedDataCopy.video,
-        layout: "video",
-        autoplay: true,
-        muted: false,
-        // controls: false,
-        parent: window.location.hostname,
-      });
-
-      this.embed.addEventListener(Twitch.Player.PLAY, this.setIsPlaying);
-      this.embed.addEventListener(Twitch.Player.PAUSE, this.setIsNotPlaying);
-      this.embed.addEventListener(Twitch.Player.ENDED, this.setIsNotPlaying);
-      this.embed.addEventListener(Twitch.Player.WAITING, () => {
-        this.isBuffering = true;
-      });
-      this.embed.addEventListener(Twitch.Player.PLAYING, () => {
+      let element = document.getElementById(this.embedDataCopy.elementId)
+      if (element.children.length == 0) {
+        this.embed = new Twitch.Embed(this.embedDataCopy.elementId, {
+          width: this.width || 540,
+          height: this.height || 300,
+          channel: this.embedDataCopy.channel,
+          video: this.embedDataCopy.video,
+          layout: "video",
+          autoplay: true,
+          muted: false,
+          // controls: false,
+          parent: window.location.hostname,
+        });
+        
+        this.embed.addEventListener(Twitch.Player.PLAY, this.setIsPlaying);
+        this.embed.addEventListener(Twitch.Player.PAUSE, this.setIsNotPlaying);
+        this.embed.addEventListener(Twitch.Player.ENDED, this.setIsNotPlaying);
+        this.embed.addEventListener(Twitch.Player.WAITING, () => {
+          this.isBuffering = true;
+        });
+        this.embed.addEventListener(Twitch.Player.PLAYING, () => {
+          this.isBuffering = false;
+        });
+        this.embed.addEventListener(Twitch.Player.OFFLINE, () => {
+          this.embedPlaying = false;
+          this.isBuffering = false;
+        });
+      } else {
         this.isBuffering = false;
-      });
-      this.embed.addEventListener(Twitch.Player.OFFLINE, () => {
-        this.embedPlaying = false;
-        this.isBuffering = false;
-      });
+        this.startPlayer()
+      }
     },
     startPlayer: function () {
       if (
