@@ -194,6 +194,7 @@ export default {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
     this.$refs.channelBox.addEventListener("scroll", this.handleScroll);
     this.$refs.channelBox.scrollLeft = 0;
+    this.setIsMobileDevice();
   },
   updated: function () {
     this.allowScrolling =
