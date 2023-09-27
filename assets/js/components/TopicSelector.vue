@@ -83,6 +83,7 @@ export default {
         toastr.error("Selected video/game already exists in another container. Please select different one or allow this one to repeat.");
         document.querySelector('input.topic-id').value = '';
         document.querySelector('input.topic-label').value = '';
+        EventBus.$emit('clear-game-streamers');
       }
     },
     /* Clicking on the search button */

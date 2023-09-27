@@ -150,6 +150,7 @@ class TwitchApiController extends AbstractController
         $first = $request->get('first');
         $before = $request->get('before');
         $after = $request->get('after');
+        $user_login = $request->get('user_login');
         $how_row_item_id = $request->get('how_row_item_id');
         $getSelectedRowItemOperation =  $this->em->getRepository(HomeRowItemOperation::class)->findBy(['home_row_item'=>$how_row_item_id]);
         $selectedStreamerArr = [];
@@ -176,7 +177,7 @@ class TwitchApiController extends AbstractController
                 ];
             }
         }
-        $result = $twitch->getTopLiveBroadcastForGame($gameId, $first);
+        $result = $twitch->getTopLiveBroadcastForGame($gameId, $first, $before, $after,$user_login);
         $resultArr =  $result->toArray();
         if(isset($resultArr['data'])) {
             foreach ($resultArr['data'] as $res_key => $res_data) {
@@ -208,6 +209,40 @@ class TwitchApiController extends AbstractController
         $sort_priority = array_column($resultArr['data'], 'sort_priority');
         array_multisort($sort_priority, SORT_ASC, $resultArr['data']);
 
+        return $this->json($resultArr);
+    }
+
+    /**
+     * @Route("/streams/offline/{query}", name="gameOfflineStreamers")
+     */
+    public function getOfflineGameStreamers($query,Request $request, TwitchApi $twitch)
+    {
+        $first = $request->get('first');
+        $before = $request->get('before');
+        $after = $request->get('after');
+        $how_row_item_id = $request->get('how_row_item_id');
+
+        $result = $twitch->getStreamerInfoByChannel($query);
+        $resultArr =  $result->toArray();
+        return $this->json($resultArr);
+    }
+
+    /**
+     * @Route("/games/{query}", name="games")
+     */
+    public function getGames($query,Request $request, TwitchApi $twitch)
+    {
+        $first = $request->get('first');
+        $before = $request->get('before');
+        $after = $request->get('after');
+        $how_row_item_id = $request->get('how_row_item_id');
+
+        if(!empty($query) && $query != 'null') {
+            $result = $twitch->getGameInfo($query);
+        } else {
+            $result = $twitch->getTopGames($first, $before, $after);
+        }
+        $resultArr =  $result->toArray();
         return $this->json($resultArr);
     }
 

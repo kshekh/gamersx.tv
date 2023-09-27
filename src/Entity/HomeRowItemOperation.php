@@ -28,7 +28,7 @@ class HomeRowItemOperation
     private $item_type;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true,options={"comment":"itemtype=streamer => livestreaming_id,itemtype=offline_streamer => userid"})
      */
     private $streamer_id;
 

@@ -58,6 +58,32 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
         if (!$isPublished) {
             return Array();
         }
+        // getting selected games
+        $getSelectedRowItemOperation =  $homeRowItem->getHomeRowItemOperations();
+        $selectedGamesArr = [];
+        if(!empty($getSelectedRowItemOperation)) {
+            foreach ($getSelectedRowItemOperation as $getSelectedOprData) {
+                $selectedGamesArr[$getSelectedOprData->getGameId()] = [
+                    'is_whitelisted' => $getSelectedOprData->getIsWhitelisted(),
+                    'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
+                ];
+            }
+        }
+
+        if(!empty($broadcast)) {
+            // sorting streamers based on priority
+            $selected_streamer_index = [];
+            if(isset($selectedGamesArr[$broadcast['game_id']])) {
+                $selected_streamer_index = $selectedGamesArr[$broadcast['game_id']];
+            }
+            if(!empty($selected_streamer_index)) {
+                $is_blacklisted =  $selected_streamer_index['is_blacklisted'];
+                $is_whitelisted =  $selected_streamer_index['is_whitelisted'];
+                if($is_blacklisted == 1 || $is_whitelisted == 0) {
+                    return Array();
+                }
+            }
+        }
 
         $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
         $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());

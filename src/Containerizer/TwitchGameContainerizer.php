@@ -146,10 +146,16 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
             if(isset($this->items)) {
                 foreach ($this->items as $res_key => $res_data) {
                     $broadcast_data = $res_data['broadcast'];
+                    $selected_streamer_index = [];
                     if(isset($selectedStreamerArr[$broadcast_data['id']])) {
-                        $is_blacklisted =  $selectedStreamerArr[$broadcast_data['id']]['is_blacklisted'];
-                        $is_full_site_blacklisted =  $selectedStreamerArr[$broadcast_data['id']]['is_full_site_blacklisted'];
-                        $priority = $selectedStreamerArr[$broadcast_data['id']]['priority'];
+                        $selected_streamer_index = $selectedStreamerArr[$broadcast_data['id']];
+                    } else if(isset($selectedStreamerArr[$broadcast_data['user_id']])) {
+                        $selected_streamer_index = $selectedStreamerArr[$broadcast_data['user_id']];
+                    }
+                    if(!empty($selected_streamer_index)) {
+                        $is_blacklisted =  $selected_streamer_index['is_blacklisted'];
+                        $is_full_site_blacklisted =  $selected_streamer_index['is_full_site_blacklisted'];
+                        $priority = $selected_streamer_index['priority'];
                         if($is_blacklisted == 1 || $is_full_site_blacklisted == 1) {
                             unset($this->items[$res_key]);
                         } else {
