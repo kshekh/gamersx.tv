@@ -182,7 +182,7 @@ export default {
     clickPrev() {},
     clickNext() {},
     setIsMobileDevice() {
-            const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
+      const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
       if(checkDeviceType) {
         this.isMobileDevice = true;
       } else {
@@ -194,6 +194,7 @@ export default {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
     this.$refs.channelBox.addEventListener("scroll", this.handleScroll);
     this.$refs.channelBox.scrollLeft = 0;
+    this.setIsMobileDevice();
   },
   updated: function () {
     if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels.filter(this.showChannel))){
