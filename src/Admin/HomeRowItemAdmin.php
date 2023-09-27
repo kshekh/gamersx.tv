@@ -239,6 +239,13 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('topic', TopicType::class, [
                 'required' => false,
             ])
+            ->add('is_unique_container',null,[
+                'label' => null,
+                'attr' => [
+                    'class' => 'chk_is_unique_container',
+                ],
+                'label_attr' => array('class' => 'switch')
+            ])
             ->add('sortAndTrimOptions', SortAndTrimOptionsType::class, [
                 'label' => 'Sort and Trim Options',
                 'required' => false,
@@ -277,6 +284,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
                 ]
             ])
             ->add('isPartner')
+
             ->getFormBuilder()->addModelTransformer(new CallbackTransformer(
                 // Use the array in the form
                 function ($valuesAsArray) {

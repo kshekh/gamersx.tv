@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\HomeRowItem;
+use App\Entity\HomeRowItemOperation;
 use App\Service\TwitchApi;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,11 +34,14 @@ class TwitchApiController extends AbstractController
      * @var UrlGeneratorInterface
      */
     private $urlGenerator;
+    private EntityManagerInterface $em;
+
     public function __construct(
         ParameterBagInterface $params,
         SessionInterface $session,
         ?TranslatorInterface $translator = null,
-        UrlGeneratorInterface $urlGenerator
+        UrlGeneratorInterface $urlGenerator,
+        EntityManagerInterface $em
     )
     {
         $this->params = $params;
@@ -53,6 +59,7 @@ class TwitchApiController extends AbstractController
         $this->translator = $translator;
         $this->urlGenerator = $urlGenerator;
 
+        $this->em = $em;
     }
     /**
      * @Route("/query/streamer/{query}", name="queryStreamer")
@@ -135,4 +142,126 @@ class TwitchApiController extends AbstractController
         return $this->json($result->toArray());
     }
 
+    /**
+     * @Route("/streams/{gameId}", name="gameStreamers")
+     */
+    public function getGameStreamers($gameId,Request $request, TwitchApi $twitch)
+    {
+        $first = $request->get('first');
+        $before = $request->get('before');
+        $after = $request->get('after');
+        $user_login = $request->get('user_login');
+        $how_row_item_id = $request->get('how_row_item_id');
+        $getSelectedRowItemOperation =  $this->em->getRepository(HomeRowItemOperation::class)->findBy(['home_row_item'=>$how_row_item_id]);
+        $selectedStreamerArr = [];
+        $old_streamer_ids = [];
+        if(!empty($getSelectedRowItemOperation)) {
+            foreach ($getSelectedRowItemOperation as $getSelectedOprData) {
+                $selectedStreamerArr[$getSelectedOprData->getStreamerId()] = [
+                    'id' => $getSelectedOprData->getStreamerId(),
+                    'user_name' => $getSelectedOprData->getStreamerName(),
+                    'viewer_count' => $getSelectedOprData->getViewer(),
+                    'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
+                    'priority' => $getSelectedOprData->getPriority(),
+                    'sort_priority' => $getSelectedOprData->getPriority(),
+                    'is_from_database' => true,
+                ];
+                $old_streamer_ids[$getSelectedOprData->getStreamerId()] = [
+                    'id' => $getSelectedOprData->getStreamerId(),
+                    'user_name' => $getSelectedOprData->getStreamerName(),
+                    'viewer_count' => $getSelectedOprData->getViewer(),
+                    'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
+                    'priority' => $getSelectedOprData->getPriority(),
+                    'sort_priority' => $getSelectedOprData->getPriority(),
+                    'is_from_database' => true,
+                ];
+            }
+        }
+        $result = $twitch->getTopLiveBroadcastForGame($gameId, $first, $before, $after,$user_login);
+        $resultArr =  $result->toArray();
+        if(isset($resultArr['data'])) {
+            foreach ($resultArr['data'] as $res_key => $res_data) {
+                if(isset($old_streamer_ids[$res_data['id']])) {
+                    unset($old_streamer_ids[$res_data['id']]);
+                }
+                if(isset($selectedStreamerArr[$res_data['id']])) {
+                    $resultArr['data'][$res_key]['is_blacklisted'] = $selectedStreamerArr[$res_data['id']]['is_blacklisted'];
+                    $priority = $selectedStreamerArr[$res_data['id']]['priority'];
+                    $resultArr['data'][$res_key]['priority'] = $priority;
+                    $sort_priority = $priority;
+                    if(empty($sort_priority)) {
+                        $sort_priority = count($resultArr['data'])+1;
+                    }
+                    $resultArr['data'][$res_key]['sort_priority'] = $sort_priority;
+                } else {
+                    $resultArr['data'][$res_key]['is_blacklisted'] = NULL;
+                    $resultArr['data'][$res_key]['priority'] = NULL;
+                    $resultArr['data'][$res_key]['sort_priority'] = count($resultArr['data'])+1;
+                    $resultArr['data'][$res_key]['is_from_database'] = false;
+                }
+            }
+
+            foreach ($old_streamer_ids as $streamer_id => $old_streamer_data) {
+                $resultArr['data'][] = $old_streamer_data;
+            }
+        }
+
+        $sort_priority = array_column($resultArr['data'], 'sort_priority');
+        array_multisort($sort_priority, SORT_ASC, $resultArr['data']);
+
+        return $this->json($resultArr);
+    }
+
+    /**
+     * @Route("/streams/offline/{query}", name="gameOfflineStreamers")
+     */
+    public function getOfflineGameStreamers($query,Request $request, TwitchApi $twitch)
+    {
+        $first = $request->get('first');
+        $before = $request->get('before');
+        $after = $request->get('after');
+        $how_row_item_id = $request->get('how_row_item_id');
+
+        $result = $twitch->getStreamerInfoByChannel($query);
+        $resultArr =  $result->toArray();
+        return $this->json($resultArr);
+    }
+
+    /**
+     * @Route("/games/{query}", name="games")
+     */
+    public function getGames($query,Request $request, TwitchApi $twitch)
+    {
+        $first = $request->get('first');
+        $before = $request->get('before');
+        $after = $request->get('after');
+        $how_row_item_id = $request->get('how_row_item_id');
+
+        if(!empty($query) && $query != 'null') {
+            $result = $twitch->getGameInfo($query);
+        } else {
+            $result = $twitch->getTopGames($first, $before, $after);
+        }
+        $resultArr =  $result->toArray();
+        return $this->json($resultArr);
+    }
+
+    /**
+     * @Route("/check_unique_container", name="checkIsUniqueContainer")
+     */
+    public function checkIsUniqueContainer(Request $request)
+    {
+        $item_type = $request->get('item_type');
+        $topic_id = $request->get('topic_id');
+        $how_row_item_id = $request->get('how_row_item_id');
+
+        $getHomeRowItem =  $this->em->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id,$how_row_item_id);
+        $return = [];
+        if(!empty($getHomeRowItem)) {
+            $return = ['is_unique_container'=> true];
+        } else {
+            $return = ['is_unique_container'=> false];
+        }
+        return $this->json($return);
+    }
 }

@@ -1,0 +1,51 @@
+{% extends '@SonataAdmin/CRUD/base_list.html.twig' %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).on("click",".btn_remove_blacklist",function () {
+            var _this = $(this);
+            var url = _this.data('url');
+
+            $.ajax({
+                type: 'GET',
+                url: url,
+                dataType:'JSON',
+                beforeSend:function () {
+                },
+                success:function (response) {
+                    if(response.status == 1 ) {
+                        location.reload();
+                    }
+
+                    if(response.status == 0 ) {
+                        toastr.error(response.msg)
+                    }
+                },
+            });
+        });
+
+        $(document).on("change",".chk_full_site_blacklist",function () {
+            var _this = $(this);
+            var url = _this.data('url');
+
+            $.ajax({
+                type: 'GET',
+                url: url,
+                dataType:'JSON',
+                beforeSend:function () {
+                },
+                success:function (response) {
+                    if(response.status == 1 ) {
+                        location.reload();
+                    }
+
+                    if(response.status == 0 ) {
+                        toastr.error(response.msg)
+                    }
+                },
+            });
+        });
+    </script>
+{% endblock %}
