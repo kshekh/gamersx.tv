@@ -182,7 +182,7 @@ export default {
     clickPrev() {},
     clickNext() {},
     setIsMobileDevice() {
-            const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
+      const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
       if(checkDeviceType) {
         this.isMobileDevice = true;
       } else {
