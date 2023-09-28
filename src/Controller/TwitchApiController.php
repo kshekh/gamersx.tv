@@ -152,17 +152,21 @@ class TwitchApiController extends AbstractController
         $after = $request->get('after');
         $user_login = $request->get('user_login');
         $how_row_item_id = $request->get('how_row_item_id');
-        $getSelectedRowItemOperation =  $this->em->getRepository(HomeRowItemOperation::class)->findBy(['home_row_item'=>$how_row_item_id,'item_type'=> 'streamer']);
         $selectedStreamerArr = [];
+
+        $getSelectedRowItemOperation =  $this->em->getRepository(HomeRowItemOperation::class)->findBy(['home_row_item'=>$how_row_item_id]);
         if(!empty($getSelectedRowItemOperation)) {
             foreach ($getSelectedRowItemOperation as $getSelectedOprData) {
-                $selectedStreamerArr[] = [
-                    'id' => $getSelectedOprData->getStreamerId(),
-                    'user_name' => $getSelectedOprData->getStreamerName(),
-                    'viewer_count' => $getSelectedOprData->getViewer(),
-                    'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
-                    'priority' => $getSelectedOprData->getPriority(),
-                ];
+                if($getSelectedOprData->getItemType() == 'streamer' || $getSelectedOprData->getItemType() == 'offline_streamer') {
+                    $selectedStreamerArr[] = [
+                        'id' => $getSelectedOprData->getStreamerId(),
+                        'user_name' => $getSelectedOprData->getStreamerName(),
+                        'viewer_count' => $getSelectedOprData->getViewer(),
+                        'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
+                        'priority' => $getSelectedOprData->getPriority(),
+                        'item_type' => $getSelectedOprData->getItemType(),
+                    ];
+                }
             }
         }
         $result = $twitch->getTopLiveBroadcastForGame($gameId, $first, $before, $after,$user_login);
@@ -189,22 +193,8 @@ class TwitchApiController extends AbstractController
             $result = $twitch->getStreamerInfoByChannel($query);
             $resultArr =  $result->toArray();
         }
-        $getSelectedRowItemOperation =  $this->em->getRepository(HomeRowItemOperation::class)->findBy(['home_row_item'=>$how_row_item_id,'item_type'=>'offline_streamer']);
-        $selectedArr = [];
-        if(!empty($getSelectedRowItemOperation)) {
-            foreach ($getSelectedRowItemOperation as $getSelectedOprData) {
-                $selectedArr[] = [
-                    'id' => $getSelectedOprData->getStreamerId(),
-                    'login' => $getSelectedOprData->getStreamerName(),
-                    'view_count' => $getSelectedOprData->getViewer(),
-                    'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
-                    'is_whitelisted' => $getSelectedOprData->getIsWhitelisted(),
-                ];
-            }
-        }
 
         $return['results_data'] = $resultArr;
-        $return['old_selected_data'] = $selectedArr;
 
         return $this->json($return);
     }

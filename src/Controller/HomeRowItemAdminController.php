@@ -186,10 +186,16 @@ class HomeRowItemAdminController extends CRUDController
                                 if (isset($requestData['viewer_' . $streamerId])) {
                                     $viewer = $requestData['viewer_' . $streamerId];
                                 }
+
+                                $item_type = 'streamer';
+                                if (isset($requestData['item_type_' . $streamerId])) {
+                                    $item_type = $requestData['item_type_' . $streamerId];
+                                }
+
                                 $homeRowItemOperation = new HomeRowItemOperation();
                                 $homeRowItemOperation->setHomeRowItem($newObject);
                                 $homeRowItemOperation->setPriority($priority);
-                                $homeRowItemOperation->setItemType('streamer');
+                                $homeRowItemOperation->setItemType($item_type);
                                 $homeRowItemOperation->setStreamerId($streamerId);
                                 $homeRowItemOperation->setGameId($game_id);
                                 $homeRowItemOperation->setGameName($game_name);
@@ -201,39 +207,6 @@ class HomeRowItemAdminController extends CRUDController
                             }
                         }
 
-                        $offline_streamerIndexArr = $requestData['offline_streamer_index']??[];
-                        if (!empty($offline_streamerIndexArr)) {
-                            $priority = 0;
-                            foreach ($offline_streamerIndexArr as $offline_streamerIndex =>  $offline_streamerId) {
-                                if(empty($offline_streamerId)) {
-                                    continue;
-                                }
-                                $priority++;
-                                $is_blacklisted = 0;
-                                if (isset($requestData['is_blacklisted_' . $offline_streamerId])) {
-                                    $is_blacklisted = 1;
-                                }
-
-                                $streamer_name = '';
-                                if (isset($requestData['streamer_name_' . $offline_streamerId])) {
-                                    $streamer_name = $requestData['streamer_name_' . $offline_streamerId];
-                                }
-                                $viewer = '';
-                                if (isset($requestData['viewer_' . $offline_streamerId])) {
-                                    $viewer = $requestData['viewer_' . $offline_streamerId];
-                                }
-                                $homeRowItemOperation = new HomeRowItemOperation();
-                                $homeRowItemOperation->setHomeRowItem($newObject);
-                                $homeRowItemOperation->setPriority($priority);
-                                $homeRowItemOperation->setItemType('offline_streamer');
-                                $homeRowItemOperation->setStreamerId($offline_streamerId);
-                                $homeRowItemOperation->setStreamerName($streamer_name);
-                                $homeRowItemOperation->setViewer($viewer);
-                                $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
-                                $this->em->persist($homeRowItemOperation);
-                                $this->em->flush();
-                            }
-                        }
                     } else if($submittedObject->getItemType() == HomeRowItem::TYPE_STREAMER) {
 
                         $gameIndexArr = $requestData['game_index'] ?? [];
@@ -557,10 +530,16 @@ class HomeRowItemAdminController extends CRUDController
                                 if (isset($requestData['viewer_' . $streamerId])) {
                                     $viewer = $requestData['viewer_' . $streamerId];
                                 }
+
+                                $item_type = 'streamer';
+                                if (isset($requestData['item_type_' . $streamerId])) {
+                                    $item_type = $requestData['item_type_' . $streamerId];
+                                }
+
                                 $homeRowItemOperation = new HomeRowItemOperation();
                                 $homeRowItemOperation->setHomeRowItem($existingObject);
                                 $homeRowItemOperation->setPriority($priority);
-                                $homeRowItemOperation->setItemType('streamer');
+                                $homeRowItemOperation->setItemType($item_type);
                                 $homeRowItemOperation->setStreamerId($streamerId);
                                 $homeRowItemOperation->setGameId($game_id);
                                 $homeRowItemOperation->setGameName($game_name);
@@ -572,39 +551,6 @@ class HomeRowItemAdminController extends CRUDController
                             }
                         }
 
-                        $offline_streamerIndexArr = $requestData['offline_streamer_index']??[];
-                        if (!empty($offline_streamerIndexArr)) {
-                            $priority = 0;
-                            foreach ($offline_streamerIndexArr as $offline_streamerIndex =>  $offline_streamerId) {
-                                if(empty($offline_streamerId)) {
-                                    continue;
-                                }
-                                $priority++;
-                                $is_blacklisted = 0;
-                                if (isset($requestData['is_blacklisted_' . $offline_streamerId])) {
-                                    $is_blacklisted = 1;
-                                }
-
-                                $streamer_name = '';
-                                if (isset($requestData['streamer_name_' . $offline_streamerId])) {
-                                    $streamer_name = $requestData['streamer_name_' . $offline_streamerId];
-                                }
-                                $viewer = '';
-                                if (isset($requestData['viewer_' . $offline_streamerId])) {
-                                    $viewer = $requestData['viewer_' . $offline_streamerId];
-                                }
-                                $homeRowItemOperation = new HomeRowItemOperation();
-                                $homeRowItemOperation->setHomeRowItem($existingObject);
-                                $homeRowItemOperation->setPriority($priority);
-                                $homeRowItemOperation->setItemType('offline_streamer');
-                                $homeRowItemOperation->setStreamerId($offline_streamerId);
-                                $homeRowItemOperation->setStreamerName($streamer_name);
-                                $homeRowItemOperation->setViewer($viewer);
-                                $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
-                                $this->em->persist($homeRowItemOperation);
-                                $this->em->flush();
-                            }
-                        }
                     } else if($submittedObject->getItemType() == HomeRowItem::TYPE_STREAMER) {
 
                         $delete_home_row_item =  $this->em->getRepository(HomeRowItemOperation::class)->deleteByHomeRowItem($existingObject->getId());

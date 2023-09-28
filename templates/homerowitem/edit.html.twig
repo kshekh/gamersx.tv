@@ -23,6 +23,13 @@
         .ui-sortable-placeholder {
             background: yellow;
         }
+        .streamer_row.live_streamer {
+            background: #de6969;
+        }
+        .disabled_move {
+            pointer-events: none;
+            cursor: not-allowed;
+        }
     </style>
 {% endblock %}
 {% block form %}
@@ -38,5 +45,19 @@
             $(".switch").find('.control-label__text').remove();
             $(".switch").find('.icheckbox_square-blue').removeClass();
         },100);
+
+        $(document).ready(function () {
+            $("#custom-tabs-one-tab .nav-item").on('click',function(){
+                 var active_tab_id = $(this).find('.nav-link').attr('id');
+                 if(active_tab_id == 'custom-tabs-live-tab') {
+                    $("#streamer-result-table").find('.streamer_row.live_streamer').removeClass('disabled_move');
+                    $("#streamer-result-table").find('.streamer_row.offline_streamer').addClass('disabled_move');
+                 } else if(active_tab_id == 'custom-tabs-offline-tab') {
+                    $("#streamer-result-table").find('.streamer_row.live_streamer').addClass('disabled_move');
+                    $("#streamer-result-table").find('.streamer_row.offline_streamer').removeClass('disabled_move');
+                }
+            });
+        });
+
     </script>
 {% endblock %}
