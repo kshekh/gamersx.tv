@@ -17,47 +17,47 @@
           <div class="card-body">
             <div class="tab-content" id="custom-tabs-one-tabContent">
               <div class="tab-pane active" id="custom-tabs-live" role="tabpanel" aria-labelledby="custom-tabs-live-tab">
-                  <div class="row">
-                      <div class="col-md-6">
-                        <div class="row">
-                          <div class="col-md-12">
-                            <div class="form-group">
-                              <input name="live-topic-search" class="form-control" v-model="searchValue" type="search"
-                                     placeholder="Enter a search term"></input>
-                              <div class="well well-small">
-                                <button @click="search()" type="button" class="btn btn-small btn-primary">Search</button>
-                                <button @click="moreResults('before')" type="button" class="btn btn-small btn-primary">Previous Results</button>
-                                <button @click="moreResults('after')" type="button" class="btn btn-small btn-primary">Next Results</button>
-                                <button @click="clearSearch()" type="button" class="btn btn-small btn-primary">Reset Results</button>
-                              </div>
-                              <div v-if="message" class="well well-small">
-                                <span class="message">{{ message }}</span>
-                              </div>
-                            </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <input name="live-topic-search" class="form-control" v-model="searchValue" type="search"
+                                 placeholder="Enter a search term"></input>
+                          <div class="well well-small">
+                            <button @click="search()" type="button" class="btn btn-small btn-primary">Search</button>
+                            <button @click="moreResults('before')" type="button" class="btn btn-small btn-primary">Previous Results</button>
+                            <button @click="moreResults('after')" type="button" class="btn btn-small btn-primary">Next Results</button>
+                            <button @click="clearSearch()" type="button" class="btn btn-small btn-primary">Reset Results</button>
                           </div>
-
-                          <div class="col-md-12">
-                            <table id="live-streamer-table" class="tables_ui table table-bordered table-striped table-hover sonata-ba-list">
-                              <tbody class="t_sortable">
-                              <tr class="sonata-ba-list-field-header">
-                                <th v-for="header in headers" class="sonata-ba-list-field-header">{{ header }}</th>
-                              </tr>
-                              </tbody>
-                            </table>
+                          <div v-if="message" class="well well-small">
+                            <span class="message">{{ message }}</span>
                           </div>
                         </div>
                       </div>
-                      <div class="col-md-6">
-                        <h3>Black & Whitelist</h3>
-                        <table id="live-streamer-result-table" class="tables_ui table table-bordered table-striped table-hover sonata-ba-list">
+
+                      <div class="col-md-12">
+                        <table id="live-streamer-table" class="tables_ui table table-bordered table-striped table-hover sonata-ba-list">
                           <tbody class="t_sortable">
-                            <tr class="sonata-ba-list-field-header">
-                              <th v-for="header in headers" class="sonata-ba-list-field-header">{{ header }}</th>
-                            </tr>
+                          <tr class="sonata-ba-list-field-header">
+                            <th v-for="header in headers" class="sonata-ba-list-field-header">{{ header }}</th>
+                          </tr>
                           </tbody>
                         </table>
                       </div>
+                    </div>
                   </div>
+                  <div class="col-md-6">
+                    <h3>Black & Whitelist</h3>
+                    <table id="live-streamer-result-table" class="tables_ui table table-bordered table-striped table-hover sonata-ba-list">
+                      <tbody class="t_sortable">
+                      <tr class="sonata-ba-list-field-header">
+                        <th v-for="header in headers" class="sonata-ba-list-field-header">{{ header }}</th>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
               <div class="tab-pane" id="custom-tabs-offline" role="tabpanel" aria-labelledby="custom-tabs-offline-tab">
                 <div class="row">
@@ -111,37 +111,25 @@
 
     <h3>Select Games</h3>
     <div class="row">
-        <div class="col-md-6">
-          <div class="col-md-12">
-            <div class="form-group">
-              <input name="game-search" class="form-control" v-model="gameSearchValue" type="search"
-                     placeholder="Enter a search term"></input>
-              <div class="well well-small">
-                <button @click="game_search()" type="button" class="btn btn-small btn-primary">Search</button>
-                <button @click="moreGameResults('before')" type="button" class="btn btn-small btn-primary">Previous Results</button>
-                <button @click="moreGameResults('after')" type="button" class="btn btn-small btn-primary">Next Results</button>
-                <button @click="clearGameSearch()" type="button" class="btn btn-small btn-primary">Reset Results</button>
-              </div>
-              <div v-if="message" class="well well-small">
-                <span class="message">{{ message }}</span>
-              </div>
+      <div class="col-md-6">
+        <div class="col-md-12">
+          <div class="form-group">
+            <input name="game-search" class="form-control" v-model="gameSearchValue" type="search"
+                   placeholder="Enter a search term"></input>
+            <div class="well well-small">
+              <button @click="game_search()" type="button" class="btn btn-small btn-primary">Search</button>
+              <button @click="moreGameResults('before')" type="button" class="btn btn-small btn-primary">Previous Results</button>
+              <button @click="moreGameResults('after')" type="button" class="btn btn-small btn-primary">Next Results</button>
+              <button @click="clearGameSearch()" type="button" class="btn btn-small btn-primary">Reset Results</button>
             </div>
-          </div>
-
-          <div class="col-md-12">
-            <table id="game-table" class="tables_ui table table-bordered table-striped table-hover sonata-ba-list">
-              <tbody class="t_sortable">
-              <tr class="sonata-ba-list-field-header">
-                <th v-for="header in streamer_type_headers" class="sonata-ba-list-field-header">{{ header }}</th>
-              </tr>
-              </tbody>
-            </table>
+            <div v-if="message" class="well well-small">
+              <span class="message">{{ message }}</span>
+            </div>
           </div>
         </div>
 
-        <div class="col-md-6">
-          <h3>Black & Whitelist</h3>
-          <table id="game-result-table" class="tables_ui table table-bordered table-striped table-hover sonata-ba-list">
+        <div class="col-md-12">
+          <table id="game-table" class="tables_ui table table-bordered table-striped table-hover sonata-ba-list">
             <tbody class="t_sortable">
             <tr class="sonata-ba-list-field-header">
               <th v-for="header in streamer_type_headers" class="sonata-ba-list-field-header">{{ header }}</th>
@@ -149,6 +137,18 @@
             </tbody>
           </table>
         </div>
+      </div>
+
+      <div class="col-md-6">
+        <h3>Black & Whitelist</h3>
+        <table id="game-result-table" class="tables_ui table table-bordered table-striped table-hover sonata-ba-list">
+          <tbody class="t_sortable">
+          <tr class="sonata-ba-list-field-header">
+            <th v-for="header in streamer_type_headers" class="sonata-ba-list-field-header">{{ header }}</th>
+          </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
@@ -280,113 +280,181 @@ export default {
         .then(response => callback(response))
     },
     processGameStreamerResults(response) {
-      this.cursor = response.data.pagination.cursor;
-      if (response.data.data === null) {
-        this.message = 'Sorry, no results for that query';
-        return;
-      }
+      this.cursor = response.data.results_data.pagination.cursor;
+      // if (response.data.results_data.data === null) {
+      //   this.message = 'Sorry, no results for that query';
+      //   return;
+      // }
       this.headers = ['Streamer', 'Viewers', 'Blacklist'];
       $("#live-streamer-table .live_streamer_row").remove();
-      this.rows = response.data.data.map(function(stream) {
+      if(response.data.results_data && response.data.results_data.data) {
 
-        var row_id = stream.id;
-        var streamer = stream.user_name;
-        var viewer_count = stream.viewer_count;
-        var is_blacklisted = stream.is_blacklisted;
-        var is_from_database = stream.is_from_database;
-        var streamer_string = '';
-        var viewer_count_string = '';
-        var is_blacklisted_check = (is_blacklisted == 1)?'checked':'';
+        this.rows = response.data.results_data.data.map(function(stream) {
 
-        if(is_from_database == 1) {
-          streamer_string = '<sup>*</sup>';
-          viewer_count_string = '<sup>#</sup>';
-        }
-        var tr_data = `<tr class="live_streamer_row">`;
-        tr_data += `<td class="sonata-ba-list-field handle"><i class="fa fa-arrows"></i> `+streamer+` `+streamer_string+`</td>
-                    <td class="sonata-ba-list-field">`+viewer_count+` `+viewer_count_string+`</td>
-                    <td class="sonata-ba-list-field">
-                      <input type="hidden" name="streamer_index[]" data-id="`+row_id+`" >
-                      <input type="checkbox" name="is_blacklisted_`+row_id+`" `+is_blacklisted_check+` >
-                      <input type="hidden" name="streamer_name_`+row_id+`" value="`+streamer+`">
-                      <input type="hidden" name="viewer_`+row_id+`" value="`+viewer_count+`">
-                    </td>`;
-        tr_data +=`</tr>`;
+          var row_id = stream.id;
+          var streamer = stream.user_name;
+          var viewer_count = stream.viewer_count;
+          var is_blacklisted = stream.is_blacklisted;
+          var is_blacklisted_check = (is_blacklisted == 1)?'checked':'';
 
-        $("#live-streamer-table tbody").append(tr_data);
-
-      });
-
-    },
-    processOfflineGameStreamerResults(response) {
-      if (response.data.data === null) {
-        this.message = 'Sorry, no results for that query';
-        return;
-      }
-      this.headers = ['Streamer', 'Viewers', 'Blacklist'];
-      $("#offline-streamer-table .offline_streamer_row").remove();
-      this.offline_rows = response.data.data.map(function(stream) {
-
-        var row_id = stream.id;
-        var streamer = stream.login;
-        var viewer_count = stream.view_count;
-        var is_blacklisted = 0;
-        var priority = 0;
-        var is_from_database = 0;
-
-        var tr_data = `<tr class="offline_streamer_row">`;
-        tr_data += `<td class="sonata-ba-list-field handle"><i class="fa fa-arrows"></i> `+streamer+`</td>
+          var tr_data = `<tr class="live_streamer_row">`;
+          tr_data += `<td class="sonata-ba-list-field handle"><i class="fa fa-arrows"></i> `+streamer+`</td>
                       <td class="sonata-ba-list-field">`+viewer_count+`</td>
                       <td class="sonata-ba-list-field">
-                        <input type="hidden" name="offline_streamer_index[]" data-id="`+row_id+`" >
-                        <input type="checkbox" name="is_blacklisted_`+row_id+`" >
-                        <input type="hidden" name="priority_`+row_id+`" value="`+priority+`">
+                        <input type="hidden" name="streamer_index[]" data-id="`+row_id+`" >
+                        <input type="checkbox" name="is_blacklisted_`+row_id+`" `+is_blacklisted_check+` >
                         <input type="hidden" name="streamer_name_`+row_id+`" value="`+streamer+`">
                         <input type="hidden" name="viewer_`+row_id+`" value="`+viewer_count+`">
                       </td>`;
-        tr_data +=`</tr>`;
+          tr_data +=`</tr>`;
 
-        $("#offline-streamer-table tbody").append(tr_data);
+          $("#live-streamer-table tbody").append(tr_data);
 
-      });
+        });
+
+      }
+
+      $("#live-streamer-result-table .live_streamer_row").remove();
+      if(response.data.old_selected_data) {
+        this.rows = response.data.old_selected_data.map(function (stream) {
+
+          var row_id = stream.id;
+          var streamer = stream.user_name;
+          var viewer_count = stream.viewer_count;
+          var is_blacklisted = stream.is_blacklisted;
+          var is_blacklisted_check = (is_blacklisted == 1) ? 'checked' : '';
+
+          var tr_data = `<tr class="live_streamer_row">`;
+          tr_data += `<td class="sonata-ba-list-field handle"><i class="fa fa-arrows"></i> ` + streamer + `</td>
+                    <td class="sonata-ba-list-field">` + viewer_count + `</td>
+                    <td class="sonata-ba-list-field">
+                      <input type="hidden" name="streamer_index[]" value="` + row_id + `" data-id="` + row_id + `" >
+                      <input type="checkbox" name="is_blacklisted_` + row_id + `" ` + is_blacklisted_check + ` >
+                      <input type="hidden" name="streamer_name_` + row_id + `" value="` + streamer + `">
+                      <input type="hidden" name="viewer_` + row_id + `" value="` + viewer_count + `">
+                    </td>`;
+          tr_data += `</tr>`;
+
+          $("#live-streamer-result-table tbody").append(tr_data);
+
+        });
+      }
+
+    },
+    processOfflineGameStreamerResults(response) {
+      // if (response.data.results_data.data === null) {
+      //   this.message = 'Sorry, no results for that query';
+      //   return;
+      // }
+      this.headers = ['Streamer', 'Viewers', 'Blacklist'];
+      $("#offline-streamer-table .offline_streamer_row").remove();
+      if(response.data.results_data && response.data.results_data.data) {
+
+        this.offline_rows = response.data.results_data.data.map(function(stream) {
+
+          var row_id = stream.id;
+          var streamer = stream.login;
+          var viewer_count = stream.view_count;
+
+          var tr_data = `<tr class="offline_streamer_row">`;
+          tr_data += `<td class="sonata-ba-list-field handle"><i class="fa fa-arrows"></i> `+streamer+`</td>
+                        <td class="sonata-ba-list-field">`+viewer_count+`</td>
+                        <td class="sonata-ba-list-field">
+                          <input type="hidden" name="offline_streamer_index[]" data-id="`+row_id+`" >
+                          <input type="checkbox" name="is_blacklisted_`+row_id+`" >
+                          <input type="hidden" name="streamer_name_`+row_id+`" value="`+streamer+`">
+                          <input type="hidden" name="viewer_`+row_id+`" value="`+viewer_count+`">
+                        </td>`;
+          tr_data +=`</tr>`;
+
+          $("#offline-streamer-table tbody").append(tr_data);
+
+        });
+      }
+
+      $("#offline-streamer-result-table .offline_streamer_row").remove();
+
+      if(response.data.old_selected_data) {
+        this.offline_rows = response.data.old_selected_data.map(function (stream) {
+
+          var row_id = stream.id;
+          var streamer = stream.login;
+          var viewer_count = stream.view_count;
+
+          var tr_data = `<tr class="offline_streamer_row">`;
+          tr_data += `<td class="sonata-ba-list-field handle"><i class="fa fa-arrows"></i> ` + streamer + `</td>
+                      <td class="sonata-ba-list-field">` + viewer_count + `</td>
+                      <td class="sonata-ba-list-field">
+                        <input type="hidden" name="offline_streamer_index[]" value="` + row_id + `"  data-id="` + row_id + `" >
+                        <input type="checkbox" name="is_blacklisted_` + row_id + `" >
+                        <input type="hidden" name="streamer_name_` + row_id + `" value="` + streamer + `">
+                        <input type="hidden" name="viewer_` + row_id + `" value="` + viewer_count + `">
+                      </td>`;
+          tr_data += `</tr>`;
+
+          $("#offline-streamer-result-table tbody").append(tr_data);
+
+        });
+      }
     },
     processGameResults(response) {
-      if(response.data.pagination && response.data.pagination.cursor) {
-        this.cursor = response.data.pagination.cursor;
+      if(response.data.results_data.pagination && response.data.results_data.pagination.cursor) {
+        this.cursor = response.data.results_data.pagination.cursor;
       }
-      if (response.data.data === null) {
-        this.message = 'Sorry, no results for that query';
-        return;
-      }
+      // if (response.data.results_data === null) {
+      //   this.message = 'Sorry, no results for that query';
+      //   return;
+      // }
       $("#game-table .game_row").remove();
-      this.rows = response.data.data.map(function(stream) {
+      if(response.data.results_data && response.data.results_data.data) {
+        this.rows = response.data.results_data.data.map(function (stream) {
 
-        var row_id = stream.id;
-        var streamer = stream.name;
-        var is_blacklisted = stream.is_blacklisted;
-        var is_whitelisted = stream.is_blacklisted;
-        var is_from_database = stream.is_from_database;
-        var streamer_string = '';
-        var is_blacklisted_check = (is_blacklisted == 1)?'checked':'';
-        var is_whitelisted_check = (is_whitelisted == 1)?'checked':'';
+          var row_id = stream.id;
+          var streamer = stream.name;
 
-        if(is_from_database == 1) {
-          streamer_string = '<sup>*</sup>';
-        }
-        var tr_data = `<tr class="game_row">`;
-        tr_data += `<td class="sonata-ba-list-field handle"><i class="fa fa-arrows"></i> `+streamer+` `+streamer_string+`</td>
+          var tr_data = `<tr class="game_row">`;
+          tr_data += `<td class="sonata-ba-list-field handle"><i class="fa fa-arrows"></i> ` + streamer + `</td>
                     <td class="sonata-ba-list-field">
-                     <input type="checkbox" name="is_whitelisted_`+row_id+`" `+is_whitelisted_check+` >
+                     <input type="checkbox" name="is_whitelisted_` + row_id + `" >
                     </td>
                     <td class="sonata-ba-list-field">
-                      <input type="hidden" name="game_index[]" data-id="`+row_id+`" >
-                      <input type="checkbox" name="is_blacklisted_`+row_id+`" `+is_blacklisted_check+` >
-                      <input type="hidden" name="streamer_name_`+row_id+`" value="`+streamer+`">
+                      <input type="hidden" name="game_index[]" data-id="` + row_id + `" >
+                      <input type="checkbox" name="is_blacklisted_` + row_id + `" >
+                      <input type="hidden" name="streamer_name_` + row_id + `" value="` + streamer + `">
                     </td>`;
-        tr_data +=`</tr>`;
+          tr_data += `</tr>`;
 
-        $("#game-table tbody").append(tr_data);
-      });
+          $("#game-table tbody").append(tr_data);
+        });
+      }
+
+      $("#game-result-table .game_row").remove();
+
+      if(response.data.old_selected_data) {
+        this.rows = response.data.old_selected_data.map(function (stream) {
+
+          var row_id = stream.id;
+          var streamer = stream.name;
+          var is_blacklisted = stream.is_blacklisted;
+          var is_whitelisted = stream.is_whitelisted;
+          var is_blacklisted_check = (is_blacklisted == 1) ? 'checked' : '';
+          var is_whitelisted_check = (is_whitelisted == 1) ? 'checked' : '';
+
+          var tr_data = `<tr class="game_row">`;
+          tr_data += `<td class="sonata-ba-list-field handle"><i class="fa fa-arrows"></i> ` + streamer + `</td>
+                    <td class="sonata-ba-list-field">
+                     <input type="checkbox" name="is_whitelisted_` + row_id + `" ` + is_whitelisted_check + ` >
+                    </td>
+                    <td class="sonata-ba-list-field">
+                      <input type="hidden" name="game_index[]" value="` + row_id + `" data-id="` + row_id + `" >
+                      <input type="checkbox" name="is_blacklisted_` + row_id + `" ` + is_blacklisted_check + ` >
+                      <input type="hidden" name="streamer_name_` + row_id + `" value="` + streamer + `">
+                    </td>`;
+          tr_data += `</tr>`;
+
+          $("#game-result-table tbody").append(tr_data);
+        });
+      }
     },
   },
   created() {
@@ -429,98 +497,100 @@ export default {
     if (selector) {
       this.itemType = $(selector).val();
     }
+    if(this.itemType == 'game') {
 
-    var $tabs = $('#live-streamer-result-table')
-    $("tbody.t_sortable").sortable({
-      connectWith: ".t_sortable",
-      items: "> tr:not(:first)",
-      appendTo: $tabs,
-      helper:"clone",
-      zIndex: 999990
-    }).disableSelection();
+      var $tabs = $('#live-streamer-result-table')
+      $("tbody.t_sortable").sortable({
+        connectWith: ".t_sortable",
+        items: "> tr:not(:first)",
+        appendTo: $tabs,
+        helper:"clone",
+        zIndex: 999990
+      }).disableSelection();
 
-    var $offline_tabs = $('#offline-streamer-result-table')
-    $("tbody.t_sortable").sortable({
-      connectWith: ".t_sortable",
-      items: "> tr:not(:first)",
-      appendTo: $offline_tabs,
-      helper:"clone",
-      zIndex: 999990
-    }).disableSelection();
+      var $offline_tabs = $('#offline-streamer-result-table')
+      $("tbody.t_sortable").sortable({
+        connectWith: ".t_sortable",
+        items: "> tr:not(:first)",
+        appendTo: $offline_tabs,
+        helper:"clone",
+        zIndex: 999990
+      }).disableSelection();
 
-    var $game_tabs = $('#game-result-table')
-    $("tbody.t_sortable").sortable({
-      connectWith: ".t_sortable",
-      items: "> tr:not(:first)",
-      appendTo: $game_tabs,
-      helper:"clone",
-      zIndex: 999990
-    }).disableSelection();
+      $("#live-streamer-table tbody.t_sortable" ).sortable({
+        stop: function (e, ui) {
+          $('#live-streamer-table input[name="streamer_index[]"]').each(function(i){
+            $(this).val('');
+          });
 
-    $("#live-streamer-table tbody.t_sortable" ).sortable({
-      stop: function (e, ui) {
-        $('#live-streamer-table input[name="streamer_index[]"]').each(function(i){
-          $(this).val('');
-        });
+          $('#live-streamer-result-table input[name="streamer_index[]"]').each(function(i){
+            let streamer_id = $(this).data('id');
+            $(this).val(streamer_id);
+          });
+        }
+      });
 
-        $('#live-streamer-result-table input[name="streamer_index[]"]').each(function(i){
-          let streamer_id = $(this).data('id');
-          $(this).val(streamer_id);
-        });
-      }
-    });
+      $("#live-streamer-result-table tbody.t_sortable" ).sortable({
+        stop: function (e, ui) {
+          $('#live-streamer-table input[name="streamer_index[]"]').each(function(i){
+            $(this).val('');
+          });
+        }
+      });
 
-    $("#live-streamer-result-table tbody.t_sortable" ).sortable({
-      stop: function (e, ui) {
-        $('#live-streamer-table input[name="streamer_index[]"]').each(function(i){
-          $(this).val('');
-        });
-      }
-    });
+      $("#offline-streamer-table tbody.t_sortable" ).sortable({
+        stop: function (e, ui) {
+          $('#offline-streamer-table input[name="offline_streamer_index[]"]').each(function(i){
+            $(this).val('');
+          });
 
+          $('#offline-streamer-result-table input[name="offline_streamer_index[]"]').each(function(i){
+            let streamer_id = $(this).data('id');
+            $(this).val(streamer_id);
+          });
+        }
+      });
 
-    $("#offline-streamer-table tbody.t_sortable" ).sortable({
-      stop: function (e, ui) {
-        $('#offline-streamer-table input[name="offline_streamer_index[]"]').each(function(i){
-          $(this).val('');
-        });
+      $("#offline-streamer-result-table tbody.t_sortable" ).sortable({
+        stop: function (e, ui) {
+          $('#offline-streamer-table input[name="offline_streamer_index[]"]').each(function(i){
+            $(this).val('');
+          });
+        }
+      });
 
-        $('#offline-streamer-result-table input[name="offline_streamer_index[]"]').each(function(i){
-          let streamer_id = $(this).data('id');
-          $(this).val(streamer_id);
-        });
-      }
-    });
+    } else if(this.itemType == 'streamer') {
 
-    $("#offline-streamer-result-table tbody.t_sortable" ).sortable({
-      stop: function (e, ui) {
-        $('#offline-streamer-table input[name="offline_streamer_index[]"]').each(function(i){
-          $(this).val('');
-        });
-      }
-    });
+      var $game_tabs = $('#game-result-table')
+      $("tbody.t_sortable").sortable({
+        connectWith: ".t_sortable",
+        items: "> tr:not(:first)",
+        appendTo: $game_tabs,
+        helper: "clone",
+        zIndex: 999990
+      }).disableSelection();
 
+      $("#game-table tbody.t_sortable" ).sortable({
+        stop: function (e, ui) {
+          $('#game-table input[name="game_index[]"]').each(function(i){
+            $(this).val('');
+          });
 
-    $("#game-table tbody.t_sortable" ).sortable({
-      stop: function (e, ui) {
-        $('#game-table input[name="game_index[]"]').each(function(i){
-          $(this).val('');
-        });
+          $('#game-result-table input[name="game_index[]"]').each(function(i){
+            let streamer_id = $(this).data('id');
+            $(this).val(streamer_id);
+          });
+        }
+      });
 
-        $('#game-result-table input[name="game_index[]"]').each(function(i){
-          let streamer_id = $(this).data('id');
-          $(this).val(streamer_id);
-        });
-      }
-    });
-
-    $("#game-result-table tbody.t_sortable" ).sortable({
-      stop: function (e, ui) {
-        $('#game-table input[name="game_index[]"]').each(function(i){
-          $(this).val('');
-        });
-      }
-    });
+      $("#game-result-table tbody.t_sortable" ).sortable({
+        stop: function (e, ui) {
+          $('#game-table input[name="game_index[]"]').each(function(i){
+            $(this).val('');
+          });
+        }
+      });
+    }
 
   },
 }
