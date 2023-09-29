@@ -61,6 +61,17 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
                     'is_full_site_blacklisted' => $getSelectedOprData->getIsFullSiteBlacklisted(),
                     'priority' => $getSelectedOprData->getPriority()
                 ];
+
+                $itemType = $getSelectedOprData->getItemType();
+                if($itemType == 'offline_streamer') {
+                    $user_broadcasts = $twitch->getStreamForStreamer($getSelectedOprData->getStreamerId());
+                    if ($user_broadcasts->getStatusCode() == 200) {
+                        $user_broadcasts = $user_broadcasts->toArray()['data'];
+                        foreach ($user_broadcasts as $user_broadcast_data) {
+                            $broadcasts[] = $user_broadcast_data;
+                        }
+                    }
+                }
             }
         }
 
