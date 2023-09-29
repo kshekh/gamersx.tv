@@ -227,9 +227,9 @@
               'pointer-events-none z-negative': !isEmbedVisible,
             },
           ]"
-          style="top: 50%;left: 0;transform: translateY(-50%);z-index: 99;display: flex;align-items: center;"
+          style="top: 50%;left: 0;transform: translateY(-50%);z-index: 99;display: flex;align-items: center; width: auto !important;height: 311px;"
         >
-          <div ref="embedWrapper" class="w-full main-parent">
+          <div ref="embedWrapper" class="w-full h-full main-parent">
             <component
               v-if="embedData"
               ref="embed"
