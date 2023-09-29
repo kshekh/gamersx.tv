@@ -32,7 +32,7 @@
       </div>
       <div
         @mousemove="this.triggerDragging"
-        @mousedown="this.startDragging"
+        v-on="!isMobileDevice ? { mousedown: this.startDragging } : {}"
         @mouseup="this.stopDragging"
         @mouseleave="this.stopDragging"
         @scroll="this.handleScroll"
@@ -191,6 +191,7 @@ export default {
     },
   },
   mounted: function () {
+    this.setIsMobileDevice();
     this.displayChannels = this.settings.channels.filter(this.showChannel);
     this.$refs.channelBox.addEventListener("scroll", this.handleScroll);
     this.$refs.channelBox.scrollLeft = 0;

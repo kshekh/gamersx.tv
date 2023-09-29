@@ -41,7 +41,7 @@
       <div class="w5-center sliderArrowHide" ref="backArrow">
         <slider-arrow :isNext="false" :videoType="'twitch'" @arrow-clicked="back()" />
       </div>
-      <div @mousedown="this.startDragging" @mousemove="this.triggerDragging" @mouseup="this.stopDragging"
+      <div v-on="!isMobileDevice ? { mousedown: this.startDragging } : {}" @mousemove="this.triggerDragging" @mouseup="this.stopDragging"
         @mouseleave="this.stopDragging" @scroll="this.handleScroll" ref="channelBox" style="width: 100%" class="
           flex
           overflow-hidden custom-smooth-scroll

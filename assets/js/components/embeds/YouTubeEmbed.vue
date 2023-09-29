@@ -42,7 +42,7 @@ export default {
           onStateChange: this.playerStateChanged,
         },
       });
-
+      this.startPlayer();
       // Listen for other players, stop on their start
       this.$root.$on("yt-embed-playing", this.stopPlayer);
     },
