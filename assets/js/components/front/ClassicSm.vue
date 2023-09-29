@@ -57,7 +57,7 @@
       </div>
       <div
         @mousemove="this.triggerDragging"
-        @mousedown="this.startDragging"
+        v-on="!isMobileDevice ? { mousedown: this.startDragging } : {}"
         @mouseup="this.stopDragging"
         @mouseleave="this.stopDragging"
         @scroll="this.handleScroll"
