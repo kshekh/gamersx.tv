@@ -291,7 +291,7 @@ export default {
                         <input type="checkbox" name="is_blacklisted_`+row_id+`" `+is_blacklisted_check+` >
                         <input type="hidden" name="streamer_name_`+row_id+`" value="`+streamer+`">
                         <input type="hidden" name="viewer_`+row_id+`" value="`+viewer_count+`">
-                        <input type="hidden" name="item_type_`+row_id+`" value="live_streamer">
+                        <input type="hidden" name="item_type_`+row_id+`" value="streamer">
                       </td>`;
           tr_data +=`</tr>`;
 
