@@ -90,6 +90,32 @@ class CacheHomePageContainers extends Command
                             $channels[$key]['isGlowStyling'] = $row->getIsGlowStyling();
                         }
 
+                        $priority_Arr = [];
+                        $without_priority_Arr = [];
+                        foreach ($channels as $channels_data) {
+                            if(isset($channels_data['priority'])) {
+                                $priority_Arr[] = $channels_data;
+                            } else{
+                                $without_priority_Arr[] = $channels_data;
+                            }
+                        }
+                        if(!empty($priority_Arr)) {
+                            $options =  $row->getOptions();
+                            if (array_key_exists('itemSortType', $options)) {
+                                $sort = $options['itemSortType'];
+                                if ($sort === HomeRow::SORT_ASC) {
+                                    $key_values = array_column($priority_Arr, 'priority');
+                                    array_multisort($key_values, SORT_ASC, $priority_Arr);
+                                } elseif ($sort === HomeRow::SORT_DESC) {
+                                    $key_values = array_column($priority_Arr, 'priority');
+                                    array_multisort($key_values, SORT_DESC, $priority_Arr);
+                                } elseif ($sort === HomeRow::SORT_FIXED) {
+                                    $key_values = array_column($priority_Arr, 'sortIndex');
+                                    array_multisort($key_values, SORT_ASC, $priority_Arr);
+                                }
+                            }
+                            $channels = array_merge($priority_Arr,$without_priority_Arr);
+                        }
                         $thisRow['channels'] = $channels;
 
                         $rowChannels[] = $thisRow;

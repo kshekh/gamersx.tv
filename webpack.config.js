@@ -33,6 +33,7 @@ Encore
     .addEntry('game', './assets/js/game.js')
     .addEntry('streamer', './assets/js/streamer.js')
     .addEntry('topic-selector', './assets/js/topicSelector.js')
+    .addEntry('streamer-selector', './assets/js/streamerSelector.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')

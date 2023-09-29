@@ -2,7 +2,9 @@
 
 namespace App\Containerizer;
 
+use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
+use App\Entity\HomeRowItemOperation;
 use App\Service\HomeRowInfo;
 
 class TwitchGameContainerizer extends LiveContainerizer implements ContainerizerInterface
@@ -48,6 +50,20 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
 
         // Get every broadcast
         $broadcasts = $broadcasts->toArray()['data'];
+
+        // getting selected game streamers
+        $getSelectedRowItemOperation =  $homeRowItem->getHomeRowItemOperations();
+        $selectedStreamerArr = [];
+        if(!empty($getSelectedRowItemOperation)) {
+            foreach ($getSelectedRowItemOperation as $getSelectedOprData) {
+                $selectedStreamerArr[$getSelectedOprData->getStreamerId()] = [
+                    'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
+                    'is_full_site_blacklisted' => $getSelectedOprData->getIsFullSiteBlacklisted(),
+                    'priority' => $getSelectedOprData->getPriority()
+                ];
+            }
+        }
+
 
         $rowName = $homeRowItem->getHomeRow()->getTitle();
         $description = $homeRowItem->getDescription();
@@ -126,7 +142,45 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
             $this->items = $channels;
             $this->options = $homeRowItem->getSortAndTrimOptions();
 
-            $this->sort();
+            // sorting streamers based on priority
+            if(isset($this->items)) {
+                foreach ($this->items as $res_key => $res_data) {
+                    $broadcast_data = $res_data['broadcast'];
+                    $selected_streamer_index = [];
+                    if(isset($selectedStreamerArr[$broadcast_data['id']])) {
+                        $selected_streamer_index = $selectedStreamerArr[$broadcast_data['id']];
+                    } else if(isset($selectedStreamerArr[$broadcast_data['user_id']])) {
+                        $selected_streamer_index = $selectedStreamerArr[$broadcast_data['user_id']];
+                    }
+                    if(!empty($selected_streamer_index)) {
+                        $is_blacklisted =  $selected_streamer_index['is_blacklisted'];
+                        $is_full_site_blacklisted =  $selected_streamer_index['is_full_site_blacklisted'];
+                        $priority = $selected_streamer_index['priority'];
+                        if($is_blacklisted == 1 || $is_full_site_blacklisted == 1) {
+                            unset($this->items[$res_key]);
+                        } else {
+                            $this->items[$res_key]['priority'] = $priority;
+                        }
+                    } else {
+                        $this->items[$res_key]['priority'] = (count($this->items)+1);
+                    }
+                }
+
+                if (array_key_exists('itemSortType', $this->options)) {
+                    $sort = $this->options['itemSortType'];
+                    if ($sort === HomeRow::SORT_ASC) {
+                        $priority = array_column($this->items, 'priority');
+                        array_multisort($priority, SORT_ASC, $this->items);
+                    } elseif ($sort === HomeRow::SORT_DESC) {
+                        $priority = array_column($this->items, 'priority');
+                        array_multisort($priority, SORT_DESC, $this->items);
+                    } elseif ($sort === HomeRow::SORT_FIXED) {
+                        $priority = array_column($this->items, 'sortIndex');
+                        array_multisort($priority, SORT_ASC, $this->items);
+                    }
+                }
+
+            }
 
             // If showArt is checked, add the art to the very first item
             if ($homeRowItem->getShowArt() === TRUE) {

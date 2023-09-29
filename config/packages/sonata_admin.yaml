@@ -20,6 +20,7 @@ sonata_admin:
                     - admin.home_row_item
                     - admin.theme
                     - admin.site_settings
+                    - admin.container_access_control
             sonata_user:
                 label: Users and Partners
                 items:
