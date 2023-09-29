@@ -139,7 +139,6 @@
 </template>
 <script>
 import axios from 'axios';
-import tableDragger from 'table-dragger';
 
 export default {
   components: {
