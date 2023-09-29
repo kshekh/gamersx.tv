@@ -152,64 +152,30 @@ class TwitchApiController extends AbstractController
         $after = $request->get('after');
         $user_login = $request->get('user_login');
         $how_row_item_id = $request->get('how_row_item_id');
-        $getSelectedRowItemOperation =  $this->em->getRepository(HomeRowItemOperation::class)->findBy(['home_row_item'=>$how_row_item_id]);
         $selectedStreamerArr = [];
-        $old_streamer_ids = [];
+
+        $getSelectedRowItemOperation =  $this->em->getRepository(HomeRowItemOperation::class)->findBy(['home_row_item'=>$how_row_item_id]);
         if(!empty($getSelectedRowItemOperation)) {
             foreach ($getSelectedRowItemOperation as $getSelectedOprData) {
-                $selectedStreamerArr[$getSelectedOprData->getStreamerId()] = [
-                    'id' => $getSelectedOprData->getStreamerId(),
-                    'user_name' => $getSelectedOprData->getStreamerName(),
-                    'viewer_count' => $getSelectedOprData->getViewer(),
-                    'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
-                    'priority' => $getSelectedOprData->getPriority(),
-                    'sort_priority' => $getSelectedOprData->getPriority(),
-                    'is_from_database' => true,
-                ];
-                $old_streamer_ids[$getSelectedOprData->getStreamerId()] = [
-                    'id' => $getSelectedOprData->getStreamerId(),
-                    'user_name' => $getSelectedOprData->getStreamerName(),
-                    'viewer_count' => $getSelectedOprData->getViewer(),
-                    'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
-                    'priority' => $getSelectedOprData->getPriority(),
-                    'sort_priority' => $getSelectedOprData->getPriority(),
-                    'is_from_database' => true,
-                ];
+                if($getSelectedOprData->getItemType() == 'streamer' || $getSelectedOprData->getItemType() == 'offline_streamer') {
+                    $selectedStreamerArr[] = [
+                        'id' => $getSelectedOprData->getStreamerId(),
+                        'user_name' => $getSelectedOprData->getStreamerName(),
+                        'viewer_count' => $getSelectedOprData->getViewer(),
+                        'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
+                        'priority' => $getSelectedOprData->getPriority(),
+                        'item_type' => $getSelectedOprData->getItemType(),
+                    ];
+                }
             }
         }
         $result = $twitch->getTopLiveBroadcastForGame($gameId, $first, $before, $after,$user_login);
         $resultArr =  $result->toArray();
-        if(isset($resultArr['data'])) {
-            foreach ($resultArr['data'] as $res_key => $res_data) {
-                if(isset($old_streamer_ids[$res_data['id']])) {
-                    unset($old_streamer_ids[$res_data['id']]);
-                }
-                if(isset($selectedStreamerArr[$res_data['id']])) {
-                    $resultArr['data'][$res_key]['is_blacklisted'] = $selectedStreamerArr[$res_data['id']]['is_blacklisted'];
-                    $priority = $selectedStreamerArr[$res_data['id']]['priority'];
-                    $resultArr['data'][$res_key]['priority'] = $priority;
-                    $sort_priority = $priority;
-                    if(empty($sort_priority)) {
-                        $sort_priority = count($resultArr['data'])+1;
-                    }
-                    $resultArr['data'][$res_key]['sort_priority'] = $sort_priority;
-                } else {
-                    $resultArr['data'][$res_key]['is_blacklisted'] = NULL;
-                    $resultArr['data'][$res_key]['priority'] = NULL;
-                    $resultArr['data'][$res_key]['sort_priority'] = count($resultArr['data'])+1;
-                    $resultArr['data'][$res_key]['is_from_database'] = false;
-                }
-            }
 
-            foreach ($old_streamer_ids as $streamer_id => $old_streamer_data) {
-                $resultArr['data'][] = $old_streamer_data;
-            }
-        }
+        $return['results_data'] = $resultArr;
+        $return['old_selected_data'] = $selectedStreamerArr;
 
-        $sort_priority = array_column($resultArr['data'], 'sort_priority');
-        array_multisort($sort_priority, SORT_ASC, $resultArr['data']);
-
-        return $this->json($resultArr);
+        return $this->json($return);
     }
 
     /**
@@ -222,9 +188,15 @@ class TwitchApiController extends AbstractController
         $after = $request->get('after');
         $how_row_item_id = $request->get('how_row_item_id');
 
-        $result = $twitch->getStreamerInfoByChannel($query);
-        $resultArr =  $result->toArray();
-        return $this->json($resultArr);
+        $resultArr = [];
+        if(!empty($query) && $query != 'null') {
+            $result = $twitch->getStreamerInfoByChannel($query);
+            $resultArr =  $result->toArray();
+        }
+
+        $return['results_data'] = $resultArr;
+
+        return $this->json($return);
     }
 
     /**
@@ -242,8 +214,25 @@ class TwitchApiController extends AbstractController
         } else {
             $result = $twitch->getTopGames($first, $before, $after);
         }
+
+        $getSelectedRowItemOperation =  $this->em->getRepository(HomeRowItemOperation::class)->findBy(['home_row_item'=>$how_row_item_id,'item_type'=>'game']);
+        $selectedArr = [];
+        if(!empty($getSelectedRowItemOperation)) {
+            foreach ($getSelectedRowItemOperation as $getSelectedOprData) {
+                $selectedArr[] = [
+                    'id' => $getSelectedOprData->getGameId(),
+                    'name' => $getSelectedOprData->getGameName(),
+                    'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
+                    'is_whitelisted' => $getSelectedOprData->getIsWhitelisted(),
+                ];
+            }
+        }
+
         $resultArr =  $result->toArray();
-        return $this->json($resultArr);
+        $return['results_data'] = $resultArr;
+        $return['old_selected_data'] = $selectedArr;
+
+        return $this->json($return);
     }
 
     /**
