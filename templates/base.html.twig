@@ -78,6 +78,7 @@
                 --site_privacy_background_color: {{ (get_theme_setting_array['privacy_background_color'] is defined and get_theme_setting_array['privacy_background_color']!='')?get_theme_setting_array['privacy_background_color']:'#000' }};
                 --site_privacy_label_font_color: {{ (get_theme_setting_array['privacy_label_font_color'] is defined and get_theme_setting_array['privacy_label_font_color']!='')?get_theme_setting_array['privacy_label_font_color']:'#e11616' }};
                 --site_privacy_regular_font_color: {{ (get_theme_setting_array['privacy_regular_font_color'] is defined and get_theme_setting_array['privacy_regular_font_color']!='')?get_theme_setting_array['privacy_regular_font_color']:'#6441A5' }};
+				--site_mobile_embed_height: {{ (get_theme_setting_array['mobile_embed_height'] is defined and get_theme_setting_array['mobile_embed_height']!='')?get_theme_setting_array['mobile_embed_height']:'311' }}px;
             }
             .text-white, .text-grey, .elementor-button-text {
                 color: var(--site_color);
@@ -196,6 +197,9 @@
 
             .custom-smooth-scroll::-webkit-scrollbar {
                 display: none;
+            }
+            .custom-embed-m{
+                height: var(--site_mobile_embed_height);
             }
         </style>
 
