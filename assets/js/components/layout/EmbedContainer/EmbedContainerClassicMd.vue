@@ -225,7 +225,7 @@
     <!-- Show the embed with overlay if there's an embed -->
     <div v-if="showEmbed && embedData">
       <div
-        class="cut-edge__wrapper flex-grow min-h-0 absolute inset-0 z-20 py-5 md:py-8 xl:py-12 px-4 md:px-18 xl:px-32 opacity-0 transition-opacity duration-300 ease-linear"
+        class="cut-edge__wrapper flex-grow min-h-0 absolute inset-0 z-20 py-5 md:py-8 xl:py-12 px-4 md:px-18 xl:px-32 opacity-0 transition-opacity duration-300 ease-linear custom-embed-m"
         :class="[
           getOutlineBorder,
           {
@@ -233,7 +233,7 @@
             'pointer-events-none z-negative': !isEmbedVisible,
           },
         ]"
-        style="top: 50%;left: 0;transform: translateY(-50%);z-index: 99;display: flex;align-items: center;width: auto !important;height: 311px;"
+        style="top: 50%;left: 0;transform: translateY(-50%);z-index: 99;display: flex;align-items: center;width: auto !important;"
       >
         <div ref="embedWrapper" class="w-full h-full main-parent">
           <component
