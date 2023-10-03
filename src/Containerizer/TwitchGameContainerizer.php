@@ -11,15 +11,26 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
 {
     private $homeRowItem;
     private $twitch;
+    private $entityManager;
 
-    public function __construct(HomeRowItem $homeRowItem, $twitch)
+    public function __construct(HomeRowItem $homeRowItem, $twitch,$entityManager)
     {
         $this->homeRowItem = $homeRowItem;
         $this->twitch = $twitch;
+        $this->entityManager = $entityManager;
     }
 
     public function getContainers(): Array
     {
+
+        $topic_id = $this->homeRowItem->getTopic()['topicId'];
+        $check_unique_item =  $this->entityManager->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
+
+        $is_unique_container =  $this->homeRowItem->getIsUniqueContainer();
+        if($is_unique_container == 0 && (isset($check_unique_item) && !empty($check_unique_item) && count($check_unique_item) > 1 && $check_unique_item[0]['id'] != $this->homeRowItem->getId())) {
+            return Array();
+        }
+
         $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
         $twitch = $this->twitch;

@@ -106,7 +106,8 @@ class HomeRowItemAdminController extends CRUDController
                         ->createQueryBuilder()
                         ->addSelect('hri')
                         ->from('App:HomeRowItem', 'hri')
-                        ->andWhere('hri.is_unique_container = 0');
+                        ->andWhere('hri.is_unique_container = 0')
+                        ->andWhere('hri.is_published = 1');
 
                     if($submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO) {
                         $qb->andWhere('hri.videoId = :videoId');
@@ -311,6 +312,7 @@ class HomeRowItemAdminController extends CRUDController
                             $submittedObjectVideo->setIsPublishedStart($submittedObject->getIsPublishedStart());
                             $submittedObjectVideo->setIsPublishedEnd($submittedObject->getIsPublishedEnd());
                             $submittedObjectVideo->setIsPartner($submittedObject->getIsPartner());
+                            $submittedObjectVideo->setIsUniqueContainer($submittedObject->getIsUniqueContainer());
                             $submittedObjectVideo->setVideoId($videoId_link);
                             $submittedObjectVideo->setPlaylistId($newObject->getId());
                             $submittedObjectVideo->setUpdatedAt($submittedObject->getUpdatedAt());
@@ -445,7 +447,8 @@ class HomeRowItemAdminController extends CRUDController
                         ->from('App:HomeRowItem', 'hri')
                         ->where('hri.id != :id')
                         ->setParameter('id', $id)
-                        ->andWhere('hri.is_unique_container = 0');
+                        ->andWhere('hri.is_unique_container = 0')
+                        ->andWhere('hri.isPublished = 1');
 
                     if($submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO) {
                         $qb->andWhere('hri.videoId = :videoId');
@@ -660,6 +663,7 @@ class HomeRowItemAdminController extends CRUDController
                             $submittedObjectVideo->setIsPublishedStart($submittedObject->getIsPublishedStart());
                             $submittedObjectVideo->setIsPublishedEnd($submittedObject->getIsPublishedEnd());
                             $submittedObjectVideo->setIsPartner($submittedObject->getIsPartner());
+                            $submittedObjectVideo->setIsUniqueContainer($submittedObject->getIsUniqueContainer());
                             $submittedObjectVideo->setVideoId($videoId_link);
                             $submittedObjectVideo->setPlaylistId($submittedObject->getId());
                             $submittedObjectVideo->setUpdatedAt($submittedObject->getUpdatedAt());
