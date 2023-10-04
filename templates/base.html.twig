@@ -201,6 +201,16 @@
             .custom-embed-m{
                 height: var(--site_mobile_embed_height);
             }
+            @media (max-width: 767px) {
+                .custom-header-btn .elementor-button-text {
+                    font-size: 10px;
+                }
+                .custom-header-btn {
+                    border:none;
+                    padding:3px;
+                    height:auto
+                }
+            }
         </style>
 
         {% if(font_type == 'remote' and get_theme_setting_array['remote_font_url'] is defined and get_theme_setting_array['remote_font_url'] !='') %}
@@ -249,14 +259,14 @@
 					<header
 						id="header"
 						class="flex items-center justify-between
-							px-4 md:px-6 xl:px-20 py-2 md:py-6 xl:py-7
+							px-4 md:px-5 xl:px-20 py-1 sm:py-2 md:py-4 xl:py-7
 							mx-auto max-w-full-hd"
 					>
                         {% if(header_background_type == 'image') %}
                             <img src="{{ site_header_background }}" class="shrink-0 w-24 md:w-72 mr-3 md:mr-14 xl:mr-4 header_background">
                         {% endif %}
                         {% set header_logo = (get_theme_setting_array['header_logo'] is defined and get_theme_setting_array['header_logo'] != '')? get_theme_setting_array['header_logo'] :'logo.png' %}
-                        <img src="{{ aws_s3_custom_uri_prefix~'/'~header_logo }}" class="shrink-0 w-24 md:w-72 mr-3 md:mr-14 xl:mr-4"/>
+                        <img src="{{ aws_s3_custom_uri_prefix~'/'~header_logo }}" class="shrink-0 w-22 sm:w-24 md:w-72 mr-3 md:mr-14 xl:mr-4"/>
 						{#
 						<div class="flex flex-grow items-center justify-between xl:justify-end ml-auto">
 							<nav class="hidden xl:block">
@@ -309,9 +319,9 @@
 								<img src="{{ twitchUserInfo['profile_image_url'] }}" class="twitch-profile-picture">
 							</a>
 							{% else %}
-							<a href="api/twitch-login" class="flex items-center elementor-button text-[5px] sm:text-base py-1 px-2 sm:py-0 sm:px-[40px] h-7 sm:h-10 " role="button" onmouseover="changeBtnColor()" onmouseout="changeNormalBtnColor()">
+							<a href="api/twitch-login" class="custom-header-btn flex items-center elementor-button text-[5px] sm:text-base py-1 px-2 sm:py-0 sm:px-[40px] sm:h-10 " role="button" onmouseover="changeBtnColor()" onmouseout="changeNormalBtnColor()">
 								<span class="elementor-button-text">Login With Twitch</span>
-								<img src="/images/twitch-icon-white.png" class="ml-2 w-2.5 h-2.5 sm:w-5 sm:h-5" id="twitch-btn-icon">
+								<img src="/images/twitch-icon-white.png" class="sm:ml-2 w-3.5 sm:w-2.5 h-3.5 sm:h-2.5 sm:w-5 sm:h-5" id="twitch-btn-icon">
 							</a>
 							{% endif %}
                         {% endif %}

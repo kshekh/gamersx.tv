@@ -575,6 +575,13 @@
                                             <span class="errors error-arrowcolor"></span>
                                         </div>
                                     </div>
+                                    <div class="col-md-6 form-group">
+                                        <label class="control-label" >Mobile embed height (in px)</label>
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <input type="number" name="form[mobile_embed_height]"  class="form-control" value="">
+                                            <span class="errors error-mobileembedheight"></span>
+                                        </div>
+                                    </div>
                                 </div>
 
                             </div>
@@ -896,6 +903,12 @@
                             $("input[name='form[border_radius_bottom_left]']").val(response.data.border_radius_bottom_left);
                         } else {
                             $("input[name='form[border_radius_bottom_left]']").val("0");
+                        }
+
+                        if(response.data.mobile_embed_height && response.data.mobile_embed_height != '') {
+                            $("input[name='form[mobile_embed_height]']").val(response.data.mobile_embed_height);
+                        } else {
+                            $("input[name='form[mobile_embed_height]']").val("0");
                         }
 
                         if(response.data.header_background && response.data.header_background != '') {
