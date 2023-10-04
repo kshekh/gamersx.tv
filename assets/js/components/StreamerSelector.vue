@@ -279,6 +279,7 @@ export default {
 
           var row_id = stream.id;
           var streamer = stream.user_name;
+          var user_id = stream.user_id;
           var viewer_count = stream.viewer_count;
           var is_blacklisted = stream.is_blacklisted;
           var is_blacklisted_check = (is_blacklisted == 1)?'checked':'';
@@ -291,6 +292,7 @@ export default {
                         <input type="checkbox" name="is_blacklisted_`+row_id+`" `+is_blacklisted_check+` >
                         <input type="hidden" name="streamer_name_`+row_id+`" value="`+streamer+`">
                         <input type="hidden" name="viewer_`+row_id+`" value="`+viewer_count+`">
+                        <input type="hidden" name="user_id_`+row_id+`" value="`+user_id+`">
                         <input type="hidden" name="item_type_`+row_id+`" value="streamer">
                       </td>`;
           tr_data +=`</tr>`;
@@ -308,6 +310,7 @@ export default {
 
             var row_id = stream.id;
             var streamer = stream.user_name;
+            var user_id = stream.user_id;
             var viewer_count = stream.viewer_count;
             var is_blacklisted = stream.is_blacklisted;
             var is_blacklisted_check = (is_blacklisted == 1) ? 'checked' : '';
@@ -327,6 +330,7 @@ export default {
                         <input type="checkbox" name="is_blacklisted_` + row_id + `" ` + is_blacklisted_check + ` >
                         <input type="hidden" name="streamer_name_` + row_id + `" value="` + streamer + `">
                         <input type="hidden" name="viewer_` + row_id + `" value="` + viewer_count + `">
+                        <input type="hidden" name="user_id_`+row_id+`" value="`+user_id+`">
                         <input type="hidden" name="item_type_`+row_id+`" value="`+item_type+`">
                       </td>`;
             tr_data += `</tr>`;
@@ -352,6 +356,7 @@ export default {
 
           var row_id = stream.id;
           var streamer = stream.login;
+          var user_id = stream.id;
           var viewer_count = stream.view_count;
 
           var tr_data = `<tr class="streamer_row offline_streamer">`;
@@ -362,6 +367,7 @@ export default {
                           <input type="checkbox" name="is_blacklisted_`+row_id+`" >
                           <input type="hidden" name="streamer_name_`+row_id+`" value="`+streamer+`">
                           <input type="hidden" name="viewer_`+row_id+`" value="`+viewer_count+`">
+                          <input type="hidden" name="user_id_`+row_id+`" value="`+user_id+`">
                           <input type="hidden" name="item_type_`+row_id+`" value="offline_streamer">
                         </td>`;
           tr_data +=`</tr>`;

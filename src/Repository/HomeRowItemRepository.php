@@ -52,7 +52,7 @@ class HomeRowItemRepository extends ServiceEntityRepository
         $em = $this->getEntityManager();
         $connection = $em->getConnection();
 
-        $sql = "SELECT * FROM home_row_item WHERE JSON_EXTRACT(topic, :key) = :value AND is_unique_container = 0";
+        $sql = "SELECT * FROM home_row_item WHERE JSON_EXTRACT(topic, :key) = :value AND is_unique_container = 0 AND is_published = 1";
         if($how_row_item_id != '') {
             $sql .= " AND id != $how_row_item_id ";
         }
