@@ -40,6 +40,10 @@ class ThemeSettingValidator
                 new Assert\NotBlank(),
                 new Assert\PositiveOrZero()
             ],
+            'mobile_embed_height' =>  [
+                new Assert\NotBlank(),
+                new Assert\PositiveOrZero()
+            ],
         ];
         if(isset($requestParams['font_type']) && $requestParams['font_type'] == 'remote') {
             $validate_arr['remote_font_url'] = [
@@ -100,6 +104,7 @@ class ThemeSettingValidator
             'border_radius_top_right' => $requestParams['border_radius_top_right'],
             'border_radius_bottom_right' => $requestParams['border_radius_bottom_right'],
             'border_radius_bottom_left' => $requestParams['border_radius_bottom_left'],
+            'mobile_embed_height' => $requestParams['mobile_embed_height'],
         ];
 
         if(isset($requestParams['header_logo'])) {
