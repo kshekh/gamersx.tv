@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full shrink-0" ref="itemWrapper">
+  <div class="w-full h-full shrink-0" ref="itemWrapper" v-if="!isMobileDevice">
     <div class="cut-edge__wrapper w-full h-full" :class="getGlow">
       <div
         @click="isShowTwitchEmbed = true"
@@ -138,6 +138,77 @@
       </div>
     </div>
   </div>
+
+  <div class="w-full h-full shrink-0" v-else>
+    <div
+      @click="isShowTwitchEmbed = true"
+      v-show="!isEmbedVisible"
+      class="cut-edge__wrapper h-full w-full md:w-50 xs:pr-26 sm:pr-16 lg:pr-0 xl:pr-16 2xl:pr-0 xs:w-75 md:w-75 lg:w-80 xl:w-118 2xl:w-127"
+      style="aspect-ratio: 3/4"
+      :class="getGlow"
+    >
+      <div
+        class="cut-edge__clipped cut-edge__clipped-top-right-md h-full bg-black overflow-hidden"
+        :class="getOutline"
+      >
+        <img
+          v-if="showArt && image"
+          :src="image.url"
+          class="-translate-y-1/2 relative top-1/2 transform h-full object-cover"
+        />
+
+        <img
+          v-else-if="showOverlay"
+          alt="Embed's Custom Overlay"
+          :src="overlay"
+          class="relative top-1/2 transform -translate-y-1/2 w-full h-full object-cover"
+        />
+        <play-button
+          v-if="showEmbed && embedData"
+          class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 h-12 md:h-16 xl:h-32 w-12 md:w-16 xl:w-32"
+          svgClass="w-3 md:w-7 xl:w-12"
+          wrapperClass="md:pl-1.5 xl:pl-3"
+          :videoType="playBtnColor"
+          @click.native="playVideo"
+        />
+      </div>
+    </div>
+
+    <!-- Show the embed with overlay if there's an embed -->
+    <div v-if="showEmbed && embedData">
+      <div
+        class="cut-edge__wrapper flex-grow min-h-0 absolute inset-0 z-20 py-5 md:py-8 xl:py-12 px-4 md:px-18 xl:px-32 opacity-0 transition-opacity duration-300 ease-linear custom-embed-m"
+        :class="[
+          getOutlineBorder,
+          {
+            'opacity-100': isEmbedVisible,
+            'pointer-events-none z-negative': !isEmbedVisible,
+          },
+        ]"
+        style="top: 50%;left: 0;transform: translateY(-50%);z-index: 99;display: flex;align-items: center; width: auto !important;"
+      >
+        <div ref="embedWrapper" class="w-full h-full main-parent">
+          <component
+            v-if="embedData"
+            ref="embed"
+            :is="embedName"
+            :embedData="embedData"
+            :overlay="overlay"
+            :image="image"
+            :isShowTwitchEmbed="isShowTwitchEmbed"
+            :isMobileDevice="isMobileDevice"
+            class="h-full w-full border overflow-hidden bg-black"
+            :class="{
+              'border-purple': embedName === 'TwitchEmbed',
+              'border-red': embedName === 'YouTubeEmbed',
+            }"
+            :width="'100%'"
+            :height="'100%'"
+          ></component>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -182,6 +253,7 @@ export default {
         outline: "",
       },
       isShowTwitchEmbed: false,
+      isMobileDevice: false,
     };
   },
   computed: {
@@ -193,6 +265,9 @@ export default {
       this.computeGlowStyling();
       return this.glowStyling.glow;
     },
+  },
+  mounted() {
+    this.setIsMobileDevice();
   },
   methods: {
     computeGlowStyling: function () {
@@ -220,6 +295,37 @@ export default {
         }
       }
     },
+    playVideo() {
+      this.$root.$emit("close-other-layouts");
+      setTimeout(() => {
+        if (this.showOverlay || this.showArt) {
+          this.isOverlayVisible = false;
+          this.isEmbedVisible = true;
+        }
+      }, 0);
+      window.addEventListener("scroll", this.checkIfBoxInViewPort);
+      this.$refs.embed.startPlayer();
+      this.$emit("hide-controls");
+    },
+    scrollOut() {
+      if (this.showOverlay || this.showArt) {
+        this.isOverlayVisible = true;
+        this.isEmbedVisible = false;
+      }
+            // if (this.$refs.embed.isPlaying()) {
+      this.$refs.embed.stopPlayer();
+      // }
+      window.removeEventListener("scroll", this.checkIfBoxInViewPort);
+      this.$emit("show-controls");
+    },
+    setIsMobileDevice() {
+      const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
+      if(checkDeviceType) {
+        this.isMobileDevice = true;
+      } else {
+        this.isMobileDevice = false;
+      }
+    }
   },
   // created() {
   //   if(!this.showOnline && this.embedData){

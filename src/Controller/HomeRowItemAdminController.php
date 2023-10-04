@@ -106,7 +106,8 @@ class HomeRowItemAdminController extends CRUDController
                         ->createQueryBuilder()
                         ->addSelect('hri')
                         ->from('App:HomeRowItem', 'hri')
-                        ->andWhere('hri.is_unique_container = 0');
+                        ->andWhere('hri.is_unique_container = 0')
+                        ->andWhere('hri.is_published = 1');
 
                     if($submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO) {
                         $qb->andWhere('hri.videoId = :videoId');
@@ -187,6 +188,11 @@ class HomeRowItemAdminController extends CRUDController
                                     $viewer = $requestData['viewer_' . $streamerId];
                                 }
 
+                                $user_id = '';
+                                if (isset($requestData['user_id_' . $streamerId])) {
+                                    $user_id = $requestData['user_id_' . $streamerId];
+                                }
+
                                 $item_type = 'streamer';
                                 if (isset($requestData['item_type_' . $streamerId])) {
                                     $item_type = $requestData['item_type_' . $streamerId];
@@ -197,6 +203,7 @@ class HomeRowItemAdminController extends CRUDController
                                 $homeRowItemOperation->setPriority($priority);
                                 $homeRowItemOperation->setItemType($item_type);
                                 $homeRowItemOperation->setStreamerId($streamerId);
+                                $homeRowItemOperation->setUserId($user_id);
                                 $homeRowItemOperation->setGameId($game_id);
                                 $homeRowItemOperation->setGameName($game_name);
                                 $homeRowItemOperation->setStreamerName($streamer_name);
@@ -311,6 +318,7 @@ class HomeRowItemAdminController extends CRUDController
                             $submittedObjectVideo->setIsPublishedStart($submittedObject->getIsPublishedStart());
                             $submittedObjectVideo->setIsPublishedEnd($submittedObject->getIsPublishedEnd());
                             $submittedObjectVideo->setIsPartner($submittedObject->getIsPartner());
+                            $submittedObjectVideo->setIsUniqueContainer($submittedObject->getIsUniqueContainer());
                             $submittedObjectVideo->setVideoId($videoId_link);
                             $submittedObjectVideo->setPlaylistId($newObject->getId());
                             $submittedObjectVideo->setUpdatedAt($submittedObject->getUpdatedAt());
@@ -445,7 +453,8 @@ class HomeRowItemAdminController extends CRUDController
                         ->from('App:HomeRowItem', 'hri')
                         ->where('hri.id != :id')
                         ->setParameter('id', $id)
-                        ->andWhere('hri.is_unique_container = 0');
+                        ->andWhere('hri.is_unique_container = 0')
+                        ->andWhere('hri.isPublished = 1');
 
                     if($submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO) {
                         $qb->andWhere('hri.videoId = :videoId');
@@ -531,6 +540,11 @@ class HomeRowItemAdminController extends CRUDController
                                     $viewer = $requestData['viewer_' . $streamerId];
                                 }
 
+                                $user_id = '';
+                                if (isset($requestData['user_id_' . $streamerId])) {
+                                    $user_id = $requestData['user_id_' . $streamerId];
+                                }
+
                                 $item_type = 'streamer';
                                 if (isset($requestData['item_type_' . $streamerId])) {
                                     $item_type = $requestData['item_type_' . $streamerId];
@@ -541,6 +555,7 @@ class HomeRowItemAdminController extends CRUDController
                                 $homeRowItemOperation->setPriority($priority);
                                 $homeRowItemOperation->setItemType($item_type);
                                 $homeRowItemOperation->setStreamerId($streamerId);
+                                $homeRowItemOperation->setUserId($user_id);
                                 $homeRowItemOperation->setGameId($game_id);
                                 $homeRowItemOperation->setGameName($game_name);
                                 $homeRowItemOperation->setStreamerName($streamer_name);
@@ -660,6 +675,7 @@ class HomeRowItemAdminController extends CRUDController
                             $submittedObjectVideo->setIsPublishedStart($submittedObject->getIsPublishedStart());
                             $submittedObjectVideo->setIsPublishedEnd($submittedObject->getIsPublishedEnd());
                             $submittedObjectVideo->setIsPartner($submittedObject->getIsPartner());
+                            $submittedObjectVideo->setIsUniqueContainer($submittedObject->getIsUniqueContainer());
                             $submittedObjectVideo->setVideoId($videoId_link);
                             $submittedObjectVideo->setPlaylistId($submittedObject->getId());
                             $submittedObjectVideo->setUpdatedAt($submittedObject->getUpdatedAt());

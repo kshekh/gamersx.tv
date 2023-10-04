@@ -4,7 +4,7 @@
         <!--  Privacy Controls and Cookie Solution -->
         <script type="text/javascript">
             var _iub = _iub || [];
-            _iub.csConfiguration = {"askConsentAtCookiePolicyUpdate":true,"countryDetection":true,"enableLgpd":true,"enableTcf":true,"enableUspr":true,"floatingPreferencesButtonDisplay":"bottom-left","gdprAppliesGlobally":false,"googleAdditionalConsentMode":true,"lang":"en-GB","lgpdAppliesGlobally":false,"perPurposeConsent":true,"purposes":"4,5,1","siteId":3228129,"tcfPurposes":{"2":"consent_only","3":"consent_only","4":"consent_only","5":"consent_only","6":"consent_only","7":"consent_only","8":"consent_only","9":"consent_only","10":"consent_only"},"usprPurposes":"s,sh,adv","whitelabel":false,"cookiePolicyId":32231057, "banner":{ "acceptButtonDisplay":true,"backgroundOverlay":true,"closeButtonDisplay":false,"customizeButtonDisplay":true,"explicitWithdrawal":true,"listPurposes":true,"position":"float-top-center","rejectButtonDisplay":true }};
+            _iub.csConfiguration = {"applyGdprForCH":false,"askConsentAtCookiePolicyUpdate":true,"countryDetection":true,"enableFadp":true,"enableLgpd":true,"enableTcf":true,"enableUspr":true,"floatingPreferencesButtonDisplay":false,"gdprAppliesGlobally":false,"googleAdditionalConsentMode":true,"lang":"en","lgpdAppliesGlobally":false,"logLevel":"info","perPurposeConsent":true,"preferenceCookie":{"expireAfter":180},"siteId":3228129,"showBannerForUS":true,"tcfPurposes":{"2":"consent_only","3":"consent_only","4":"consent_only","5":"consent_only","6":"consent_only","7":"consent_only","8":"consent_only","9":"consent_only","10":"consent_only"},"usprPurposes":"s,sh,adv","whitelabel":false,"cookiePolicyId":49149225, "banner":{ "acceptButtonDisplay":true,"backgroundOverlay":true,"closeButtonDisplay":false,"customizeButtonDisplay":true,"explicitWithdrawal":true,"listPurposes":true,"position":"float-top-center","prependOnBody":true,"rejectButtonDisplay":true,"showPurposesToggles":true }};
         </script>
         <script type="text/javascript" src="https://cs.iubenda.com/autoblocking/3228129.js"></script>
         <script type="text/javascript" src="//cdn.iubenda.com/cs/tcf/stub-v2.js"></script>
@@ -78,6 +78,7 @@
                 --site_privacy_background_color: {{ (get_theme_setting_array['privacy_background_color'] is defined and get_theme_setting_array['privacy_background_color']!='')?get_theme_setting_array['privacy_background_color']:'#000' }};
                 --site_privacy_label_font_color: {{ (get_theme_setting_array['privacy_label_font_color'] is defined and get_theme_setting_array['privacy_label_font_color']!='')?get_theme_setting_array['privacy_label_font_color']:'#e11616' }};
                 --site_privacy_regular_font_color: {{ (get_theme_setting_array['privacy_regular_font_color'] is defined and get_theme_setting_array['privacy_regular_font_color']!='')?get_theme_setting_array['privacy_regular_font_color']:'#6441A5' }};
+				--site_mobile_embed_height: {{ (get_theme_setting_array['mobile_embed_height'] is defined and get_theme_setting_array['mobile_embed_height']!='')?get_theme_setting_array['mobile_embed_height']:'311' }}px;
             }
             .text-white, .text-grey, .elementor-button-text {
                 color: var(--site_color);
@@ -122,9 +123,15 @@
                 }
             {% elseif(header_background_type == 'image') %}
                 header {
-                  background-image: url({{ site_header_background }});
-                  background-size: 100% 100%;
-                  background-repeat: no-repeat;
+                    position: relative;
+                }
+                .header_background {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: -1;
                 }
             {% endif %}
 
@@ -134,7 +141,7 @@
                 }
             {% elseif(body_background_type == 'image') %}
                 #app-body {
-                    background-image: url({{ site_body_background }});
+                    background-image: url("{{ site_body_background }}");
                     background-size: cover;
                     background-repeat: no-repeat;
                     background-position: center;
@@ -147,7 +154,7 @@
                 }
             {% elseif(footer_background_type == 'image') %}
                 footer {
-                    background-image: url({{ site_footer_background }});
+                    background-image: url("{{ site_footer_background }}");
                     background-size: 100% 100%;
                     background-repeat: no-repeat;
                 }
@@ -190,6 +197,19 @@
 
             .custom-smooth-scroll::-webkit-scrollbar {
                 display: none;
+            }
+            .custom-embed-m{
+                height: var(--site_mobile_embed_height);
+            }
+            @media (max-width: 767px) {
+                .custom-header-btn .elementor-button-text {
+                    font-size: 10px;
+                }
+                .custom-header-btn {
+                    border:none;
+                    padding:3px;
+                    height:auto
+                }
             }
         </style>
 
@@ -239,11 +259,14 @@
 					<header
 						id="header"
 						class="flex items-center justify-between
-							px-4 md:px-6 xl:px-20 pb-3 md:pb-6 pt-6 xl:py-7
+							px-4 md:px-5 xl:px-20 py-1 sm:py-2 md:py-4 xl:py-7
 							mx-auto max-w-full-hd"
 					>
+                        {% if(header_background_type == 'image') %}
+                            <img src="{{ site_header_background }}" class="shrink-0 w-24 md:w-72 mr-3 md:mr-14 xl:mr-4 header_background">
+                        {% endif %}
                         {% set header_logo = (get_theme_setting_array['header_logo'] is defined and get_theme_setting_array['header_logo'] != '')? get_theme_setting_array['header_logo'] :'logo.png' %}
-                        <img src="{{ aws_s3_custom_uri_prefix~'/'~header_logo }}" class="shrink-0 w-24 md:w-72 mr-3 md:mr-14 xl:mr-4"/>
+                        <img src="{{ aws_s3_custom_uri_prefix~'/'~header_logo }}" class="shrink-0 w-22 sm:w-24 md:w-72 mr-3 md:mr-14 xl:mr-4"/>
 						{#
 						<div class="flex flex-grow items-center justify-between xl:justify-end ml-auto">
 							<nav class="hidden xl:block">
@@ -296,9 +319,9 @@
 								<img src="{{ twitchUserInfo['profile_image_url'] }}" class="twitch-profile-picture">
 							</a>
 							{% else %}
-							<a href="api/twitch-login" class="flex items-center elementor-button text-[5px] sm:text-base py-1 px-2 sm:py-0 sm:px-[40px] h-7 sm:h-10 " role="button" onmouseover="changeBtnColor()" onmouseout="changeNormalBtnColor()">
+							<a href="api/twitch-login" class="custom-header-btn flex items-center elementor-button text-[5px] sm:text-base py-1 px-2 sm:py-0 sm:px-[40px] sm:h-10 " role="button" onmouseover="changeBtnColor()" onmouseout="changeNormalBtnColor()">
 								<span class="elementor-button-text">Login With Twitch</span>
-								<img src="/images/twitch-icon-white.png" class="ml-2 w-2.5 h-2.5 sm:w-5 sm:h-5" id="twitch-btn-icon">
+								<img src="/images/twitch-icon-white.png" class="sm:ml-2 w-3.5 sm:w-2.5 h-3.5 sm:h-2.5 sm:w-5 sm:h-5" id="twitch-btn-icon">
 							</a>
 							{% endif %}
                         {% endif %}
@@ -429,6 +452,9 @@
 									<a class="text-grey text-xxs md:text-sm" href="{{ path('terms') }}">Terms of Service</a>
                                     <span class="w-1px h-2 bg-grey md:h-3"></span>
                                     <a class="text-grey text-xxs md:text-sm" href="{{ path('privacy_policy') }}">Privacy Policy</a>
+                                    <span class="w-1px h-2 bg-grey md:h-3"></span>
+                                    <!-- This button added to allow user to select privacy and hide US widget from middle of screen-->
+                                    <a href="#" class="text-grey text-xxs md:text-sm iubenda-advertising-preferences-link">Your Privacy Choices</a>
 								</div>
 							</div>
 						</div>

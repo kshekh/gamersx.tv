@@ -29,7 +29,6 @@
     "dependencies": {
         "axios": "^0.21.1",
         "js-cookie": "^3.0.1",
-        "swiped-events": "^1.1.4",
-        "table-dragger": "^1.0.3"
+        "swiped-events": "^1.1.4"
     }
 }

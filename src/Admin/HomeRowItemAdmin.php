@@ -81,7 +81,10 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('partner')
             ->add('homeRow')
             ->add('isPublished')
-            ->add('isPartner');
+            ->add('isPartner')
+            ->add('is_unique_container', null, [
+                'field_options' => ['expanded' => false,'choices'=>['no'=>1,'yes'=>0]],
+            ]);
     }
 
     protected function configureListFields(ListMapper $listMapper): void
@@ -145,6 +148,11 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPublishedEnd', null, [
                 'editable' => true,
                 'sortable' => false
+            ])
+            ->add('is_unique_container', ChoiceType::class, [
+                'editable' => true,
+                'sortable' => false,
+                'template'=> 'homerowitem/column_is_unique_container.html.twig'
             ])
             ->add('_action', null, [
                 'actions' => [

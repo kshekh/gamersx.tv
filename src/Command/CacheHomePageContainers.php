@@ -81,6 +81,8 @@ class CacheHomePageContainers extends Command
                         $thisRow['sortIndex'] = $row->getSortIndex();
                         $thisRow['componentName'] = $row->getLayout();
                         $thisRow['onGamersXtv'] = $row->getonGamersXtv();
+                        $thisRow['rowPaddingTop'] = ($row->getRowPaddingTop() != null)? $row->getRowPaddingTop(): 0;
+                        $thisRow['rowPaddingBottom'] = ($row->getRowPaddingBottom() != null)? $row->getRowPaddingBottom(): 0;
 
                         $containers = array();
                         $containerized = $containerizer($row);
@@ -104,14 +106,18 @@ class CacheHomePageContainers extends Command
                             if (array_key_exists('itemSortType', $options)) {
                                 $sort = $options['itemSortType'];
                                 if ($sort === HomeRow::SORT_ASC) {
-                                    $key_values = array_column($priority_Arr, 'priority');
-                                    array_multisort($key_values, SORT_ASC, $priority_Arr);
+                                    $priority = array_column($priority_Arr, 'priority');
+//                                    $liveViewerCount = array_column($priority_Arr, 'liveViewerCount');
+//                                    array_multisort($priority, SORT_ASC,$liveViewerCount, SORT_ASC, $priority_Arr);
+                                    array_multisort($priority, SORT_ASC,$priority_Arr);
                                 } elseif ($sort === HomeRow::SORT_DESC) {
-                                    $key_values = array_column($priority_Arr, 'priority');
-                                    array_multisort($key_values, SORT_DESC, $priority_Arr);
+                                    $priority = array_column($priority_Arr, 'priority');
+//                                    $liveViewerCount = array_column($priority_Arr, 'liveViewerCount');
+//                                    array_multisort($priority, SORT_DESC,$liveViewerCount, SORT_DESC, $priority_Arr);
+                                    array_multisort($priority, SORT_DESC,$priority_Arr);
                                 } elseif ($sort === HomeRow::SORT_FIXED) {
-                                    $key_values = array_column($priority_Arr, 'sortIndex');
-                                    array_multisort($key_values, SORT_ASC, $priority_Arr);
+                                    $priority = array_column($priority_Arr, 'sortIndex');
+                                    array_multisort($priority, SORT_ASC, $priority_Arr);
                                 }
                             }
                             $channels = array_merge($priority_Arr,$without_priority_Arr);

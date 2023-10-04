@@ -160,6 +160,7 @@ class TwitchApiController extends AbstractController
                 if($getSelectedOprData->getItemType() == 'streamer' || $getSelectedOprData->getItemType() == 'offline_streamer') {
                     $selectedStreamerArr[] = [
                         'id' => $getSelectedOprData->getStreamerId(),
+                        'user_id' => $getSelectedOprData->getUserId(),
                         'user_name' => $getSelectedOprData->getStreamerName(),
                         'viewer_count' => $getSelectedOprData->getViewer(),
                         'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
