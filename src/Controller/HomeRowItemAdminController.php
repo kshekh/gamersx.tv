@@ -188,6 +188,11 @@ class HomeRowItemAdminController extends CRUDController
                                     $viewer = $requestData['viewer_' . $streamerId];
                                 }
 
+                                $user_id = '';
+                                if (isset($requestData['user_id_' . $streamerId])) {
+                                    $user_id = $requestData['user_id_' . $streamerId];
+                                }
+
                                 $item_type = 'streamer';
                                 if (isset($requestData['item_type_' . $streamerId])) {
                                     $item_type = $requestData['item_type_' . $streamerId];
@@ -198,6 +203,7 @@ class HomeRowItemAdminController extends CRUDController
                                 $homeRowItemOperation->setPriority($priority);
                                 $homeRowItemOperation->setItemType($item_type);
                                 $homeRowItemOperation->setStreamerId($streamerId);
+                                $homeRowItemOperation->setUserId($user_id);
                                 $homeRowItemOperation->setGameId($game_id);
                                 $homeRowItemOperation->setGameName($game_name);
                                 $homeRowItemOperation->setStreamerName($streamer_name);
@@ -534,6 +540,11 @@ class HomeRowItemAdminController extends CRUDController
                                     $viewer = $requestData['viewer_' . $streamerId];
                                 }
 
+                                $user_id = '';
+                                if (isset($requestData['user_id_' . $streamerId])) {
+                                    $user_id = $requestData['user_id_' . $streamerId];
+                                }
+
                                 $item_type = 'streamer';
                                 if (isset($requestData['item_type_' . $streamerId])) {
                                     $item_type = $requestData['item_type_' . $streamerId];
@@ -544,6 +555,7 @@ class HomeRowItemAdminController extends CRUDController
                                 $homeRowItemOperation->setPriority($priority);
                                 $homeRowItemOperation->setItemType($item_type);
                                 $homeRowItemOperation->setStreamerId($streamerId);
+                                $homeRowItemOperation->setUserId($user_id);
                                 $homeRowItemOperation->setGameId($game_id);
                                 $homeRowItemOperation->setGameName($game_name);
                                 $homeRowItemOperation->setStreamerName($streamer_name);
