@@ -92,36 +92,6 @@ class CacheHomePageContainers extends Command
                             $channels[$key]['isGlowStyling'] = $row->getIsGlowStyling();
                         }
 
-                        $priority_Arr = [];
-                        $without_priority_Arr = [];
-                        foreach ($channels as $channels_data) {
-                            if(isset($channels_data['priority'])) {
-                                $priority_Arr[] = $channels_data;
-                            } else{
-                                $without_priority_Arr[] = $channels_data;
-                            }
-                        }
-                        if(!empty($priority_Arr)) {
-                            $options =  $row->getOptions();
-                            if (array_key_exists('itemSortType', $options)) {
-                                $sort = $options['itemSortType'];
-                                if ($sort === HomeRow::SORT_ASC) {
-                                    $priority = array_column($priority_Arr, 'priority');
-//                                    $liveViewerCount = array_column($priority_Arr, 'liveViewerCount');
-//                                    array_multisort($priority, SORT_ASC,$liveViewerCount, SORT_ASC, $priority_Arr);
-                                    array_multisort($priority, SORT_ASC,$priority_Arr);
-                                } elseif ($sort === HomeRow::SORT_DESC) {
-                                    $priority = array_column($priority_Arr, 'priority');
-//                                    $liveViewerCount = array_column($priority_Arr, 'liveViewerCount');
-//                                    array_multisort($priority, SORT_DESC,$liveViewerCount, SORT_DESC, $priority_Arr);
-                                    array_multisort($priority, SORT_DESC,$priority_Arr);
-                                } elseif ($sort === HomeRow::SORT_FIXED) {
-                                    $priority = array_column($priority_Arr, 'sortIndex');
-                                    array_multisort($priority, SORT_ASC, $priority_Arr);
-                                }
-                            }
-                            $channels = array_merge($priority_Arr,$without_priority_Arr);
-                        }
                         $thisRow['channels'] = $channels;
 
                         $rowChannels[] = $thisRow;

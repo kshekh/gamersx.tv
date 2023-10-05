@@ -10,7 +10,7 @@
                 <a class="nav-link active" id="custom-tabs-live-tab" data-toggle="pill" href="#custom-tabs-live" role="tab" aria-controls="custom-tabs-live" aria-selected="true">Live Streamer</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="custom-tabs-offline-tab" data-toggle="pill" href="#custom-tabs-offline" role="tab" aria-controls="custom-tabs-offline" aria-selected="false">Offline Streamer</a>
+                <a class="nav-link" id="custom-tabs-offline-tab" data-toggle="pill" href="#custom-tabs-offline" role="tab" aria-controls="custom-tabs-offline" aria-selected="false">Search Streamer</a>
               </li>
             </ul>
           </div>

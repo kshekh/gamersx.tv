@@ -59,9 +59,10 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
         // getting selected game streamers
         $getSelectedRowItemOperation =  $homeRowItem->getHomeRowItemOperations();
         $selectedStreamerArr = [];
+        $blacklistedUserIds = [];
         if(!empty($getSelectedRowItemOperation)) {
             foreach ($getSelectedRowItemOperation as $getSelectedOprData) {
-                if($getSelectedOprData->getIsBlacklisted() == 0 || $getSelectedOprData->getIsFullSiteBlacklisted() == 0) {
+                if($getSelectedOprData->getIsBlacklisted() == 0 && $getSelectedOprData->getIsFullSiteBlacklisted() == 0) {
                     $user_broadcasts = $twitch->getStreamForStreamer($getSelectedOprData->getUserId());
                     if ($user_broadcasts->getStatusCode() == 200) {
                         $user_broadcasts = $user_broadcasts->toArray()['data'];
@@ -73,6 +74,10 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
                             'priority' => $getSelectedOprData->getPriority()
                         ];
                     }
+                } else {
+                    $blacklistedUserIds[$getSelectedOprData->getUserId()] = [
+                        'priority' => $getSelectedOprData->getPriority()
+                    ];
                 }
             }
 
@@ -81,7 +86,7 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
                 if ($remaining_broadcasts->getStatusCode() == 200) {
                     $remaining_broadcasts_Arr = $remaining_broadcasts->toArray()['data'];
                     foreach ($remaining_broadcasts_Arr as $rem_broadcast_data) {
-                        if(!isset($selectedStreamerArr[$rem_broadcast_data['user_id']])) {
+                        if(!isset($selectedStreamerArr[$rem_broadcast_data['user_id']]) && !isset($blacklistedUserIds[$rem_broadcast_data['user_id']])) {
                             $broadcasts[] = $rem_broadcast_data;
                         }
 
@@ -181,42 +186,6 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
             $this->items = $channels;
             $this->options = $homeRowItem->getSortAndTrimOptions();
 
-            // sorting streamers based on priority
-            if(isset($this->items)) {
-                foreach ($this->items as $res_key => $res_data) {
-                    $broadcast_data = $res_data['broadcast'];
-                    $selected_streamer_index = [];
-                    if(isset($selectedStreamerArr[$broadcast_data['user_id']])) {
-                        $selected_streamer_index = $selectedStreamerArr[$broadcast_data['user_id']];
-                    }
-                    if(!empty($selected_streamer_index)) {
-                        $priority = $selected_streamer_index['priority'];
-                        $this->items[$res_key]['priority'] = $priority;
-                    } else {
-                        $this->items[$res_key]['priority'] = '';
-                    }
-                }
-
-                if (array_key_exists('itemSortType', $this->options)) {
-                    $sort = $this->options['itemSortType'];
-                    if ($sort === HomeRow::SORT_ASC) {
-                        $priority = array_column($this->items, 'priority');
-//                        $liveViewerCount = array_column($this->items, 'liveViewerCount');
-//                        array_multisort($priority, SORT_ASC,$liveViewerCount, SORT_ASC, $this->items);
-                        array_multisort($priority, SORT_ASC, $this->items);
-                    } elseif ($sort === HomeRow::SORT_DESC) {
-                        $priority = array_column($this->items, 'priority');
-//                        $liveViewerCount = array_column($this->items, 'liveViewerCount');
-//                        array_multisort($priority, SORT_DESC,$liveViewerCount, SORT_DESC, $this->items);
-                        array_multisort($priority, SORT_DESC, $this->items);
-                    } elseif ($sort === HomeRow::SORT_FIXED) {
-                        $priority = array_column($this->items, 'sortIndex');
-                        array_multisort($priority, SORT_ASC, $this->items);
-                    }
-                }
-
-            }
-
             // If showArt is checked, add the art to the very first item
             if ($homeRowItem->getShowArt() === TRUE) {
                 // Get the sized art link
@@ -238,6 +207,7 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
                 $this->items[0]['offlineDisplay']['showArt'] = TRUE;
             }
 
+            $this->sort();
             $this->trim();
 
             return $this->items;
