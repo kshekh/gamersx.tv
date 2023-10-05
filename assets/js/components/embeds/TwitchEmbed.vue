@@ -9,7 +9,7 @@
       v-else-if="overlay && isBuffering"
       alt="Embed's Custom Overlay"
       :src="overlay"
-      :class="{'transform -translate-y-1/2 top-1/2 ':!isMobileDevice,'relative w-full':true}"
+      :class="{'transform -translate-y-1/2 top-1/2 ':!isMobileDevice,'relative w-full':true,'h-full':isMobileDevice}"
     />
     <iframe
       v-if="embedDataCopy.type === 'twitch_clip'"
