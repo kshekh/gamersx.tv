@@ -15,6 +15,7 @@ export default {
   name: "YouTubeEmbed",
   props: {
     embedData: Object,
+    isShowTwitchEmbed: Boolean,
     height: [Number, String],
     width: [Number, String],
   },
@@ -42,7 +43,6 @@ export default {
           onStateChange: this.playerStateChanged,
         },
       });
-      this.startPlayer();
       // Listen for other players, stop on their start
       this.$root.$on("yt-embed-playing", this.stopPlayer);
     },
@@ -100,6 +100,11 @@ export default {
     showTwitchEmbed(newVal) {
       if (newVal === true) {
         this.embedYouTube();
+      }
+    },
+    isShowTwitchEmbed(newVal) {
+      if (newVal === true) {
+        this.showTwitchEmbed = true
       }
     },
   },
