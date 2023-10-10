@@ -229,7 +229,7 @@
           ]"
           style="top: 50%;left: 0;transform: translateY(-50%);z-index: 99;display: flex;align-items: center; width: auto !important;"
         >
-        <div ref="embedWrapper" :class="{'relative h-full main-parent':true,'w-full':!isMobileDevice,'width-custom':isMobileDevice}">
+        <div ref="embedWrapper" :class="{'relative w-full h-full main-parent':true}">
             <component
               v-if="embedData"
               ref="embed"
