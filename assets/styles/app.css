@@ -120,9 +120,9 @@ div.full-width-embed-first-row iframe {
   background: #000000;
 }
 
-.width-custom{
+/* .width-custom{
   width:auto;margin: 0 auto;
-}
+} */
 
 @media (max-width: 425px) {
   .responsive-container {
