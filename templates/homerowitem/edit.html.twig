@@ -44,6 +44,9 @@
             $(".switch").find('.iCheck-helper').remove();
             $(".switch").find('.control-label__text').remove();
             $(".switch").find('.icheckbox_square-blue').removeClass();
+            if($("#how_row_item_id").val() == '')  {
+                $(".chk_is_unique_container").prop('checked', true);
+            }
         },100);
 
         $(document).ready(function () {
