@@ -1,11 +1,19 @@
 <template>
   <div @click="showTwitchEmbed = true" @mouseover="showTwitchEmbed = true">
-    <img
-      v-if="!showTwitchEmbed || !embed.videoTitle"
-      :src="image"
-      alt="Image missing"
-      :style="{ height: height, width: width }"
-    />
+    <video
+    v-if="!showTwitchEmbed || !embed.videoTitle"
+      autoplay="autoplay"
+      muted="muted"
+      loop="loop"
+      playsinline=""
+      class="h-full md:w-full object-cover"
+    >
+      <source
+        :src="loadingVideo"
+        type="video/mp4"
+      />
+    </video>
+   
     <div :id="embedDataCopy.elementId"></div>
   </div>
 </template>
@@ -22,6 +30,7 @@ export default {
   data: function () {
     return {
       embed: {},
+      loaders:['/images/buffering_video_6.mp4','/images/buffering_video_7.mp4','/images/buffering_video_10.mp4','/images/buffering_video_11.mp4'],
       embedPlaying: false,
       showTwitchEmbed: false,
       image: "",
@@ -43,6 +52,7 @@ export default {
           onStateChange: this.playerStateChanged,
         },
       });
+      this.embed.playVideo();
       // Listen for other players, stop on their start
       this.$root.$on("yt-embed-playing", this.stopPlayer);
     },
@@ -95,6 +105,9 @@ export default {
       this.image = `https://img.youtube.com/vi/${this.embedData.video}/hqdefault.jpg`;
       return { ...this.embedData };
     },
+    loadingVideo(){
+      return this.loaders[Math.floor(Math.random()*this.loaders.length)]
+    }
   },
   watch: {
     showTwitchEmbed(newVal) {
