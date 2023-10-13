@@ -5,12 +5,19 @@
       :src="image.url"
       class="relative top-1/2 transform -translate-y-1/2 w-full"
     />
-    <img
+    <video
       v-else-if="overlay && isBuffering"
-      alt="Embed's Custom Overlay"
-      :src="overlay"
-      :class="{'transform -translate-y-1/2 top-1/2 relative w-full':true}"
-    />
+      autoplay="autoplay"
+      muted="muted"
+      loop="loop"
+      playsinline=""
+      class="h-full md:w-full object-cover"
+    >
+      <source
+        :src="loadingVideo"
+        type="video/mp4"
+      />
+    </video>
     <iframe
       v-if="embedDataCopy.type === 'twitch_clip'"
       :id="embedDataCopy.elementId"
@@ -51,6 +58,7 @@ export default {
   data: function () {
     return {
       embed: {},
+      loaders:['/images/buffering_video_6.mp4','/images/buffering_video_7.mp4','/images/buffering_video_10.mp4','/images/buffering_video_11.mp4'],
       embedPlaying: false,
       showTwitchEmbed: false,
       isBuffering: true,
@@ -138,6 +146,9 @@ export default {
     embedDataCopy() {
       return { ...this.embedData };
     },
+    loadingVideo(){
+      return this.loaders[Math.floor(Math.random()*this.loaders.length)]
+    }
   },
   watch: {
     showTwitchEmbed(newVal) {

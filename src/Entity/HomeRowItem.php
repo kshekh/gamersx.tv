@@ -182,7 +182,7 @@ class HomeRowItem implements PartneredInterface
     private $homeRowItemOperations;
 
     /**
-     * @ORM\Column(type="boolean", options={"default" : 0})
+     * @ORM\Column(type="boolean", options={"default" : 1,"comment":"0 = unique,1 = allow repeat"})
      */
     private $is_unique_container;
 
