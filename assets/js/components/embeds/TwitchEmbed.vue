@@ -58,7 +58,7 @@ export default {
   data: function () {
     return {
       embed: {},
-      loaders:['/images/buffering_video_6.mp4','/images/buffering_video_7.mp4','/images/buffering_video_10.mp4','/images/buffering_video_11.mp4'],
+      loaders:['/images/buffering_video_06.mp4','/images/buffering_video_07.mp4','/images/buffering_video_10.mp4','/images/buffering_video_11.mp4'],
       embedPlaying: false,
       showTwitchEmbed: false,
       isBuffering: true,
