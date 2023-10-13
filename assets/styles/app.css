@@ -342,3 +342,31 @@ div.full-width-embed-first-row iframe {
     height: auto;
   }
 }
+@media (min-width: 1920px) {
+  .max-w-hd-full-header.xl\:py-7 {
+    max-width: 100%;
+  }
+  .max-w-hd-full-header .custom-header-btn {
+    padding: 1.75rem;
+  }
+  .max-w-hd-full-header .custom-header-btn .elementor-button-text {
+    font-size: 24px;
+  }
+  .max-w-hd-full-header .custom-header-btn img {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+}
+@media (min-width: 2500px) {
+  .max-w-hd-full-header.xl\:py-7 {
+    padding-bottom: 2.75rem;
+    padding-top: 2.75rem;
+  }
+  .max-w-hd-full-header .custom-header-btn {
+    height: auto;
+  }
+  .max-w-hd-full-header .custom-header-btn .elementor-button-text {
+    font-size: 24px;
+  }
+}
+
