@@ -66,10 +66,12 @@ export default {
       }
     },
     startPlayer: function () {
+      console.log('startPlayer from YouTube embed');
       if (this.isFirstTimeLoad) {
         setTimeout(() => {
           if (!this.embedPlaying && this.showTwitchEmbed) {
             if (this.embed) {
+              console.log("if",this.embed);
               this.embed.playVideo();
               this.embed.unMute();
               this.embedPlaying = true;

@@ -296,6 +296,7 @@ export default {
       }
     },
     playVideo() {
+      console.log('playVideo');
       this.$root.$emit("close-other-layouts");
       setTimeout(() => {
         if (this.showOverlay || this.showArt) {
@@ -304,7 +305,11 @@ export default {
         }
       }, 0);
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
-      this.$refs.embed.startPlayer();
+      setTimeout(() => {
+        console.log('playVideo setTimeout');
+        this.$refs.embed.startPlayer();
+      },3000);
+      
       this.$emit("hide-controls");
     },
     scrollOut() {
