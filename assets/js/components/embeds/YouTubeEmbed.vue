@@ -39,22 +39,26 @@ export default {
   },
   methods: {
     embedYouTube: function () {
-      this.embed = new YT.Player(this.embedDataCopy.elementId, {
-        width: this.width || 540,
-        height: this.height || 300,
-        videoId: this.embedDataCopy.video,
-        autoplay: true,
-        playerVars: {
-          modestbranding: true,
-          rel: 0,
-        },
-        events: {
-          onStateChange: this.playerStateChanged,
-        },
-      });
-      this.embed.playVideo();
-      // Listen for other players, stop on their start
-      this.$root.$on("yt-embed-playing", this.stopPlayer);
+      let _this = this;
+      window.YT.ready(function() {
+        console.log("embedYouTube")
+        _this.embed = new YT.Player(_this.embedDataCopy.elementId, {
+            width: _this.width || 540,
+            height: _this.height || 300,
+            videoId: _this.embedDataCopy.video,
+            autoplay: true,
+            playerVars: {
+              modestbranding: true,
+              rel: 0,
+            },
+            events: {
+              onStateChange: _this.playerStateChanged,
+            },
+          });
+          _this.embed.playVideo();
+          // Listen for other players, stop on their start
+          _this.$root.$on("yt-embed-playing", _this.stopPlayer);
+      })
     },
     playerStateChanged: function (e) {
       if (e.data == YT.PlayerState.PAUSED) {
