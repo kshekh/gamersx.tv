@@ -46,7 +46,7 @@ export default {
             width: _this.width || 540,
             height: _this.height || 300,
             videoId: _this.embedDataCopy.video,
-            autoplay: true,
+            autoplay: false,
             playerVars: {
               modestbranding: true,
               rel: 0,
@@ -55,7 +55,6 @@ export default {
               onStateChange: _this.playerStateChanged,
             },
           });
-          _this.embed.playVideo();
           // Listen for other players, stop on their start
           _this.$root.$on("yt-embed-playing", _this.stopPlayer);
       })
@@ -76,7 +75,6 @@ export default {
           if (!this.embedPlaying && this.showTwitchEmbed) {
             if (this.embed) {
               console.log("if",this.embed);
-              this.embed.playVideo();
               this.embed.unMute();
               this.embedPlaying = true;
               this.isFirstTimeLoad = false;
@@ -86,7 +84,6 @@ export default {
       } else {
         if (!this.embedPlaying) {
           if (this.embed) {
-            this.embed.playVideo();
             this.embed.unMute();
             this.embedPlaying = true;
           }
