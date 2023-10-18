@@ -305,6 +305,7 @@ export default {
       }, 0);
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
       this.$refs.embed.startPlayer();
+      
       this.$emit("hide-controls");
     },
     scrollOut() {
