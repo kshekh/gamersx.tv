@@ -168,7 +168,7 @@ export default {
   methods: {
     /* Clicking on a row writes to the Admin form */
     selectRow: function(row) {
-      console.log('selected row:',row);
+      // console.log('selected row:',row);
     },
     /* Clicking on the search button */
     search: function() {
@@ -445,14 +445,14 @@ export default {
   created() {
     // Listen for the event
     EventBus.$on('selected-game', eventData => {
-      console.log('selected-game',eventData);
+      // console.log('selected-game',eventData);
       this.gameId = eventData.game_id;
       this.gameName = eventData.game_name
       this.moreResults();
     });
 
     EventBus.$on('clear-game-streamers', eventData => {
-      console.log('clear-game-streamers');
+      // console.log('clear-game-streamers');
       this.isOldResultsUpdated = false;
       $("#live-streamer-table .streamer_row").remove();
       $("#offline-streamer-table .streamer_row").remove();
