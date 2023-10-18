@@ -1,6 +1,12 @@
 <template>
   <div @click="showTwitchEmbed = true" @mouseover="showTwitchEmbed = true">
-    <video
+    <img
+      v-if="!showTwitchEmbed || !embed.videoTitle"
+      :src="image"
+      alt="Image missing"
+      :style="{ height: height, width: width }"
+    />
+    <!-- <video
     v-if="!showTwitchEmbed || !embed.videoTitle"
       autoplay="autoplay"
       muted="muted"
@@ -12,7 +18,7 @@
         :src="loadingVideo"
         type="video/mp4"
       />
-    </video>
+    </video> -->
    
     <div :id="embedDataCopy.elementId"></div>
   </div>
@@ -30,7 +36,6 @@ export default {
   data: function () {
     return {
       embed: {},
-      loaders:['/images/buffering_video_06.mp4','/images/buffering_video_07.mp4','/images/buffering_video_10.mp4','/images/buffering_video_11.mp4'],
       embedPlaying: false,
       showTwitchEmbed: false,
       image: "",
@@ -74,7 +79,7 @@ export default {
         setTimeout(() => {
           if (!this.embedPlaying && this.showTwitchEmbed) {
             if (this.embed) {
-              console.log("if",this.embed);
+              console.log("if1",this.embed);
               this.embed.unMute();
               this.embedPlaying = true;
               this.isFirstTimeLoad = false;
