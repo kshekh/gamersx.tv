@@ -49,12 +49,41 @@ export default {
   methods: {
     /* Clicking on a row writes to the Admin form */
     selectRow: function(row) {
+      var topic_id = '';
+      var topic_label = '';
       if (this.itemType === 'youtube') {
-        document.querySelector('input.topic-id').value = this.searchValue;
-        document.querySelector('input.topic-label').value = 'YT: ' + this.searchValue;
+        topic_id = this.searchValue;
+        topic_label = 'YT: ' + this.searchValue;
       } else {
-        document.querySelector('input.topic-id').value = row.id;
-        document.querySelector('input.topic-label').value = row.label;
+        topic_id = row.id;
+        topic_label = row.label;
+      }
+
+      document.querySelector('input.topic-id').value = topic_id;
+      document.querySelector('input.topic-label').value = topic_label;
+
+      let params = {
+        'item_type': this.itemType,
+        'topic_id': topic_id,
+        'how_row_item_id': $("#how_row_item_id").val()
+      }
+
+      this.callApi('/api/check_unique_container/', params, this.checkUniqueContainerResults);
+
+      if (this.itemType === 'game') {
+        let rowData = {
+          'game_id': row.id,
+          'game_name': row.label,
+        };
+        EventBus.$emit('selected-game', rowData);
+      }
+    },
+    checkUniqueContainerResults(response) {
+      if(response.data && response.data.is_unique_container) {
+        toastr.error("Selected video/game already exists in another container. Please select different one or allow this one to repeat.");
+        document.querySelector('input.topic-id').value = '';
+        document.querySelector('input.topic-label').value = '';
+        EventBus.$emit('clear-game-streamers');
       }
     },
     /* Clicking on the search button */
@@ -76,6 +105,7 @@ export default {
     clear: function() {
       document.querySelector('input.topic-id').value = null;
       document.querySelector('input.topic-label').value = null;
+      EventBus.$emit('clear-game-streamers');
     },
     /** == Call the API to get various kinds of results, then process them == **/
     getSearchResults: function(params) {

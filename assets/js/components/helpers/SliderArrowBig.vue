@@ -12,6 +12,7 @@
             duration-300
             transform
             hover:scale-110
+            slider_arrow_big
           "
     :class="[
       videoTypeClass,

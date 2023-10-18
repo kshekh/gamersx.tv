@@ -5,6 +5,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     app.theme_path: '%kernel.project_dir%/public/images/themes/'
+    app.images: '%kernel.project_dir%/public/images/'
     app.theme_url: '/images/themes/'
     app.twitch_secret: '%env(resolve:TWITCH_CLIENT_SECRET)%'
     app.twitch_id: '%env(resolve:TWITCH_CLIENT_ID)%'
@@ -12,6 +13,8 @@ parameters:
     uploads_base_url: '%env(SITE_BASE_URL)%/%uploads_dir_name%'
     timezone: '%env(APP_TIMEZONE)%'
     app.twitch_redirect_uri: '%env(TWITCH_REDIRECT_URI)%'
+    app.aws_s3_bucket_name: '%env(AWS_S3_BUCKET_NAME)%'
+    app.aws_s3_custom.uri_prefix: 'https://%env(AWS_S3_BUCKET_NAME)%.%env(AWS_S3_DOMAIN)%'
 
 services:
     # default configuration for services in *this* file
@@ -60,6 +63,8 @@ services:
         arguments: [~, App\Entity\HomeRowItem, App\Controller\HomeRowItemAdminController ]
         tags:
             - { name: sonata.admin, manager_type: orm, group: home, label: Containers }
+        calls:
+            - [ setTemplate, [ 'edit', 'homerowitem/edit.html.twig' ] ]
         public: true
 
     admin.theme:
@@ -71,7 +76,9 @@ services:
 
     admin.site_settings:
         class: App\Admin\SiteSettingsAdmin
-        arguments: [ ~, App\Entity\SiteSettings, ~ ]
+        arguments: [ ~, App\Entity\SiteSettings, App\Controller\ThemeSettingAdminController ]
+        calls:
+            - [ setTemplate, [ 'list', 'sitesetting/list.html.twig' ] ]
         tags:
             - { name: sonata.admin, manager_type: orm, group: admin, label: Site Settings }
         public: true
@@ -88,6 +95,15 @@ services:
         arguments: [~, App\Entity\PartnerRole, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, group: admin, label: Partner Roles }
+        public: true
+
+    admin.container_access_control:
+        class: App\Admin\ContainerAccessControlAdmin
+        arguments: [~, App\Entity\HomeRowItemOperation, App\Controller\ContainerAccessControlController ]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: admin, label: Container access control }
+        calls:
+            - [ setTemplate, [ 'list', 'ContainerAccessControlAdmin/list.html.twig' ] ]
         public: true
 
     Aws\S3\S3Client:

@@ -3,13 +3,15 @@
 namespace App\Entity;
 
 use App\Model\PartneredInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-
+use App\Repository\HomeRowItemRepository;
 /**
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass=HomeRowItemRepository::class)
  * @Vich\Uploadable
  */
 class HomeRowItem implements PartneredInterface
@@ -173,6 +175,21 @@ class HomeRowItem implements PartneredInterface
      * @ORM\Column(type="boolean", options={"default" : 0})
      */
     private $isPartner;
+
+    /**
+     * @ORM\OneToMany(targetEntity=HomeRowItemOperation::class, mappedBy="home_row_item")
+     */
+    private $homeRowItemOperations;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default" : 1,"comment":"0 = unique,1 = allow repeat"})
+     */
+    private $is_unique_container;
+
+    public function __construct()
+    {
+        $this->homeRowItemOperations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -487,5 +504,47 @@ class HomeRowItem implements PartneredInterface
     public function setUpdatedAt(?\DateTime $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * @return Collection<int, HomeRowItemOperation>
+     */
+    public function getHomeRowItemOperations(): Collection
+    {
+        return $this->homeRowItemOperations;
+    }
+
+    public function addHomeRowItemOperation(HomeRowItemOperation $homeRowItemOperation): self
+    {
+        if (!$this->homeRowItemOperations->contains($homeRowItemOperation)) {
+            $this->homeRowItemOperations[] = $homeRowItemOperation;
+            $homeRowItemOperation->setHomeRowItem($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHomeRowItemOperation(HomeRowItemOperation $homeRowItemOperation): self
+    {
+        if ($this->homeRowItemOperations->removeElement($homeRowItemOperation)) {
+            // set the owning side to null (unless already changed)
+            if ($homeRowItemOperation->getHomeRowItem() === $this) {
+                $homeRowItemOperation->setHomeRowItem(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getIsUniqueContainer(): ?bool
+    {
+        return $this->is_unique_container;
+    }
+
+    public function setIsUniqueContainer(bool $is_unique_container): self
+    {
+        $this->is_unique_container = $is_unique_container;
+
+        return $this;
     }
 }

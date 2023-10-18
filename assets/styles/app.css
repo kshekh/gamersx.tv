@@ -15,8 +15,11 @@
 }
 
 /* blur experience pop-up bg */
+.home-banner-section {
+  height: 100vh;
+}
 .backdrop-filter {
-  backdrop-filter: blur(3px); 
+  backdrop-filter: blur(3px);
 }
 
 /* new arrows style */
@@ -116,6 +119,10 @@ div.channel-description {
 div.full-width-embed-first-row iframe {
   background: #000000;
 }
+
+/* .width-custom{
+  width:auto;margin: 0 auto;
+} */
 
 @media (max-width: 425px) {
   .responsive-container {
@@ -269,3 +276,97 @@ div.full-width-embed-first-row iframe {
     transform: rotateZ(135deg);
   }
 }
+
+@media (max-width: 768px) {
+  .home-row .md\:flex-col {
+    flex-direction: column;
+  }
+  .home-row .md\:self-center {
+    align-self: center;
+  }
+  .home-row {
+    margin-bottom: 3rem;
+  }
+}
+
+@media (max-width: 1024px) and (orientation: portrait){
+  .slider_arrow {
+    display: none;
+  }
+  .home-row .slider_arrow {
+    display: block;
+  }
+}
+
+@media (max-width: 1366px) and (orientation: landscape){
+  .slider_arrow {
+    display: none;
+  }
+  .home-row .slider_arrow {
+    display: block;
+  }
+}
+
+@media (max-width: 415px) and (orientation: portrait){
+  .slider_arrow_big {
+    margin-left: 5px;
+  }
+  .slider_arrow_big svg{
+      height: 45px;
+      width: 45px;
+  }
+}
+
+@media (max-width: 424px) and (orientation: landscape){
+  .slider_arrow_big {
+    margin-left: 5px;
+  }
+  .slider_arrow_big svg{
+    height: 45px;
+    width: 45px;
+  }
+}
+
+@media (max-width: 320px) {
+  .slider_arrow_big {
+    margin-left: 2px;
+  }
+  .slider_arrow_big svg{
+    height: 35px;
+    width: 35px;
+  }
+}
+
+@media (max-width: 991px) {
+  .home-banner-section {
+    height: auto;
+  }
+}
+@media (min-width: 1920px) {
+  .max-w-hd-full-header.xl\:py-7 {
+    max-width: 100%;
+  }
+  .max-w-hd-full-header .custom-header-btn {
+    padding: 1.75rem;
+  }
+  .max-w-hd-full-header .custom-header-btn .elementor-button-text {
+    font-size: 24px;
+  }
+  .max-w-hd-full-header .custom-header-btn img {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+}
+@media (min-width: 2700px) {
+  .max-w-hd-full-header.xl\:py-7 {
+    padding-bottom: 2.75rem;
+    padding-top: 2.75rem;
+  }
+  .max-w-hd-full-header .custom-header-btn {
+    height: auto;
+  }
+  .max-w-hd-full-header .custom-header-btn .elementor-button-text {
+    font-size: 24px;
+  }
+}
+

@@ -6,6 +6,20 @@
       alt="Image missing"
       :style="{ height: height, width: width }"
     />
+    <!-- <video
+    v-if="!showTwitchEmbed || !embed.videoTitle"
+      autoplay="autoplay"
+      muted="muted"
+      loop="loop"
+      playsinline=""
+      class="h-full md:w-full object-cover"
+    >
+      <source
+        :src="loadingVideo"
+        type="video/mp4"
+      />
+    </video> -->
+   
     <div :id="embedDataCopy.elementId"></div>
   </div>
 </template>
@@ -15,6 +29,7 @@ export default {
   name: "YouTubeEmbed",
   props: {
     embedData: Object,
+    isShowTwitchEmbed: Boolean,
     height: [Number, String],
     width: [Number, String],
   },
@@ -29,22 +44,25 @@ export default {
   },
   methods: {
     embedYouTube: function () {
-      this.embed = new YT.Player(this.embedDataCopy.elementId, {
-        width: this.width || 540,
-        height: this.height || 300,
-        videoId: this.embedDataCopy.video,
-        autoplay: true,
-        playerVars: {
-          modestbranding: true,
-          rel: 0,
-        },
-        events: {
-          onStateChange: this.playerStateChanged,
-        },
-      });
-
-      // Listen for other players, stop on their start
-      this.$root.$on("yt-embed-playing", this.stopPlayer);
+      // let _this = this;
+      // window.YT.ready(function() {
+        console.log("embedYouTubeRollback")
+        this.embed = new YT.Player(this.embedDataCopy.elementId, {
+            width: this.width || 540,
+            height: this.height || 300,
+            videoId: this.embedDataCopy.video,
+            autoplay: false,
+            playerVars: {
+              modestbranding: true,
+              rel: 0,
+            },
+            events: {
+              onStateChange: this.playerStateChanged,
+            },
+          });
+          // Listen for other players, stop on their start
+          this.$root.$on("yt-embed-playing", this.stopPlayer);
+      // })
     },
     playerStateChanged: function (e) {
       if (e.data == YT.PlayerState.PAUSED) {
@@ -56,10 +74,12 @@ export default {
       }
     },
     startPlayer: function () {
+      console.log('startPlayer from YouTube embed');
       if (this.isFirstTimeLoad) {
         setTimeout(() => {
           if (!this.embedPlaying && this.showTwitchEmbed) {
             if (this.embed) {
+              console.log("if1",this.embed);
               this.embed.playVideo();
               this.embed.unMute();
               this.embedPlaying = true;
@@ -95,6 +115,9 @@ export default {
       this.image = `https://img.youtube.com/vi/${this.embedData.video}/hqdefault.jpg`;
       return { ...this.embedData };
     },
+    // loadingVideo(){
+    //   return this.loaders[Math.floor(Math.random()*this.loaders.length)]
+    // }
   },
   watch: {
     showTwitchEmbed(newVal) {
@@ -102,6 +125,11 @@ export default {
         this.embedYouTube();
       }
     },
+    // isShowTwitchEmbed(newVal) {
+    //   if (newVal === true) {
+    //     this.showTwitchEmbed = true
+    //   }
+    // },
   },
 };
 </script>

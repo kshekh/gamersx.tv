@@ -2,22 +2,35 @@
 
 namespace App\Containerizer;
 
+use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
+use App\Entity\HomeRowItemOperation;
 use App\Service\HomeRowInfo;
 
 class TwitchGameContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
     private $homeRowItem;
     private $twitch;
+    private $entityManager;
 
-    public function __construct(HomeRowItem $homeRowItem, $twitch)
+    public function __construct(HomeRowItem $homeRowItem, $twitch,$entityManager)
     {
         $this->homeRowItem = $homeRowItem;
         $this->twitch = $twitch;
+        $this->entityManager = $entityManager;
     }
 
     public function getContainers(): Array
     {
+
+        $topic_id = $this->homeRowItem->getTopic()['topicId'];
+        $check_unique_item =  $this->entityManager->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
+
+        $is_unique_container =  $this->homeRowItem->getIsUniqueContainer();
+        if($is_unique_container == 0 && (isset($check_unique_item) && !empty($check_unique_item) && count($check_unique_item) > 1 && $check_unique_item[0]['id'] != $this->homeRowItem->getId())) {
+            return Array();
+        }
+
         $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
         $twitch = $this->twitch;
@@ -30,12 +43,6 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
             return Array();
         }
 
-        $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, 20);
-        if (200 !== $broadcasts->getStatusCode()) {
-            $this->logger->error("Call to Twitch failed with ".$broadcasts->getStatusCode());
-            unset($broadcasts);
-            return Array();
-        }
 
         // Get the info for the game, use that for every game
         $info = $infos->toArray()['data'];
@@ -45,9 +52,62 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
         }
 
         $info = $info[0];
-
+        $options = $homeRowItem->getSortAndTrimOptions();
+        $maxContainers = (isset($options['maxContainers']))?$options['maxContainers']:0;
         // Get every broadcast
-        $broadcasts = $broadcasts->toArray()['data'];
+        $broadcasts = [];
+        // getting selected game streamers
+        $getSelectedRowItemOperation =  $homeRowItem->getHomeRowItemOperations();
+        $selectedStreamerArr = [];
+        $blacklistedUserIds = [];
+        if(!empty($getSelectedRowItemOperation)) {
+            foreach ($getSelectedRowItemOperation as $getSelectedOprData) {
+                if($getSelectedOprData->getIsBlacklisted() == 0 && $getSelectedOprData->getIsFullSiteBlacklisted() == 0) {
+                    $user_broadcasts = $twitch->getStreamForStreamer($getSelectedOprData->getUserId());
+                    if ($user_broadcasts->getStatusCode() == 200) {
+                        $user_broadcasts = $user_broadcasts->toArray()['data'];
+                        foreach ($user_broadcasts as $user_broadcast_data) {
+                            $broadcasts[] = $user_broadcast_data;
+                        }
+
+                        $selectedStreamerArr[$getSelectedOprData->getUserId()] = [
+                            'priority' => $getSelectedOprData->getPriority()
+                        ];
+                    }
+                } else {
+                    $blacklistedUserIds[$getSelectedOprData->getUserId()] = [
+                        'priority' => $getSelectedOprData->getPriority()
+                    ];
+                }
+            }
+
+            if(count($broadcasts) < $maxContainers) {
+                $remaining_broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, 20);
+                if ($remaining_broadcasts->getStatusCode() == 200) {
+                    $remaining_broadcasts_Arr = $remaining_broadcasts->toArray()['data'];
+                    foreach ($remaining_broadcasts_Arr as $rem_broadcast_data) {
+                        if(!isset($selectedStreamerArr[$rem_broadcast_data['user_id']]) && !isset($blacklistedUserIds[$rem_broadcast_data['user_id']])) {
+                            $broadcasts[] = $rem_broadcast_data;
+                        }
+
+                        if(count($broadcasts) == $maxContainers) {
+                            break;
+                        }
+                    }
+                }
+            }
+
+        } else {
+
+            $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, 20);
+            if (200 !== $broadcasts->getStatusCode()) {
+                $this->logger->error("Call to Twitch failed with ".$broadcasts->getStatusCode());
+                unset($broadcasts);
+                return Array();
+            }
+            $broadcasts = $broadcasts->toArray()['data'];
+        }
+
 
         $rowName = $homeRowItem->getHomeRow()->getTitle();
         $description = $homeRowItem->getDescription();
@@ -126,8 +186,6 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
             $this->items = $channels;
             $this->options = $homeRowItem->getSortAndTrimOptions();
 
-            $this->sort();
-
             // If showArt is checked, add the art to the very first item
             if ($homeRowItem->getShowArt() === TRUE) {
                 // Get the sized art link
@@ -149,6 +207,7 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
                 $this->items[0]['offlineDisplay']['showArt'] = TRUE;
             }
 
+            $this->sort();
             $this->trim();
 
             return $this->items;

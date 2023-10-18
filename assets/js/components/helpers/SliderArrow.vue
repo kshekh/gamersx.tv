@@ -1,7 +1,7 @@
 <template>
   <button
     @click="handleClick()"
-    class="transition-all duration-300 transform hover:scale-110 overBG"
+    class="transition-all duration-300 transform hover:scale-110 overBG slider_arrow"
     :class="[
       videoTypeClass,
       {

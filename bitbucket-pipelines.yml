@@ -165,10 +165,6 @@ definitions:
           - fi
           - echo "Updating the service in ECS..."
           - aws ecs update-service --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --service ${AWS_IMAGE_REPO}-app --force-new-deployment
-          - aws ecs wait services-stable --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --services ${AWS_IMAGE_REPO}-app
-          - if test -f "ecr-mobile"; then
-          - aws ecs wait services-stable --region ${AWS_REGION} --cluster ${MOBILE_REPO} --services ${MOBILE_REPO}-app
-          - fi
 
     - step: &runscripts
         name: Running Migrations and Clearing Cache

@@ -5,7 +5,7 @@
     @swiped-right="back()"
     @mouseenter="mouseEntered()"
     @mousemove="checkMouseActive()"
-    class="home-row mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative min-h-mobile"
+    class="home-row mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative min-h-mobile home-banner-section"
     :style="customBg"
   >
     <div class="container mx-auto">
@@ -124,6 +124,7 @@ export default {
         return {
           // backgroundImage: "url(https://picsum.photos/2000/3000)"
           backgroundImage: "url(" + selected.customArt + ")",
+          backgroundSize: "100% 100%",
         };
       } else {
         return {};
@@ -207,6 +208,11 @@ export default {
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
     }
     this.displayChannels = this.settings.channels.filter(this.showChannel);
+  },
+  updated: function () {
+    if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels.filter(this.showChannel))){
+      this.displayChannels = this.settings.channels.filter(this.showChannel);
+    }
   },
 };
 </script>

@@ -33,11 +33,11 @@
         <div class="flex w-full h-full items-center justify-between">
           <div
             ref="channelBox"
-            class="            
+            class="
               py-2.5
-              sm:py-0            
+              sm:py-0
               sm:mr-20
-              w-full            
+              w-full
               h-full
               flex flex-col
               justify-center
@@ -196,6 +196,11 @@ export default {
   },
   mounted: function () {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
+  },
+  updated: function () {
+    if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels.filter(this.showChannel))){
+      this.displayChannels = this.settings.channels.filter(this.showChannel);
+    }
   },
 };
 </script>

@@ -47,7 +47,7 @@
         src="/images/left-arrow.png"
       />
     </div> -->
-    <div class="flex" style="align-items: center;">
+    <div :class="{'relative':isMobileDevice,'flex':true}" style="align-items: center;">
       <div class="w5-center " ref="backArrow">
         <slider-arrow
           :isNext="false"
@@ -57,7 +57,7 @@
       </div>
       <div
         @mousemove="this.triggerDragging"
-        @mousedown="this.startDragging"
+        v-on="!isMobileDevice ? { mousedown: this.startDragging } : {}"
         @mouseup="this.stopDragging"
         @mouseleave="this.stopDragging"
         @scroll="this.handleScroll"
@@ -169,6 +169,7 @@ export default {
       displayChannels: [],
       allowScrolling: false,
       max_scroll_left: 0,
+      isMobileDevice: false,
     };
   },
   methods: {
@@ -241,14 +242,26 @@ export default {
       }else
         this.$refs.backArrow.classList.add("sliderArrowHide")
       this.$root.$emit('close-other-layouts');
-    }
+    },
+    setIsMobileDevice() {
+      const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
+      if(checkDeviceType) {
+        this.isMobileDevice = true;
+      } else {
+        this.isMobileDevice = false;
+      }
+    },
   },
   mounted: function() {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
     this.$refs.channelBox.addEventListener('scroll', this.handleScroll);
     this.$refs.channelBox.scrollLeft = 0;
+    this.setIsMobileDevice();
   },
   updated: function() {
+    if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels.filter(this.showChannel))){
+      this.displayChannels = this.settings.channels.filter(this.showChannel);
+    }
     this.allowScrolling =
       this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
     this.max_scroll_left = this.$refs.channelBox.scrollWidth - this.$refs.channelBox.clientWidth;

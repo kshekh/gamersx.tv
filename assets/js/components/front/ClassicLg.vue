@@ -36,12 +36,12 @@
       <!--      </div>-->
     </div>
 
-    <div class="flex" style="align-items: center;">
+    <div :class="{'relative':isMobileDevice,'flex':true}" style="align-items: center;">
 
       <div class="w5-center sliderArrowHide" ref="backArrow">
         <slider-arrow :isNext="false" :videoType="'twitch'" @arrow-clicked="back()" />
       </div>
-      <div @mousedown="this.startDragging" @mousemove="this.triggerDragging" @mouseup="this.stopDragging"
+      <div v-on="!isMobileDevice ? { mousedown: this.startDragging } : {}" @mousemove="this.triggerDragging" @mouseup="this.stopDragging"
         @mouseleave="this.stopDragging" @scroll="this.handleScroll" ref="channelBox" style="width: 100%" class="
           flex
           overflow-hidden custom-smooth-scroll
@@ -107,6 +107,7 @@ export default {
       displayChannels: [],
       allowScrolling: false,
       max_scroll_left: 0,
+      isMobileDevice: false,
     };
   },
   methods: {
@@ -176,14 +177,26 @@ export default {
       } else
         this.$refs.backArrow.classList.add("sliderArrowHide")
       this.$root.$emit('close-other-layouts');
-    }
+    },
+    setIsMobileDevice() {
+      const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
+      if(checkDeviceType) {
+        this.isMobileDevice = true;
+      } else {
+        this.isMobileDevice = false;
+      }
+    },
   },
   mounted() {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
     this.$refs.channelBox.addEventListener('scroll', this.handleScroll);
     this.$refs.channelBox.scrollLeft = 0;
+    this.setIsMobileDevice();
   },
   updated: function () {
+    if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels.filter(this.showChannel))){
+      this.displayChannels = this.settings.channels.filter(this.showChannel);
+    }
     this.allowScrolling =
       this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
     this.max_scroll_left = this.$refs.channelBox.scrollWidth - this.$refs.channelBox.clientWidth;

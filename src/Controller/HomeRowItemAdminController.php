@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\HomeRowItem;
+use App\Entity\HomeRowItemOperation;
 use App\Service\YouTubeApi;
 use Doctrine\ORM\EntityManagerInterface;
 use Sonata\AdminBundle\Exception\LockException;
@@ -93,6 +94,53 @@ class HomeRowItemAdminController extends CRUDController
             if ($isFormValid && (!$this->isInPreviewMode() || $this->isPreviewApproved())) {
                 /** @phpstan-var T $submittedObject */
                 $submittedObject = $form->getData();
+                $requestData = $request->request->all();
+
+                if (
+                    $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO ||
+                    $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO ||
+                    $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_PLAYLIST ||
+                    $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST
+                ) {
+                    $qb = $this->admin->getModelManager()->getEntityManager('App:HomeRowItem')
+                        ->createQueryBuilder()
+                        ->addSelect('hri')
+                        ->from('App:HomeRowItem', 'hri')
+                        ->andWhere('hri.is_unique_container = 0')
+                        ->andWhere('hri.is_published = 1');
+
+                    if($submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO) {
+                        $qb->andWhere('hri.videoId = :videoId');
+                        $qb->setParameter('videoId', $submittedObject->getVideoId());
+                    } else if($submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_PLAYLIST || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
+                        $qb->andWhere('hri.playlistId = :playlistId');
+                        $qb->setParameter('playlistId', $submittedObject->getPlaylistId());
+                    }
+                    $check_unique_item = $qb->getQuery()->getResult();
+                } else {
+                    $topic_id = $submittedObject->getTopic()['topicId'];
+                    $check_unique_item =  $this->em->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
+                }
+
+                if(!empty($check_unique_item)) {
+                    $this->addFlash(
+                        'sonata_flash_error',
+                        'Selected video/game already exists in another container. Please select different one or allow this one to repeat.'
+                    );
+                    $formView = $form->createView();
+                    // set the theme for the current Admin Form
+                    $this->setFormTheme($formView, $this->admin->getFormTheme());
+                    // NEXT_MAJOR: Remove this line and use commented line below it instead
+                    $template = $this->admin->getTemplate($templateKey);
+
+                    return $this->renderWithExtraParams($template, [
+                        'action' => 'create',
+                        'form' => $formView,
+                        'object' => $newObject,
+                        'objectId' => null,
+                    ]);
+                }
+
                 $this->admin->setSubject($submittedObject);
                 $this->admin->checkAccess('create', $submittedObject);
                 if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
@@ -114,6 +162,95 @@ class HomeRowItemAdminController extends CRUDController
 
                 try {
                     $newObject = $this->admin->create($submittedObject);
+                    if($submittedObject->getItemType() == HomeRowItem::TYPE_GAME) {
+
+                        $game_name = $submittedObject->getTopic()['label']??'';
+                        $game_id = $submittedObject->getTopic()['topicId']??'';
+                        $streamerIndexArr = $requestData['streamer_index']??[];
+                        if (!empty($streamerIndexArr)) {
+                            $priority = 0;
+                            foreach ($streamerIndexArr as $streamerIndex =>  $streamerId) {
+                                if(empty($streamerId)) {
+                                    continue;
+                                }
+                                $priority++;
+                                $is_blacklisted = 0;
+                                if (isset($requestData['is_blacklisted_' . $streamerId])) {
+                                    $is_blacklisted = 1;
+                                }
+
+                                $streamer_name = '';
+                                if (isset($requestData['streamer_name_' . $streamerId])) {
+                                    $streamer_name = $requestData['streamer_name_' . $streamerId];
+                                }
+                                $viewer = '';
+                                if (isset($requestData['viewer_' . $streamerId])) {
+                                    $viewer = $requestData['viewer_' . $streamerId];
+                                }
+
+                                $user_id = '';
+                                if (isset($requestData['user_id_' . $streamerId])) {
+                                    $user_id = $requestData['user_id_' . $streamerId];
+                                }
+
+                                $item_type = 'streamer';
+                                if (isset($requestData['item_type_' . $streamerId])) {
+                                    $item_type = $requestData['item_type_' . $streamerId];
+                                }
+
+                                $homeRowItemOperation = new HomeRowItemOperation();
+                                $homeRowItemOperation->setHomeRowItem($newObject);
+                                $homeRowItemOperation->setPriority($priority);
+                                $homeRowItemOperation->setItemType($item_type);
+                                $homeRowItemOperation->setStreamerId($streamerId);
+                                $homeRowItemOperation->setUserId($user_id);
+                                $homeRowItemOperation->setGameId($game_id);
+                                $homeRowItemOperation->setGameName($game_name);
+                                $homeRowItemOperation->setStreamerName($streamer_name);
+                                $homeRowItemOperation->setViewer($viewer);
+                                $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
+                                $this->em->persist($homeRowItemOperation);
+                                $this->em->flush();
+                            }
+                        }
+
+                    } else if($submittedObject->getItemType() == HomeRowItem::TYPE_STREAMER) {
+
+                        $gameIndexArr = $requestData['game_index'] ?? [];
+                        if (!empty($gameIndexArr)) {
+                            foreach ($gameIndexArr as $gameIndex => $gameId) {
+                                if (empty($gameId)) {
+                                    continue;
+                                }
+
+                                $is_blacklisted = 0;
+                                if (isset($requestData['is_blacklisted_' . $gameId])) {
+                                    $is_blacklisted = 1;
+                                }
+
+                                $is_whitelisted = 0;
+                                if (isset($requestData['is_whitelisted_' . $gameId])) {
+                                    $is_whitelisted = 1;
+                                }
+
+                                $streamer_name = '';
+                                if (isset($requestData['streamer_name_' . $gameId])) {
+                                    $streamer_name = $requestData['streamer_name_' . $gameId];
+                                }
+
+                                $homeRowItemOperation = new HomeRowItemOperation();
+                                $homeRowItemOperation->setHomeRowItem($newObject);
+                                $homeRowItemOperation->setItemType('game');
+                                $homeRowItemOperation->setGameId($gameId);
+                                $homeRowItemOperation->setStreamerName($streamer_name);
+                                $homeRowItemOperation->setGameName($streamer_name);
+                                $homeRowItemOperation->setIsWhitelisted($is_whitelisted);
+                                $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
+                                $this->em->persist($homeRowItemOperation);
+                                $this->em->flush();
+                            }
+                        }
+                    }
 
                     if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
                         $youtube = $this->youtube;
@@ -181,6 +318,7 @@ class HomeRowItemAdminController extends CRUDController
                             $submittedObjectVideo->setIsPublishedStart($submittedObject->getIsPublishedStart());
                             $submittedObjectVideo->setIsPublishedEnd($submittedObject->getIsPublishedEnd());
                             $submittedObjectVideo->setIsPartner($submittedObject->getIsPartner());
+                            $submittedObjectVideo->setIsUniqueContainer($submittedObject->getIsUniqueContainer());
                             $submittedObjectVideo->setVideoId($videoId_link);
                             $submittedObjectVideo->setPlaylistId($newObject->getId());
                             $submittedObjectVideo->setUpdatedAt($submittedObject->getUpdatedAt());
@@ -300,6 +438,58 @@ class HomeRowItemAdminController extends CRUDController
             if ($isFormValid && (!$this->isInPreviewMode() || $this->isPreviewApproved())) {
                 /** @phpstan-var T $submittedObject */
                 $submittedObject = $form->getData();
+                $requestData = $request->request->all();
+
+                if (
+                    $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO ||
+                    $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO ||
+                    $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_PLAYLIST ||
+                    $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST
+                ) {
+
+                    $qb = $this->admin->getModelManager()->getEntityManager('App:HomeRowItem')
+                        ->createQueryBuilder()
+                        ->addSelect('hri')
+                        ->from('App:HomeRowItem', 'hri')
+                        ->where('hri.id != :id')
+                        ->setParameter('id', $id)
+                        ->andWhere('hri.is_unique_container = 0')
+                        ->andWhere('hri.isPublished = 1');
+
+                    if($submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO) {
+                        $qb->andWhere('hri.videoId = :videoId');
+                        $qb->setParameter('videoId', $submittedObject->getVideoId());
+                    } else if($submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_PLAYLIST || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
+                        $qb->andWhere('hri.playlistId = :playlistId');
+                        $qb->setParameter('playlistId', $submittedObject->getPlaylistId());
+                    }
+                    $check_unique_item = $qb->getQuery()->getResult();
+                } else {
+                    $topic_id = $submittedObject->getTopic()['topicId'];
+                    $check_unique_item =  $this->em->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id,$id);
+                }
+
+                if(!empty($check_unique_item)) {
+                    $this->addFlash(
+                        'sonata_flash_error',
+                        'Selected video/game already exists in another container. Please select different one or allow this one to repeat.'
+                    );
+
+                    $formView = $form->createView();
+                    // set the theme for the current Admin Form
+                    $this->setFormTheme($formView, $this->admin->getFormTheme());
+                    // NEXT_MAJOR: Remove this line and use commented line below it instead
+                    $template = $this->admin->getTemplate($templateKey);
+                    // $template = $this->templateRegistry->getTemplate($templateKey);
+
+                    return $this->renderWithExtraParams($template, [
+                        'action' => 'edit',
+                        'form' => $formView,
+                        'object' => $existingObject,
+                        'objectId' => $objectId,
+                    ]);
+                }
+
                 $this->admin->setSubject($submittedObject);
                 if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
                     $submittedObject->setIsPublished(false);
@@ -321,6 +511,98 @@ class HomeRowItemAdminController extends CRUDController
 
                     if ($this->isXmlHttpRequest()) {
                         return $this->handleXmlHttpRequestSuccessResponse($request, $existingObject);
+                    }
+
+
+                    if($existingObject->getItemType() == HomeRowItem::TYPE_GAME) {
+                        $delete_home_row_item =  $this->em->getRepository(HomeRowItemOperation::class)->deleteByHomeRowItem($existingObject->getId());
+                        $game_name = $submittedObject->getTopic()['label']??'';
+                        $game_id = $submittedObject->getTopic()['topicId']??'';
+                        $streamerIndexArr = $requestData['streamer_index']??[];
+                        if (!empty($streamerIndexArr)) {
+                            $priority = 0;
+                            foreach ($streamerIndexArr as $streamerIndex =>  $streamerId) {
+                                if(empty($streamerId)) {
+                                    continue;
+                                }
+                                $priority++;
+                                $is_blacklisted = 0;
+                                if (isset($requestData['is_blacklisted_' . $streamerId])) {
+                                    $is_blacklisted = 1;
+                                }
+
+                                $streamer_name = '';
+                                if (isset($requestData['streamer_name_' . $streamerId])) {
+                                    $streamer_name = $requestData['streamer_name_' . $streamerId];
+                                }
+                                $viewer = '';
+                                if (isset($requestData['viewer_' . $streamerId])) {
+                                    $viewer = $requestData['viewer_' . $streamerId];
+                                }
+
+                                $user_id = '';
+                                if (isset($requestData['user_id_' . $streamerId])) {
+                                    $user_id = $requestData['user_id_' . $streamerId];
+                                }
+
+                                $item_type = 'streamer';
+                                if (isset($requestData['item_type_' . $streamerId])) {
+                                    $item_type = $requestData['item_type_' . $streamerId];
+                                }
+
+                                $homeRowItemOperation = new HomeRowItemOperation();
+                                $homeRowItemOperation->setHomeRowItem($existingObject);
+                                $homeRowItemOperation->setPriority($priority);
+                                $homeRowItemOperation->setItemType($item_type);
+                                $homeRowItemOperation->setStreamerId($streamerId);
+                                $homeRowItemOperation->setUserId($user_id);
+                                $homeRowItemOperation->setGameId($game_id);
+                                $homeRowItemOperation->setGameName($game_name);
+                                $homeRowItemOperation->setStreamerName($streamer_name);
+                                $homeRowItemOperation->setViewer($viewer);
+                                $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
+                                $this->em->persist($homeRowItemOperation);
+                                $this->em->flush();
+                            }
+                        }
+
+                    } else if($submittedObject->getItemType() == HomeRowItem::TYPE_STREAMER) {
+
+                        $delete_home_row_item =  $this->em->getRepository(HomeRowItemOperation::class)->deleteByHomeRowItem($existingObject->getId());
+                        $gameIndexArr = $requestData['game_index'] ?? [];
+                        if (!empty($gameIndexArr)) {
+                            foreach ($gameIndexArr as $gameIndex => $gameId) {
+                                if (empty($gameId)) {
+                                    continue;
+                                }
+
+                                $is_blacklisted = 0;
+                                if (isset($requestData['is_blacklisted_' . $gameId])) {
+                                    $is_blacklisted = 1;
+                                }
+
+                                $is_whitelisted = 0;
+                                if (isset($requestData['is_whitelisted_' . $gameId])) {
+                                    $is_whitelisted = 1;
+                                }
+
+                                $streamer_name = '';
+                                if (isset($requestData['streamer_name_' . $gameId])) {
+                                    $streamer_name = $requestData['streamer_name_' . $gameId];
+                                }
+
+                                $homeRowItemOperation = new HomeRowItemOperation();
+                                $homeRowItemOperation->setHomeRowItem($existingObject);
+                                $homeRowItemOperation->setItemType('game');
+                                $homeRowItemOperation->setGameId($gameId);
+                                $homeRowItemOperation->setStreamerName($streamer_name);
+                                $homeRowItemOperation->setGameName($streamer_name);
+                                $homeRowItemOperation->setIsWhitelisted($is_whitelisted);
+                                $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
+                                $this->em->persist($homeRowItemOperation);
+                                $this->em->flush();
+                            }
+                        }
                     }
 
                     if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
@@ -393,6 +675,7 @@ class HomeRowItemAdminController extends CRUDController
                             $submittedObjectVideo->setIsPublishedStart($submittedObject->getIsPublishedStart());
                             $submittedObjectVideo->setIsPublishedEnd($submittedObject->getIsPublishedEnd());
                             $submittedObjectVideo->setIsPartner($submittedObject->getIsPartner());
+                            $submittedObjectVideo->setIsUniqueContainer($submittedObject->getIsUniqueContainer());
                             $submittedObjectVideo->setVideoId($videoId_link);
                             $submittedObjectVideo->setPlaylistId($submittedObject->getId());
                             $submittedObjectVideo->setUpdatedAt($submittedObject->getUpdatedAt());

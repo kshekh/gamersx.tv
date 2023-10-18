@@ -232,6 +232,12 @@ final class HomeRowAdmin extends AbstractAdmin
             ], [
                 'type' => 'string'
             ])
+            ->add('row_padding_top',null,[
+                'label' => 'Row Padding Top(In px)',
+            ])
+            ->add('row_padding_bottom',null,[
+                'label' => 'Row Padding Bottom(In px)',
+            ])
         ;
     }
     protected function configureShowFields(ShowMapper $showMapper): void

@@ -81,7 +81,10 @@ export default {
         this.embedPlaying = false;
         this.isBuffering = false;
       });
-      this.embed.addEventListener(Twitch.Embed.VIDEO_READY, this.videoBuffered);
+      this.embed.addEventListener(Twitch.Embed.VIDEO_READY, () => {
+        this.isBuffering = false;
+        this.videoBuffered;
+      });
     },
   },
   mounted: function () {

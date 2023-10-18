@@ -37,4 +37,5 @@ class SiteSettings
 
         return $this;
     }
+
 }
