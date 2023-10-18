@@ -12,13 +12,13 @@ export default {
   },
   methods: {
     mouseEntered() {
-      console.log('In mouseEntered');
+      // console.log('In mouseEntered');
       this.isCursorHere = true;
-      console.log('this.isCursorHere 1', this.isCursorHere);
+      // console.log('this.isCursorHere 1', this.isCursorHere);
       setTimeout(() => {
-        console.log('this.isCursorHere 2', this.isCursorHere);
+        // console.log('this.isCursorHere 2', this.isCursorHere);
         if (this.isCursorHere) {
-          console.log('Innn');
+          // console.log('Innn');
           this.setEmbedPosition();
           this.$root.$emit("close-other-layouts", this.embedData.elementId);
           this.isEmbedVisible = true;
@@ -29,7 +29,7 @@ export default {
     },
 
     mouseLeave() {
-      console.log('In mouseLeave');
+      // console.log('In mouseLeave');
       this.isCursorHere = false;
     },
 
