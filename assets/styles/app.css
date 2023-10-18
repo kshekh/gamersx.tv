@@ -357,7 +357,7 @@ div.full-width-embed-first-row iframe {
     height: 2.25rem;
   }
 }
-@media (min-width: 2500px) {
+@media (min-width: 2700px) {
   .max-w-hd-full-header.xl\:py-7 {
     padding-bottom: 2.75rem;
     padding-top: 2.75rem;
