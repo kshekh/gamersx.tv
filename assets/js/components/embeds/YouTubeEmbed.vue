@@ -44,25 +44,25 @@ export default {
   },
   methods: {
     embedYouTube: function () {
-      let _this = this;
-      window.YT.ready(function() {
-        console.log("embedYouTube")
-        _this.embed = new YT.Player(_this.embedDataCopy.elementId, {
-            width: _this.width || 540,
-            height: _this.height || 300,
-            videoId: _this.embedDataCopy.video,
+      // let _this = this;
+      // window.YT.ready(function() {
+        console.log("embedYouTubeRollback")
+        this.embed = new YT.Player(this.embedDataCopy.elementId, {
+            width: this.width || 540,
+            height: this.height || 300,
+            videoId: this.embedDataCopy.video,
             autoplay: false,
             playerVars: {
               modestbranding: true,
               rel: 0,
             },
             events: {
-              onStateChange: _this.playerStateChanged,
+              onStateChange: this.playerStateChanged,
             },
           });
           // Listen for other players, stop on their start
-          _this.$root.$on("yt-embed-playing", _this.stopPlayer);
-      })
+          this.$root.$on("yt-embed-playing", this.stopPlayer);
+      // })
     },
     playerStateChanged: function (e) {
       if (e.data == YT.PlayerState.PAUSED) {
@@ -80,6 +80,7 @@ export default {
           if (!this.embedPlaying && this.showTwitchEmbed) {
             if (this.embed) {
               console.log("if1",this.embed);
+              this.embed.playVideo();
               this.embed.unMute();
               this.embedPlaying = true;
               this.isFirstTimeLoad = false;
@@ -89,6 +90,7 @@ export default {
       } else {
         if (!this.embedPlaying) {
           if (this.embed) {
+            this.embed.playVideo();
             this.embed.unMute();
             this.embedPlaying = true;
           }
@@ -113,9 +115,9 @@ export default {
       this.image = `https://img.youtube.com/vi/${this.embedData.video}/hqdefault.jpg`;
       return { ...this.embedData };
     },
-    loadingVideo(){
-      return this.loaders[Math.floor(Math.random()*this.loaders.length)]
-    }
+    // loadingVideo(){
+    //   return this.loaders[Math.floor(Math.random()*this.loaders.length)]
+    // }
   },
   watch: {
     showTwitchEmbed(newVal) {
@@ -123,11 +125,11 @@ export default {
         this.embedYouTube();
       }
     },
-    isShowTwitchEmbed(newVal) {
-      if (newVal === true) {
-        this.showTwitchEmbed = true
-      }
-    },
+    // isShowTwitchEmbed(newVal) {
+    //   if (newVal === true) {
+    //     this.showTwitchEmbed = true
+    //   }
+    // },
   },
 };
 </script>
