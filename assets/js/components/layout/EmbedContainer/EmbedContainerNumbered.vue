@@ -157,7 +157,7 @@
     >
       <div
         class="cut-edge__clipped cut-edge__clipped-top-right-md h-full bg-black overflow-hidden"
-        :class="getOutline"
+        :class="{'getOutline':true, 'numbered-mobile':isMobileDevice}"
       >
         <img
           v-if="showArt && image"
