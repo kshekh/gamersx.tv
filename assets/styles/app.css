@@ -121,8 +121,8 @@ div.full-width-embed-first-row iframe {
 }
 
 .cut-edge__clipped-top-right-md.numbered-mobile {
-  -webkit-clip-path: polygon(0 0,calc(100% - 21px) 0,100% 21px,100% 100%,0 100%);
-  clip-path: polygon(0 0,calc(100% - 21px) 0,100% 21px,100% 100%,0 100%);
+  -webkit-clip-path: polygon(0 0,calc(100% - 17px) 0,100% 17px,100% 100%,0 100%);
+  clip-path: polygon(0 0,calc(100% - 17px) 0,100% 17px,100% 100%,0 100%);
 }
 
 /* .width-custom{
