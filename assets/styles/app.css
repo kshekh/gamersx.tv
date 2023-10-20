@@ -134,6 +134,10 @@ div.full-width-embed-first-row iframe {
   padding-bottom: 56%;
 }
 
+/*ClassicMD: Customize width in mobile*/
+.md-row-width-m.w-64{
+  width: 18rem;
+}
 /* .width-custom{
   width:auto;margin: 0 auto;
 } */
