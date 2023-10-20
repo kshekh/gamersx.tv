@@ -6,6 +6,7 @@
     @mouseenter="mouseEntered()"
     @mousemove="checkMouseActive()"
     class="home-row mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative min-h-mobile home-banner-section"
+    :class="{'mobile-full-width':isMobileDevice}"
     :style="customBg"
   >
     <div class="container mx-auto">
@@ -200,6 +201,14 @@ export default {
         this.isMouseStopped = true;
       }, 3000);
     },
+    setIsMobileDevice:function() {
+      const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
+      if(checkDeviceType) {
+        this.isMobileDevice = true;
+      } else {
+        this.isMobileDevice = false;
+      }
+    },
   },
   mounted() {
     if (!this.isRowFirst) {
@@ -208,6 +217,7 @@ export default {
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
     }
     this.displayChannels = this.settings.channels.filter(this.showChannel);
+    this.setIsMobileDevice();
   },
   updated: function () {
     if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels.filter(this.showChannel))){

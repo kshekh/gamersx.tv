@@ -87,6 +87,7 @@
           lg:h-40
           xl:h-60
         "
+        :class="{'md-row-width-m':isMobileDevice}"
         >
           <component :is="channel.componentName" v-bind="channel" :cuttedBorder="true"></component>
         </div>
