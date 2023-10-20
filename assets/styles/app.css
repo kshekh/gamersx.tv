@@ -120,9 +120,18 @@ div.full-width-embed-first-row iframe {
   background: #000000;
 }
 
+/*Num row: Less corner cut in mobile*/
 .cut-edge__clipped-top-right-md.numbered-mobile {
   -webkit-clip-path: polygon(0 0,calc(100% - 17px) 0,100% 17px,100% 100%,0 100%);
   clip-path: polygon(0 0,calc(100% - 17px) 0,100% 17px,100% 100%,0 100%);
+}
+
+/*Maintain aspect ration of full width slider (first row) in mobile*/
+.mobile-full-width.min-h-mobile{
+  min-height: inherit;
+}
+.mobile-full-width .pb-50p{
+  padding-bottom: 56%;
 }
 
 /* .width-custom{
