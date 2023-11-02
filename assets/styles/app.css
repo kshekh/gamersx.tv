@@ -117,26 +117,6 @@ div.full-width-embed-first-row iframe {
   background: #000000;
 }
 
-.custom-accordion{
-  width: 100%;
-  position: relative;
-  border-bottom: 1px solid;
-}
-
-.custom-accordion label
-{
-  width: 100%;
-  display: block;
-  position: relative;
-  z-index: 9;
-}
-
-.custom-accordion input, .custom-accordion svg{
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-
 @media (max-width: 425px) {
   .responsive-container {
     flex-direction: column;
