@@ -66,14 +66,20 @@ class HomeRowItemRepository extends ServiceEntityRepository
 
     public function findStreamer()
     {
-        return $this->createQueryBuilder('h')
-            ->where('h.itemType = :itemTypeYoutube')
-            ->orWhere('h.itemType = :itemTypeStreamer')
+        $qb =  $this->createQueryBuilder('h');
+            $qb->where('h.isPublished = 1')
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('h.itemType',':itemTypeYoutube'),
+                    $qb->expr()->eq('h.itemType',':itemTypeStreamer')
+                )
+            )
             ->setParameter(':itemTypeYoutube', 'youtube')
             ->setParameter(':itemTypeStreamer', 'streamer')
-            ->getQuery()
-            ->getResult()
             ;
+
+        $results = $qb->getQuery()->getResult();
+        return $results;
     }
 
     // /**
