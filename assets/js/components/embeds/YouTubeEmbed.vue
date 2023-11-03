@@ -125,11 +125,11 @@ export default {
         this.embedYouTube();
       }
     },
-    // isShowTwitchEmbed(newVal) {
-    //   if (newVal === true) {
-    //     this.showTwitchEmbed = true
-    //   }
-    // },
+    isShowTwitchEmbed(newVal) {
+      if (newVal === true) {
+        this.showTwitchEmbed = true
+      }
+    },
   },
 };
 </script>
