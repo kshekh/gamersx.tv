@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\HomeRow;
+use App\Entity\HomeRowItem;
 use App\Entity\SiteSettings;
 use App\Containerizer\ContainerizerFactory;
 use App\Service\HomeRowInfo;
@@ -97,6 +98,29 @@ class HomeController extends AbstractController
         return $this->json([
             'isLoggedIn' => $isLoggedIn,
             'isRequiredToLoginTwitch' => $isRequiredToLoginTwitch
+        ]);
+    }
+
+    /**
+     * @Route("/api/streamer-list", name="streamer_list_api")
+     */
+    public function streamer_list(): Response
+    {
+        $streamer_list = $this->getDoctrine()->getRepository(HomeRowItem::class)->findStreamer();
+        $return_data = [];
+        foreach ($streamer_list as $streamer) {
+            $item_type = $streamer->getItemType();
+            $topic_id  = $streamer->getTopic()['topicId'];
+            $username  = $streamer->getTopic()['label'];
+
+            $return_data[] = [
+                'Platform' => $item_type,
+                'Username' => $username,
+                'id' => $topic_id,
+            ];
+        }
+        return $this->json([
+            'data' => $return_data
         ]);
     }
 
