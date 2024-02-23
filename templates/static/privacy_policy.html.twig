@@ -6,6 +6,63 @@
 
 {% block body %}
     <style>
+        .iubenda-section {
+            background-color: #333; 
+            color: #bbb;            
+            padding: 15px;          
+            border: 1px solid #444; 
+            margin-bottom: 20px;    
+        }
+
+        .iubenda-section h2 {
+            color: #33cccc !important;
+            font-weight: bold;
+            font-size: 1.5em;
+            text-align: center;
+            border: 2px solid #444;
+            padding: 5px 15px;
+            width: fit-content;
+            margin: 25px auto 20px;
+            display: block;
+        }
+
+        .iubenda-section h3 {
+            color: #cc99ff !important;
+            font-weight: 600;
+            font-size: 1.5em;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        .iubenda-section h4 {
+            color: #cc99ff !important;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-top: 10px;
+            margin-bottom: 7px;
+        }
+
+        .iubenda-section p, 
+        .iubenda-section div p {
+            color: #bbb !important;
+        }
+
+        .iubenda-section a,
+        .iubenda-section div a {
+            color: #6699cc !important;
+            text-decoration: underline;
+        }
+
+        .iubenda-section a:hover {
+            color: #4477aa !important;
+        }
+
+        .iubenda-section span, 
+        .iubenda-section div span {
+            color: #bbb !important; 
+        }
+
+
         .text-red-600, .text-xl, strong {
             color: #e11616;
         }
@@ -273,5 +330,24 @@
             <a href="https://www.iubenda.com/privacy-policy/49149225" class="iubenda-nostyle iubenda-noiframe iubenda-embed iub-legal-only iubenda-noiframe iub-body-embed" title="Privacy Policy">Privacy Policy</a><script type="text/javascript">(function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src="https://cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; if(w.addEventListener){w.addEventListener("load", loader, false);}else if(w.attachEvent){w.attachEvent("onload", loader);}else{w.onload = loader;}})(window, document);</script>
             <a href="https://www.iubenda.com/privacy-policy/49149225/cookie-policy" class="iubenda-nostyle iubenda-noiframe iubenda-embed iubenda-noiframe iub-body-embed" title="Cookie Policy">Cookie Policy</a><script type="text/javascript">(function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src="https://cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; if(w.addEventListener){w.addEventListener("load", loader, false);}else if(w.attachEvent){w.attachEvent("onload", loader);}else{w.onload = loader;}})(window, document);</script>
         </div>
+            <div class="iubenda-section">
+                <h2>Privacy Policy -> Clauses & Services (Data Processing Detailed Info)</h2>
+                {{ content_0|default('Default content for section 0')|raw }}
+            </div>
+            
+            <div class="iubenda-section">
+                <h2>Privacy Policy -> Custom Clauses & Services (further data)</h2>
+                {{ content_1|default('Default content for section 1')|raw }}
+            </div>
+            
+            <div class="iubenda-section">
+                <h2>Cookie Policy -> Technical Cookies</h2>
+                {{ content_2|default('Default content for section 2')|raw }}
+            </div>
+            
+            <div class="iubenda-section">
+                <h2>Cookie Policy -> Clauses & Services (Other Types of Cookies)</h2>
+                {{ content_3|default('Default content for section 3')|raw }}
+            </div>
     </div>
 {% endblock %}
