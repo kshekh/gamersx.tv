@@ -79,12 +79,12 @@ import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 
 import PlayButton from "../../helpers/PlayButton.vue";
-
+import embedMixin from "../../../mixins/embedFrameMixin";
 import isBoxInViewport from "../../../mixins/isBoxInViewport";
 
 export default {
   name: "EmbedContainerFullWidthImagery",
-  mixins: [isBoxInViewport],
+  mixins: [isBoxInViewport, embedMixin],
   components: {
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
@@ -126,7 +126,13 @@ export default {
   },
   methods: {
     playVideo() {
+      this.isCursorHere = false;
+      this.$root.isVisibleVideoContainer = false;
+      this.isEmbedVisible = false;
+      this.resetEmbedStyles();
+
       this.$root.$emit("close-other-layouts");
+
       setTimeout(() => {
         if (this.showOverlay || this.showArt) {
           this.isOverlayVisible = false;
