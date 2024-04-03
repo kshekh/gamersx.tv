@@ -189,7 +189,7 @@ definitions:
           - echo "Running custom caching command."
           - aws ecs execute-command --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --container php --command "bin/console app:cache-home-page-containers" --interactive --task $TASK_ID
           - echo "Adding cronjob to refresh Twitch Token."
-          - (crontab -l 2>/dev/null; echo "0 0 1 * * aws ecs execute-command --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --container php --command 'bin/console app:refresh-twitch-token'") | crontab -
+          - (crontab -l 2>/dev/null; echo "0 * * * * aws ecs execute-command --region ${AWS_REGION} --cluster ${AWS_IMAGE_REPO} --container php --command 'bin/console app:refresh-twitch-token'") | crontab -
 
     - step: &launch-environment
         name: Launch Temporary QA Environment
