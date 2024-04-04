@@ -15,6 +15,8 @@ parameters:
     app.twitch_redirect_uri: '%env(TWITCH_REDIRECT_URI)%'
     app.aws_s3_bucket_name: '%env(AWS_S3_BUCKET_NAME)%'
     app.aws_s3_custom.uri_prefix: 'https://%env(AWS_S3_BUCKET_NAME)%.%env(AWS_S3_DOMAIN)%'
+    app.aws_access_key_id: '%env(AWS_ACCESS_KEY_ID)%'
+    app.aws_secret_access_key: '%env(resolve:AWS_SECRET_ACCESS_KEY)%'
 
 services:
     # default configuration for services in *this* file
