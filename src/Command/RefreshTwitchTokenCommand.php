@@ -46,9 +46,17 @@ class RefreshTwitchTokenCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
+
+            $env_parameters = [
+                'dev' => 'dev/web',
+                'demo' => 'dev/demo/web',
+                'prod' => 'prod/web',
+                'prod-m' => 'prod/m'
+            ];
             $this->logger->debug("CronJob Is running.");
 
-            $env = $this->params->get('kernel.environment');
+            $envirenment = $this->params->get('kernel.environment');
+            $env = $env_parameters[$envirenment];
 
             $paramss = [];
             $credentials = [
