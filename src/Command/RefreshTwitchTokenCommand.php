@@ -72,7 +72,7 @@ class RefreshTwitchTokenCommand extends Command
             ]);
 
             $result = $client->getParameters([
-                'Names' => ["/gamersx/$env/web/TWITCH_CLIENT_ID", "/gamersx/$env/web/TWITCH_CLIENT_SECRET"],
+                'Names' => ["/gamersx/$env/TWITCH_CLIENT_ID", "/gamersx/$env/TWITCH_CLIENT_SECRET"],
                 'WithDecryption' => true
             ]);
 
@@ -90,8 +90,8 @@ class RefreshTwitchTokenCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $argFile = $input->getOption('envFile');
 
-        $topicId = !empty($paramss["/gamersx/$env/web/TWITCH_CLIENT_ID"]) ? $paramss["/gamersx/$env/web/TWITCH_CLIENT_ID"] : $this->params->get('app.twitch_id');
-        $twitchSecret = !empty($paramss["/gamersx/$env/web/TWITCH_CLIENT_SECRET"]) ? $paramss["/gamersx/$env/web/TWITCH_CLIENT_SECRET"] : $this->params->get('app.twitch_secret');
+        $topicId = !empty($paramss["/gamersx/$env/TWITCH_CLIENT_ID"]) ? $paramss["/gamersx/$env/TWITCH_CLIENT_ID"] : $this->params->get('app.twitch_id');
+        $twitchSecret = !empty($paramss["/gamersx/$env/TWITCH_CLIENT_SECRET"]) ? $paramss["/gamersx/$env/TWITCH_CLIENT_SECRET"] : $this->params->get('app.twitch_secret');
 
         $request = $this->client->request('POST', 'https://id.twitch.tv/oauth2/token', [
             'query' => [
@@ -111,7 +111,7 @@ class RefreshTwitchTokenCommand extends Command
                     $io->success("The new token is ${token}.");
 
                     $result = $client->putParameter([
-                        'Name' => "/gamersx/$env/web/TWITCH_APP_TOKEN",
+                        'Name' => "/gamersx/$env/TWITCH_APP_TOKEN",
                         'Overwrite' => true,
                         'Value' => $token,
                     ]);
