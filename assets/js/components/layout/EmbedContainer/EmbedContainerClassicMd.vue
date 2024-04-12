@@ -10,8 +10,7 @@
         <div
           v-if="showEmbed && embedData"
           class="w-full h-full relative flex flex-col"
-          @mouseenter="mouseEntered"
-          @mouseleave="mouseLeave"
+          @click="clickContainer(embedData.elementId)"
         >
           <div class="w-full h-full overflow-hidden flex-grow relative">
             <img

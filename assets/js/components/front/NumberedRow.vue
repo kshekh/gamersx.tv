@@ -177,7 +177,6 @@ export default {
       if (this.$refs.channelBox.scrollLeft > 0) {
         this.$refs.backArrow.classList.remove("sliderArrowHide");
       } else this.$refs.backArrow.classList.add("sliderArrowHide");
-      this.$root.$emit("close-other-layouts");
     },
     clickPrev() {},
     clickNext() {},

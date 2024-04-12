@@ -178,6 +178,9 @@ export default {
     },
 
     handleScroll () {
+      if (this.$root.isMoveContainer) {
+        return;
+      }
       if (this.$refs.channelBox.scrollLeft == this.max_scroll_left){
         this.$refs.forwardArrow.classList.add("sliderArrowHide")
       }
@@ -189,7 +192,6 @@ export default {
         this.$refs.backArrow.classList.remove("sliderArrowHide")
       }else
         this.$refs.backArrow.classList.add("sliderArrowHide")
-      this.$root.$emit('close-other-layouts');
     },
     customBg: function (channel) {
       if (channel.customArt) {
