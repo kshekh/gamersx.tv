@@ -18,8 +18,7 @@
         <div
           v-if="showEmbed && embedData"
           class="w-full h-full overflow-hidden"
-          v-on:mouseenter="mouseEntered"
-          v-on:mouseleave="mouseLeave"
+          @click="clickContainer(embedData.elementId)"
         >
           <img
             v-if="showArt && image"
@@ -397,9 +396,9 @@ export default {
         this.isOverlayVisible = true;
         this.isEmbedVisible = false;
       }
-      // if (this.$refs.embed.isPlaying()) {
-      this.$refs.embed.stopPlayer();
-      // }
+      if (this.$refs?.embed?.isPlaying()) {
+        this.$refs.embed.stopPlayer();
+      }
       window.removeEventListener("scroll", this.checkIfBoxInViewPort);
       this.$emit("show-controls");
     },

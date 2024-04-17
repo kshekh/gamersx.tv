@@ -8,7 +8,7 @@
   border: 3px solid #000;
   border-left: none;
   z-index: 30;
-  background-color: rgb(180 180 180);
+  background-color: #352f44;
   clip-path: polygon(
     15px 0px,
     /* top left */ 100% 0px,
@@ -60,19 +60,29 @@
 }
 
 .actions--btn:hover {
-  background-color: #fff;
+  background-color: transparent;
+  box-shadow: inset 1px 1px 5px rgba(86, 45, 114, 0.9);
+}
+
+.actions--btn svg:hover path {
+  stroke: rgba(86, 45, 114, 0.9);
+  fill: rgba(86, 45, 114, 0.9);
 }
 
 .actions--btn-active {
-  background-color: #fffdfdce;
+  background-color: #6643b5;
 }
 
-.actions--btn-icon {
-  width: 100%;
-  height: 100%;
+.actions--btn-active svg path {
+  stroke: #fff;
+  fill: #fff;
 }
 
-.actions--wrapper .actions--btn:nth-child(1) .actions--btn-icon {
+.actions--btn-icon path {
+  fill: #000 !important; /* Змініть цей колір на бажаний */
+}
+
+.actions--wrapper .actions--btn:nth-child(1) svg {
   margin-left: 12px;
 }
 

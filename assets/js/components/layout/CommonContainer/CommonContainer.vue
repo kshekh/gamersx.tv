@@ -4,35 +4,23 @@
     :style="{ zIndex: '1000', ...customStyles }"
     class="w-full h-full"
   >
-    <div class="actions--wrapper">
+    <div oncontextmenu="false" class="actions--wrapper">
       <div
         @click="(event) => $emit('on-pin', event)"
         :class="['actions--btn', { 'actions--btn-active': isPinActive }]"
       >
         <div class="left--border"></div>
-        <img
-          :src="getButtonIcon('pin')"
-          :class="`actions--btn-icon`"
-          alt="action button pin"
-        />
+        <CommonContainerIcon :icon-type="'pin'" />
       </div>
       <div
         @mousedown="(event) => $emit('on-mouse-down', event)"
         @dragstart="() => false"
         :class="['actions--btn', { 'actions--btn-move-disabled': isPinActive }]"
       >
-        <img
-          :src="getButtonIcon('move')"
-          class="actions--btn-icon"
-          alt="action button move"
-        />
+        <CommonContainerIcon :icon-type="'move'" />
       </div>
       <div @click="$emit('close-container')" class="actions--btn">
-        <img
-          :src="getButtonIcon('close')"
-          class="actions--btn-icon"
-          alt="action button close"
-        />
+        <CommonContainerIcon :icon-type="'close'" />
       </div>
     </div>
     <div
@@ -45,8 +33,12 @@
 </template>
 
 <script>
+import CommonContainerIcon from "./CommonContainerIcon/CommonContainerIcon.vue";
 export default {
   name: "CommonContainer",
+  components: {
+    CommonContainerIcon: CommonContainerIcon,
+  },
   emits: ["close-container", "on-pin", "on-mouse-down"],
   props: [
     "classNames",
@@ -55,12 +47,17 @@ export default {
     "isPinActive",
     "isMoveActive",
   ],
-
   methods: {
-    getButtonIcon(iconName) {
-      return require(`../../assets/icons/${iconName}.svg`);
-    },
+    disableContextMenu(event) {
+      event.preventDefault();
+    }
   },
+  mounted() {
+    document.addEventListener("contextmenu", this.disableContextMenu);
+  },
+  beforeDestroy() {
+    document.removeEventListener("contextmenu", this.disableContextMenu);
+  }
 };
 </script>
 

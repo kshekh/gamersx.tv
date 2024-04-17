@@ -31,6 +31,50 @@ export default {
 
           this.$root.$emit("close-other-layouts", this.embedData.elementId);
 
+          // this.isEmbedVisible = true;
+
+          if (this.$refs.embed) this.$refs.embed.startPlayer();
+        }, 30);
+      }
+    },
+
+    clickContainer(elementId) {
+
+      if (
+        (!!this.$root.containerId && this.$root.containerId === elementId) ||
+        this.$root.isPinnedContainer
+      )
+        return;
+
+      if (
+        (!!this.$root.containerId && this.$root.containerId !== elementId) ||
+        this.$root.isPinnedContainer === false
+      ) {
+        setTimeout(() => {
+          this.setEmbedPosition();
+
+          this.$root.$emit("close-other-layouts", this.embedData.elementId);
+
+          this.isEmbedVisible = true;
+
+          if (this.$refs.embed) this.$refs.embed.startPlayer();
+        }, 30);
+      }
+
+      this.$root.containerId = elementId;
+
+      this.isCursorHere = true;
+
+      this.$root.isVisibleVideoContainer = true;
+
+      if (
+        this.isCursorHere &&
+        this.$root.isVisibleVideoContainer &&
+        !this.$root.isPinnedContainer
+      ) {
+        setTimeout(() => {
+          this.setEmbedPosition();
+
           this.isEmbedVisible = true;
 
           if (this.$refs.embed) this.$refs.embed.startPlayer();
@@ -46,6 +90,8 @@ export default {
       this.isPined = false;
       this.isPinBtnActive = false;
       this.$root.isVisibleVideoContainer = false;
+      this.$root.isPinnedContainer = false;
+      this.$root.containerId = "";
 
       this.resetEmbedStyles();
 
@@ -57,16 +103,18 @@ export default {
     },
 
     async hideVideo(elementId) {
-      if (this.$root.isVisibleVideoContainer) {
-        return;
-      }
-
       // use the condition below for the Offline embed containers to auto-play and dont get closed
+
       if (
         !(elementId && this.embedData && this.embedData.elementId === elementId)
       ) {
         await this.resetEmbedStyles();
         this.isEmbedVisible = false;
+        this.$root.isVisibleVideoContainer = false;
+        this.$root.isPinnedContainer = false;
+        this.$root.isMoveContainer = false;
+        this.$root.containerId = "";
+        this.isPinBtnActive = false;
 
         if (this.$refs.embed) {
           if (this.$refs.embed.isPlaying()) {
@@ -88,8 +136,7 @@ export default {
 
       this.$refs.embedWrapper.style.transform = `translateY(-50%) scale(${scaleSize})`;
       this.$refs.embedWrapper.style.opacity = "0";
-      this.$refs.embedWrapper.style.top =
-        window.scrollY + rect.top + rootHeight / 2 + "px";
+      this.$refs.embedWrapper.style.top = window.scrollY + rect.top + rootHeight / 2 + "px";
 
       if (isRectInViewport) {
         this.$refs.embedWrapper.style.left = rect.left + "px";
@@ -110,10 +157,12 @@ export default {
 
       if (this.isPined) {
         this.$refs.embedWrapper.style.position = "absolute";
+
         this.$refs.embedWrapper.style.top = ev.pageY + (deltaHeight - 7) + "px";
 
         this.isPined = false;
         this.isPinBtnActive = false;
+        this.$root.isPinnedContainer = false;
         return;
       }
 
@@ -131,15 +180,18 @@ export default {
 
       this.isPined = true;
       this.isPinBtnActive = true;
+      this.$root.isPinnedContainer = true;
     },
 
     onMouseDownHandler(ev) {
       if (this.isPined) {
         this.isMoveBtnActive = false;
+        this.$root.isMoveContainer = false;
         return;
       }
 
       this.isMoveBtnActive = true;
+      this.$root.isMoveContainer = true;
 
       const deltaHeight = this.$refs.embedWrapper.clientHeight / 2;
 
@@ -192,14 +244,12 @@ export default {
     },
 
     startDragging(e) {
-      if (!this.$root.isVisibleVideoContainer) {
-        this.$root.$emit("close-other-layouts");
+      if (this.$root.isMoveContainer) {
+        return;
       }
-
       this.mouseDown = true;
       this.startX = e.pageX - this.$refs.channelBox.offsetLeft;
       this.scrollLeft = this.$refs.channelBox.scrollLeft;
-
       this.triggerDragging(e);
     },
 
@@ -209,6 +259,10 @@ export default {
 
     triggerDragging(e) {
       e.preventDefault();
+
+      if (this.$root.isMoveContainer) {
+        return;
+      }
 
       if (!this.mouseDown) {
         return;
