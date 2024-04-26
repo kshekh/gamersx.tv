@@ -1,0 +1,25 @@
+; top-most EditorConfig file
+root = true
+
+; Unix-style newlines
+[*]
+charset = utf-8
+end_of_line = LF
+insert_final_newline = false
+trim_trailing_whitespace = true
+
+[*.{php,html,twig,yaml}]
+indent_style = space
+indent_size = 4
+
+[{*.js,*.json,*.vue}]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = true
+insert_final_newline = false
+
+[*.md]
+max_line_length = 80
+
+[COMMIT_EDITMSG]
+max_line_length = 0

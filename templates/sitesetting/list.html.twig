@@ -1,0 +1,1100 @@
+{% extends '@SonataAdmin/CRUD/base_list.html.twig' %}
+
+
+{% block list_table %}
+    <div class="col-xs-12 col-md-12">
+        {% set batchactions = admin.batchactions %}
+        {% if admin.hasRoute('batch') and batchactions|length %}
+        <form action="{{ admin.generateUrl('batch', {'filter': admin.filterParameters}) }}" method="POST" >
+            <input type="hidden" name="_sonata_csrf_token" value="{{ csrf_token }}">
+            {% endif %}
+
+            {# Add a margin if no pager to prevent dropdown cropping on window #}
+            <div class="box box-primary"{% if admin.datagrid.pager.lastPage == 1 %} style="margin-bottom: 30px;"{% endif %}>
+                <div class="box-body{% if admin.datagrid.results|length > 0 %} table-responsive no-padding{% endif %}">
+                    {{ sonata_block_render_event('sonata.admin.list.table.top', { 'admin': admin }) }}
+
+                    {% block list_header %}{% endblock %}
+
+                    {% if admin.datagrid.results|length > 0 %}
+                        {% block table %}
+                            <table class="table table-bordered table-striped table-hover sonata-ba-list">
+                                {% block table_header %}
+                                    <thead>
+                                    <tr class="sonata-ba-list-field-header">
+                                        {% for field_description in admin.list.elements %}
+                                            {% if admin.hasRoute('batch') and field_description.name == constant('Sonata\\AdminBundle\\Datagrid\\ListMapper::NAME_BATCH') and batchactions|length > 0 %}
+                                                <th class="sonata-ba-list-field-header sonata-ba-list-field-header-batch">
+                                                    <input type="checkbox" id="list_batch_checkbox">
+                                                </th>
+                                            {% elseif field_description.name == constant('Sonata\\AdminBundle\\Datagrid\\ListMapper::NAME_SELECT') %}
+                                                <th class="sonata-ba-list-field-header sonata-ba-list-field-header-select"></th>
+                                            {% elseif field_description.name == constant('Sonata\\AdminBundle\\Datagrid\\ListMapper::NAME_ACTIONS') and app.request.isXmlHttpRequest %}
+                                                {# NEXT_MAJOR: Remove this case in version 5 and recommend using the option `ajax_hidden` instead. #}
+                                                {# Action buttons disabled in ajax view! #}
+                                            {% elseif field_description.getOption('ajax_hidden') == true and app.request.isXmlHttpRequest %}
+                                                {# Disable fields with 'ajax_hidden' option set to true #}
+                                            {% else %}
+                                                {% set sortable = false %}
+                                                {% if field_description.option('sortable', false) %}
+                                                    {% set sortable             = true %}
+                                                    {# NEXT_MAJOR: Remove next line and uncomment the other one #}
+                                                    {% set sort_parameters      = sonata_sort_parameters(field_description, admin) %}
+                                                    {# {% set sort_parameters      = admin.datagrid.sortparameters(field_description) %} #}
+                                                    {% set current              = admin.datagrid.values[constant('Sonata\\AdminBundle\\Datagrid\\DatagridInterface::SORT_BY')] is defined
+                                                        and (admin.datagrid.values[constant('Sonata\\AdminBundle\\Datagrid\\DatagridInterface::SORT_BY')] == field_description
+                                                        or admin.datagrid.values[constant('Sonata\\AdminBundle\\Datagrid\\DatagridInterface::SORT_BY')].name == sort_parameters.filter[constant('Sonata\\AdminBundle\\Datagrid\\DatagridInterface::SORT_BY')]) %}
+                                                    {% set sort_active_class    = current ? 'sonata-ba-list-field-order-active' : '' %}
+                                                    {% set sort_by              = current ? admin.datagrid.values[constant('Sonata\\AdminBundle\\Datagrid\\DatagridInterface::SORT_ORDER')] : field_description.option(constant('Sonata\\AdminBundle\\Datagrid\\DatagridInterface::SORT_ORDER'), sort_parameters.filter[constant('Sonata\\AdminBundle\\Datagrid\\DatagridInterface::SORT_ORDER')]) %}
+                                                {% endif %}
+
+                                                {% apply spaceless %}
+                                                    <th class="sonata-ba-list-field-header-{{ field_description.type }}{% if sortable %} sonata-ba-list-field-header-order-{{ sort_by|lower }} {{ sort_active_class }}{% endif %}{% if field_description.option('header_class') %} {{ field_description.option('header_class') }}{% endif %}"{% if field_description.option('header_style') %} style="{{ field_description.option('header_style') }}"{% endif %}>
+                                                        {% if sortable %}<a href="{{ admin.generateUrl('list', sort_parameters|merge({_list_mode: admin.getListMode()})) }}">{% endif %}
+                                                            {% if field_description.getOption('label_icon') %}
+                                                                <span class="sonata-ba-list-field-header-label-icon">
+                                                            {{ field_description.getOption('label_icon')|parse_icon }}
+                                                        </span>
+                                                            {% endif %}
+                                                            {% if field_description.label is not same as(false) %}
+                                                                {% if field_description.translationDomain is same as(false) %}
+                                                                    {{ field_description.label }}
+                                                                {% else %}
+                                                                    {{ field_description.label|trans({}, field_description.translationDomain) }}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                            {% if sortable %}</a>{% endif %}
+                                                    </th>
+                                                {% endapply %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                {% endblock %}
+
+                                {% block table_body %}
+                                    <tbody>
+                                    {% include get_admin_template('outer_list_rows_' ~ admin.getListMode(), admin.code) %}
+                                    </tbody>
+                                {% endblock %}
+
+                                {% block table_footer %}
+                                {% endblock %}
+                            </table>
+                        {% endblock %}
+                    {% else %}
+                        {% block no_result_content %}
+                            <div class="info-box">
+                                <span class="info-box-icon bg-aqua"><i class="fa fa-arrow-circle-right" aria-hidden="true"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">{{ 'no_result'|trans({}, 'SonataAdminBundle') }}</span>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 0%"></div>
+                                    </div>
+                                    <div class="progress-description">
+                                        <ul class="list-inline">
+                                            {# NEXT_MAJOR: remove the attribute check and just use .countResults() #}
+                                            {%- if (attribute(admin.datagrid.pager, 'countResults') is defined ? admin.datagrid.pager.countResults() : admin.datagrid.pager.getNbResults()) > 0 -%}
+                                                <li>
+                                                    <a href="{{ admin.generateUrl('list', admin.datagrid.getPaginationParameters(1)) }}">
+                                                        {{- 'go_to_the_first_page'|trans({}, 'SonataAdminBundle') -}}
+                                                    </a>
+                                                </li>
+                                            {%- elseif not app.request.xmlHttpRequest -%}
+                                                {%- include get_admin_template('button_create', admin.code) -%}
+                                            {%- endif -%}
+                                        </ul>
+                                    </div>
+                                </div><!-- /.info-box-content -->
+                            </div>
+                        {% endblock %}
+                    {% endif %}
+
+                    {{ sonata_block_render_event('sonata.admin.list.table.bottom', { 'admin': admin }) }}
+                </div>
+                {% block list_footer %}
+                    {% if admin.datagrid.results|length > 0 %}
+                        <div class="box-footer">
+                            <div class="form-inline clearfix">
+                                {% if not app.request.isXmlHttpRequest %}
+                                    <div class="pull-left">
+                                        {% if admin.hasRoute('batch') and batchactions|length > 0 %}
+                                            {% block batch %}
+                                                <script>
+                                                    {% block batch_javascript %}
+                                                    jQuery(document).ready(function ($) {
+                                                        // Toggle individual checkboxes when the batch checkbox is changed
+                                                        $('#list_batch_checkbox').on('ifChanged change', function () {
+                                                            var checkboxes = $(this)
+                                                                .closest('table')
+                                                                .find('td.sonata-ba-list-field-batch input[type="checkbox"], div.sonata-ba-list-field-batch input[type="checkbox"]')
+                                                            ;
+
+                                                            if (Admin.get_config('USE_ICHECK')) {
+                                                                checkboxes.iCheck($(this).is(':checked') ? 'check' : 'uncheck');
+                                                            } else {
+                                                                checkboxes.prop('checked', this.checked);
+                                                            }
+                                                        });
+
+                                                        // Add a CSS class to rows when they are selected
+                                                        $('td.sonata-ba-list-field-batch input[type="checkbox"], div.sonata-ba-list-field-batch input[type="checkbox"]')
+                                                            .on('ifChanged change', function () {
+                                                                $(this)
+                                                                    .closest('tr, div.sonata-ba-list-field-batch')
+                                                                    .toggleClass('sonata-ba-list-row-selected', $(this).is(':checked'))
+                                                                ;
+                                                            })
+                                                            .trigger('ifChanged')
+                                                        ;
+                                                    });
+                                                    {% endblock %}
+                                                </script>
+
+                                            {% block batch_actions %}
+                                                <label class="checkbox" for="{{ admin.uniqid }}_all_elements">
+                                                    <input type="checkbox" name="all_elements" id="{{ admin.uniqid }}_all_elements">
+                                                    {{ 'all_elements'|trans({}, 'SonataAdminBundle') }}
+                                                    {# NEXT_MAJOR: remove the attribute check and just use .countResults() #}
+                                                    ({{ attribute(admin.datagrid.pager, 'countResults') is defined ? admin.datagrid.pager.countResults() : admin.datagrid.pager.getNbResults() }})
+                                                </label>
+
+                                                <select name="action" style="width: auto; height: auto" class="form-control">
+                                                    {% for action, options in batchactions %}
+                                                        <option value="{{ action }}">
+                                                            {% if options.translation_domain is defined and options.translation_domain is same as(false) %}
+                                                                {{ options.label }}
+                                                            {% else %}
+                                                                {{ options.label|trans({}, options.translation_domain ?? admin.translationDomain) }}
+                                                            {% endif %}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                            {% endblock %}
+
+                                                <input type="submit" class="btn btn-small btn-primary" value="{{ 'btn_batch'|trans({}, 'SonataAdminBundle') }}">
+                                            {% endblock %}
+                                        {% endif %}
+                                    </div>
+
+
+                                    {# NEXT_MAJOR : remove this assignment #}
+                                    {% set export_formats = export_formats|default(admin.exportFormats) %}
+
+                                    <div class="pull-right">
+                                        {% if admin.hasRoute('export') and admin.hasAccess('export') and export_formats|length %}
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                                    <i class="fa fa-share-square-o" aria-hidden="true"></i>
+                                                    {{ "label_export_download"|trans({}, "SonataAdminBundle") }}
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    {% for format in export_formats %}
+                                                        <li>
+                                                            {# NEXT_MAJOR: Remove completely next "<a>" element and uncomment the other one #}
+                                                            <a href="{{ admin.generateUrl('export', sonata_pagination_parameters(admin, 0) + {'format' : format}) }}">
+                                                                <i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>
+                                                                {{ ("export_format_" ~ format)|trans({}, 'SonataAdminBundle') }}
+                                                            </a>
+                                                            {#
+                                                            <a href="{{ admin.generateUrl('export', admin.datagrid.paginationparameters(0) + {'format' : format}) }}">
+                                                                <i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>
+                                                                {{ ("export_format_" ~ format)|trans({}, 'SonataAdminBundle') }}
+                                                            </a>
+                                                            #}
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+
+                                            {% if block('pager_results') is not empty %}
+                                                &nbsp;-&nbsp;
+                                            {% endif %}
+                                        {% endif %}
+
+                                        {% block pager_results %}
+                                            {% include get_admin_template('pager_results', admin.code) %}
+                                        {% endblock %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            {% block pager_links %}
+                                {% if admin.datagrid.pager.haveToPaginate() %}
+                                    <hr/>
+                                    {% include get_admin_template('pager_links', admin.code) %}
+                                {% endif %}
+                            {% endblock %}
+                        </div>
+                    {% endif %}
+                {% endblock %}
+            </div>
+            {% if admin.hasRoute('batch') and batchactions|length %}
+        </form>
+        {% endif %}
+    </div>
+
+    <div class="col-xs-12 col-md-12">
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="box box-primary">
+                    <div class="box-header">
+                        <h4 class="box-title">
+                            Theme Setting
+                        </h4>
+                    </div>
+                    <div class="box-body">
+                        <form id="frm_theme_setting">
+                            <div class="sonata-ba-collapsed-fields">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="card card-primary card-tabs">
+                                            <div class="card-header p-0 pt-1">
+                                                <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                                                    <li class="nav-item active">
+                                                        <a class="nav-link active" id="custom-tabs-select-tab" data-toggle="pill" href="#custom-tabs-select" role="tab" aria-controls="custom-tabs-select" aria-selected="true">Select Theme</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="custom-tabs-save-tab" data-toggle="pill" href="#custom-tabs-save" role="tab" aria-controls="custom-tabs-save" aria-selected="false">Save Theme</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="tab-content" id="custom-tabs-one-tabContent">
+                                                    <div class="tab-pane active" id="custom-tabs-select" role="tabpanel" aria-labelledby="custom-tabs-select-tab">
+                                                        <div class="col-md-4 form-group mt-3">
+                                                            <label class="control-label" >Theme</label>
+                                                            <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                                <select id="theme" class="form-control" name="theme" >
+                                                                    {% for master_theme in masterThemes %}
+                                                                        <option value="{{ master_theme.id }}" {{ (master_theme.status == 1)?'selected':'' }}>{{ master_theme.name }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                                <span class="errors error-theme"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2 form-group mt-5">
+                                                            <button class="btn btn-success mt-2" type="button" data-action_type="apply" id="btn_apply_theme" ><i class="fa fa-save" aria-hidden="true"></i> Apply</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tab-pane" id="custom-tabs-save" role="tabpanel" aria-labelledby="custom-tabs-save-tab">
+                                                        <div class="col-md-12 form-group">
+                                                            <div class="form-group mt-3">
+                                                                <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                                    <label class="control-label" >Theme Name</label>
+                                                                    <input type="text" name="theme_name" class="form-control" value="">
+                                                                    <span class="errors error-themename"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- /.card -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="section-divider">
+                                  <span>Background</span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label" >Header Background</label>
+                                            <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                <input type="radio" id="opt_header_background_color" name="form[header_background_type]" class="form-control" value="color" > <label for="opt_header_background_color">Color</label> &nbsp;
+                                                <input type="radio" id="opt_header_background_image" name="form[header_background_type]" class="form-control" value="image" > <label for="opt_header_background_image">Image</label>
+                                                <span class="errors error-headerbackgroundtype"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group header_bg_type_image hide">
+                                            <label class="control-label" >Choose Background <span class="font-weight-300">(Pref resolution 1920px*120px)</span></label>
+                                            <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                <input type="file" name="form[header_background]" class="form-control" accept="image/*">
+                                                <span class="errors error-headerbackground"></span>
+                                            </div>
+                                            <div id="header_background_response">
+                                                <a href="" class="btn_preview_image hide">View Image</a>
+                                            </div>
+                                        </div>
+                                        <div class="form-group header_bg_type_color hide">
+                                            <label class="control-label" >Select Color</label>
+                                            <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                <input type="color" name="form[header_color]" class="form-control" value="">
+                                                <span class="errors error-headercolor"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label" >Body Background</label>
+                                            <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                <input type="radio" id="opt_body_background_color" name="form[body_background_type]" class="form-control" value="color" > <label for="opt_body_background_color">Color</label> &nbsp;
+                                                <input type="radio" id="opt_body_background_image" name="form[body_background_type]" class="form-control" value="image" > <label for="opt_body_background_image">Image</label>
+                                                <span class="errors error-bodybackgroundtype"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group body_bg_type_image hide">
+                                            <label class="control-label" >Choose Background</label>
+                                            <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                <input type="file" name="form[body_background]" class="form-control" accept="image/*">
+                                                <span class="errors error-bodybackground"></span>
+                                            </div>
+                                            <div id="body_background_response">
+                                                <a href="" class="btn_preview_image hide">View Image</a>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group body_bg_type_color hide">
+                                            <label class="control-label" >Select Color</label>
+                                            <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                <input type="color" name="form[body_color]" class="form-control" value="">
+                                                <span class="errors error-bodycolor"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label" >Footer Background</label>
+                                            <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                <input type="radio" id="opt_footer_background_color" name="form[footer_background_type]" class="form-control" value="color" > <label for="opt_footer_background_color">Color</label> &nbsp;
+                                                <input type="radio" id="opt_footer_background_image" name="form[footer_background_type]" class="form-control" value="image" > <label for="opt_footer_background_image">Image</label>
+                                                <span class="errors error-footerbackgroundtype"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group footer_bg_type_image hide">
+                                            <label class="control-label" >Choose Background <span class="font-weight-300">(Pref resolution 1920px*400px)</span></label>
+                                            <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                <input type="file" name="form[footer_background]" class="form-control" accept="image/*">
+                                                <span class="errors error-footerbackground"></span>
+                                            </div>
+                                            <div id="footer_background_response">
+                                                <a href="" class="btn_preview_image hide">View Image</a>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group footer_bg_type_color hide">
+                                            <label class="control-label" >Select Color</label>
+                                            <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                <input type="color" name="form[footer_color]" class="form-control" value="">
+                                                <span class="errors error-footercolor"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="section-divider">
+                                    <span>General Fonts</span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 form-group">
+                                        <label class="control-label" >Font Type</label>
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <input type="radio" id="opt_font_local" name="form[font_type]" class="form-control" value="local" > <label for="opt_font_local">Local</label> &nbsp;
+                                            <input type="radio" id="opt_font_remote" name="form[font_type]" class="form-control" value="remote" > <label for="opt_font_remote">Remote</label>
+                                            <span class="errors error-fonttype"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 form-group font_type_local hide">
+                                        <label class="control-label" >Font Family</label>
+                                        {% set font_family_option_arr = ["Calibri","sans-serif","serif","monospace"] %}
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <select id="font_family" class="select2" name="form[font_family][]" multiple>
+                                                {% for font_family in font_family_option_arr%}
+                                                    <option value="{{ font_family }}" >{{ font_family }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <span class="errors error-fontfamily"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 form-group font_type_remote hide">
+                                        <label class="control-label" >Remote Font URL</label>
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <input type="text" name="form[remote_font_url]" class="form-control" value="">
+                                            <span class="errors error-remotefonturl"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label class="control-label" >Color</label>
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <input type="color" name="form[color]"  class="form-control" value="">
+                                            <span class="errors error-color"></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="section-divider">
+                                        <span>Logo</span>
+                                    </div>
+                                    <div class="col-md-12 form-group">
+                                        <label class="control-label" >Upload Image</label>
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <input type="file" name="form[header_logo]" class="form-control" accept="image/*">
+                                            <span class="errors error-headerlogo"></span>
+                                        </div>
+                                        <div id="header_logo_response">
+                                            <a href="" class="btn_preview_image hide">View Image</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="section-divider">
+                                            <span>Numbered Row</span>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 form-group">
+                                                <label class="control-label" >Font Color</label>
+                                                <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                    <input type="color" name="form[numbered_row_color]"  class="form-control" value="">
+                                                    <span class="errors error-numbered_row_color"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                        <label class="control-label" >Outline Color</label>
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <input type="color" name="form[numbered_row_outline_color]"  class="form-control" value="">
+                                            <span class="errors error-numbered_row_outline_color"></span>
+                                        </div>
+                                    </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="section-divider">
+                                            <span>Glow Color</span>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 form-group">
+                                                <label class="control-label" >For Twitch</label>
+                                                <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                    <input type="color" name="form[twitch_glow_color]"  class="form-control" value="">
+                                                    <span class="errors error-twitch_glow_color"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label class="control-label" >For YouTube</label>
+                                                <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                                    <input type="color" name="form[youtube_glow_color]"  class="form-control" value="">
+                                                    <span class="errors error-youtube_glow_color"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="section-divider">
+                                    <span>Border</span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        <label class="control-label" >Border(In px)</label>
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <input type="number" name="form[border]" class="form-control" value="">
+                                            <span class="errors error-border"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label class="control-label" >Border Color</label>
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <input type="color" name="form[border_color]"  class="form-control" value="">
+                                            <span class="errors error-bordercolor"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-group">
+                                        <label class="control-label" >Border Radius(In px)</label>
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <label>Top Left</label>
+                                                    <input type="number" name="form[border_radius_top_left]" class="form-control" value="">
+                                                    <span class="errors error-borderradiustopleft"></span>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label>Top Right</label>
+                                                    <input type="number" name="form[border_radius_top_right]" class="form-control" value="">
+                                                    <span class="errors error-borderradiustopright"></span>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label>Bottom Right</label>
+                                                    <input type="number" name="form[border_radius_bottom_right]" class="form-control" value="">
+                                                    <span class="errors error-borderradiusbottomright"></span>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label>Bottom Left</label>
+                                                    <input type="number" name="form[border_radius_bottom_left]" class="form-control" value="">
+                                                    <span class="errors error-borderradiusbottomleft"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="section-divider">
+                                        <span>Privacy policy / Terms of service</span>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        <label class="control-label" >Background Color</label>
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <input type="color" name="form[privacy_background_color]"  class="form-control" value="">
+                                            <span class="errors error-privacybackgroundcolor"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        <label class="control-label" >Label/Numeric Font Color</label>
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <input type="color" name="form[privacy_label_font_color]"  class="form-control" value="">
+                                            <span class="errors error-privacylabelfontcolor"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        <label class="control-label" >Regular Font Color</label>
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <input type="color" name="form[privacy_regular_font_color]"  class="form-control" value="">
+                                            <span class="errors error-privacyregularfontcolor"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="section-divider">
+                                        <span>Other</span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label class="control-label" >Row overflow navigation(Arrow Color)</label>
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <input type="color" name="form[arrow_color]"  class="form-control" value="">
+                                            <span class="errors error-arrowcolor"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label class="control-label" >Mobile embed height (in px)</label>
+                                        <div class="sonata-ba-field sonata-ba-field-standard-natural">
+                                            <input type="number" name="form[mobile_embed_height]"  class="form-control" value="">
+                                            <span class="errors error-mobileembedheight"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <button class="btn btn-success hide" type="submit" data-action_type="save_theme" id="btn_save_theme" ><i class="fa fa-save" aria-hidden="true"></i> Save</button>
+                            <button class="btn btn-success" type="submit" data-action_type="without_preset" id="btn_without_preset" ><i class="fa fa-save" aria-hidden="true"></i> Without Preset</button>
+                            <div id="response_msg"></div>
+                        </form>
+
+                        <div class="modal fade" id="previewImageModal" tabindex="-1" role="dialog" aria-labelledby="previewImageModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <h5 class="modal-title" id="previewImageModalLabel">Selected Background</h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        <img id="preview_img" src="" class="img-responsive">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            changeThemeSettingType('header_background');
+            changeThemeSettingType('body_background');
+            changeThemeSettingType('footer_background');
+            changeThemeSettingType('font_type');
+            getThemeSetting();
+        });
+
+        function changeThemeSettingType(setting_type = ''){
+
+            if(setting_type == 'header_background') {
+                let header_background_type = $("input[name='form[header_background_type]']:checked").val();
+                if(header_background_type == 'color') {
+                    $(".header_bg_type_color").removeClass('hide');
+                    $(".header_bg_type_image").addClass('hide');
+                } else if(header_background_type == 'image') {
+                    $(".header_bg_type_image").removeClass('hide');
+                    $(".header_bg_type_color").addClass('hide');
+                }
+            } else if(setting_type == 'body_background') {
+                let body_background_type = $("input[name='form[body_background_type]']:checked").val();
+                if(body_background_type == 'color') {
+                    $(".body_bg_type_color").removeClass('hide');
+                    $(".body_bg_type_image").addClass('hide');
+                } else if(body_background_type == 'image') {
+                    $(".body_bg_type_image").removeClass('hide');
+                    $(".body_bg_type_color").addClass('hide');
+                }
+            } else if(setting_type == 'footer_background') {
+                let footer_background_type = $("input[name='form[footer_background_type]']:checked").val();
+                if(footer_background_type == 'color') {
+                    $(".footer_bg_type_color").removeClass('hide');
+                    $(".footer_bg_type_image").addClass('hide');
+                } else if(footer_background_type == 'image') {
+                    $(".footer_bg_type_image").removeClass('hide');
+                    $(".footer_bg_type_color").addClass('hide');
+                }
+            } else if(setting_type == 'font_type') {
+                let font_type = $("input[name='form[font_type]']:checked").val();
+                if(font_type == 'local') {
+                    $(".font_type_local").removeClass('hide');
+                    $(".font_type_remote").addClass('hide');
+                } else if(font_type == 'remote') {
+                    $(".font_type_remote").removeClass('hide');
+                    $(".font_type_local").addClass('hide');
+                }
+            }
+        }
+
+        $("input[name='form[header_background_type]']").change(function(){
+            changeThemeSettingType('header_background');
+        });
+
+        $("input[name='form[body_background_type]']").change(function(){
+            changeThemeSettingType('body_background');
+        });
+
+        $("input[name='form[footer_background_type]']").change(function(){
+            changeThemeSettingType('footer_background');
+        });
+
+        $("input[name='form[font_type]']").change(function(){
+            changeThemeSettingType('font_type');
+        });
+
+        $(".btn_preview_image ").click(function(e){
+            e.preventDefault();
+            $("#previewImageModal").modal('show');
+            let preview_img = $(this).attr('href');
+            $("#preview_img").attr('src',preview_img);
+        });
+
+        $("#custom-tabs-one-tab > li > a").click(function() {
+            let active_tab = $(this).attr("href").replace("#", "");
+            if(active_tab == 'custom-tabs-save') {
+                $("#btn_save_theme").removeClass('hide');
+            } else {
+                $("#btn_save_theme").addClass('hide');
+            }
+        });
+
+        $("#btn_apply_theme,#btn_without_preset,#btn_save_theme").on('click',function(e){
+            e.preventDefault();
+            var action_type = $(this).data('action_type');
+            $(".content-wrapper .content").find('.alert').remove();
+            $("#frm_theme_setting .errors").text('');
+            var formData = new FormData($("#frm_theme_setting")[0]);
+                formData.append('action_type',action_type);
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ admin.generateUrl('save_theme_setting') }}',
+                dataType:'JSON',
+                data: formData,
+                contentType: false,
+                processData: false,
+                beforeSend:function () {
+                    $("#btn_apply_theme").attr('disabled',true);
+                    $("#btn_without_preset").attr('disabled',true);
+                    $("#btn_save_theme").attr('disabled',true);
+                },
+                success:function (response) {
+                    $("#btn_apply_theme").removeAttr('disabled');
+                    $("#btn_without_preset").removeAttr('disabled');
+                    $("#btn_save_theme").removeAttr('disabled');
+                    if(response.errors) {
+                        $.each(response.errors,function(field_name,error_message){
+                            $("#frm_theme_setting .error-"+field_name).html(error_message);
+                        });
+                    }
+                    if(response.status == 1 ) {
+                        $(".content-wrapper .content").prepend('<div class="alert alert-success alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true" aria-label="Close">×</button>'+response.msg+'</div>');
+                        if(response.data.header_background != '') {
+                            $("#header_background_response a").attr('href',response.data.header_background);
+                            $("#header_background_response a").removeClass('hide');
+                        }
+                        if(response.data.body_background != '') {
+                            $("#body_background_response a").attr('href',response.data.body_background);
+                            $("#body_background_response a").removeClass('hide');
+                        }
+                        if(response.data.footer_background != '') {
+                            $("#footer_background_response a").attr('href',response.data.footer_background);
+                            $("#footer_background_response a").removeClass('hide');
+                        }
+                        if(response.data.header_logo != '') {
+                            $("#header_logo_response a").attr('href',response.data.header_logo);
+                            $("#header_logo_response a").removeClass('hide');
+                        }
+                        $("html, body").animate({ scrollTop: 0 }, "slow");
+                        $("input[name='theme_name']").val('');
+                        $("input[name='form[header_logo]']").val('');
+                        $("input[name='form[header_background]']").val('');
+                        $("input[name='form[body_background]']").val('');
+                        $("input[name='form[footer_background]']").val('');
+
+                        if(response.data.theme_data) {
+                            $('#theme').append(`<option value="` + response.data.theme_data.id + `">` + response.data.theme_data.name + `</option>`);
+                        }
+                    }
+
+                    if(response.status == 0 ) {
+                        $(".content-wrapper .content").prepend('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true" aria-label="Close">×</button>'+response.msg+'</div>');
+                        $("html, body").animate({ scrollTop: 0 }, "slow");
+                    }
+                },
+            });
+        });
+
+        $(document).on('change',"#theme",function(e){
+            getThemeSetting();
+        });
+
+        function getThemeSetting() {
+            var theme_id = $("#theme").val();
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ admin.generateUrl('get_theme_setting') }}',
+                dataType:'JSON',
+                data: {theme_id:theme_id},
+                beforeSend:function () {
+                },
+                success:function (response) {
+                    if(response.errors) {
+
+                    }
+
+                    if(response.status == 1 ) {
+
+                        if(response.data.header_background_type && (response.data.header_background_type == '' || response.data.header_background_type == 'color')) {
+                            $("#opt_header_background_color").iCheck('check');
+                        } else if(response.data.header_background_type && response.data.header_background_type == 'image') {
+                            $("#opt_header_background_image").iCheck('check');
+                        } else {
+                            $("#opt_header_background_color").iCheck('check');
+                        }
+
+                        if(response.data.body_background_type && (response.data.body_background_type == '' || response.data.body_background_type == 'color')) {
+                            $("#opt_body_background_color").iCheck('check');
+                        } else if(response.data.body_background_type && response.data.body_background_type == 'image') {
+                            $("#opt_body_background_image").iCheck('check');
+                        } else {
+                            $("#opt_body_background_color").iCheck('check');
+                        }
+
+                        if(response.data.footer_background_type && (response.data.footer_background_type == '' || response.data.footer_background_type == 'color')) {
+                            $("#opt_footer_background_color").iCheck('check');
+                        } else if(response.data.footer_background_type && response.data.footer_background_type == 'image') {
+                            $("#opt_footer_background_image").iCheck('check');
+                        } else {
+                            $("#opt_footer_background_color").iCheck('check');
+                        }
+
+                        if(response.data.font_type && (response.data.font_type == '' || response.data.font_type == 'local')) {
+                            $("#opt_font_local").iCheck('check');
+                            if(response.data.font_family && response.data.font_family != '') {
+                                var font_family = response.data.font_family;
+                                var font_family_result = font_family.split(',');
+                                $("#font_family").select2('val',font_family_result);
+                            } else {
+                                $("#font_family").select2('val','');
+                            }
+                        } else if(response.data.font_type && response.data.font_type == 'remote') {
+                            $("#opt_font_remote").iCheck('check');
+                            $("input[name='form[remote_font_url]']").val(response.data.remote_font_url);
+                        }  else {
+                            $("#opt_font_local").iCheck('check');
+                        }
+
+
+                        if(response.data.header_color && response.data.header_color != '') {
+                            $("input[name='form[header_color]']").val(response.data.header_color);
+                        } else {
+                            $("input[name='form[header_color]']").val("#000");
+                        }
+                        if(response.data.body_color && response.data.body_color != '') {
+                            $("input[name='form[body_color]']").val(response.data.body_color);
+                        } else {
+                            $("input[name='form[body_color]']").val("#000");
+                        }
+                        if(response.data.footer_color && response.data.footer_color != '') {
+                            $("input[name='form[footer_color]']").val(response.data.footer_color);
+                        } else {
+                            $("input[name='form[footer_color]']").val("#000");
+                        }
+
+                        if(response.data.color && response.data.color != '') {
+                            $("input[name='form[color]']").val(response.data.color);
+                        } else {
+                            $("input[name='form[color]']").val("#000");
+                        }
+                        if(response.data.arrow_color && response.data.arrow_color != '') {
+                            $("input[name='form[arrow_color]']").val(response.data.arrow_color);
+                        } else {
+                            $("input[name='form[arrow_color]']").val("#000");
+                        }
+                        if(response.data.numbered_row_color && response.data.numbered_row_color != '') {
+                            $("input[name='form[numbered_row_color]']").val(response.data.numbered_row_color);
+                        } else {
+                            $("input[name='form[numbered_row_color]']").val("#000");
+                        }
+                        if(response.data.numbered_row_outline_color && response.data.numbered_row_outline_color != '') {
+                            $("input[name='form[numbered_row_outline_color]']").val(response.data.numbered_row_outline_color);
+                        } else {
+                            $("input[name='form[numbered_row_outline_color]']").val("#000");
+                        }
+                        if(response.data.twitch_glow_color && response.data.twitch_glow_color != '') {
+                            $("input[name='form[twitch_glow_color]']").val(response.data.twitch_glow_color);
+                        } else {
+                            $("input[name='form[twitch_glow_color]']").val("#000");
+                        }
+                        if(response.data.youtube_glow_color && response.data.youtube_glow_color != '') {
+                            $("input[name='form[youtube_glow_color]']").val(response.data.youtube_glow_color);
+                        } else {
+                            $("input[name='form[youtube_glow_color]']").val("#000");
+                        }
+                        if(response.data.border && response.data.border != '') {
+                            $("input[name='form[border]']").val(response.data.border);
+                        } else {
+                            $("input[name='form[border]']").val(0);
+                        }
+                        if(response.data.border_color && response.data.border_color != '') {
+                            $("input[name='form[border_color]']").val(response.data.border_color);
+                        } else {
+                            $("input[name='form[border_color]']").val("#000");
+                        }
+
+                        if(response.data.border_radius_top_left && response.data.border_radius_top_left != '') {
+                            $("input[name='form[border_radius_top_left]']").val(response.data.border_radius_top_left);
+                        } else {
+                            $("input[name='form[border_radius_top_left]']").val("0");
+                        }
+                        if(response.data.border_radius_top_right && response.data.border_radius_top_right != '') {
+                            $("input[name='form[border_radius_top_right]']").val(response.data.border_radius_top_right);
+                        } else {
+                            $("input[name='form[border_radius_top_right]']").val("0");
+                        }
+                        if(response.data.border_radius_bottom_right && response.data.border_radius_bottom_right != '') {
+                            $("input[name='form[border_radius_bottom_right]']").val(response.data.border_radius_bottom_right);
+                        } else {
+                            $("input[name='form[border_radius_bottom_right]']").val("0");
+                        }
+                        if(response.data.border_radius_bottom_left && response.data.border_radius_bottom_left != '') {
+                            $("input[name='form[border_radius_bottom_left]']").val(response.data.border_radius_bottom_left);
+                        } else {
+                            $("input[name='form[border_radius_bottom_left]']").val("0");
+                        }
+
+                        if(response.data.mobile_embed_height && response.data.mobile_embed_height != '') {
+                            $("input[name='form[mobile_embed_height]']").val(response.data.mobile_embed_height);
+                        } else {
+                            $("input[name='form[mobile_embed_height]']").val("0");
+                        }
+
+                        if(response.data.header_background && response.data.header_background != '') {
+                            $("#header_background_response a").attr('href',response.data.header_background);
+                            $("#header_background_response a").removeClass('hide');
+                        } else {
+                            $("#header_background_response a").addClass('hide');
+                        }
+                        if(response.data.body_background && response.data.body_background != '') {
+                            $("#body_background_response a").attr('href',response.data.body_background);
+                            $("#body_background_response a").removeClass('hide');
+                        } else {
+                            $("#body_background_response a").addClass('hide');
+                        }
+                        if(response.data.footer_background &&  response.data.footer_background != '') {
+                            $("#footer_background_response a").attr('href',response.data.footer_background);
+                            $("#footer_background_response a").removeClass('hide');
+                        } else {
+                            $("#footer_background_response a").addClass('hide');
+                        }
+                        if(response.data.header_logo && response.data.header_logo != '') {
+                            $("#header_logo_response a").attr('href',response.data.header_logo);
+                            $("#header_logo_response a").removeClass('hide');
+                        } else {
+                            $("#header_logo_response a").addClass('hide');
+                        }
+
+                        if(response.data.privacy_background_color && response.data.privacy_background_color != '') {
+                            $("input[name='form[privacy_background_color]']").val(response.data.privacy_background_color);
+                        } else {
+                            $("input[name='form[privacy_background_color]']").val("#000");
+                        }
+
+                        if(response.data.privacy_label_font_color && response.data.privacy_label_font_color != '') {
+                            $("input[name='form[privacy_label_font_color]']").val(response.data.privacy_label_font_color);
+                        } else {
+                            $("input[name='form[privacy_label_font_color]']").val("#000");
+                        }
+
+                        if(response.data.privacy_regular_font_color && response.data.privacy_regular_font_color != '') {
+                            $("input[name='form[privacy_regular_font_color]']").val(response.data.privacy_regular_font_color);
+                        } else {
+                            $("input[name='form[privacy_regular_font_color]']").val("#000");
+                        }
+                    }
+
+                    if(response.status == 0 ) {
+
+                    }
+                },
+            });
+        }
+
+    </script>
+
+{% endblock %}
+
+{% block list_filters_actions %}
+    {% set displayableFilters = admin.datagrid.filters|filter(filter => filter.option('show_filter') is not same as (false)) %}
+    {%- if displayableFilters|length %}
+        <ul class="nav navbar-nav navbar-right">
+
+            <li class="dropdown sonata-actions">
+                <a href="#" class="dropdown-toggle sonata-ba-action" data-toggle="dropdown">
+                    <i class="fa fa-filter" aria-hidden="true"></i>
+                    {{ 'link_filters'|trans({}, 'SonataAdminBundle') }}
+                    <span class="badge sonata-filter-count"></span>
+                    <b class="caret"></b>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-scrollable" role="menu">
+                    {% for filter in displayableFilters %}
+                        {% set filterDisplayed = filter.isActive() or filter.option('show_filter') is same as (true) %}
+                        <li>
+                            <a href="#" class="sonata-toggle-filter sonata-ba-action" filter-target="filter-{{ admin.uniqid }}-{{ filter.name }}" filter-container="filter-container-{{ admin.uniqid() }}">
+                                <i class="fa {{ filterDisplayed ? 'fa-check-square-o' : 'fa-square-o' }}"></i>
+                                {% if filter.label is not same as(false) %}
+                                    {% if filter.translationDomain is same as(false) %}
+                                        {{ filter.label }}
+                                    {% else %}
+                                        {{ filter.label|trans(filter.option('label_translation_parameters', {}), filter.translationDomain ?? admin.translationDomain) }}
+                                    {% endif %}
+                                {% endif %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+    {% endif -%}
+{% endblock %}
+
+{% block list_filters %}
+    {% if admin.datagrid.filters %}
+        {% form_theme form get_admin_template('filter', admin.code) %}
+
+        <div class="col-xs-12 col-md-12 sonata-filters-box" style="display: {{ admin.datagrid.hasDisplayableFilters ? 'block' : 'none' }}" id="filter-container-{{ admin.uniqid() }}">
+            <div class="box box-primary" >
+                <div class="box-body">
+                    <form
+                        class="sonata-filter-form form-horizontal {{ admin.isChild and 1 == admin.datagrid.filters|length ? 'hide' : '' }}"
+                        action="{{ admin.generateUrl('list') }}"
+                        method="GET"
+                        role="form"
+                        {# NEXT_MAJOR: Remove condition #}
+                        {% if attribute(admin, 'getDefaultFilterParameters') is defined %}
+                            data-default-values="{{ admin.defaultFilterParameters|json_encode }}"
+                        {% endif %}
+                    >
+                        {{ form_errors(form) }}
+
+                        <div class="row">
+                            <div class="col-sm-9">
+                                {% set withAdvancedFilter = false %}
+                                {% for filter in admin.datagrid.filters %}
+                                    {% set filterDisplayed = filter.isActive() or filter.option('show_filter') is same as (true) %}
+                                    {% set filterCanBeDisplayed = filter.option('show_filter') is not same as(false) %}
+                                    <div class="form-group {% block sonata_list_filter_group_class %}{% endblock %}" id="filter-{{ admin.uniqid }}-{{ filter.name }}" sonata-filter="{{ filterCanBeDisplayed ? 'true' : 'false' }}" style="display: {% if filterDisplayed %}block{% else %}none{% endif %}">
+                                        {% if filter.label is not same as(false) %}
+                                            <label for="{{ form[filter.formName].children['value'].vars.id }}" class="col-sm-3 control-label">
+                                                {% if filter.translationDomain is same as(false) %}
+                                                    {{ filter.label }}
+                                                {% else %}
+                                                    {{ filter.label|trans(filter.option('label_translation_parameters', {}), filter.translationDomain ?? admin.translationDomain) }}
+                                                {% endif %}
+                                            </label>
+                                        {% endif %}
+                                        {% set attr = form[filter.formName].children['type'].vars.attr|default({}) %}
+
+                                        <div class="col-sm-4 advanced-filter">
+                                            {{ form_widget(form[filter.formName].children['type'], {'attr':  attr}) }}
+                                        </div>
+
+                                        <div class="col-sm-4">
+                                            {{ form_widget(form[filter.formName].children['value']) }}
+                                        </div>
+
+                                        {% if filterCanBeDisplayed %}
+                                            <div class="col-sm-1">
+                                                <label class="control-label">
+                                                    <a href="#" class="sonata-toggle-filter sonata-ba-action" filter-target="filter-{{ admin.uniqid }}-{{ filter.name }}" filter-container="filter-container-{{ admin.uniqid() }}">
+                                                        <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                                                    </a>
+                                                </label>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    {% if filter.option('advanced_filter') %}
+                                        {% set withAdvancedFilter = true %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="col-sm-3 text-center">
+                                <input type="hidden" name="filter[{{ constant('Sonata\\AdminBundle\\Datagrid\\DatagridInterface::PAGE') }}]" id="filter__page" value="1">
+
+                                {% set foo = form[constant('Sonata\\AdminBundle\\Datagrid\\DatagridInterface::PAGE')].setRendered() %}
+                                {{ form_rest(form) }}
+
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-filter" aria-hidden="true"></i> {{ 'btn_filter'|trans({}, 'SonataAdminBundle') }}
+                                    </button>
+
+                                    <a class="btn btn-default" href="{{ admin.generateUrl('list', {filters: 'reset'}) }}">
+                                        {{ 'link_reset_filter'|trans({}, 'SonataAdminBundle') }}
+                                    </a>
+                                </div>
+
+                                {% if withAdvancedFilter %}
+                                    <div class="form-group">
+                                        <a href="#" data-toggle="advanced-filter">
+                                            <i class="fa fa-cogs" aria-hidden="true"></i>
+                                            {{ 'btn_advanced_filters'|trans({}, 'SonataAdminBundle') }}
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% for paramKey, paramValue in admin.persistentParameters %}
+                            <input type="hidden" name="{{ paramKey }}" value="{{ paramValue }}">
+                        {% endfor %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

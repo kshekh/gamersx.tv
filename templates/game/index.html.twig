@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block javascripts %}
+{{ parent() }}
+{{ encore_entry_script_tags('game') }}
+{% endblock %}
+
+{% block body %}
+<div id="app-game" data-url="{{ dataUrl }}">
+    <game></game>
+</div>
+{% endblock %}

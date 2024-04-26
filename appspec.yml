@@ -1,0 +1,16 @@
+version: 0.0
+os: linux
+
+files:
+  - source: ./
+    destination: /var/gamersx/codedeploy
+
+hooks:
+  AfterInstall:
+    - location: deploy/scripts/install.sh
+      runas: gamersx
+
+permissions:
+  - object: /var/gamersx/codedeploy
+    owner: gamersx
+    group: gamersx

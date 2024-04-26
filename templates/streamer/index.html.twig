@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block javascripts %}
+{{ parent() }}
+{{ encore_entry_script_tags('streamer') }}
+{% endblock %}
+
+{% block body %}
+<div id="app-streamer" data-url="{{ dataUrl }}">
+    <streamer></streamer>
+</div>
+{% endblock %}
