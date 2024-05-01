@@ -31,8 +31,6 @@ export default {
 
           this.$root.$emit("close-other-layouts", this.embedData.elementId);
 
-          // this.isEmbedVisible = true;
-
           if (this.$refs.embed) this.$refs.embed.startPlayer();
         }, 30);
       }
