@@ -58,6 +58,7 @@ Thumbs.db
 
 ###> symfony/framework-bundle ###
 /.env
+/.env.bak
 /.env.local
 /.env.local.php
 /.env.*.local
