@@ -79,7 +79,7 @@ export default {
           // controls: false,
           parent: window.location.hostname,
         });
-        
+
         this.embed.addEventListener(Twitch.Player.PLAY, this.setIsPlaying);
         this.embed.addEventListener(Twitch.Player.PAUSE, this.setIsNotPlaying);
         this.embed.addEventListener(Twitch.Player.ENDED, this.setIsNotPlaying);
