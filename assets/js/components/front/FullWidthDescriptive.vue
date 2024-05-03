@@ -5,51 +5,23 @@
     @swiped-right="back()"
     @mouseenter="mouseEntered()"
     @mousemove="checkMouseActive()"
-    class="
-      home-row
-      mb-7
-      md:mb-9
-      xl:mb-14
-      bg-cover bg-no-repeat
-      relative
-      overflow-hidden
-      min-h-mobile
-    "
+    class="home-row mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative min-h-mobile home-banner-section"
+    :class="{'mobile-full-width':isMobileDevice}"
     :style="customBg"
   >
     <div class="container mx-auto">
       <div class="pb-50p"></div>
       <div
-        class="
-          px-4
-          md:px-12
-          flex
-          items-center
-          justify-between
-          absolute
-          inset-0
-          z-10
-        "
+        class="px-4 md:px-12 flex items-center justify-between absolute inset-0 z-10"
       >
-        <slider-arrow-big
+        <slider-arrow
           :isNext="false"
           :videoType="currentChannelEmbedName"
-          @arrow-big-clicked="back()"
+          @arrow-clicked="back()"
         />
 
         <div
-          class="
-            py-2
-            md:pt-8
-            xl:py-14
-            flex-grow
-            min-w-0
-            flex
-            h-full
-            items-center
-            justify-between
-            md:flex-col
-          "
+          class="py-2 md:pt-8 xl:py-14 flex-grow min-w-0 flex h-full items-center justify-between md:flex-col"
         >
           <div
             ref="channelBox"
@@ -68,6 +40,7 @@
                 :isRowFirst="isRowFirst"
                 :isFirstVideoLoaded="isFirstVideoLoaded"
                 :isMouseStopped="isMouseStopped"
+                :customBg="customBg"
                 @first-video-buffered="handleFirstVideoLoaded"
                 @activate-mouse-stopped="activateMouseStopped"
                 @reset-mouse-moving="checkMouseActive"
@@ -75,7 +48,7 @@
             </div>
           </div>
           <div
-            class="flex items-center space-x-1 md:space-x-2 relative z-10 self-end md:self-center"
+            class="flex items-center space-x-1 md:space-x-2 z-10 self-end md:self-center absolute -bottom-[30px]"
           >
             <slider-dot
               v-for="(channel, index) in displayChannels"
@@ -88,10 +61,10 @@
           </div>
         </div>
 
-        <slider-arrow-big
+        <slider-arrow
           :isNext="true"
           :videoType="currentChannelEmbedName"
-          @arrow-big-clicked="forward()"
+          @arrow-clicked="forward()"
         />
       </div>
     </div>
@@ -105,7 +78,7 @@ import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerDescrip
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
 import SliderDot from "../helpers/SliderDot.vue";
-import SliderArrowBig from "../helpers/SliderArrowBig.vue";
+import SliderArrow from "../helpers/SliderArrow.vue";
 
 import isBoxInViewport from "../../mixins/isBoxInViewport";
 
@@ -119,17 +92,17 @@ export default {
     NoEmbedContainer: NoEmbedContainer,
     "title-addinional-description": TitleAdditionalDescription,
     "slider-dot": SliderDot,
-    "slider-arrow-big": SliderArrowBig
+    "slider-arrow": SliderArrow,
   },
   props: {
     settings: {
       type: Object,
-      required: true
+      required: true,
     },
     rowPosition: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
   data: function () {
     return {
@@ -138,7 +111,7 @@ export default {
       isAllowPlaying: true,
       isFirstVideoLoaded: false,
       isMouseStopped: false,
-      isMouseMovingTimeout: false
+      isMouseMovingTimeout: false,
     };
   },
   computed: {
@@ -151,7 +124,8 @@ export default {
       if (selected && selected.customArt) {
         return {
           // backgroundImage: "url(https://picsum.photos/2000/3000)"
-          backgroundImage: "url(" + selected.customArt + ")"
+          backgroundImage: "url(" + selected.customArt + ")",
+          backgroundSize: "100% 100%",
         };
       } else {
         return {};
@@ -166,7 +140,7 @@ export default {
         // Default for now
         return "TwitchEmbed";
       }
-    }
+    },
   },
   methods: {
     showChannel: function (channel) {
@@ -226,7 +200,15 @@ export default {
       this.isMouseMovingTimeout = setTimeout(() => {
         this.isMouseStopped = true;
       }, 3000);
-    }
+    },
+    setIsMobileDevice:function() {
+      const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
+      if(checkDeviceType) {
+        this.isMobileDevice = true;
+      } else {
+        this.isMobileDevice = false;
+      }
+    },
   },
   mounted() {
     if (!this.isRowFirst) {
@@ -235,6 +217,12 @@ export default {
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
     }
     this.displayChannels = this.settings.channels.filter(this.showChannel);
-  }
+    this.setIsMobileDevice();
+  },
+  updated: function () {
+    if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels.filter(this.showChannel))){
+      this.displayChannels = this.settings.channels.filter(this.showChannel);
+    }
+  },
 };
 </script>

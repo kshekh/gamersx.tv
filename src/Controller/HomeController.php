@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\HomeRow;
+use App\Entity\HomeRowItem;
 use App\Entity\SiteSettings;
 use App\Containerizer\ContainerizerFactory;
 use App\Service\HomeRowInfo;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -16,10 +18,12 @@ use Symfony\Component\HttpFoundation\{Response, RedirectResponse};
 class HomeController extends AbstractController
 {
 //    private $homeRowInfo;
+    private $session;
 
-    public function __construct(HomeRowInfo $homeRowInfo)
+    public function __construct(HomeRowInfo $homeRowInfo, SessionInterface $session)
     {
         $this->homeRowInfo = $homeRowInfo;
+        $this->session = $session;
     }
 
     /**
@@ -46,10 +50,20 @@ class HomeController extends AbstractController
         $cache = new FilesystemAdapter();
 
         $rowChannels = $cache->getItem('home');
+        $home_container_refreshed_at = null;
+        $rows = null;
+        // get cache from home -> rows_data
+        // home_container_refreshed_at managed to get time of last cache clear
+        if ($rowChannels->isHit()) {
+            $rowChannelsData = $rowChannels->get();
+            $rows = $rowChannelsData['rows_data']??null;
+            $home_container_refreshed_at = $rowChannelsData['home_container_refreshed_at']??null;
+        }
 
         return $this->json([
             'settings' => [
-                'rows' => $rowChannels->get()
+                'rows' => $rows,
+                'home_container_refreshed_at' => $home_container_refreshed_at
             ]
         ]);
     }
@@ -61,16 +75,58 @@ class HomeController extends AbstractController
     {
         $cache = new FilesystemAdapter();
         $rowChannels = $cache->getItem('home');
+        $rows = [];
+        // get cache from new rows_data key
+        if ($rowChannels->isHit()) {
+            $rowChannelsData = $rowChannels->get();
+            $rows = array_column($rowChannelsData['rows_data']??[],"componentName");
+        }
         return $this->json([
             'settings' => [
-                'rows' => array_column($rowChannels->get()??[],"componentName")
+                'rows' => $rows
             ]
         ]);
     }
 
     /**
-     * @Route("/home/api/cache", name="home_api_cache")
+     * @Route("/home/sessions/api", name="home_session_api")
      */
+    public function apiSessions(): Response
+    {
+        $isLoggedIn = $this->session->get('is_logged_in');
+        $isRequiredToLoginTwitch = $this->session->get('login_required_to_connect_twitch');
+        return $this->json([
+            'isLoggedIn' => $isLoggedIn,
+            'isRequiredToLoginTwitch' => $isRequiredToLoginTwitch
+        ]);
+    }
+
+    /**
+     * @Route("/api/streamer-list", name="streamer_list_api")
+     */
+    public function streamer_list(): Response
+    {
+        $streamer_list = $this->getDoctrine()->getRepository(HomeRowItem::class)->findStreamer();
+        $return_data = [];
+        foreach ($streamer_list as $streamer) {
+            $item_type = $streamer->getItemType();
+            $topic_id  = $streamer->getTopic()['topicId'];
+            $username  = $streamer->getTopic()['label'];
+
+            $return_data[] = [
+                'Platform' => $item_type,
+                'Username' => $username,
+                'id' => $topic_id,
+            ];
+        }
+        return $this->json([
+            'data' => $return_data
+        ]);
+    }
+
+//    /**
+//     * @Route("/home/api/cache", name="home_api_cache")
+//     */
 //    public function apiHomeCache(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
 //    {
 //        $cache = new FilesystemAdapter();

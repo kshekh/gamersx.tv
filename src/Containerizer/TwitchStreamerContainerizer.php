@@ -9,15 +9,25 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
 {
     private $homeRowItem;
     private $twitch;
+    private $entityManager;
 
-    public function __construct(HomeRowItem $homeRowItem, $twitch)
+    public function __construct(HomeRowItem $homeRowItem, $twitch,$entityManager)
     {
         $this->homeRowItem = $homeRowItem;
         $this->twitch = $twitch;
+        $this->entityManager = $entityManager;
     }
 
     public function getContainers(): Array
     {
+        $topic_id = $this->homeRowItem->getTopic()['topicId'];
+        $check_unique_item =  $this->entityManager->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
+
+        $is_unique_container =  $this->homeRowItem->getIsUniqueContainer();
+        if($is_unique_container == 0 && (isset($check_unique_item) && !empty($check_unique_item) && count($check_unique_item) > 1 && $check_unique_item[0]['id'] != $this->homeRowItem->getId())) {
+            return Array();
+        }
+
         $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
         $twitch = $this->twitch;
@@ -58,9 +68,35 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
         if (!$isPublished) {
             return Array();
         }
+        // getting selected games
+        $getSelectedRowItemOperation =  $homeRowItem->getHomeRowItemOperations();
+        $selectedGamesArr = [];
+        if(!empty($getSelectedRowItemOperation)) {
+            foreach ($getSelectedRowItemOperation as $getSelectedOprData) {
+                $selectedGamesArr[$getSelectedOprData->getGameId()] = [
+                    'is_whitelisted' => $getSelectedOprData->getIsWhitelisted(),
+                    'is_blacklisted' => $getSelectedOprData->getIsBlacklisted(),
+                ];
+            }
+        }
 
-        $isPublishedStartTime = $homeRowItem->getIsPublishedStart();
-        $isPublishedEndTime = $homeRowItem->getIsPublishedEnd();
+        if(!empty($broadcast)) {
+            // sorting streamers based on priority
+            $selected_streamer_index = [];
+            if(isset($selectedGamesArr[$broadcast['game_id']])) {
+                $selected_streamer_index = $selectedGamesArr[$broadcast['game_id']];
+            }
+            if(!empty($selected_streamer_index)) {
+                $is_blacklisted =  $selected_streamer_index['is_blacklisted'];
+                $is_whitelisted =  $selected_streamer_index['is_whitelisted'];
+                if($is_blacklisted == 1 || $is_whitelisted == 0) {
+                    return Array();
+                }
+            }
+        }
+
+        $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
+        $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
 
         if (
             !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
@@ -115,6 +151,7 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
                 [
                     'info' => $info,
                     'broadcast' => $broadcast,
+                    'profileImageUrl' => $info['profile_image_url'],
                     'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
                     'viewedCount' => isset($info['view_count']) ? $info['view_count'] : 0,
                     'showOnline' => $broadcast !== NULL,

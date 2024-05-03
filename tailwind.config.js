@@ -1,9 +1,18 @@
-const colors = require("tailwindcss/colors");
-
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  purge: [],
-  darkMode: false, // or 'media' or 'class'
+  content: [
+    "./assets/js/components/**/*.{js,vue,ts}",
+    "./templates/**/*.twig",
+  ],
   theme: {
+    screens: {
+      'xs': '450px', // Your custom screen size
+      'sm': '640px',
+      'md': '815px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
     colors: {
       purple: {
         600: "#32235B",
@@ -16,12 +25,20 @@ module.exports = {
         DEFAULT: "#000612"
       },
       grey: {
-        600: "#C3C3C3",
         DEFAULT: "#737373",
+        400: "#dfdfdf",
+        600: "#C3C3C3",
         900: "#1e1927"
       },
+      orange: {
+        400: "rgb(251 146 60)"
+      },
+      lime: {
+        500: "rgb(132 204 22)"
+      },
       red: {
-        DEFAULT: "#FF0000"
+        DEFAULT: "#FF0000",
+        600: "#7F0000"
       },
       transparent: {
         DEFAULT: "transparent"
@@ -108,6 +125,8 @@ module.exports = {
         "mobile-description": "250px"
       },
       minWidth: {
+        "20": "20px",
+        "30": "30px",
         "40": "40px",
         "50": "50px",
         "75": "75px",
@@ -128,16 +147,34 @@ module.exports = {
       spacing: {
         "0.75": "3px",
         "18": "72px",
+        "19": "75px",
         "22": "88px",
+        "25p": "25%",
+        "30p": "30%",
+        "35p": "35%",
+        "40p": "40%",
+        "45p": "45%",
         "26": "104px",
+        "27": "108px",
+        "30": "120px",
         "34": "136px",
         "41": "164px",
+        "45": "180px",
         "46": "184px",
         "50": "200px",
+        "54": "216px",
+        "60": "240px",
         "75": "300px",
         "86": "344px",
+        "90": "360px",
+        "92": "384px",
         "118": "472px",
+        "120": "480px",
+        "127": "510px",
+        "150": "600px",
+        "160": "640px",
         "50p": "50%",
+        "60p": "60%",
         "110p": "110%",
         "115p": "115%",
         "140p": "140%",
@@ -145,7 +182,8 @@ module.exports = {
         "230p": "230%",
         "330p": "330%",
         "360p": "360%",
-        "360p": "360%"
+        "360p": "360%",
+        "337": "337px"
       },
       zIndex: {
         negative: -1
@@ -169,18 +207,11 @@ module.exports = {
       },
       backdropBlur: {
         xs: "2px",
+      },
+      aspectRatio: {
+        '4/3': '4 / 3',
+        '3/4': '3 / 4',
       }
-    }
-  },
-  variants: {
-    extend: {
-      maxWidth: ["hover"],
-      width: ["hover"],
-      maxHeight: ["hover"],
-      height: ["hover"],
-      zIndex: ["hover"],
-      inset: ["hover"],
-      left: ["hover"]
     }
   },
   plugins: []

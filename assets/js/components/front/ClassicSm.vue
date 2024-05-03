@@ -1,5 +1,5 @@
 <template>
-  <div @swiped-left="forward()" @swiped-right="back()">
+  <div>
     <div
       class="
         flex
@@ -39,7 +39,7 @@
 <!--        />-->
 <!--      </div>-->
     </div>
-    <!-- <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="first()">
+    <!-- <div class="w-16 h-16 shrink-0 grow-0" @click="first()">
       <img
         alt="cursor-left"
         class="cursor-pointer"
@@ -47,7 +47,7 @@
         src="/images/left-arrow.png"
       />
     </div> -->
-    <div class="flex" style="align-items: center;">
+    <div :class="{'relative':isMobileDevice,'flex':true}" style="align-items: center;">
       <div class="w5-center " ref="backArrow">
         <slider-arrow
           :isNext="false"
@@ -57,7 +57,7 @@
       </div>
       <div
         @mousemove="this.triggerDragging"
-        @mousedown="this.startDragging"
+        v-on="!isMobileDevice ? { mousedown: this.startDragging } : {}"
         @mouseup="this.stopDragging"
         @mouseleave="this.stopDragging"
         @scroll="this.handleScroll"
@@ -80,7 +80,7 @@
           v-for="(channel, index) in displayChannels"
           :key="index"
           class="
-            flex-shrink-0
+            shrink-0
             mr-1.5
             xl:mr-3
             w-36
@@ -104,13 +104,15 @@
           items-center
           mr-1.5
           xl:mr-3
-          flex-shrink-0
+          shrink-0
           w-36
-          md:w-28
-          xl:w-48
+          md:w-40
+          lg:w-52
+          xl:w-64
           h-20
-          md:h-18
-          xl:h-32
+          md:h-22
+          lg:h-30
+          xl:h-36
         "
         >
           <component :is="channel.componentName" v-bind="channel" :cuttedBorder="true"></component>
@@ -124,7 +126,7 @@
         />
       </div>
     </div>
-    <!-- <div class="w-16 h-16 flex-shrink-0 flex-grow-0" @click="forward()">
+    <!-- <div class="w-16 h-16 shrink-0 grow-0" @click="forward()">
         <img
           alt="cursor-right"
           class="cursor-pointer"
@@ -167,6 +169,7 @@ export default {
       displayChannels: [],
       allowScrolling: false,
       max_scroll_left: 0,
+      isMobileDevice: false,
     };
   },
   methods: {
@@ -239,14 +242,26 @@ export default {
       }else
         this.$refs.backArrow.classList.add("sliderArrowHide")
       this.$root.$emit('close-other-layouts');
-    }
+    },
+    setIsMobileDevice() {
+      const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
+      if(checkDeviceType) {
+        this.isMobileDevice = true;
+      } else {
+        this.isMobileDevice = false;
+      }
+    },
   },
   mounted: function() {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
     this.$refs.channelBox.addEventListener('scroll', this.handleScroll);
     this.$refs.channelBox.scrollLeft = 0;
+    this.setIsMobileDevice();
   },
   updated: function() {
+    if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels.filter(this.showChannel))){
+      this.displayChannels = this.settings.channels.filter(this.showChannel);
+    }
     this.allowScrolling =
       this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
     this.max_scroll_left = this.$refs.channelBox.scrollWidth - this.$refs.channelBox.clientWidth;

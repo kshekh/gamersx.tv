@@ -42,7 +42,7 @@
             h-41
             md:h-22
             xl:h-41
-            flex-shrink-0
+            shrink-0
             bg-grey-600
             animate-pulse
           "

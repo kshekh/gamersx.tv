@@ -4,9 +4,8 @@ namespace App\Controller;
 
 use App\Service\YouTubeApi;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\{Request, Response, RedirectResponse};
 
 /**
  * @Route("/api", name="youtube_")
@@ -18,6 +17,12 @@ class YouTubeApiController extends AbstractController
      */
     public function channelQuery(Request $request, YouTubeApi $youtube, $query)
     {
+
+        if (!$this->isGranted('ROLE_LOCKED')) {
+            return new RedirectResponse(
+                $this->generateUrl('sonata_user_admin_security_login')
+             );
+        }
         $first = $request->get('first');
         $before = $request->get('before');
         $after = $request->get('after');
@@ -32,6 +37,12 @@ class YouTubeApiController extends AbstractController
      */
     public function liveQuery(Request $request, YouTubeApi $youtube, $query)
     {
+
+        if (!$this->isGranted('ROLE_LOCKED')) {
+            return new RedirectResponse(
+                $this->generateUrl('sonata_user_admin_security_login')
+             );
+        }
         $first = $request->get('first');
         $before = $request->get('before');
         $after = $request->get('after');

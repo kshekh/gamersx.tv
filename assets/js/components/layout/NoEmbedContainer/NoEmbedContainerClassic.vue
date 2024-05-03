@@ -4,7 +4,7 @@
       cut-edge__wrapper
       w-full
       h-full
-      flex-shrink-0
+      shrink-0
       cut-edge__wrapper--twitch
     "
   >

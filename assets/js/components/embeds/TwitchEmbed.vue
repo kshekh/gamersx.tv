@@ -39,13 +39,58 @@
       :style="isBuffering ? { display: 'none' } : { display: 'block' }"
     ></div>
   </div>
+  <div @mouseover="showTwitchEmbed = true">
+    <img
+      v-if="image && isBuffering"
+      :src="image.url"
+      class="relative top-1/2 transform -translate-y-1/2 w-full"
+    />
+    <video
+      v-else-if="overlay && isBuffering"
+      autoplay="autoplay"
+      muted="muted"
+      loop="loop"
+      playsinline=""
+      class="h-full md:w-full object-cover"
+    >
+      <source
+        :src="loadingVideo"
+        type="video/mp4"
+      />
+    </video>
+    <iframe
+      v-if="embedDataCopy.type === 'twitch_clip'"
+      :id="embedDataCopy.elementId"
+      ref="videoIframe"
+      class="h-full w-full m-w-[355px] m-h-[311px]"
+      :style="isBuffering ? { display: 'none' } : { display: 'block' }"
+      :src="`${embedDataCopy.url}&autoplay=true`"
+      @load="handleIframeLoad"
+      width="854"
+      height="480"
+      frameborder="0"
+      allowfullscreen="true"
+      scrolling="no"
+    ></iframe>
+    <div
+      v-else
+      :id="embedDataCopy.elementId"
+      class="h-full w-full m-w-[355px] m-h-[311px]"
+      :style="isBuffering ? { display: 'none' } : { display: 'block' }"
+    ></div>
+  </div>
 </template>
 
 <script>
 export default {
   name: "TwitchEmbed",
+  name: "TwitchEmbed",
   props: {
     embedData: Object,
+    image: Object,
+    overlay: String,
+    isShowTwitchEmbed: Boolean,
+    isMobileDevice: Boolean,
     image: Object,
     overlay: String,
     isShowTwitchEmbed: Boolean,
@@ -56,10 +101,15 @@ export default {
     broadcast: {},
   },
   data: function () {
+  data: function () {
     return {
       embed: {},
       loaders:['/images/Sequence_01_final.mp4'],
+      loaders:['/images/Sequence_01_final.mp4'],
       embedPlaying: false,
+      showTwitchEmbed: false,
+      isBuffering: true,
+    };
       showTwitchEmbed: false,
       isBuffering: true,
     };
@@ -109,20 +159,64 @@ export default {
       }
     },
     stopPlayer: function () {
+    stopPlayer: function () {
       if (this.embedPlaying) {
         this.embed.pause();
         this.embedPlaying = false;
       }
     },
     isPlaying: function () {
+    isPlaying: function () {
       return this.embedPlaying;
     },
+    setIsPlaying: function () {
     setIsPlaying: function () {
       this.embedPlaying = true;
     },
     setIsNotPlaying: function () {
+    setIsNotPlaying: function () {
       this.embedPlaying = false;
     },
+    handlePlayerStateChanged(event) {
+      const { video_id, play, play_reason } = event.detail;
+      if (video_id === this.embedDataCopy.elementId) {
+        if (play && play_reason === "auto") {
+          this.embedPlaying = true;
+          this.isBuffering = false;
+        } else if (!play && play_reason === "buffering") {
+          this.embedPlaying = false;
+          this.isBuffering = true;
+        } else {
+          this.embedPlaying = false;
+          this.isBuffering = false;
+        }
+      }
+    },
+    handleIframeLoad(e) {
+      this.isBuffering = false;
+    }
+  },
+  computed: {
+    embedDataCopy() {
+      return { ...this.embedData };
+    },
+    loadingVideo(){
+      return this.loaders[Math.floor(Math.random()*this.loaders.length)]
+    }
+  },
+  watch: {
+    showTwitchEmbed(newVal) {
+      if (newVal === true) {
+        this.embedTwitch();
+      }
+    },
+    isShowTwitchEmbed(newVal) {
+      if (newVal === true) {
+        this.embedTwitch();
+      }
+    },
+  },
+};
     handlePlayerStateChanged(event) {
       const { video_id, play, play_reason } = event.detail;
       if (video_id === this.embedDataCopy.elementId) {

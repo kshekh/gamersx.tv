@@ -1,0 +1,8 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+{% block field %}
+    {% if value %}
+        <span class="label label-danger">no</span>
+    {% else %}
+        <span class="label label-success">yes</span>
+    {% endif %}
+{% endblock %}

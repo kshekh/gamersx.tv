@@ -1,0 +1,66 @@
+{% extends '@SonataAdmin/CRUD/base_edit.html.twig' %}
+{% block javascripts %}
+    {{ parent() }}
+    <style type="text/css">
+
+        .dragging li.ui-state-hover {
+            min-width: 240px;
+        }
+        .dragging .ui-state-hover a {
+            color:green !important;
+            font-weight: bold;
+        }
+        .tables_ui th,td {
+            padding: 2px 4px;
+            border: 1px solid;
+        }
+        .t_sortable tr, .ui-sortable-helper {
+            cursor: move;
+        }
+        .t_sortable tr:first-child {
+            cursor: default;
+        }
+        .ui-sortable-placeholder {
+            background: yellow;
+        }
+        .streamer_row.live_streamer {
+            background: #de6969;
+        }
+        .disabled_move {
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+    </style>
+{% endblock %}
+{% block form %}
+    <input type="hidden" id="how_row_item_id" value="{{ objectId }}">
+    {{ block('parentForm') }}
+    <script>
+        setTimeout(function () {
+            $(".switch").parent().closest('.checkbox').addClass('switch_checkbox');
+            $(".switch").before('<label>Unique</label>');
+            $(".switch").find('.icheckbox_square-blue').append('<span class="slider round"></span>');
+            $(".switch").after('<label>Allow Repeat</label>');
+            $(".switch").find('.iCheck-helper').remove();
+            $(".switch").find('.control-label__text').remove();
+            $(".switch").find('.icheckbox_square-blue').removeClass();
+            if($("#how_row_item_id").val() == '')  {
+                $(".chk_is_unique_container").prop('checked', true);
+            }
+        },100);
+
+        $(document).ready(function () {
+            $("#custom-tabs-one-tab .nav-item").on('click',function(){
+                 var active_tab_id = $(this).find('.nav-link').attr('id');
+                 if(active_tab_id == 'custom-tabs-live-tab') {
+                    $("#streamer-result-table").find('.streamer_row.live_streamer').removeClass('disabled_move');
+                    $("#streamer-result-table").find('.streamer_row.offline_streamer').addClass('disabled_move');
+                 } else if(active_tab_id == 'custom-tabs-offline-tab') {
+                    $("#streamer-result-table").find('.streamer_row.live_streamer').addClass('disabled_move');
+                    $("#streamer-result-table").find('.streamer_row.offline_streamer').removeClass('disabled_move');
+                }
+            });
+        });
+
+    </script>
+{% endblock %}

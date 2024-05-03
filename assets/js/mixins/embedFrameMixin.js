@@ -12,19 +12,24 @@ export default {
   },
   methods: {
     mouseEntered() {
+      // console.log('In mouseEntered');
       this.isCursorHere = true;
+      // console.log('this.isCursorHere 1', this.isCursorHere);
       setTimeout(() => {
+        // console.log('this.isCursorHere 2', this.isCursorHere);
         if (this.isCursorHere) {
+          // console.log('Innn');
           this.setEmbedPosition();
           this.$root.$emit("close-other-layouts", this.embedData.elementId);
           this.isEmbedVisible = true;
           if (this.$refs.embed)
             this.$refs.embed.startPlayer();
         }
-      }, 1000); // user cursor should be under block for this time period
+      }, 30); // user cursor should be under block for this time period
     },
 
     mouseLeave() {
+      // console.log('In mouseLeave');
       this.isCursorHere = false;
     },
 
@@ -97,8 +102,8 @@ export default {
     },
 
     setEmbedSizes() {
-      this.embedWidth = window.innerWidth > 1279 ? 400 : 300;
-      this.embedHeight = window.innerWidth > 1279 ? 350 : 200;
+      this.embedWidth = window.innerWidth > 1279 ? 400 : 355;
+      this.embedHeight = window.innerWidth > 1279 ? 350 : 311;
     },
     startDragging(e) {
       this.$root.$emit('close-other-layouts');

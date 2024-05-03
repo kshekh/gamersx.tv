@@ -38,7 +38,7 @@
           class="
             mr-1.5
             xl:mr-3
-            flex-shrink-0
+            shrink-0
             w-36
             md:w-28
             xl:w-48

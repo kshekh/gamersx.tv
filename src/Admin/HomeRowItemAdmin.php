@@ -9,7 +9,7 @@ use App\Entity\HomeRowItem;
 use App\Form\TopicType;
 use App\Form\SortAndTrimOptionsType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\{ ChoiceType, HiddenType, TimeType };
+use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, TimeType, TimezoneType};
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\CallbackTransformer;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -29,11 +29,20 @@ final class HomeRowItemAdmin extends AbstractAdmin
     {
         /** @var ProxyQuery $query */
         $query = parent::createQuery($context);
+        $rootAlias = $query->getRootAliases()[0];
 
-        return $query
+        $query
             ->setSortOrder('ASC')
-            ->setSortBy([], ['fieldName' => 'sortIndex'])
-            ;
+            ->setSortBy([], ['fieldName' => 'sortIndex']);
+
+        $query->where($query->expr()->andX(
+            $query->expr()->eq($rootAlias.'.itemType', ':itemType'),
+            $query->expr()->isNull($rootAlias.'.playlistId')
+        ));
+        $query->orWhere($rootAlias.'.itemType != :itemType');
+        $query->setParameter(':itemType', 'youtube_video');
+
+        return $query;
     }
 
     protected $datagridValues = array(
@@ -73,13 +82,30 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('homeRow')
             ->add('isPublished')
             ->add('isPartner')
-            ;
+            ->add('is_unique_container', null, [
+                'field_options' => ['expanded' => false,'choices'=>['no'=>1,'yes'=>0]],
+            ]);
     }
 
     protected function configureListFields(ListMapper $listMapper): void
     {
+        $homeRows = $this->getModelManager()->findBy(HomeRow::class);
+        $homeRowsObjects = [];
+        $homeRowsTitles = [];
+        $homeRowsIds = [];
+
+        foreach ($homeRows as $homeRow) {
+            $homeRowsObjects[$homeRow->getId()] = $homeRow;
+            $homeRowsTitles[$homeRow->getId()] = $homeRow->getTitle();
+            $homeRowsIds[$homeRow->getId()] = $homeRow->getId();
+        }
+
+
         $listMapper
-            ->add('homeRow', null, [
+            ->add('homeRow', 'choice', [
+                'editable' => true,
+                'class' => HomeRow::class,
+                'choices' => $homeRowsTitles,
                 'sortable' => false,
             ])
             ->add('label', null, [
@@ -112,6 +138,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPartner', null, [
                 'sortable' => false
             ])
+            ->add('timezone', null, [
+                'sortable' => false
+            ])
             ->add('isPublishedStart', null, [
                 'editable' => true,
                 'sortable' => false
@@ -119,6 +148,11 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPublishedEnd', null, [
                 'editable' => true,
                 'sortable' => false
+            ])
+            ->add('is_unique_container', ChoiceType::class, [
+                'editable' => true,
+                'sortable' => false,
+                'template'=> 'homerowitem/column_is_unique_container.html.twig'
             ])
             ->add('_action', null, [
                 'actions' => [
@@ -213,6 +247,13 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('topic', TopicType::class, [
                 'required' => false,
             ])
+            ->add('is_unique_container',null,[
+                'label' => null,
+                'attr' => [
+                    'class' => 'chk_is_unique_container',
+                ],
+                'label_attr' => array('class' => 'switch')
+            ])
             ->add('sortAndTrimOptions', SortAndTrimOptionsType::class, [
                 'label' => 'Sort and Trim Options',
                 'required' => false,
@@ -223,31 +264,35 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPublished', null, [
                 'help' => 'Current Server Time: ' . date('H:i')
             ])
+            ->add('timezone', TimezoneType::class, ['required' => false])
             ->add('isPublishedStart', TimeType::class, [
-                'label'=> 'Publish Start Time',
+                'label' => 'Publish Start Time',
                 'required' => false,
-                'input'  => 'timestamp',
+                'input' => 'string',
+                'input_format' => 'H:i:s',
                 'widget' => 'single_text',
-                'model_timezone' => 'America/Los_Angeles',
-                'view_timezone' => 'UTC',
-                'attr'=> [
+//                'model_timezone' => 'America/Los_Angeles',
+//                'view_timezone' => 'UTC',
+                'attr' => [
                     'class' => 'timepicker',
-                    'title'=> "Start timepicker for published",
+                    'title' => "Start timepicker for published",
                 ]
             ])
             ->add('isPublishedEnd', TimeType::class, [
-                'label'=> 'Publish End Time',
+                'label' => 'Publish End Time',
                 'required' => false,
-                'input'  => 'timestamp',
+                'input' => 'string',
+                'input_format' => 'H:i:s',
                 'widget' => 'single_text',
-                'model_timezone' => 'America/Los_Angeles',
-                'view_timezone' => 'UTC',
-                'attr'=> [
+//                'model_timezone' => 'America/Los_Angeles',
+//                'view_timezone' => 'UTC',
+                'attr' => [
                     'class' => 'timepicker',
-                    'title'=> "End timepicker for published",
+                    'title' => "End timepicker for published",
                 ]
             ])
             ->add('isPartner')
+
             ->getFormBuilder()->addModelTransformer(new CallbackTransformer(
                 // Use the array in the form
                 function ($valuesAsArray) {
@@ -262,9 +307,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
 
                     return $homeRowItem;
                 }
-            ))
-            ;
-
+            ));
     }
 
     protected function configureShowFields(ShowMapper $showMapper): void
@@ -286,8 +329,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('partner')
             ->add('description')
             ->add('isPublished')
-            ->add('isPartner')
-            ;
+            ->add('isPartner');
     }
 
     protected function configureBatchActions($actions)
@@ -306,10 +348,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
         $collection
-            ->add('reorder', $this->getRouterIdParameter().'/reorder')
+            ->add('reorder', $this->getRouterIdParameter() . '/reorder')
             ->add('importForm')
-            ->add('import')
-            ;
+            ->add('import');
     }
 
     public function alterNewInstance(object $instance): void
@@ -325,5 +366,4 @@ final class HomeRowItemAdmin extends AbstractAdmin
             }
         }
     }
-
 }

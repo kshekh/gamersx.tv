@@ -3,13 +3,15 @@
 namespace App\Entity;
 
 use App\Model\PartneredInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-
+use App\Repository\HomeRowItemRepository;
 /**
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass=HomeRowItemRepository::class)
  * @Vich\Uploadable
  */
 class HomeRowItem implements PartneredInterface
@@ -39,10 +41,10 @@ class HomeRowItem implements PartneredInterface
     const TYPE_POPULAR = 'popular';
     const TYPE_YOUTUBE = 'youtube';
     const TYPE_LINK = 'link';
-    const TYPE_TWITCH_VIDEO = 'twitch-video';
-    const TYPE_TWITCH_PLAYLIST = 'twitch-playlist';
-    const TYPE_YOUTUBE_VIDEO = 'youtube-video';
-    const TYPE_YOUTUBE_PLAYLIST = 'youtube-playlist';
+    const TYPE_TWITCH_VIDEO = 'twitch_video';
+    const TYPE_TWITCH_PLAYLIST = 'twitch_playlist';
+    const TYPE_YOUTUBE_VIDEO = 'youtube_video';
+    const TYPE_YOUTUBE_PLAYLIST = 'youtube_playlist';
     /**
      * @ORM\Column(type="string", length=32)
      */
@@ -149,22 +151,17 @@ class HomeRowItem implements PartneredInterface
     private $isPublished;
 
     /**
-     * @ORM\Column(name="isPublishedStart", type="integer", nullable=true)
-     *
-     * @Assert\Expression(
-     *     "this.getIsPublishedStart() <= this.getIsPublishedEnd()",
-     *     message="Start time should be less than end date!"
-     * )
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $timezone;
+
+    /**
+     * @ORM\Column(name="isPublishedStart",type="string", length=255, nullable=true)
      */
     private $isPublishedStart;
 
     /**
-     * @ORM\Column(name="isPublishedEnd", type="integer", nullable=true)
-     *
-     * @Assert\Expression(
-     *     "this.getIsPublishedStart() <= this.getIsPublishedEnd()",
-     *     message="Start time should be less than end date!"
-     * )
+     * @ORM\Column(name="isPublishedEnd", type="string", length=255, nullable=true)
      */
     private $isPublishedEnd;
 
@@ -178,6 +175,21 @@ class HomeRowItem implements PartneredInterface
      * @ORM\Column(type="boolean", options={"default" : 0})
      */
     private $isPartner;
+
+    /**
+     * @ORM\OneToMany(targetEntity=HomeRowItemOperation::class, mappedBy="home_row_item")
+     */
+    private $homeRowItemOperations;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default" : 1,"comment":"0 = unique,1 = allow repeat"})
+     */
+    private $is_unique_container;
+
+    public function __construct()
+    {
+        $this->homeRowItemOperations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -299,7 +311,7 @@ class HomeRowItem implements PartneredInterface
     public function setCustomArtFile(?File $customArtFile): self
     {
         $this->customArtFile = $customArtFile;
-        if (null !== $customArtFile ) {
+        if (null !== $customArtFile) {
             $this->updatedAt = new \DateTime('now');
         }
 
@@ -326,7 +338,7 @@ class HomeRowItem implements PartneredInterface
     public function setOverlayArtFile(?File $overlayArtFile): self
     {
         $this->overlayArtFile = $overlayArtFile;
-        if (null !== $overlayArtFile ) {
+        if (null !== $overlayArtFile) {
             $this->updatedAt = new \DateTime('now');
         }
 
@@ -432,28 +444,37 @@ class HomeRowItem implements PartneredInterface
         return $this;
     }
 
-    public function getIsPublishedStart(): ?int
+    public function getTimezone(): ?string
+    {
+        return $this->timezone;
+    }
+
+    public function setTimezone(?string $timezone): self
+    {
+        $this->timezone = $timezone;
+
+        return $this;
+    }
+    public function getIsPublishedStart(): ?string
     {
         return $this->isPublishedStart;
     }
 
-    public function setIsPublishedStart(?int $isPublishedStart): self
+    public function setIsPublishedStart(?string $isPublishedStart): self
     {
-        $isPublishedStartTime = 0;
-        $this->isPublishedStart = !empty($isPublishedStart) ? $isPublishedStart : $isPublishedStartTime;
+        $this->isPublishedStart = $isPublishedStart;
 
         return $this;
     }
 
-    public function getIsPublishedEnd(): ?int
+    public function getIsPublishedEnd(): ?string
     {
         return $this->isPublishedEnd;
     }
 
-    public function setIsPublishedEnd(?int $isPublishedEnd): self
+    public function setIsPublishedEnd(?string $isPublishedEnd): self
     {
-        $isPublishedEndTime = 86400;
-        $this->isPublishedEnd = !empty($isPublishedEnd) ? $isPublishedEnd : $isPublishedEndTime;
+        $this->isPublishedEnd = $isPublishedEnd;
 
         return $this;
     }
@@ -473,11 +494,10 @@ class HomeRowItem implements PartneredInterface
     /**
      * @return \DateTime
      */
-     public function getUpdatedAt(): ?\DateTime
+    public function getUpdatedAt(): ?\DateTime
     {
         return $this->updatedAt;
     }
-
     /**
      * @param \DateTime $updatedAt
      */
@@ -486,4 +506,45 @@ class HomeRowItem implements PartneredInterface
         $this->updatedAt = $updatedAt;
     }
 
+    /**
+     * @return Collection<int, HomeRowItemOperation>
+     */
+    public function getHomeRowItemOperations(): Collection
+    {
+        return $this->homeRowItemOperations;
+    }
+
+    public function addHomeRowItemOperation(HomeRowItemOperation $homeRowItemOperation): self
+    {
+        if (!$this->homeRowItemOperations->contains($homeRowItemOperation)) {
+            $this->homeRowItemOperations[] = $homeRowItemOperation;
+            $homeRowItemOperation->setHomeRowItem($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHomeRowItemOperation(HomeRowItemOperation $homeRowItemOperation): self
+    {
+        if ($this->homeRowItemOperations->removeElement($homeRowItemOperation)) {
+            // set the owning side to null (unless already changed)
+            if ($homeRowItemOperation->getHomeRowItem() === $this) {
+                $homeRowItemOperation->setHomeRowItem(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getIsUniqueContainer(): ?bool
+    {
+        return $this->is_unique_container;
+    }
+
+    public function setIsUniqueContainer(bool $is_unique_container): self
+    {
+        $this->is_unique_container = $is_unique_container;
+
+        return $this;
+    }
 }

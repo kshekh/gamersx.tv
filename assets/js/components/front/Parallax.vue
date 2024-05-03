@@ -1,5 +1,5 @@
 <template>
-  <div @swiped-left="forward()" @swiped-right="back()">
+  <div>
     <div
       class="
         flex
@@ -40,7 +40,7 @@
       <!--      </div>-->
     </div>
 
-    <div class="flex" style="align-items: center;">
+    <div :class="{'relative':isMobileDevice,'flex':true}" style="align-items: center;">
       <div ref="backArrow" class="w5-center">
         <slider-arrow
           :isNext="false"
@@ -50,12 +50,12 @@
       </div>
       <div
         @mousemove="this.triggerDragging"
-        @mousedown="this.startDragging"
+        v-on="!isMobileDevice ? { mousedown: this.startDragging } : {}"
         @mouseup="this.stopDragging"
         @mouseleave="this.stopDragging"
         ref="channelBox"
         style="width: 100%"
-        class="flex overflow-hidden w-full custom-smooth-scroll pt-18 md:pt-12 xl:pt-18 pb-18 md:pb-14"
+        class="flex overflow-hidden w-full custom-smooth-scroll pt-10 md:pt-16 lg:pt-12 pb-12 md:pb-14 lg:pb-18"
       >
         <div
           v-for="(channel, index) in displayChannels"
@@ -63,11 +63,12 @@
           ref="channelDivs"
           :style="customBg(channel)"
           class="
-          flex-shrink-0
+          shrink-0
           bg-cover bg-no-repeat bg-center
-          xl:max-w-485
-          w-full md:w-1/3 xl:w-full
-          h-41 md:h-22 xl:h-41
+          w-90
+          h-30
+          xl:w-150
+          xl:h-50
           bg-black
         "
         >
@@ -117,6 +118,7 @@ export default {
       displayChannels: [],
       allowScrolling: false,
       max_scroll_left: 0,
+      isMobileDevice: false,
     };
   },
   methods: {
@@ -192,15 +194,16 @@ export default {
     customBg: function (channel) {
       if (channel.customArt) {
         return {
-          backgroundImage: "url(" + channel.customArt + ")",
-          aspectRatio: 3/1,
-          height:'200px',
-          width:'600px',
+          backgroundImage: "url(" + channel.customArt + ")"
         };
+      }
+    },
+    setIsMobileDevice:function() {
+      const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
+      if(checkDeviceType) {
+        this.isMobileDevice = true;
       } else {
-        return {aspectRatio: 3/1,
-          height:'200px',
-          width:'600px',};
+        this.isMobileDevice = false;
       }
     },
   },
@@ -208,8 +211,12 @@ export default {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
     this.$refs.channelBox.addEventListener('scroll', this.handleScroll);
     this.$refs.channelBox.scrollLeft = 0;
+    this.setIsMobileDevice();
   },
   updated: function() {
+    if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels.filter(this.showChannel))){
+      this.displayChannels = this.settings.channels.filter(this.showChannel);
+    }
     this.allowScrolling =
       this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
     this.max_scroll_left = this.$refs.channelBox.scrollWidth - this.$refs.channelBox.clientWidth;

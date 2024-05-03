@@ -34,14 +34,13 @@
           <div
             ref="channelBox"
             class="
-              mr-5
-              md:mr-0
+              py-2.5
+              sm:py-0
+              sm:mr-20
               w-full
               h-full
               flex flex-col
               justify-center
-              py-16
-              md:py-0
             "
           >
             <div
@@ -84,7 +83,7 @@
 
         <div
           v-show="isControlsShown"
-          class="ml-2 md:ml-5 xl:ml-8 flex-shrink-0 relative z-10 flex"
+          class="pr-8 sm:pr-0 ml-2 md:ml-5 xl:ml-8 shrink-0 relative z-10 flex"
         >
          <slider-arrow-big
           :isNext="false"
@@ -197,6 +196,11 @@ export default {
   },
   mounted: function () {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
+  },
+  updated: function () {
+    if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels.filter(this.showChannel))){
+      this.displayChannels = this.settings.channels.filter(this.showChannel);
+    }
   },
 };
 </script>

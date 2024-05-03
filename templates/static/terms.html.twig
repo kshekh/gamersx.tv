@@ -5,19 +5,6 @@
 {% endblock %}
 
 {% block body %}
-    <style>
-        .text-red-600, .text-xl, strong {
-            color: #e11616;
-        }
-
-        li::marker {
-            color: #e11616;
-        }
-
-        p, .list-inside {
-            color: #6441A5;
-        }
-    </style>
     <div class="container w-full mx-auto px-6 space-y-6">
         <div class="text-4xl pt-6 text-red-600">Terms of Service</div>
         <div>
@@ -738,6 +725,7 @@
                                                                    href="https://www.twitch.tv/p/en/legal/privacy-notice/"
                                                                    target="_terms">Privacy Policy</a>.</p>
         </div>
+        <a href="https://www.iubenda.com/terms-and-conditions/49149225" class="iubenda-nostyle iubenda-noiframe iubenda-embed iubenda-noiframe iub-body-embed" title="Terms and Conditions">Terms and Conditions</a><script type="text/javascript">(function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src="https://cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; if(w.addEventListener){w.addEventListener("load", loader, false);}else if(w.attachEvent){w.attachEvent("onload", loader);}else{w.onload = loader;}})(window, document);</script>
         <div class="text-xl py-6 underline">
             <a href="{{ path('home') }}">
                 Return Home

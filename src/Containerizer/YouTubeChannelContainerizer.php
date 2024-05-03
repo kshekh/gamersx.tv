@@ -9,15 +9,25 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
 {
     private $homeRowItem;
     private $youtube;
+    private $entityManager;
 
-    public function __construct(HomeRowItem $homeRowItem, $youtube)
+    public function __construct(HomeRowItem $homeRowItem, $youtube,$entityManager)
     {
         $this->homeRowItem = $homeRowItem;
         $this->youtube = $youtube;
+        $this->entityManager = $entityManager;
     }
 
     public function getContainers(): Array
     {
+        $topic_id = $this->homeRowItem->getTopic()['topicId'];
+        $check_unique_item =  $this->entityManager->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
+
+        $is_unique_container =  $this->homeRowItem->getIsUniqueContainer();
+        if($is_unique_container == 0 && (isset($check_unique_item) && !empty($check_unique_item) && count($check_unique_item) > 1 && $check_unique_item[0]['id'] != $this->homeRowItem->getId())) {
+            return Array();
+        }
+
         $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
         $youtube = $this->youtube;
@@ -36,15 +46,19 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
         $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
         $description = $homeRowItem->getDescription();
         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
-
+        $liveViewers = 0;
+        if ($broadcast) {
+            $videoDetails = $youtube->getVideoInfo($broadcast->getId()->getVideoId())->getItems();
+            $liveViewers = $videoDetails[0]->liveStreamingDetails->concurrentViewers;
+        }
         $isPublished = $homeRowItem->getIsPublished();
 
         if (!$isPublished) {
             return Array();
         }
 
-        $isPublishedStartTime = $homeRowItem->getIsPublishedStart();
-        $isPublishedEndTime = $homeRowItem->getIsPublishedEnd();
+        $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
+        $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
 
         if (
             !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
@@ -108,7 +122,7 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
                 [
                     'info' => $info,
                     'broadcast' => $broadcast,
-                    'liveViewerCount' => $broadcast ? $broadcast['viewer_count'] : 0,
+                    'liveViewerCount' => $liveViewers,
                     'viewedCount' => isset($info['statistics_view_count']) ? (int) $info['statistics_view_count'] : 0,
                     'showOnline' => $broadcast !== NULL,
                     'onlineDisplay' => [

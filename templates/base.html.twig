@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html>
 	<head>
+        <!--  Privacy Controls and Cookie Solution -->
+        <script type="text/javascript">
+            var _iub = _iub || [];
+            _iub.csConfiguration = {"applyGdprForCH":false,"askConsentAtCookiePolicyUpdate":true,"countryDetection":true,"enableFadp":true,"enableLgpd":true,"enableTcf":true,"enableUspr":true,"floatingPreferencesButtonDisplay":false,"gdprAppliesGlobally":false,"googleAdditionalConsentMode":true,"lang":"en","lgpdAppliesGlobally":false,"logLevel":"info","perPurposeConsent":true,"preferenceCookie":{"expireAfter":180},"siteId":3228129,"showBannerForUS":true,"tcfPurposes":{"2":"consent_only","3":"consent_only","4":"consent_only","5":"consent_only","6":"consent_only","7":"consent_only","8":"consent_only","9":"consent_only","10":"consent_only"},"usprPurposes":"s,sh,adv","whitelabel":false,"cookiePolicyId":49149225, "banner":{ "acceptButtonDisplay":true,"backgroundOverlay":true,"closeButtonDisplay":false,"customizeButtonDisplay":true,"explicitWithdrawal":true,"listPurposes":true,"position":"float-top-center","prependOnBody":true,"rejectButtonDisplay":true,"showPurposesToggles":true }};
+        </script>
+        <script type="text/javascript" src="https://cs.iubenda.com/autoblocking/3228129.js"></script>
+        <script type="text/javascript" src="//cdn.iubenda.com/cs/tcf/stub-v2.js"></script>
+        <script type="text/javascript" src="//cdn.iubenda.com/cs/tcf/safe-tcf-v2.js"></script>
+        <script type="text/javascript" src="//cdn.iubenda.com/cs/gpp/stub.js"></script>
+        <script type="text/javascript" src="//cdn.iubenda.com/cs/iubenda_cs.js" charset="UTF-8" async></script>
+        <!-- End Privacy Controls and Cookie Solution -->
 		<meta charset="UTF-8">
 		<title>
 			{% block title %}GamersX
@@ -19,7 +30,7 @@
             gtag('config', 'G-SRMHMJDY8E');
         </script>
         <link rel="icon" type="image/x-icon" href="/images/favicon.png">
-		<script src="https://cdn.tailwindcss.com"></script>
+		<!--<script src="https://cdn.tailwindcss.com"></script>-->
 		{% block javascripts %}
 			<!-- Load the Twitch embed script -->
 			<script src="https://embed.twitch.tv/embed/v1.js"></script>
@@ -27,19 +38,204 @@
 			{{ encore_entry_script_tags('app') }}
 			{{ encore_entry_script_tags('main') }}
 		{% endblock %}
+        {% set get_active_theme = master_theme.findOneBy({'status':1}) %}
+        {% set get_theme_setting = [] %}
+        {% if get_active_theme is defined and get_active_theme.id is defined %}
+            {% set get_theme_setting = theme_setting.findBy({'master_theme':get_active_theme.id}) %}
+        {% endif %}
+        {% set get_theme_setting_array = [] %}
+        {% for ts_data in get_theme_setting %}
+            {% set get_theme_setting_array = get_theme_setting_array|merge({ (ts_data.name) :ts_data.value}) %}
+        {% endfor %}
+        {% set site_header_background = (get_theme_setting_array['header_background'] is defined and get_theme_setting_array['header_background']!='')? aws_s3_custom_uri_prefix~'/'~get_theme_setting_array['header_background']:'' %}
+        {% set site_body_background = (get_theme_setting_array['body_background'] is defined and get_theme_setting_array['body_background']!='')? aws_s3_custom_uri_prefix~'/'~get_theme_setting_array['body_background']:'' %}
+        {% set site_footer_background = (get_theme_setting_array['footer_background'] is defined and get_theme_setting_array['footer_background']!='')? aws_s3_custom_uri_prefix~'/'~get_theme_setting_array['footer_background']: asset('images/footer-border.png') %}
+        {% set header_background_type = get_theme_setting_array['header_background_type']??'' %}
+        {% set body_background_type = get_theme_setting_array['body_background_type']??'' %}
+        {% set footer_background_type = get_theme_setting_array['footer_background_type']??'' %}
+        {% set font_type = get_theme_setting_array['font_type']??'' %}
+
+        {% set current_path = app.request.get('_route') %}
         <style>
+            :root {
+                --site_header_color: {{ (get_theme_setting_array['header_color'] is defined and get_theme_setting_array['header_color']!='')?get_theme_setting_array['header_color']:'black' }};
+                --site_body_color: {{ (get_theme_setting_array['body_color'] is defined and get_theme_setting_array['body_color']!='')?get_theme_setting_array['body_color']:'black' }};
+                --site_footer_color: {{ (get_theme_setting_array['footer_color'] is defined and get_theme_setting_array['footer_color']!='')?get_theme_setting_array['footer_color']:'black' }};
+                --site_color: {{ (get_theme_setting_array['color'] is defined and get_theme_setting_array['color']!='')?get_theme_setting_array['color']:'white' }};
+                --site_border_color: {{ (get_theme_setting_array['border_color'] is defined and get_theme_setting_array['border_color']!='')?get_theme_setting_array['border_color']:'#6441A5' }};
+                --site_border_width: {{ (get_theme_setting_array['border'] is defined and get_theme_setting_array['border']!='')?get_theme_setting_array['border']:'1' }}px;
+                --border_radius_top_left: {{ (get_theme_setting_array['border_radius_top_left'] is defined and get_theme_setting_array['border_radius_top_left']!='')?get_theme_setting_array['border_radius_top_left']:'20' }}px;
+                --border_radius_top_right: {{ (get_theme_setting_array['border_radius_top_right'] is defined and get_theme_setting_array['border_radius_top_right']!='')?get_theme_setting_array['border_radius_top_right']:'5' }}px;
+                --border_radius_bottom_right: {{ (get_theme_setting_array['border_radius_bottom_right'] is defined and get_theme_setting_array['border_radius_bottom_right']!='')?get_theme_setting_array['border_radius_bottom_right']:'20' }}px;
+                --border_radius_bottom_left: {{ (get_theme_setting_array['border_radius_bottom_left'] is defined and get_theme_setting_array['border_radius_bottom_left']!='')?get_theme_setting_array['border_radius_bottom_left']:'20' }}px;
+                --site_font_family: {{ (get_theme_setting_array['font_family'] is defined and get_theme_setting_array['font_family']!='')?get_theme_setting_array['font_family']:'' }};
+                --site_remote_font_name: {{ (get_theme_setting_array['remote_font_name'] is defined and get_theme_setting_array['remote_font_name']!='')?get_theme_setting_array['remote_font_name']:'' }};
+                --site_arrow_color: {{ (get_theme_setting_array['arrow_color'] is defined and get_theme_setting_array['arrow_color']!='')?get_theme_setting_array['arrow_color']:'#fff' }};
+                --site_numbered_row_color: {{ (get_theme_setting_array['numbered_row_color'] is defined and get_theme_setting_array['numbered_row_color']!='')?get_theme_setting_array['numbered_row_color']:'#bababa' }};
+                --site_numbered_row_outline_color: {{ (get_theme_setting_array['numbered_row_outline_color'] is defined and get_theme_setting_array['numbered_row_outline_color']!='')?get_theme_setting_array['numbered_row_outline_color']:'#595959' }};
+                --site_twitch_glow_color: {{ (get_theme_setting_array['twitch_glow_color'] is defined and get_theme_setting_array['twitch_glow_color']!='')?get_theme_setting_array['twitch_glow_color']:'rgba(100, 65, 165, 0.5)' }};
+                --site_youtube_glow_color: {{ (get_theme_setting_array['youtube_glow_color'] is defined and get_theme_setting_array['youtube_glow_color']!='')?get_theme_setting_array['youtube_glow_color']:'rgba(255, 0, 0, 0.6)' }};
+                --site_privacy_background_color: {{ (get_theme_setting_array['privacy_background_color'] is defined and get_theme_setting_array['privacy_background_color']!='')?get_theme_setting_array['privacy_background_color']:'#000' }};
+                --site_privacy_label_font_color: {{ (get_theme_setting_array['privacy_label_font_color'] is defined and get_theme_setting_array['privacy_label_font_color']!='')?get_theme_setting_array['privacy_label_font_color']:'#e11616' }};
+                --site_privacy_regular_font_color: {{ (get_theme_setting_array['privacy_regular_font_color'] is defined and get_theme_setting_array['privacy_regular_font_color']!='')?get_theme_setting_array['privacy_regular_font_color']:'#6441A5' }};
+				--site_mobile_embed_height: {{ (get_theme_setting_array['mobile_embed_height'] is defined and get_theme_setting_array['mobile_embed_height']!='')?get_theme_setting_array['mobile_embed_height']:'311' }}px;
+            }
+            .text-white, .text-grey, .elementor-button-text {
+                color: var(--site_color);
+            }
+            .text-stroke {
+                color: var(--site_numbered_row_color);
+            }
+            .text-stroke::before {
+                -webkit-text-stroke-color: var(--site_numbered_row_outline_color);
+            }
+            .cut-edge__wrapper--twitch {
+                filter: drop-shadow(0px 0px 6px var(--site_twitch_glow_color));
+            }
+            .cut-edge__wrapper--youtube {
+                filter: drop-shadow(0px 0px 10px var(--site_youtube_glow_color));
+            }
+
+            .elementor-button, .elementor-button-x, .query_input {
+                border-style: solid;
+                border-color: var(--site_border_color) !important;
+                border-width: var(--site_border_width);
+                border-radius: var(--border_radius_top_left) var(--border_radius_top_right) var(--border_radius_bottom_right) var(--border_radius_bottom_left);
+            }
+
+            .query_input > button > svg > path {
+                fill: var(--site_color);
+            }
+            .query_input:after {
+                background-color: unset;
+            }
+
+            .slider_arrow > svg > path {
+                fill: var(--site_arrow_color);
+                stroke: var(--site_arrow_color);
+            }
+            .slider_arrow_big > svg > path {
+                fill: var(--site_arrow_color);
+            }
+            {% if(header_background_type == 'color') %}
+                header {
+                    background-color: var(--site_header_color);
+                }
+            {% elseif(header_background_type == 'image') %}
+                header {
+                    position: relative;
+                }
+                .header_background {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: -1;
+                }
+            {% endif %}
+
+            {% if(body_background_type == 'color') %}
+                #app-body {
+                    background-color: var(--site_body_color);
+                }
+            {% elseif(body_background_type == 'image') %}
+                #app-body {
+                    background-image: url("{{ site_body_background }}");
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    background-position: center;
+                }
+            {% endif %}
+
+            {% if(footer_background_type == 'color') %}
+                footer {
+                    background-color: var(--site_footer_color);
+                }
+            {% elseif(footer_background_type == 'image') %}
+                footer {
+                    background-image: url("{{ site_footer_background }}");
+                    background-size: 100% 100%;
+                    background-repeat: no-repeat;
+                }
+            {% endif %}
+
+            {% if(current_path == 'terms' or current_path == 'privacy_policy') %}
+                #app-body {
+                    background-color: var(--site_privacy_background_color);
+                    background-image: none;
+                }
+
+                #app-body .text-red-600,
+                #app-body .text-xl,
+                #app-body strong,
+                #app-body h4,#app-body h5,
+                #app-body li::marker,
+                #app-body .text-heading
+                {
+                    color: var(--site_privacy_label_font_color);
+                }
+
+                #app-body table th,
+                #app-body table td {
+                    border-color: var(--site_privacy_regular_font_color);
+                }
+                #app-body p,
+                #app-body .list-inside,
+                #app-body table {
+                    color: var(--site_privacy_regular_font_color);
+                }
+				#iubenda_policy .box_primary {
+					background-color: inherit !important;
+					border:none !important;
+				}
+				#iubenda_policy h1, #iubenda_policy h2, #iubenda_policy h3 {
+					color: var(--site_privacy_label_font_color) !important;
+				}
+            {% endif %}
+
             .custom-smooth-scroll {
                 overflow-x: auto;
                 display: flex;
                 flex-wrap: nowrap;
-                scroll-behavior: smooth;
+                scroll-behavior: auto;
                 cursor: all-scroll;
             }
 
             .custom-smooth-scroll::-webkit-scrollbar {
                 display: none;
             }
+            .custom-embed-m{
+                height: var(--site_mobile_embed_height);
+            }
+            @media (max-width: 767px) {
+                .custom-header-btn .elementor-button-text {
+                    font-size: 10px;
+                }
+                .custom-header-btn {
+                    border:none;
+                    padding:3px;
+                    height:auto
+                }
+            }
         </style>
+
+        {% if(font_type == 'remote' and get_theme_setting_array['remote_font_url'] is defined and get_theme_setting_array['remote_font_url'] !='') %}
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="{{ get_theme_setting_array['remote_font_url']??'' }}" rel="stylesheet">
+            <style>
+                body {
+                    font-family: var(--site_remote_font_name);
+                }
+            </style>
+        {% elseif(font_type == 'local'  and get_theme_setting_array['font_family'] is defined and get_theme_setting_array['font_family'] !='') %}
+            <style>
+                body {
+                    font-family: var(--site_font_family);
+                }
+            </style>
+        {% endif %}
 
         <!-- Meta Pixel Code -->
         <script>
@@ -58,18 +254,26 @@
             <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=646138676835854&ev=PageView&noscript=1" />
         </noscript>
         <!-- End Meta Pixel Code -->
+
 	</head>
 	<body class="bg-black">
 		<div class="h-full flex flex-col">
+			{% set isLoggedIn = app.session.get('is_logged_in') %}
+			{% set isRequiredToLoginTwitch = app.session.get('login_required_to_connect_twitch') %}
+			{% set twitchUserInfo = app.session.get('twitch_user_info') %}
 			{% block header %}
 				<div class="w-full shadow-base">
 					<header
 						id="header"
 						class="flex items-center justify-between
-							px-4 md:px-6 xl:px-20 pb-3 md:pb-6 pt-6 xl:py-7
-							mx-auto max-w-full-hd"
+							px-4 md:px-5 xl:px-20 py-1 sm:py-2 md:py-4 xl:py-7
+							mx-auto max-w-full-hd max-w-hd-full-header"
 					>
-						<img src="/images/logo.png" class="flex-shrink-0 w-24 md:w-72 mr-3 md:mr-14 xl:mr-4"/>
+                        {% if(header_background_type == 'image') %}
+                            <img src="{{ site_header_background }}" class="shrink-0 w-24 md:w-72 mr-3 md:mr-14 xl:mr-4 header_background">
+                        {% endif %}
+                        {% set header_logo = (get_theme_setting_array['header_logo'] is defined and get_theme_setting_array['header_logo'] != '')? get_theme_setting_array['header_logo'] :'logo.png' %}
+                        <img src="{{ aws_s3_custom_uri_prefix~'/'~header_logo }}" class="shrink-0 w-22 sm:w-24 md:w-72 mr-3 md:mr-14 xl:mr-4"/>
 						{#
 						<div class="flex flex-grow items-center justify-between xl:justify-end ml-auto">
 							<nav class="hidden xl:block">
@@ -91,7 +295,7 @@
 							<div class="w-full xl:max-w-xs
 								mr-9 md:mr-24 xl:mr-8
 								cut-edge__wrapper">
-								<div class="h-7 md:h-8 xl:h-9 cut-edge__clipped cut-edge__clipped--md-border cut-edge__clipped--twitch cut-edge__clipped-bottom-left-md flex items-center">
+								<div class="query_input h-7 md:h-8 xl:h-9 cut-edge__clipped cut-edge__clipped--md-border cut-edge__clipped--twitch cut-edge__clipped-bottom-left-md flex items-center">
 									<input id="query"
 										class="
 										w-full bg-transparent
@@ -116,16 +320,20 @@
 								</div>
 							</div>
                             #}
-							{% if is_granted('ROLE_SONATA_ADMIN') %}
-							<button onclick="window.location.href='/admin/dashboard';" class="hidden xl:block">
-								<svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-									<path d="M35.8493 6.15074C31.8829 2.1844 26.6092 0 21 0C15.3905 0 10.1171 2.1844 6.15074 6.15074C2.1844 10.1171 0 15.3905 0 21C0 26.6092 2.1844 31.8829 6.15074 35.8493C10.1171 39.8156 15.3905 42 21 42C26.6092 42 31.8829 39.8156 35.8493 35.8493C39.8156 31.8829 42 26.6092 42 21C42 15.3905 39.8156 10.1171 35.8493 6.15074ZM10.5279 36.2895C11.4062 31.2324 15.7885 27.5023 21 27.5023C26.2119 27.5023 30.5938 31.2324 31.4721 36.2895C28.4905 38.3381 24.883 39.5391 21 39.5391C17.117 39.5391 13.5095 38.3381 10.5279 36.2895ZM14.3228 18.3641C14.3228 14.682 17.3182 11.6869 21 11.6869C24.6818 11.6869 27.6772 14.6823 27.6772 18.3641C27.6772 22.0459 24.6818 25.0413 21 25.0413C17.3182 25.0413 14.3228 22.0459 14.3228 18.3641ZM33.6037 34.5826C32.9413 32.2283 31.6259 30.0923 29.7822 28.4238C28.651 27.4 27.3635 26.5922 25.9792 26.0228C28.4812 24.3908 30.1385 21.5675 30.1385 18.3641C30.1385 13.3253 26.0388 9.22595 21 9.22595C15.9612 9.22595 11.8618 13.3253 11.8618 18.3641C11.8618 21.5675 13.5191 24.3908 16.0208 26.0228C14.6368 26.5922 13.349 27.3997 12.2178 28.4235C10.3744 30.092 9.05869 32.228 8.39635 34.5823C4.7482 31.1943 2.46094 26.3596 2.46094 21C2.46094 10.7775 10.7775 2.46094 21 2.46094C31.2225 2.46094 39.5391 10.7775 39.5391 21C39.5391 26.3599 37.2518 31.1946 33.6037 34.5826Z" fill="#6441A5"/>
-								</svg>
-							</button>
+                        {% if  app.request.schemeAndHttpHost != "https://m.gamersx.tv" %}
+							{% if isLoggedIn and  isRequiredToLoginTwitch == false %}
+							<a href="https://www.twitch.tv/settings/profile" class="hidden xl:block">
+								<img src="{{ twitchUserInfo['profile_image_url'] }}" class="twitch-profile-picture">
+							</a>
+							{% else %}
+							<a href="api/twitch-login" class="custom-header-btn flex items-center elementor-button text-[5px] sm:text-base py-1 px-2 sm:py-0 sm:px-[40px] sm:h-10 " role="button" onmouseover="changeBtnColor()" onmouseout="changeNormalBtnColor()">
+								<span class="elementor-button-text">Login With Twitch</span>
+								<img src="/images/twitch-icon-white.png" class="sm:ml-2 w-3.5 sm:w-2.5 h-3.5 sm:h-2.5 sm:w-5 sm:h-5" id="twitch-btn-icon">
+							</a>
 							{% endif %}
-
+                        {% endif %}
 							{#
-							<button class="jsOpenBurgerButton block xl:hidden w-7 md:w-11 flex-shrink-0">
+							<button class="jsOpenBurgerButton block xl:hidden w-7 md:w-11 shrink-0">
 								<span class="block h-0.75 w-full bg-purple"></span>
 								<span class="block h-0.75 w-full bg-purple my-1 md:my-1.5"></span>
 								<span class="block h-0.75 w-full bg-purple"></span>
@@ -135,7 +343,7 @@
 						fixed top-0 left-0
 						w-full h-full
 						transform translate-x-full
-						z-50 bg-black bg-opacity-80
+						z-50 bg-black/80
 						flex justify-end
 						transition-all
 						duration-500
@@ -167,13 +375,28 @@
 						</div>
 						#}
 					</header>
+					{% for message in app.flashes('loggedin') %}
+					<div id="toast-warning" class="fixed top-5 right-5 flex items-center w-full max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800" role="alert">
+						<div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-orange-500 bg-orange-100 rounded-lg dark:bg-orange-700 dark:text-orange-200">
+							<svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+							<span class="sr-only">Warning icon</span>
+						</div>
+						<div class="ml-3 text-sm font-normal">{{ message }}</div>
+						<button type="button" onclick="closeToast()" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" data-dismiss-target="#toast-warning" aria-label="Close">
+							<span class="sr-only">Close</span>
+							<svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+						</button>
+					</div>
+
+					<div class="max-w-xs bg-white border rounded-md shadow-lg dark:bg-gray-800 dark:border-gray-700" role="alert">
+					{% endfor %}
 				</div>
 			{% endblock %}
-			<div class="w-full mx-auto flex-grow">
+			<div id="app-body" class="w-full mx-auto flex-grow">
 				{% block body %}{% endblock %}
 			</div>
 			{% block footer %}
-				<footer class="mb-2 bg-full bg-left-bottom bg-no-repeat xl:pt-10" style="background-image: url('/images/footer-border.png')">
+				<footer class="mb-2 bg-full bg-left-bottom bg-no-repeat xl:pt-10">
 					<div>
 						<div class="px-4 md:px-6 xl:px-20 py-5 pb-3 mx-auto max-w-full-hd flex flex-col items-center md:relative md:py-10 xl:py-12">
 							<ul class="flex items-center space-x-1 mb-2 md:mb-0 md:absolute md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 md:space-x-2 xl:space-x-4">
@@ -197,7 +420,7 @@
 										</svg>
 									</a>
 								</li>
-								<li>
+								{# <li>
 									<a class="block" href="https://www.youtube.com/@gamersxtv">
 										<svg class="w-6 h-6 md:w-7 md:h-7 xl:w-10 xl:h-10 hover:opacity-80" viewbox="0 0 16 16" fill="#6441A5" xmlns="http://www.w3.org/2000/svg">
 											<g clip-path="url(#clip0)">
@@ -206,7 +429,7 @@
 											</g>
 										</svg>
 									</a>
-								</li>
+								</li> #}
 								<li>
 									<a class="block" href="https://www.twitch.tv/tvGamersx">
 										<svg class="w-6 h-6 md:w-7 md:h-7 xl:w-10 xl:h-10 hover:opacity-80" viewbox="0 0 16 16" fill="#6441A5" xmlns="http://www.w3.org/2000/svg">
@@ -233,9 +456,12 @@
 
 
 								<div class="flex items-center space-x-1">
-{#									<a class="text-grey text-xxs md:text-sm" href="#">Privacy Policy</a>#}
-{#									<span class="w-1px h-2 bg-grey md:h-3"></span>#}
 									<a class="text-grey text-xxs md:text-sm" href="{{ path('terms') }}">Terms of Service</a>
+                                    <span class="w-1px h-2 bg-grey md:h-3"></span>
+                                    <a class="text-grey text-xxs md:text-sm" href="{{ path('privacy_policy') }}">Privacy Policy</a>
+                                    <span class="w-1px h-2 bg-grey md:h-3"></span>
+                                    <!-- This button added to allow user to select privacy and hide US widget from middle of screen-->
+                                    <a href="#" class="text-grey text-xxs md:text-sm iubenda-advertising-preferences-link">Your Privacy Choices</a>
 								</div>
 							</div>
 						</div>
@@ -245,6 +471,20 @@
 		</div>
 		</body>
     <script>
+		function closeToast() {
+			document.getElementById("toast-warning").style.display = "none";
+		}
+
+		function changeBtnColor(event) {
+			var $imgForBtn = event.currentTarget.querySelector(".twitch-btn-icon");
+			$imgForBtn.setAttribute("src", "/images/twitch-icon-black.png");
+		}
+
+		function changeNormalBtnColor(event) {
+			var $imgForBtn = event.currentTarget.querySelector(".twitch-btn-icon");
+			$imgForBtn.setAttribute("src", "/images/twitch-icon-white.png");
+		}
+
         /*
         window.onload = function () {
             const draggableRows = document.getElementsByClassName('custom-smooth-scroll');
@@ -281,10 +521,8 @@
          */
     </script>
     <script>
-        {% set not_mobile_domain = redirect_url not in app.request.schemeAndHttpHost %}
-        if ({{ not_mobile_domain }} && navigator.userAgent.toLowerCase().match(/mobile/i)) {
-            if ("{{ app.environment }}" !== "dev")
-                window.location.replace("{{ redirect_url }}");
+        if ("{{ app.environment }}" != "dev" && "{{ app.request.schemeAndHttpHost }}" == "https://gamersx.tv"  && navigator.userAgent.toLowerCase().match(/mobile/i)){
+            window.location.replace("{{ redirect_url }}");
         }
     </script>
 	</html>
