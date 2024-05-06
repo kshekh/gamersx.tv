@@ -60,6 +60,7 @@
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               alt="Embed's Custom Overlay"
               :src="overlay"
+              onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
             />
           </a>
         </div>
@@ -161,7 +162,7 @@
       >
         <img
           v-if="showArt && image"
-          :src="image.url"
+          :src="image.url || 'https://placehold.co/600x400'"
           class="-translate-y-1/2 relative top-1/2 transform w-30p h-full object-cover"
         />
 

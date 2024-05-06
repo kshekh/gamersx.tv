@@ -21,6 +21,7 @@
             v-show="isOverlayVisible"
             alt="Embed's Custom Overlay"
             :src="overlay"
+            onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
           />
           <component
             v-show="isEmbedVisible"
