@@ -10,8 +10,7 @@
         <div
           v-if="showEmbed && embedData"
           class="w-full h-full relative flex flex-col"
-          @mouseenter="mouseEntered"
-          @mouseleave="mouseLeave"
+          @click="clickContainer(embedData.elementId)"
         >
           <div class="w-full h-full overflow-hidden flex-grow relative">
             <img
@@ -116,10 +115,13 @@
       ref="embedWrapper"
       :style="embedSize"
     >
-      <div
-        class="w-full h-full flex flex-col relative cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
-        style="aspect-ratio: 16/9"
-        :class="getOutline"
+      <CommonContainer
+        @on-pin="onPinHandler"
+        @close-container="closeContainer"
+        @on-mouse-down="onMouseDownHandler"
+        :isPinActive="isPinBtnActive"
+        :isMoveActive="isMoveBtnActive"
+        :innerWrapperClassNames="getOutline"
       >
         <div class="flex-grow min-h-0 relative">
           <div class="absolute inset-0 bg-black overflow-hidden">
@@ -183,7 +185,7 @@
             {{ liveViewerCount }} viewers
           </h6>
         </a>
-      </div>
+      </CommonContainer>
     </div>
   </div>
   <!--Additional block added for mobile to fix issue embed not play in iOS-->
@@ -233,9 +235,20 @@
             'pointer-events-none z-negative': !isEmbedVisible,
           },
         ]"
-        style="top: 50%;left: 0;transform: translateY(-50%);z-index: 99;display: flex;align-items: center;width: auto !important;"
+        style="
+          top: 50%;
+          left: 0;
+          transform: translateY(-50%);
+          z-index: 99;
+          display: flex;
+          align-items: center;
+          width: auto !important;
+        "
       >
-      <div ref="embedWrapper" :class="{'relative w-full h-full main-parent':true}">
+        <div
+          ref="embedWrapper"
+          :class="{ 'relative w-full h-full main-parent': true }"
+        >
           <component
             v-if="embedData"
             ref="embed"
@@ -262,16 +275,15 @@
 <script>
 import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
-import axios from "axios";
-
+import CommonContainer from "../CommonContainer/CommonContainer.vue";
 import embedMixin from "../../../mixins/embedFrameMixin";
-
 import PlayButton from "../../helpers/PlayButton.vue";
 
 export default {
   name: "EmbedContainerClassicMd",
   mixins: [embedMixin],
   components: {
+    CommonContainer: CommonContainer,
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
     "play-button": PlayButton,
@@ -368,19 +380,24 @@ export default {
       this.$emit("hide-controls");
     },
     scrollOut() {
+      if (this.$root.isVisibleVideoContainer) {
+        return;
+      }
       if (this.showOverlay || this.showArt) {
         this.isOverlayVisible = true;
         this.isEmbedVisible = false;
       }
-            // if (this.$refs.embed.isPlaying()) {
+      // if (this.$refs.embed.isPlaying()) {
       this.$refs.embed.stopPlayer();
       // }
       window.removeEventListener("scroll", this.checkIfBoxInViewPort);
       this.$emit("show-controls");
     },
     setIsMobileDevice() {
-      const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
-      if(checkDeviceType) {
+      const checkDeviceType = navigator.userAgent
+        .toLowerCase()
+        .match(/mobile/i);
+      if (checkDeviceType) {
         this.isMobileDevice = true;
       } else {
         this.isMobileDevice = false;
@@ -390,10 +407,5 @@ export default {
   beforeMount() {
     this.streamerInfoApi();
   },
-  // created() {
-  //   if(!this.showOnline && this.embedData){
-  //     this.mouseEntered();
-  //   }
-  // }
 };
 </script>

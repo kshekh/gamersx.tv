@@ -139,7 +139,7 @@ definitions:
           - docker
         script:
           - apk add --no-cache curl jq python3 py3-pip
-          - pip install awscli
+          - pip install awscli --break-system-packages
           - export AWS_REGION=$(cat ./aws-region)
           - export AWS_IMAGE_REPO=$(cat ./ecr-repo)
           - aws --region ${AWS_REGION} ecr get-login-password | docker login --username AWS --password-stdin 071827225223.dkr.ecr.${AWS_REGION}.amazonaws.com/${AWS_IMAGE_REPO}

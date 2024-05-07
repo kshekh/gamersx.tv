@@ -241,7 +241,6 @@ export default {
         this.$refs.backArrow.classList.remove("sliderArrowHide")
       }else
         this.$refs.backArrow.classList.add("sliderArrowHide")
-      this.$root.$emit('close-other-layouts');
     },
     setIsMobileDevice() {
       const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
