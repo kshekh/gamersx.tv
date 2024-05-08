@@ -14,8 +14,7 @@
         <div
           v-if="showEmbed && embedData"
           class="w-full h-full relative overflow-hidden"
-          @mouseenter="mouseEntered"
-          @mouseleave="mouseLeave"
+          @click="clickContainer(embedData.elementId)"
         >
           <img
             v-if="showArt && image"
@@ -73,9 +72,13 @@
       ref="embedWrapper"
       :style="embedSize"
     >
-      <div
-        class="w-full h-full flex flex-col relative cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
-        :class="getOutline"
+      <CommonContainer
+        @on-pin="onPinHandler"
+        @close-container="closeContainer"
+        @on-mouse-down="onMouseDownHandler"
+        :isPinActive="isPinBtnActive"
+        :isMoveActive="isMoveBtnActive"
+        :innerWrapperClassNames="getOutline"
       >
         <div class="flex-grow min-h-0 relative">
           <div class="absolute inset-0 bg-black overflow-hidden">
@@ -140,7 +143,7 @@
             {{ liveViewerCount }} viewers
           </h6>
         </a>
-      </div>
+      </CommonContainer>
     </div>
   </div>
 </template>
@@ -148,13 +151,14 @@
 <script>
 import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
-
+import CommonContainer from "../CommonContainer/CommonContainer.vue";
 import embedMixin from "../../../mixins/embedFrameMixin";
 
 export default {
   name: "EmbedContainerClassicVertical",
   mixins: [embedMixin],
   components: {
+    CommonContainer: CommonContainer,
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
   },
