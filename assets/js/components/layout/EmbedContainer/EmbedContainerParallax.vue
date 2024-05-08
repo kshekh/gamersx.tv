@@ -200,6 +200,7 @@
                 class="relative w-full"
                 alt="Embed's Custom Overlay"
                 :src="overlay"
+                onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
                 style="height: inherit"
               />
             </a>

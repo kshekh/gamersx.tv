@@ -35,7 +35,11 @@
       <!-- If there's only an overlay, show that instead with a link -->
       <div class="embed-frame" v-else-if="showOverlay">
         <a :href="link">
-          <img alt="Embed's Custom Overlay" :src="overlay" />
+          <img
+            alt="Embed's Custom Overlay"
+            :src="overlay"
+            onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
+          />
         </a>
       </div>
     </div>
