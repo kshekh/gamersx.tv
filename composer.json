@@ -13,7 +13,7 @@
         "doctrine/doctrine-bundle": "^2.2",
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^2.8",
-        "google/apiclient": "~2.0",
+        "google/apiclient": "^2.0",
         "knplabs/knp-gaufrette-bundle": "^0.7.2",
         "league/flysystem-aws-s3-v3": "^1.0",
         "oneup/flysystem-bundle": "^3.5",
