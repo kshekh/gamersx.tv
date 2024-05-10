@@ -79,7 +79,7 @@
     >
       <CommonContainer
         @on-pin="onPinHandler"
-        @close-container="closeContainer"
+        @close-container="() => closeContainer(true)"
         @on-mouse-down="onMouseDownHandler"
         :isPinActive="isPinBtnActive"
         :isMoveActive="isMoveBtnActive"
@@ -142,7 +142,9 @@
               {{ embedData.channel }}
             </h6>
           </div>
-          <h6 class="text-8 text-grey font-play whitespace-nowrap">
+          <h6
+            class="cursor-default text-8 text-grey font-play whitespace-nowrap"
+          >
             {{ liveViewerCount }} viewers
           </h6>
         </a>
@@ -331,6 +333,7 @@ export default {
     this.$root.$on("close-other-layouts", this.scrollOut);
     this.isOverlayVisible = this.showOverlay;
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
+
   },
   destroyed() {
     this.$emit("show-controls");
@@ -345,7 +348,7 @@ export default {
         this.isMobileDevice = true;
       } else {
         this.isMobileDevice = false;
-      }
+      }  
     },
     computeGlowStyling: function () {
       if (

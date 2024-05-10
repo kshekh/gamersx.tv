@@ -13,6 +13,8 @@ export default {
 
       isPinBtnActive: false,
       isMoveBtnActive: false,
+
+      position: { top: "", left: "" },
     };
   },
 
@@ -24,59 +26,49 @@ export default {
 
       this.isCursorHere = true;
       this.$root.isVisibleVideoContainer = true;
-
       if (this.isCursorHere && this.$root.isVisibleVideoContainer) {
         setTimeout(() => {
           this.setEmbedPosition();
-
           this.$root.$emit("close-other-layouts", this.embedData.elementId);
-
-          // this.isEmbedVisible = true;
-
           if (this.$refs.embed) this.$refs.embed.startPlayer();
         }, 30);
       }
     },
 
-    clickContainer(elementId) {
-
-      if (
-        (!!this.$root.containerId && this.$root.containerId === elementId) ||
-        this.$root.isPinnedContainer
-      )
+    clickContainer(elementId, isFullWidth) {
+      if (this.$root.containerId === elementId) {
         return;
+      }
 
-      if (
-        (!!this.$root.containerId && this.$root.containerId !== elementId) ||
-        this.$root.isPinnedContainer === false
-      ) {
-        setTimeout(() => {
-          this.setEmbedPosition();
+      if (!!this.$root.embedRef && this.$root.isPinnedContainer) {
+        const prevVideoContainer = this.$root.embedRef;
+        const videoContainerPosition =
+          prevVideoContainer.getBoundingClientRect();
 
-          this.$root.$emit("close-other-layouts", this.embedData.elementId);
+        this.position = {
+          top: isFullWidth ? videoContainerPosition.top + window.scrollY : videoContainerPosition.top + window.scrollY,
+          left: videoContainerPosition.left,
+        };
+      }
 
-          this.isEmbedVisible = true;
+      this.closeContainer();
 
-          if (this.$refs.embed) this.$refs.embed.startPlayer();
-        }, 30);
+      if (this.$root.containerId) {
+        this.$root.$emit("close-other-layouts", this.$root.containerId);
       }
 
       this.$root.containerId = elementId;
-
+      this.$root.embedRef = this.$refs.embedWrapper;
       this.isCursorHere = true;
-
       this.$root.isVisibleVideoContainer = true;
 
-      if (
-        this.isCursorHere &&
-        this.$root.isVisibleVideoContainer &&
-        !this.$root.isPinnedContainer
-      ) {
+      if (this.isCursorHere && this.$root.isVisibleVideoContainer) {
         setTimeout(() => {
-          this.setEmbedPosition();
-
+          this.setEmbedPosition(isFullWidth);
+          this.$root.$emit("close-other-layouts", this.$root.containerId);
+          this.position = { top: "", left: "" };
+          this.$root.isPinnedContainer = false;
           this.isEmbedVisible = true;
-
           if (this.$refs.embed) this.$refs.embed.startPlayer();
         }, 30);
       }
@@ -86,15 +78,26 @@ export default {
       this.isCursorHere = false;
     },
 
-    closeContainer() {
+    closeContainer(isButtonClick) {
+      if (isButtonClick) {
+        this.isPined = false;
+        this.isPinBtnActive = false;
+        this.$root.isVisibleVideoContainer = false;
+        this.$root.isPinnedContainer = false;
+        this.$root.containerId = "";
+        this.resetEmbedStyles();
+        this.isEmbedVisible = false;
+
+        if (this.$refs.embed && this.$refs.embed.isPlaying()) {
+          this.$refs.embed.stopPlayer();
+        }
+        return;
+      }
       this.isPined = false;
       this.isPinBtnActive = false;
       this.$root.isVisibleVideoContainer = false;
-      this.$root.isPinnedContainer = false;
       this.$root.containerId = "";
-
       this.resetEmbedStyles();
-
       this.isEmbedVisible = false;
 
       if (this.$refs.embed && this.$refs.embed.isPlaying()) {
@@ -104,61 +107,76 @@ export default {
 
     async hideVideo(elementId) {
       // use the condition below for the Offline embed containers to auto-play and dont get closed
-
-      if (
-        !(elementId && this.embedData && this.embedData.elementId === elementId)
-      ) {
-        await this.resetEmbedStyles();
-        this.isEmbedVisible = false;
-        this.$root.isVisibleVideoContainer = false;
-        this.$root.isPinnedContainer = false;
-        this.$root.isMoveContainer = false;
-        this.$root.containerId = "";
-        this.isPinBtnActive = false;
-
-        if (this.$refs.embed) {
-          if (this.$refs.embed.isPlaying()) {
-            this.$refs.embed.stopPlayer();
+      
+        if (
+          !(elementId && this.embedData && this.embedData.elementId === elementId)
+        ) {
+          if (!this.$root.isPinnedContainer) {
+            this.resetEmbedStyles();
+          }
+          this.isEmbedVisible = false;
+          this.$root.isVisibleVideoContainer = false;
+          // this.$root.isPinnedContainer = false;
+          this.$root.isMoveContainer = false;
+          this.$root.containerId = "";
+          this.isPinBtnActive = false;
+  
+          if (this.$refs.embed) {
+            if (this.$refs.embed.isPlaying()) {
+              this.$refs.embed.stopPlayer();
+            }
           }
         }
-      }
+      
+      
     },
 
-    setEmbedPosition() {
-      const rect = this.$refs.itemWrapper.getBoundingClientRect();
-      const rootHeight = this.$refs.itemWrapper.offsetHeight;
-      const rootWidth = this.$refs.itemWrapper.offsetWidth;
-      const scaleSize = rootWidth / this.embedWidth; // 300 - video wrapper width
-      const isRectInViewport =
-        rect.left >= 0 &&
-        rect.left + this.embedWidth + 20 <=
-          (window.innerWidth || document.documentElement.clientWidth); // 320 - video wrapper width with little extra space
-
-      this.$refs.embedWrapper.style.transform = `translateY(-50%) scale(${scaleSize})`;
-      this.$refs.embedWrapper.style.opacity = "0";
-      this.$refs.embedWrapper.style.top = window.scrollY + rect.top + rootHeight / 2 + "px";
-
-      if (isRectInViewport) {
-        this.$refs.embedWrapper.style.left = rect.left + "px";
-      } else {
-        this.$refs.embedWrapper.style.transformOrigin = "center center";
-        this.$refs.embedWrapper.style.left = "";
-        this.$refs.embedWrapper.style.right = "10px";
+    setEmbedPosition(isFullWidth) {
+      if (this.$root.isPinnedContainer && !!this.position.top) {
+        const videoContainer = this.$refs.embedWrapper;
+        videoContainer.style.top = this.position.top + "px";
+        videoContainer.style.left = this.position.left + "px";
+        videoContainer.style.opacity = "1";
+        return;
       }
+      const videoContainer = this.$refs.embedWrapper;
+      const videoContainerPosition = videoContainer.getBoundingClientRect();
+      const viewportHeight = document.documentElement.clientHeight;
+      const viewportWidth = document.documentElement.clientWidth;
 
-      setTimeout(() => {
-        this.$refs.embedWrapper.style.transform = "translateY(-50%) scale(1)";
-        this.$refs.embedWrapper.style.opacity = "1";
-      }, 1);
+      const resultY = isFullWidth
+        ? viewportHeight -
+          videoContainerPosition.height -
+          50 -
+          videoContainerPosition.top +
+          600
+        : viewportHeight -
+          videoContainerPosition.height -
+          50 -
+          videoContainerPosition.top;
+
+      const resultX =
+        viewportWidth -
+        videoContainerPosition.width -
+        50 -
+        videoContainerPosition.left;
+
+      videoContainer.style.transform = `translateY(${resultY}px) translateX(${resultX}px)`;
+      videoContainer.style.opacity = "1";
     },
 
-    onPinHandler(ev) {
-      const deltaHeight = this.$refs.embedWrapper.clientHeight / 2;
+    onPinHandler(ev,isFullWidth) {
+      const container = this.$refs.embedWrapper;
+      const top = Math.abs(container.getBoundingClientRect().top);
+      const left = container.getBoundingClientRect().left;
 
       if (this.isPined) {
-        this.$refs.embedWrapper.style.position = "absolute";
+        this.position = { top: "", left: "" };
+        container.style.transition = "none";
+        container.style.position = "absolute";
 
-        this.$refs.embedWrapper.style.top = ev.pageY + (deltaHeight - 7) + "px";
+        container.style.top = isFullWidth ? top  + window.scrollY + "px" : top + window.scrollY + "px";
+        container.style.left = left + "px";
 
         this.isPined = false;
         this.isPinBtnActive = false;
@@ -166,24 +184,20 @@ export default {
         return;
       }
 
-      const top =
-        this.$refs.embedWrapper.getBoundingClientRect().top +
-        deltaHeight +
-        "px";
+      container.style.transition = "none";
+      container.style.transform = "none";
+      container.style.position = "fixed";
 
-      const left = this.$refs.embedWrapper.getBoundingClientRect().left + "px";
-
-      this.$refs.embedWrapper.style.position = "fixed";
-
-      this.$refs.embedWrapper.style.top = top;
-      this.$refs.embedWrapper.style.left = left;
+      container.style.top = isFullWidth ? top + "px" : top + "px";
+      container.style.left = left + "px";
 
       this.isPined = true;
       this.isPinBtnActive = true;
       this.$root.isPinnedContainer = true;
     },
 
-    onMouseDownHandler(ev) {
+    onMouseDownHandler(ev, isFullWidth) {
+      this.$refs.embedWrapper.style.transition = "none";
       if (this.isPined) {
         this.isMoveBtnActive = false;
         this.$root.isMoveContainer = false;
@@ -193,18 +207,13 @@ export default {
       this.isMoveBtnActive = true;
       this.$root.isMoveContainer = true;
 
-      const deltaHeight = this.$refs.embedWrapper.clientHeight / 2;
-
       let shiftX =
         ev.clientX - this.$refs.embedWrapper.getBoundingClientRect().left;
-      let shiftY =
-        ev.clientY -
-        this.$refs.embedWrapper.getBoundingClientRect().top -
-        deltaHeight;
 
       const moveAt = (pageX, pageY) => {
+        this.$refs.embedWrapper.style.transform = "none";
         this.$refs.embedWrapper.style.left = pageX - shiftX + "px";
-        this.$refs.embedWrapper.style.top = pageY - shiftY + "px";
+        this.$refs.embedWrapper.style.top = isFullWidth ? pageY - 115 + "px" : pageY - 15 + "px";
       };
 
       moveAt(ev.pageX, ev.pageY);
@@ -221,19 +230,16 @@ export default {
       };
     },
 
-    async resetEmbedStyles() {
-      // use the condition below for the Offline embed containers to auto-play and dont get closed
-      // if (this.showOnline) {
-      // }
-      this.isPined = false;
+    resetEmbedStyles() {
       if (this.$refs.itemWrapper) {
-        const rootWidth = this.$refs.itemWrapper.offsetWidth;
-        const scaleSize = rootWidth / this.embedWidth;
-        if (this.$refs.embedWrapper != undefined) {
-          this.$refs.embedWrapper.style.position = "absolute";
-          this.$refs.embedWrapper.style.transformOrigin = "left center";
-          this.$refs.embedWrapper.style.transform = `translateY(-50%) scale(${scaleSize})`;
-          this.$refs.embedWrapper.style.opacity = "0";
+        if (
+          this.$root.isVisibleVideoContainer === false &&
+          this.$refs.embedWrapper !== undefined
+        ) {
+          const container = this.$refs.embedWrapper;
+          container.style.position = "absolute";
+          container.style.opacity = "0";
+          container.style.transform = "none";
         }
       }
     },

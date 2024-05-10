@@ -103,7 +103,7 @@ export default {
         !this.embedPlaying &&
         (this.isShowTwitchEmbed || this.showTwitchEmbed)
       ) {
-        this.embed.play();
+        this.embed?.play();
         this.embed.setMuted(false);
         this.embedPlaying = true;
       }

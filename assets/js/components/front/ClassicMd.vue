@@ -58,7 +58,7 @@
         style="width: 100%"
         class="
         flex
-        overflow-hidden custom-smooth-scroll
+       custom-smooth-scroll
         pt-5
         xl:pt-9
         pb-7

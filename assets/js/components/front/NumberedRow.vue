@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="numberedRow">
     <div
       class="flex items-center justify-between pl-8 md:pl-10 xl:pl-24 pr-4 md:pr-5 xl:pr-12"
     >

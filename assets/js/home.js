@@ -13,5 +13,48 @@ new Vue({
     this.isPinnedContainer = false;
     this.isMoveContainer = false;
     this.embedRef = '';
+    this.currentVisibleContainerPositionY = '',
+    this.currentVisibleContainerPositionX = '',
+
+    this.startParentPosition = {
+      Y: '',
+      X: ''
+    },
+
+    this.bottomRightPosition = {
+      Y: '',
+      X: ''
+    },
+
+    this.pinnedPosition = {
+      Y: '',
+      X: ''
+    },
+
+    this.unPinnedPosition = {
+      Y: '',
+      X: ''
+    },
+
+    this.lastMovedPosition = {
+      Y: '',
+      X: ''
+    },
+
+    this.currentPosition = {
+      Y: '',
+      X: ''
+    },
+
+    this.positionBeforeUnpin = {
+      top: '',
+      left: ''
+  },
+
+  this.previousPinnedPosition = {
+    y: '',
+    x: ''
+  }
   },
 });
+

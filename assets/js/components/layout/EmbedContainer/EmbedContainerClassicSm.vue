@@ -90,7 +90,7 @@
     >
       <CommonContainer
         @on-pin="onPinHandler"
-        @close-container="closeContainer"
+        @close-container="() => closeContainer(true)"
         @on-mouse-down="onMouseDownHandler"
         :isPinActive="isPinBtnActive"
         :isMoveActive="isMoveBtnActive"
