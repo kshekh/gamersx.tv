@@ -55,9 +55,40 @@
                 class="relative top-1/2 transform -translate-y-1/2 w-full"
                 alt="Embed's Custom Overlay"
                 :src="overlay"
+                onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
+                class="relative top-1/2 transform -translate-y-1/2 w-full"
                 style="height: inherit"
               />
-            </a>
+              <!--            <img-->
+              <!--              v-if="showEmbed && embedData"-->
+              <!--              src="/images/live-icon.gif"-->
+              <!--              class="" style="position: absolute;top: 5px;width: 50px;right: 0;"-->
+              <!--            />-->
+            </div>
+
+            <!-- If there's no embed, show that instead with a link first -->
+            <div v-else-if="showArt && image" class="w-full h-full">
+              <a :href="link" class="block w-full h-full overflow-hidden">
+                <img
+                  :src="image.url"
+                  class="relative top-1/2 transform -translate-y-1/2 w-full"
+                  style="height: inherit"
+                />
+              </a>
+            </div>
+
+            <!-- If there's only an overlay and isn't art, show that instead with a link -->
+            <div v-else-if="showOverlay" class="w-full h-full">
+              <a :href="link" class="block w-full h-full overflow-hidden">
+                <img
+                  class="relative top-1/2 transform -translate-y-1/2 w-full"
+                  alt="Embed's Custom Overlay"
+                  :src="overlay"
+                  onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
+                  style="height: inherit"
+                />
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -82,19 +113,50 @@
         :isMoveActive="isMoveBtnActive"
         :innerWrapperClassNames="getOutline"
       >
-        <div class="flex-grow min-h-0 relative">
-          <div class="absolute inset-0 bg-black overflow-hidden">
-            <img
-              v-if="showArt && image"
-              :src="image.url"
-              class="relative top-1/2 transform -translate-y-1/2 w-full"
-            />
-            <img
-              v-else-if="showOverlay"
-              alt="Embed's Custom Overlay"
-              :src="overlay"
-              class="relative top-1/2 transform -translate-y-1/2 w-full"
-            />
+        <div
+          class="w-full h-full flex flex-col relative cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
+          :class="getOutline"
+        >
+          <div class="flex-grow min-h-0 relative">
+            <div class="absolute inset-0 bg-black overflow-hidden">
+              <img
+                v-if="showArt && image"
+                :src="image.url"
+                class="relative top-1/2 transform -translate-y-1/2 w-full"
+              />
+              <img
+                v-else-if="showOverlay"
+                alt="Embed's Custom Overlay"
+                :src="overlay"
+                onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
+                class="relative top-1/2 transform -translate-y-1/2 w-full"
+              />
+            </div>
+            <div
+              class="relative w-full h-full transition-opacity ease-linear duration-500 delay-750 opacity-0 bg-black"
+              :class="{ 'opacity-100': isEmbedVisible }"
+            >
+              <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
+                <h5 class="text-xxs text-white font-play truncate">
+                  {{ offlineDisplay.title }}
+                </h5>
+                <h6 class="text-8 text-white font-play truncate">
+                  {{ embedData.channel }}
+                </h6>
+              </div>
+              <component
+                v-if="embedData"
+                ref="embed"
+                :is="embedName"
+                :embedData="embedData"
+                :overlay="overlay"
+                :image="image"
+                :isShowTwitchEmbed="isShowTwitchEmbed"
+                class="w-full h-full"
+                :width="'100%'"
+                :height="'100%'"
+              ></component>
+            </div>
           </div>
           <div
             class="relative w-full h-full transition-opacity ease-linear duration-500 delay-750 opacity-0 bg-black"
@@ -199,6 +261,7 @@
                 class="relative w-full"
                 alt="Embed's Custom Overlay"
                 :src="overlay"
+                onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
                 style="height: inherit"
               />
             </a>
@@ -214,6 +277,7 @@
           />
         </div>
       </div>
+
     </div>
     <!-- Show the embed with overlay if there's an embed, section moved to make it absolute of parent relative -->
     <div v-if="showEmbed && embedData">

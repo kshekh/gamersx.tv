@@ -66,6 +66,7 @@ Thumbs.db
 /public/bundles/
 /var/
 /vendor/
+/vendor.bak/
 ###< symfony/framework-bundle ###
 
 ###> symfony/phpunit-bridge ###
