@@ -38,6 +38,7 @@ class RefreshTwitchTokenCommand extends Command
     {
         $this
             ->setDescription(self::$defaultDescription)
+            ->addArgument('environment_type', InputArgument::REQUIRED, 'Environment type.')
             ->addOption('topicId', 'i', InputOption::VALUE_OPTIONAL, 'Your Client ID for your Twitch application')
             ->addOption('twitchSecret', 's', InputOption::VALUE_OPTIONAL, 'Your Client Secret for your Twitch application')
             ->addOption('envFile', 'f', InputOption::VALUE_OPTIONAL, 'The .env.local file to rewrite the TWITCH_APP_TOKEN variable');
@@ -55,7 +56,7 @@ class RefreshTwitchTokenCommand extends Command
             ];
             $this->logger->debug("CronJob Is running.");
 
-            $envirenment = $this->params->get('kernel.environment');
+            $envirenment = $input->getArgument('environment_type');
             $env = $env_parameters[$envirenment];
 
             $paramss = [];
