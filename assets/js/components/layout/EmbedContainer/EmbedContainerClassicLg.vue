@@ -10,8 +10,7 @@
         <div
           v-if="showEmbed && embedData"
           class="w-full h-full relative overflow-hidden"
-          @mouseenter="mouseEntered"
-          @mouseleave="mouseLeave"
+          @click="clickContainer(embedData.elementId)"
         >
           <img
             v-if="showArt && image"

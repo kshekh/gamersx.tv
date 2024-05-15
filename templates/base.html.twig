@@ -256,7 +256,7 @@
         <!-- End Meta Pixel Code -->
 
 	</head>
-	<body class="bg-black">
+	<body class="bg-black overflow-x-hidden">
 		<div class="h-full flex flex-col">
 			{% set isLoggedIn = app.session.get('is_logged_in') %}
 			{% set isRequiredToLoginTwitch = app.session.get('login_required_to_connect_twitch') %}

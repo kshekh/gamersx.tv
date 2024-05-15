@@ -127,11 +127,9 @@ export default {
   methods: {
     playVideo() {
       this.isCursorHere = false;
-      this.$root.isVisibleVideoContainer = false;
-      this.isEmbedVisible = false;
-      this.resetEmbedStyles();
+      this.closeContainer();
 
-      this.$root.$emit("close-other-layouts");
+      this.$root.$emit("close-other-layouts", this.embedData.elementId);
 
       setTimeout(() => {
         if (this.showOverlay || this.showArt) {
@@ -149,9 +147,9 @@ export default {
         this.isOverlayVisible = true;
         this.isEmbedVisible = false;
       }
-      // if (this.$refs.embed.isPlaying()) {
-      this.$refs.embed.stopPlayer();
-      // }
+      if (this.$refs?.embed?.isPlaying()) {
+        this.$refs.embed.stopPlayer();
+      }
       window.removeEventListener("scroll", this.checkIfBoxInViewPort);
       this.$emit("show-controls");
     },

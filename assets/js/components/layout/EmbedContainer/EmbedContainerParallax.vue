@@ -15,8 +15,7 @@
           <div
             v-if="showEmbed && embedData"
             class="w-full h-full relative overflow-hidden"
-            @mouseenter="mouseEntered"
-            @mouseleave="mouseLeave"
+            @click="clickContainer(embedData.elementId)"
           >
             <img
               v-if="showArt && image"
@@ -165,8 +164,7 @@
           <div
             v-if="showEmbed && embedData"
             class="w-full h-full overflow-hidden"
-            @mouseenter="mouseEntered"
-            @mouseleave="mouseLeave"
+            @click="clickContainer(elementId)"
           >
             <img
               v-if="showArt && image"
@@ -306,7 +304,7 @@ export default {
   ],
   data: function () {
     return {
-      isOverlayVisible: true,
+      isOverlayVisible: false,
       isEmbedVisible: false,
       isTitleVisible: false,
       glowStyling: {
@@ -420,18 +418,18 @@ export default {
       this.$emit("hide-controls");
     },
     scrollOut() {
-      if (this.$root.isVisibleVideoContainer) {
-        return;
-      }
-      if (this.showOverlay || this.showArt) {
-        this.isOverlayVisible = true;
-        this.isEmbedVisible = false;
-      }
-      if (this.$refs.embed.isPlaying()) {
-        this.$refs.embed.stopPlayer();
-      }
-      window.removeEventListener("scroll", this.checkIfBoxInViewPort);
-      this.$emit("show-controls");
+      // if (this.$root.isVisibleVideoContainer) {
+      //   return;
+      // }
+      // if (this.showOverlay || this.showArt) {
+      //   this.isOverlayVisible = true;
+      //   this.isEmbedVisible = false;
+      // }
+      // if (this.$refs.embed.isPlaying()) {
+      //   this.$refs.embed.stopPlayer();
+      // }
+      // window.removeEventListener("scroll", this.checkIfBoxInViewPort);
+      // this.$emit("show-controls");
     },
   },
 };

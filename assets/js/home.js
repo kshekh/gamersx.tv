@@ -9,5 +9,9 @@ new Vue({
   components: { Home },
   created: function () {
     this.isVisibleVideoContainer = false;
+    this.containerId = '';
+    this.isPinnedContainer = false;
+    this.isMoveContainer = false;
+    this.embedRef = '';
   },
 });
