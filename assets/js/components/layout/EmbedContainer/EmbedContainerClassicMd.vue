@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full shrink-0" ref="itemWrapper" v-if="!isMobileDevice">
+  <div class="cursor-default w-full h-full shrink-0" ref="itemWrapper" v-if="!isMobileDevice">
     <div class="cut-edge__wrapper w-full h-full" :class="getGlow">
       <div
         @click="isShowTwitchEmbed = true"
@@ -394,6 +394,7 @@ export default {
       this.$emit("show-controls");
     },
     setIsMobileDevice() {
+      console.log('this.offlineDisplay :>> ', this.offlineDisplay);
       const checkDeviceType = navigator.userAgent
         .toLowerCase()
         .match(/mobile/i);

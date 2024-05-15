@@ -4,7 +4,7 @@
       class="flex items-center justify-between pl-8 md:pl-10 shrink-0 mr-3 xl:pl-24 pr-4 md:pr-5 xl:pr-12"
     >
       <h2
-        class="text-white font-calibri font-bold text-sm md:text-2xl xl:text-4xl mr-2"
+        class="cursor-default text-white font-calibri font-bold text-sm md:text-2xl xl:text-4xl mr-2"
       >
         {{ settings.title }}
         <title-addinional-description v-show="settings.onGamersXtv" />

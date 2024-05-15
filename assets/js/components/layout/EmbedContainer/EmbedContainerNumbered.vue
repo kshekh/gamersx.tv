@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center w-18 h-24 md:w-24 md:h-32 xl:w-30 xl:h-40 shrink-0"
+    class="cursor-default lex items-center w-18 h-24 md:w-24 md:h-32 xl:w-30 xl:h-40 shrink-0"
     ref="itemWrapper"
     v-if="!isMobileDevice"
   >
@@ -104,10 +104,10 @@
             :class="{ 'opacity-100': isEmbedVisible }"
           >
             <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
-              <h5 class="text-xxs text-white font-play truncate">
+              <h5 class="cursor-default text-xxs text-white font-play truncate">
                 {{ offlineDisplay.title }}
               </h5>
-              <h6 class="text-8 text-white font-play truncate">
+              <h6 class="cursor-default text-8 text-white font-play truncate">
                 {{ embedData.channel }}
               </h6>
             </div>
@@ -127,22 +127,22 @@
         </div>
         <a
           :href="link"
-          class="flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
+          class="cursor-default flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
           :title="offlineDisplay.title"
         >
-          <div class="mr-2 overflow-hidden">
+          <div class="cursor-default mr-2 overflow-hidden">
             <h5
-              class="text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
+              class="cursor-default text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
             >
               {{ offlineDisplay.title }}
             </h5>
             <h6
-              class="text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
+              class="cursor-default text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
             >
               {{ embedData.channel }}
             </h6>
           </div>
-          <h6 class="text-8 text-grey font-play whitespace-nowrap">
+          <h6 class="cursor-default text-8 text-grey font-play whitespace-nowrap">
             {{ liveViewerCount }} viewers
           </h6>
         </a>

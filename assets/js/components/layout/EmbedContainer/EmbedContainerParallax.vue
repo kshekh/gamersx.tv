@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full flex items-center" v-if="!isMobileDevice">
+  <div class="cursor-default w-full h-full flex items-center" v-if="!isMobileDevice">
     <div class="relative left-1/5 w-20 h-40 md:w-28 md:h-56" ref="itemWrapper">
       <div
         @click="isShowTwitchEmbed = true"
@@ -82,7 +82,7 @@
         :isMoveActive="isMoveBtnActive"
         :innerWrapperClassNames="getOutline"
       >
-        <div class="flex-grow min-h-0 relative">
+        <div class="cursor-default flex-grow min-h-0 relative">
           <div class="absolute inset-0 bg-black overflow-hidden">
             <img
               v-if="showArt && image"
@@ -127,19 +127,19 @@
           class="flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
           :title="offlineDisplay.title"
         >
-          <div class="mr-2 overflow-hidden">
+          <div class="cursor-default mr-2 overflow-hidden">
             <h5
-              class="text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
+              class="cursor-default text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
             >
               {{ offlineDisplay.title }}
             </h5>
             <h6
-              class="text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
+              class="cursor-default text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
             >
               {{ embedData.channel }}
             </h6>
           </div>
-          <h6 class="text-8 text-grey font-play whitespace-nowrap">
+          <h6 class="cursor-default text-8 text-grey font-play whitespace-nowrap">
             {{ liveViewerCount }} viewers
           </h6>
         </a>
@@ -147,7 +147,7 @@
     </div>
   </div>
 
-  <div class="w-full h-full flex items-center" v-else>
+  <div class="cursor-default w-full h-full flex items-center" v-else>
     <div class="relative left-1/5 w-20 h-40 md:w-28 md:h-56">
       <div
         @click="isShowTwitchEmbed = true"

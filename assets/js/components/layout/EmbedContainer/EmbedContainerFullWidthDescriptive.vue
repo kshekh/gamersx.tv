@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      class="relative z-10 flex flex-col opacity-1 transform rounded-md transition-all duration-700 backdrop-filter backdrop-blur-xs shadow-smooth px-7 -mx-7"
+      class="cursor-default relative z-10 flex flex-col opacity-1 transform rounded-md transition-all duration-700 backdrop-filter backdrop-blur-xs shadow-smooth px-7 -mx-7"
       :class="[
         decreaseInfoBoxSize
           ? 'md:max-w-1/4 md:min-w-180'
@@ -41,11 +41,11 @@
       </div>
 
       <p
-        class="text-white transition-all duration-300"
+        class="cursor-default text-white transition-all duration-300"
         :class="[
           decreaseInfoBoxSize
-            ? 'text-8 md:text-xs xl:text-sm mb-1 xl:mb-2'
-            : 'text-xs md:text-sm xl:text-lg mb-2 xl:mb-4',
+            ? 'cursor-default text-8 md:text-xs xl:text-sm mb-1 xl:mb-2'
+            : 'cursor-default text-xs md:text-sm xl:text-lg mb-2 xl:mb-4',
         ]"
       >
         {{ description }}
