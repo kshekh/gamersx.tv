@@ -6,9 +6,11 @@ use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
 use App\Entity\HomeRowItemOperation;
 use App\Service\HomeRowInfo;
+use App\Traits\ErrorLogTrait;
 
 class TwitchGameContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
+    use ErrorLogTrait;
     private $homeRowItem;
     private $twitch;
     private $entityManager;
@@ -39,6 +41,7 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
         $infos = $twitch->getGameInfo($gameIds);
         if (200 !== $infos->getStatusCode()) {
             $this->logger->error("Call to Twitch failed with ".$infos->getStatusCode());
+            $this->log_error($infos->getContent(false), $infos->getStatusCode(), "twitch_game_container_info");
             unset($infos);
             return Array();
         }
@@ -102,6 +105,7 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
             $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, 20);
             if (200 !== $broadcasts->getStatusCode()) {
                 $this->logger->error("Call to Twitch failed with ".$broadcasts->getStatusCode());
+                $this->log_error($broadcasts->getContent(false), $broadcasts->getStatusCode(), "twitch_game_container_broadcast");
                 unset($broadcasts);
                 return Array();
             }

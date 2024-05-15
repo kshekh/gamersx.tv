@@ -4,9 +4,11 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
+use App\Traits\ErrorLogTrait;
 
 class TwitchStreamerContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
+    use ErrorLogTrait;
     private $homeRowItem;
     private $twitch;
     private $entityManager;
@@ -37,6 +39,7 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
         $infos = $twitch->getStreamerInfo($streamerId);
         if (200 !== $infos->getStatusCode()) {
             $this->logger->error("Call to Twitch failed with ".$infos->getStatusCode());
+            $this->log_error($infos->getContent(false), $infos->getStatusCode(), "twitch_streaming_container_info");
             unset($infos);
             return Array();
         }
@@ -44,6 +47,7 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
         $broadcast = $twitch->getStreamForStreamer($streamerId);
         if (200 !== $broadcast->getStatusCode()) {
             $this->logger->error("Call to Twitch failed with ".$broadcast->getStatusCode());
+            $this->log_error($broadcast->getContent(false), $broadcast->getStatusCode(), "twitch_streaming_container_broadcast");
             unset($broadcast);
             return Array();
         }
