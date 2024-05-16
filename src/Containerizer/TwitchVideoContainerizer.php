@@ -5,6 +5,7 @@ namespace App\Containerizer;
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
 use App\Traits\ErrorLogTrait;
+use Symfony\Component\HttpClient\Exception\ClientException;
 
 class TwitchVideoContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
@@ -175,14 +176,14 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
         }
 
         return Array();
-        } catch (\Throwable $th) {
+        } catch (ClientException $th) {
             $msg = $th->getMessage()." ".$th->getFile() . " " .$th->getLine();
             $this->logger->error($msg);
-            $this->log_error($msg, 500, "twitch_video_containerizer", $this->homeRowItem->getId());
-        } catch (\Exception $e) {
-            $msg = $e->getMessage()." ".$e->getFile() . " " .$e->getLine();
+            $this->log_error($msg, $th->getCode(), "twitch_video_containerizer", $this->homeRowItem ? $this->homeRowItem->getId() : null);
+        } catch (\Exception $ex) {
+            $msg = $ex->getMessage()." ".$ex->getFile() . " " .$ex->getLine();
             $this->logger->error($msg);
-            $this->log_error($msg, 500, "twitch_video_containerizer", $this->homeRowItem->getId());
+            $this->log_error($msg, $ex->getCode(), "twitch_video_containerizer", $this->homeRowItem ? $this->homeRowItem->getId() : null);
         }
         return Array();
     }

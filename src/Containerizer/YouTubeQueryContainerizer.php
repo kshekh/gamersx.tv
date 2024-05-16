@@ -4,9 +4,13 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
+use App\Traits\ErrorLogTrait;
+use Symfony\Component\HttpClient\Exception\ClientException;
 
 class YouTubeQueryContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
+    use ErrorLogTrait;
+
     private $homeRowItem;
     private $youtube;
 
@@ -18,6 +22,7 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
 
     public function getContainers(): Array
     {
+        try {
         $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
         $youtube = $this->youtube;
@@ -47,12 +52,12 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
             !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
            (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
         ) {
-            try {
+            // try {
                 $broadcasts = $youtube->searchLiveChannels($query, $max, null, null)->getItems();
-            } catch (\Exception $e) {
-                $this->logger->error("Call to YouTube failed with the message \"".$e->getErrors()[0]['message']."\"");
-                return Array();
-            }
+            // } catch (\Exception $e) {
+            //     $this->logger->error("Call to YouTube failed with the message \"".$e->getErrors()[0]['message']."\"");
+            //     return Array();
+            // }
 
             $videoIds = [];
             foreach ($broadcasts as $broadcast) {
@@ -122,6 +127,15 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
             $this->trim();
 
             return $this->items;
+        }
+        } catch (ClientException $th) {
+            $msg = $th->getMessage(). " " . $th->getFile() . " " . $th->getLine();
+            $this->log_error($msg, $th->getCode(), "youtube_query_containerizer",  $this->homeRowItem ? $this->homeRowItem->getId() : null);
+            $this->logger->error($msg);
+        } catch (\Exception $ex) {
+            $msg = $ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine();
+            $this->log_error($msg, $ex->getCode(), "youtube_query_containerizer",  $this->homeRowItem ? $this->homeRowItem->getId() : null);
+            $this->logger->error($msg);
         }
 
         return Array();

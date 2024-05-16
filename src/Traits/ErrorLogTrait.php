@@ -30,7 +30,7 @@ trait ErrorLogTrait
         $error_log->setErrorMessage($error_message);
         $error_log->setErrorType($error_type);
         $error_log->setCreatedAt(new DateTime());
-        $error_log->setStatusCode($status_code);
+        $error_log->setStatusCode($status_code == '0' ? '500' : $status_code);
         $error_log->setContainerId($container_id);
         $this->entityManager->persist($error_log);
         $this->entityManager->flush();

@@ -4,9 +4,13 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
+use App\Traits\ErrorLogTrait;
+use Symfony\Component\HttpClient\Exception\ClientException;
 
 class YouTubeChannelContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
+    use ErrorLogTrait;
+
     private $homeRowItem;
     private $youtube;
     private $entityManager;
@@ -20,6 +24,7 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
 
     public function getContainers(): Array
     {
+        try {
         $topic_id = $this->homeRowItem->getTopic()['topicId'];
         $check_unique_item =  $this->entityManager->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
 
@@ -34,13 +39,10 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
 
         $channelId = $homeRowItem->getTopic()['topicId'];
 
-        try {
+
             $info = $youtube->getChannelInfo($channelId)->getItems();
             $broadcast = $youtube->getLiveChannel($channelId)->getItems();
-        } catch (\Exception $e) {
-            $this->logger->error("Call to YouTube failed with the message \"".$e->getErrors()[0]['message']."\"");
-            return Array();
-        }
+
 
         $info = $info[0];
         $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
@@ -158,6 +160,16 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
             $this->trim();
 
             return $this->items;
+        }
+
+        } catch (ClientException $th) {
+            $msg = $th->getMessage(). " " . $th->getFile() . " " . $th->getLine();
+            $this->logger->error("Call to YouTube failed with the message \"".$msg."\"");
+            $this->log_error($msg, $th->getCode(), "youtube_channel_containerizer", $this->homeRowItem ? $this->homeRowItem->getId() : null);
+        } catch (\Exception $ex) {
+            $msg = $ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine();
+            $this->logger->error("Call to YouTube failed with the message \"".$msg."\"");
+            $this->log_error($msg, $ex->getCode(), "youtube_channel_containerizer", $this->homeRowItem ? $this->homeRowItem->getId() : null);
         }
 
         return Array();
