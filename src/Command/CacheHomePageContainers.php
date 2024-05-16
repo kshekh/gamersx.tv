@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Containerizer\ContainerizerFactory;
 use App\Entity\HomeRow;
 use App\Service\HomeRowInfo;
+use App\Traits\ErrorLogTrait;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,6 +18,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class CacheHomePageContainers extends Command
 {
+    use ErrorLogTrait;
+
     private $containerizer;
     private $container;
     private $homeRowInfo;
@@ -119,7 +122,8 @@ class CacheHomePageContainers extends Command
             $io->success($message);
             return 0;
         } catch (\Exception $ex) {
-            $message = $ex->getMessage();
+            $message = $ex->getMessage() . " ".$ex->getFile() ." ". $ex->getLine();
+            $this->log_error($message, "500", "home_cache_clear");
         }
         $io->error($message);
         return -1;

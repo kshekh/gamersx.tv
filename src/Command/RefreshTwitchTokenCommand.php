@@ -148,8 +148,9 @@ class RefreshTwitchTokenCommand extends Command
             $message = "Twitch returned status code " . $request->getStatusCode();
             $this->log_error($request->getContent(false), $request->getStatusCode(), "twitch_token_generation");
         } catch (\Exception $ex) {
-            $message = $ex->getMessage();
-            $this->log_error($message, '500', "twitch_token");
+            $msg = $ex->getMessage()." ".$ex->getFile() . " " .$ex->getLine();
+            $this->logger->error($msg);
+            $this->log_error($msg, 500, "twitch_token");
         }
         $io->error($message);
         $this->logger->debug($message);

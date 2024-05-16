@@ -4,9 +4,12 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
+use App\Traits\ErrorLogTrait;
 
 class TwitchVideoContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
+    use ErrorLogTrait;
+
     private $homeRowItem;
     private $twitch;
     private $entityManager;
@@ -20,6 +23,7 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
 
     public function getContainers(): Array
     {
+        try {
         $qb = $this->entityManager->createQueryBuilder();
         $query = $qb->select('hri')
             ->from('App:HomeRowItem', 'hri')
@@ -60,7 +64,9 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
                 $info = $twitch->getClipInfo($videoId)->toArray();
             }
         } catch (\Exception $e) {
-            $this->logger->error("Call to twitch failed with the message \"".$e->getMessage()."\"");
+            $msg = $e->getMessage()." ".$e->getFile() . " " .$e->getLine();
+            $this->logger->error($msg);
+            $this->log_error($msg, 500, "twitch_video_containerizer", $this->homeRowItem->getId());
             return Array();
         }
 
@@ -168,6 +174,16 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
             return $this->items;
         }
 
+        return Array();
+        } catch (\Throwable $th) {
+            $msg = $th->getMessage()." ".$th->getFile() . " " .$th->getLine();
+            $this->logger->error($msg);
+            $this->log_error($msg, 500, "twitch_video_containerizer", $this->homeRowItem->getId());
+        } catch (\Exception $e) {
+            $msg = $e->getMessage()." ".$e->getFile() . " " .$e->getLine();
+            $this->logger->error($msg);
+            $this->log_error($msg, 500, "twitch_video_containerizer", $this->homeRowItem->getId());
+        }
         return Array();
     }
 }
