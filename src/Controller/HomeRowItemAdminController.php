@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\HomeRowItem;
 use App\Entity\HomeRowItemOperation;
 use App\Service\YouTubeApi;
-use App\Traits\ErrorLogTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Sonata\AdminBundle\Exception\LockException;
 use Sonata\AdminBundle\Exception\ModelManagerException;
@@ -33,8 +32,6 @@ use Vich\UploaderBundle\Storage\StorageInterface;
 
 class HomeRowItemAdminController extends CRUDController
 {
-    use ErrorLogTrait;
-
     private $serializer;
     private $filesystem;
     private $storage;
@@ -351,14 +348,10 @@ class HomeRowItemAdminController extends CRUDController
                     $this->handleModelManagerException($e);
 
                     $isFormValid = false;
-                    $msg = $e->getMessage(). " " . $e->getFile() . " " . $e->getLine();
-                    $this->log_error($msg, $e->getCode(), "homerow_create_action", null);
                 } catch (ModelManagerThrowable $e) {
                     $this->handleModelManagerThrowable($e);
 
                     $isFormValid = false;
-                    $msg = $e->getMessage(). " " . $e->getFile() . " " . $e->getLine();
-                    $this->log_error($msg, $e->getCode(), "homerow_create_action", null);
                 }
             }
 
@@ -708,22 +701,16 @@ class HomeRowItemAdminController extends CRUDController
                     $this->handleModelManagerException($e);
 
                     $isFormValid = false;
-                    $msg = $e->getMessage(). " " . $e->getFile() . " " . $e->getLine();
-                    $this->log_error($msg, $e->getCode(), "homerow_edit_action", $id);
                 } catch (ModelManagerThrowable $e) {
                     $this->handleModelManagerThrowable($e);
 
                     $isFormValid = false;
-                    $msg = $e->getMessage(). " " . $e->getFile() . " " . $e->getLine();
-                    $this->log_error($msg, $e->getCode(), "homerow_edit_action", $id);
                 } catch (LockException $e) {
                     $this->addFlash('sonata_flash_error', $this->trans('flash_lock_error', [
                         '%name%' => $this->escapeHtml($this->admin->toString($existingObject)),
                         '%link_start%' => sprintf('<a href="%s">', $this->admin->generateObjectUrl('edit', $existingObject)),
                         '%link_end%' => '</a>',
                     ], 'SonataAdminBundle'));
-                    $msg = $e->getMessage(). " " . $e->getFile() . " " . $e->getLine();
-                    $this->log_error($msg, $e->getCode(), "homerow_edit_action", $id);
                 }
             }
 
@@ -814,8 +801,6 @@ class HomeRowItemAdminController extends CRUDController
                     )
                 );
             } catch (ModelManagerException $e) {
-                $msg = $e->getMessage(). " " . $e->getFile() . " " . $e->getLine();
-                $this->log_error($msg, $e->getCode(), "homerow_delete_action", $id);
                 // NEXT_MAJOR: Remove this catch.
                 $this->handleModelManagerException($e);
 
@@ -832,8 +817,6 @@ class HomeRowItemAdminController extends CRUDController
                     )
                 );
             } catch (ModelManagerThrowable $e) {
-                $msg = $e->getMessage(). " " . $e->getFile() . " " . $e->getLine();
-                $this->log_error($msg, $e->getCode(), "homerow_delete_action", $id);
                 $this->handleModelManagerThrowable($e);
 
                 if ($this->isXmlHttpRequest()) {
@@ -1023,8 +1006,7 @@ class HomeRowItemAdminController extends CRUDController
                 $this->addFlash('sonata_flash_success', "Successfully imported $success home rows.");
             } catch (\Exception $e) {
                 $this->addFlash('sonata_flash_error', $e->getMessage());
-                $msg = $e->getMessage(). " " . $e->getFile() . " " . $e->getLine();
-                $this->log_error($msg, $e->getCode(), "homerow_import_action");
+
                 return new RedirectResponse(
                     $this->admin->generateUrl('list', [
                         'filter' => $this->admin->getFilterParameters()
@@ -1080,8 +1062,6 @@ class HomeRowItemAdminController extends CRUDController
             $archive->close();
         } catch (\Exception $e) {
             $this->addFlash('sonata_flash_error', $e->getMessage());
-            $msg = $e->getMessage(). " " . $e->getFile() . " " . $e->getLine();
-            $this->log_error($msg, $e->getCode(), "homerow_export_action");
             return new RedirectResponse(
                 $this->admin->generateUrl('list', [
                     'filter' => $this->admin->getFilterParameters()
