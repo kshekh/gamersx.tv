@@ -5,13 +5,15 @@ namespace App\Controller;
 use App\Entity\HomeRowItem;
 use App\Entity\HomeRowItemOperation;
 use App\Service\TwitchApi;
+use App\Traits\ErrorLogTrait;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-
+use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -22,6 +24,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class TwitchApiController extends AbstractController
 {
+
+    use ErrorLogTrait;
+
     private $params;
     private $session;
 
@@ -66,6 +71,7 @@ class TwitchApiController extends AbstractController
      */
     public function channelQuery(Request $request, TwitchApi $twitch, $query)
     {
+        try {
         if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
                 $this->generateUrl('sonata_user_admin_security_login')
@@ -77,6 +83,14 @@ class TwitchApiController extends AbstractController
 
         $result = $twitch->searchChannels($query, $first, $before, $after);
         return $this->json($result->toArray());
+
+        } catch (ClientException $th) {
+            $this->log_error($th->getMessage(). " " . $th->getFile() . " " . $th->getLine(), $th->getCode(), "twitch_channel_query");
+            throw $th;
+        } catch (\Exception $ex) {
+            $this->log_error($ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine(), $ex->getCode(), "twitch_channel_query");
+            throw $ex;
+        }
     }
 
     /**
@@ -115,7 +129,7 @@ class TwitchApiController extends AbstractController
      */
     public function gameQuery(Request $request, TwitchApi $twitch, $query)
     {
-
+        try{
         if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
                 $this->generateUrl('sonata_user_admin_security_login')
@@ -127,6 +141,13 @@ class TwitchApiController extends AbstractController
 
         $result = $twitch->searchGames($query, $first, $before, $after);
         return $this->json($result->toArray());
+        } catch (ClientException $th) {
+            $this->log_error($th->getMessage(). " " . $th->getFile() . " " . $th->getLine(), $th->getCode(), "twitch_game_query");
+            throw $th;
+        } catch (\Exception $ex) {
+            $this->log_error($ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine(), $ex->getCode(), "twitch_game_query");
+            throw $ex;
+        }
     }
 
     /**
@@ -134,12 +155,21 @@ class TwitchApiController extends AbstractController
      */
     public function getPopularStreams(Request $request, TwitchApi $twitch)
     {
+        try {
         $first = $request->get('first');
         $before = $request->get('before');
         $after = $request->get('after');
 
         $result = $twitch->getPopularStreams($first, $before, $after);
         return $this->json($result->toArray());
+        } catch (ClientException $th) {
+            $this->log_error($th->getMessage(). " " . $th->getFile() . " " . $th->getLine(), $th->getCode(), "twitch_popular_streams");
+            throw $th;
+        } catch (\Exception $ex) {
+            $this->log_error($ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine(), $ex->getCode(), "twitch_popular_streams");
+            throw $ex;
+        }
+
     }
 
     /**
@@ -147,6 +177,7 @@ class TwitchApiController extends AbstractController
      */
     public function getGameStreamers($gameId,Request $request, TwitchApi $twitch)
     {
+        try {
         $first = $request->get('first');
         $before = $request->get('before');
         $after = $request->get('after');
@@ -177,6 +208,13 @@ class TwitchApiController extends AbstractController
         $return['old_selected_data'] = $selectedStreamerArr;
 
         return $this->json($return);
+        } catch (ClientException $th) {
+            $this->log_error($th->getMessage(). " " . $th->getFile() . " " . $th->getLine(), $th->getCode(), "twitch_game_streamers", $request->get('how_row_item_id'));
+            throw $th;
+        } catch (\Exception $ex) {
+            $this->log_error($ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine(), $ex->getCode(), "twitch_game_streamers", $request->get('how_row_item_id'));
+            throw $ex;
+        }
     }
 
     /**
@@ -184,6 +222,7 @@ class TwitchApiController extends AbstractController
      */
     public function getOfflineGameStreamers($query,Request $request, TwitchApi $twitch)
     {
+        try {
         $first = $request->get('first');
         $before = $request->get('before');
         $after = $request->get('after');
@@ -198,6 +237,13 @@ class TwitchApiController extends AbstractController
         $return['results_data'] = $resultArr;
 
         return $this->json($return);
+        } catch (ClientException $th) {
+            $this->log_error($th->getMessage(). " " . $th->getFile() . " " . $th->getLine(), $th->getCode(), "twitch_game_offline_streamers", $request->get('how_row_item_id'));
+            throw $th;
+        } catch (\Exception $ex) {
+            $this->log_error($ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine(), $ex->getCode(), "twitch_game_offline_streamers", $request->get('how_row_item_id'));
+            throw $ex;
+        }
     }
 
     /**
@@ -205,6 +251,7 @@ class TwitchApiController extends AbstractController
      */
     public function getGames($query,Request $request, TwitchApi $twitch)
     {
+        try {
         $first = $request->get('first');
         $before = $request->get('before');
         $after = $request->get('after');
@@ -234,6 +281,13 @@ class TwitchApiController extends AbstractController
         $return['old_selected_data'] = $selectedArr;
 
         return $this->json($return);
+        } catch (ClientException $th) {
+            $this->log_error($th->getMessage(). " " . $th->getFile() . " " . $th->getLine(), $th->getCode(), "twitch_get_games", $request->get('how_row_item_id'));
+            throw $th;
+        } catch (\Exception $ex) {
+            $this->log_error($ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine(), $ex->getCode(), "twitch_get_games", $request->get('how_row_item_id'));
+            throw $ex;
+        }
     }
 
     /**
@@ -241,6 +295,7 @@ class TwitchApiController extends AbstractController
      */
     public function checkIsUniqueContainer(Request $request)
     {
+        try{
         $item_type = $request->get('item_type');
         $topic_id = $request->get('topic_id');
         $how_row_item_id = $request->get('how_row_item_id');
@@ -253,5 +308,12 @@ class TwitchApiController extends AbstractController
             $return = ['is_unique_container'=> false];
         }
         return $this->json($return);
+        } catch (ClientException $th) {
+            $this->log_error($th->getMessage(). " " . $th->getFile() . " " . $th->getLine(), $th->getCode(), "twitch_unique_container_check", $request->get('how_row_item_id'));
+            throw $th;
+        } catch (\Exception $ex) {
+            $this->log_error($ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine(), $ex->getCode(), "twitch_unique_container_check", $request->get('how_row_item_id'));
+            throw $ex;
+        }
     }
 }
