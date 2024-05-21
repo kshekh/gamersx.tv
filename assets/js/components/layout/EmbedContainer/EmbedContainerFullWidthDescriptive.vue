@@ -30,14 +30,12 @@
           v-else-if="showOverlay"
           alt="Embed's Custom Overlay"
           :src="overlay"
-          onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
           class="max-h-20 md:max-h-28 xl:max-h-52"
         />
         <img
           v-else-if="overlay && offlineDisplay.showEmbed"
           alt="Embed's Custom Overlay"
           :src="overlay"
-          onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
           class="max-h-20 md:max-h-28 xl:max-h-52"
         />
       </div>

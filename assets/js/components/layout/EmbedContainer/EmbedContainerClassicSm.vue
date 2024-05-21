@@ -23,7 +23,6 @@
             v-else-if="showOverlay"
             alt="Embed's Custom Overlay"
             :src="overlay"
-            onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
             class="relative top-1/2 transform -translate-y-1/2 w-full object-cover"
             style="height: inherit"
           />
@@ -71,7 +70,6 @@
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               alt="Embed's Custom Overlay"
               :src="overlay"
-              onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
               style="height: inherit"
             />
           </a>
@@ -110,7 +108,6 @@
               v-else-if="showOverlay"
               alt="Embed's Custom Overlay"
               :src="overlay"
-              onerror="this.onerror=null; this.src='https://placehold.co/400x600'"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               style="height: inherit"
             />
@@ -187,7 +184,6 @@
           v-else-if="showOverlay"
           alt="Embed's Custom Overlay"
           :src="overlay"
-          onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
           class="relative top-1/2 transform -translate-y-1/2 w-full h-full object-cover"
         />
         <play-button
