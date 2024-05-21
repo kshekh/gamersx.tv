@@ -13,3 +13,6 @@ twig:
 
     form_themes:
         - 'form/custom_types.html.twig'
+
+    paths:
+        '%kernel.project_dir%/public/images': images

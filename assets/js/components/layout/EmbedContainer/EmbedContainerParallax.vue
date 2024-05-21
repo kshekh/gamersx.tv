@@ -19,6 +19,7 @@
           >
             <img
               v-if="showArt && image"
+              alt="Embed's Art"
               :src="image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               style="height: inherit"
@@ -28,6 +29,7 @@
               alt="Embed's Custom Overlay"
               :src="overlay"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
+              onerror="this.onerror=null; this.src='https://placehold.co/400x800'"
               style="height: inherit"
             />
             <!--            <img-->
@@ -44,6 +46,8 @@
                 :src="image.url"
                 class="relative top-1/2 transform -translate-y-1/2 w-full"
                 style="height: inherit"
+                onerror="this.onerror=null; this.src='https://placehold.co/1000x800'"
+                alt="Embed's Art"
               />
             </a>
           </div>
@@ -55,6 +59,32 @@
                 class="relative top-1/2 transform -translate-y-1/2 w-full"
                 alt="Embed's Custom Overlay"
                 :src="overlay"
+                onerror="this.onerror=null; this.src='https://placehold.co/400x600'"
+                style="height: inherit"
+              />
+            </a>
+          </div>
+
+          <!-- If there's no embed, show that instead with a link first -->
+          <div v-else-if="showArt && image" class="w-full h-full">
+            <a :href="link" class="block w-full h-full overflow-hidden">
+              <img
+                :src="image.url"
+                class="relative top-1/2 transform -translate-y-1/2 w-full"
+                style="height: inherit"
+                onerror="this.onerror=null; this.src='https://placehold.co/1000x800'"
+              />
+            </a>
+          </div>
+
+          <!-- If there's only an overlay and isn't art, show that instead with a link -->
+          <div v-else-if="showOverlay" class="w-full h-full">
+            <a :href="link" class="block w-full h-full overflow-hidden">
+              <img
+                class="relative top-1/2 transform -translate-y-1/2 w-full"
+                alt="Embed's Custom Overlay"
+                :src="overlay"
+                onerror="this.onerror=null; this.src='https://placehold.co/400x600'"
                 style="height: inherit"
               />
             </a>
@@ -88,11 +118,13 @@
               v-if="showArt && image"
               :src="image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
+              alt="Embed's Art"
             />
             <img
               v-else-if="showOverlay"
               alt="Embed's Custom Overlay"
               :src="overlay"
+              onerror="this.onerror=null; this.src='https://placehold.co/400x600'"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
             />
           </div>
@@ -169,8 +201,10 @@
             <img
               v-if="showArt && image"
               :src="image.url"
+              alt="Embed's Art"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               style="height: inherit"
+              onerror="this.onerror=null; this.src='https://placehold.co/400x600'"
             />
             <img
               v-else-if="showOverlay"
@@ -178,6 +212,7 @@
               :src="overlay"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               style="height: inherit"
+              onerror="this.onerror=null; this.src='https://placehold.co/400x600'"
             />
           </div>
 
@@ -199,6 +234,7 @@
                 class="relative w-full"
                 alt="Embed's Custom Overlay"
                 :src="overlay"
+                onerror="this.onerror=null; this.src='https://placehold.co/400x600'"
                 style="height: inherit"
               />
             </a>
