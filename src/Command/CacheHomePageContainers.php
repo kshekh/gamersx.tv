@@ -46,11 +46,11 @@ class CacheHomePageContainers extends Command
         $containerizer = $this->containerizer;
 
         try {
-            // $cache = new FilesystemAdapter(
-            //     $namespace = '',
-            //     $defaultLifetime = 0,
-            //     $directory = '/Users/ahmed/Herd/gamersx.tv/filesystem_cache'
-            // );
+//             $cache = new FilesystemAdapter(
+//                 $namespace = '',
+//                 $defaultLifetime = 0,
+//                 $directory = '/Users/ahmed/Herd/gamersx.tv/filesystem_cache'
+//             );
             $cache = new FilesystemAdapter();
             // Deleting old cache
             //Previously `home` cache delete directly, now `home_item` item used to save temporary cache.
@@ -89,6 +89,7 @@ class CacheHomePageContainers extends Command
 
                         $containers = array();
                         $containerized = $containerizer($row);
+                        // dd($containerized);
                         $channels = $containerized->getContainers();
 
                         foreach ($channels as $key => $channel) {

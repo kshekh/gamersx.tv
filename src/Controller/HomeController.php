@@ -47,11 +47,11 @@ class HomeController extends AbstractController
      */
     public function apiHome(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
     {
-        // $cache = new FilesystemAdapter(
-        //     $namespace = '',
-        //     $defaultLifetime = 0,
-        //     $directory = '/Users/ahmed/Herd/gamersx.tv/filesystem_cache'
-        // );
+//         $cache = new FilesystemAdapter(
+//             $namespace = '',
+//             $defaultLifetime = 0,
+//             $directory = '/Users/ahmed/Herd/gamersx.tv/filesystem_cache'
+//         );
         $cache = new FilesystemAdapter();
 
         $rowChannels = $cache->getItem('home');
