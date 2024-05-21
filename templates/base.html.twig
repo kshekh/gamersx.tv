@@ -29,7 +29,7 @@
             gtag('js', new Date());
             gtag('config', 'G-SRMHMJDY8E');
         </script>
-        <link rel="icon" type="image/x-icon" href="/images/favicon.png">
+        <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.png') }}">
 		<!--<script src="https://cdn.tailwindcss.com"></script>-->
 		{% block javascripts %}
 			<!-- Load the Twitch embed script -->
@@ -273,7 +273,7 @@
                             <img src="{{ site_header_background }}" class="shrink-0 w-24 md:w-72 mr-3 md:mr-14 xl:mr-4 header_background">
                         {% endif %}
                         {% set header_logo = (get_theme_setting_array['header_logo'] is defined and get_theme_setting_array['header_logo'] != '')? get_theme_setting_array['header_logo'] :'logo.png' %}
-                        <img src="{{ aws_s3_custom_uri_prefix~'/'~header_logo }}" class="shrink-0 w-22 sm:w-24 md:w-72 mr-3 md:mr-14 xl:mr-4"/>
+                        <img src="{{ asset('images/logo.png') }}" class="shrink-0 w-22 sm:w-24 md:w-72 mr-3 md:mr-14 xl:mr-4" alt="Site logo"/>
 						{#
 						<div class="flex flex-grow items-center justify-between xl:justify-end ml-auto">
 							<nav class="hidden xl:block">
@@ -328,7 +328,7 @@
 							{% else %}
 							<a href="api/twitch-login" class="custom-header-btn flex items-center elementor-button text-[5px] sm:text-base py-1 px-2 sm:py-0 sm:px-[40px] sm:h-10 " role="button" onmouseover="changeBtnColor()" onmouseout="changeNormalBtnColor()">
 								<span class="elementor-button-text">Login With Twitch</span>
-								<img src="/images/twitch-icon-white.png" class="sm:ml-2 w-3.5 sm:w-2.5 h-3.5 sm:h-2.5 sm:w-5 sm:h-5" id="twitch-btn-icon">
+								<img src='{{ asset('images/twitch-icon-white.png') }}' class="sm:ml-2 w-3.5 sm:w-2.5 h-3.5 sm:h-2.5 sm:w-5 sm:h-5" id="twitch-btn-icon" alt="white twitch icon">
 							</a>
 							{% endif %}
                         {% endif %}
@@ -445,7 +445,7 @@
 								<li>
 									<a class="w-6 h-6 md:w-7 md:h-7 xl:w-10 xl:h-10 hover:opacity-80" viewbox="0 0 16 16" href="https://www.gamersx.gg/">
 										<div class="w-6 h-6 md:w-7 md:h-7 xl:w-10 xl:h-10" style="background: #6441A5; border-radius: 50%">
-											<img style="filter: grayscale(100%) saturate(0%) brightness(50%) contrast(300%); transform: scale(.7)" src="/images/gmx-logo-black.png"></img>
+											<img style="filter: grayscale(100%) saturate(0%) brightness(50%) contrast(300%); transform: scale(.7)" src='{{ asset('images/gmx-logo-black.png') }}' alt="GamersX Logo"></img>
 										</div>
 									</a>
 								</li>
@@ -521,7 +521,7 @@
          */
     </script>
     <script>
-        if ("{{ app.environment }}" != "dev" && "{{ app.request.schemeAndHttpHost }}" == "https://gamersx.tv"  && navigator.userAgent.toLowerCase().match(/mobile/i)){
+        if ("{{ app.environment }}" !== "dev" && "{{ app.request.schemeAndHttpHost }}" === "https://gamersx.tv"  && navigator.userAgent.toLowerCase().match(/mobile/i)){
             window.location.replace("{{ redirect_url }}");
         }
     </script>

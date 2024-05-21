@@ -23,7 +23,7 @@
         "sonata-project/doctrine-orm-admin-bundle": "^3.31",
         "sonata-project/user-bundle": "^4.11",
         "symfony/apache-pack": "^1.0",
-        "symfony/asset": "*",
+        "symfony/asset": "4.4.*",
         "symfony/cache": "4.4.*",
         "symfony/console": "*",
         "symfony/dotenv": "*",
