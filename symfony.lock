@@ -347,7 +347,13 @@
         ]
     },
     "sonata-project/twig-extensions": {
-        "version": "1.5.1"
+        "version": "1.12",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.2",
+            "ref": "30dba2f9b719f21b497a6302f41aac07f9079e13"
+        }
     },
     "sonata-project/user-bundle": {
         "version": "4.11.1"
