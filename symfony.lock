@@ -348,7 +348,13 @@
         "version": "3.31.0"
     },
     "sonata-project/exporter": {
-        "version": "2.5.1"
+        "version": "2.14",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "2.4",
+            "ref": "93d6df022ef1dc24bdfa8667ddd560bbde89a7cc"
+        }
     },
     "sonata-project/form-extensions": {
         "version": "1.18",
