@@ -336,12 +336,12 @@
         "version": "2.5.1"
     },
     "sonata-project/form-extensions": {
-        "version": "1.4",
+        "version": "1.18",
         "recipe": {
             "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
+            "branch": "main",
             "version": "1.4",
-            "ref": "bfc222606aea5418345af70104d974a25dc7c441"
+            "ref": "9c8a1e8ce2b1f215015ed16652c4ed18eb5867fd"
         },
         "files": [
             "config/packages/sonata_form.yaml"
