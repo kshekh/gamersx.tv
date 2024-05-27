@@ -318,7 +318,16 @@
         ]
     },
     "sonata-project/block-bundle": {
-        "version": "4.5.2"
+        "version": "4.19",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "4.11",
+            "ref": "b4edd2a1e6ac1827202f336cac2771cb529de542"
+        },
+        "files": [
+            "config/packages/sonata_block.yaml"
+        ]
     },
     "sonata-project/cache": {
         "version": "2.1.1"
