@@ -55,9 +55,11 @@
         <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
     </listeners>
 
+<<<<<<< ours
     <!-- Uncomment when adding extensions
+>>>>>>> theirs
+=======
 >>>>>>> theirs
     <extensions>
     </extensions>
-    -->
 </phpunit>
