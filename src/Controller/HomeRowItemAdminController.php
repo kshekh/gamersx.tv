@@ -47,10 +47,8 @@ class HomeRowItemAdminController extends CRUDController
         $this->em = $em;
     }
 
-    public function createAction()
+    public function createAction(Request $request): Response
     {
-        $request = $this->getRequest();
-
         $this->assertObjectExists($request);
 
         $this->admin->checkAccess('create');
@@ -392,7 +390,7 @@ class HomeRowItemAdminController extends CRUDController
         ]);
     }
 
-    public function editAction($deprecatedId = null) // NEXT_MAJOR: Remove the unused $id parameter
+    public function editAction(Request $request): Response
     {
         if (isset(\func_get_args()[0])) {
             @trigger_error(sprintf(
@@ -406,7 +404,6 @@ class HomeRowItemAdminController extends CRUDController
         // the key used to lookup the template
         $templateKey = 'edit';
 
-        $request = $this->getRequest();
         $this->assertObjectExists($request, true);
 
         $id = $request->get($this->admin->getIdParameter());
@@ -751,9 +748,8 @@ class HomeRowItemAdminController extends CRUDController
         ]);
     }
 
-    public function deleteAction($id) // NEXT_MAJOR: Remove the unused $id parameter
+    public function deleteAction(Request $request): Response // NEXT_MAJOR: Remove the unused $id parameter
     {
-        $request = $this->getRequest();
         $this->assertObjectExists($request, true);
 
         $id = $request->get($this->admin->getIdParameter());
@@ -847,44 +843,44 @@ class HomeRowItemAdminController extends CRUDController
         ]);
     }
 
-    private function setFormTheme(FormView $formView, ?array $theme = null): void
-    {
-        $twig = $this->get('twig');
+//    protected function setFormTheme(FormView $formView, ?array $theme = null): void
+//    {
+//        $twig = $this->get('twig');
+//
+//        $twig->getRuntime(FormRenderer::class)->setTheme($formView, $theme);
+//    }
 
-        $twig->getRuntime(FormRenderer::class)->setTheme($formView, $theme);
-    }
-
-    private function checkParentChildAssociation(Request $request, object $object): void
-    {
-        if (!$this->admin->isChild()) {
-            return;
-        }
-
-        // NEXT_MAJOR: remove this check
-        if (!$this->admin->getParentAssociationMapping()) {
-            return;
-        }
-
-        $parentAdmin = $this->admin->getParent();
-        $parentId = $request->get($parentAdmin->getIdParameter());
-
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        $propertyPath = new PropertyPath($this->admin->getParentAssociationMapping());
-
-        $parentAdminObject = $parentAdmin->getObject($parentId);
-        $objectParent = $propertyAccessor->getValue($object, $propertyPath);
-
-        // $objectParent may be an array or a Collection when the parent association is many to many.
-        $parentObjectMatches = $this->equalsOrContains($objectParent, $parentAdminObject);
-
-        if (!$parentObjectMatches) {
-            // NEXT_MAJOR: make this exception
-            @trigger_error(
-                'Accessing a child that isn\'t connected to a given parent is deprecated since sonata-project/admin-bundle 3.34 and won\'t be allowed in 4.0.',
-                \E_USER_DEPRECATED
-            );
-        }
-    }
+//    protected function checkParentChildAssociation(Request $request, object $object): void
+//    {
+//        if (!$this->admin->isChild()) {
+//            return;
+//        }
+//
+//        // NEXT_MAJOR: remove this check
+//        if (!$this->admin->getParentAssociationMapping()) {
+//            return;
+//        }
+//
+//        $parentAdmin = $this->admin->getParent();
+//        $parentId = $request->get($parentAdmin->getIdParameter());
+//
+//        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+//        $propertyPath = new PropertyPath($this->admin->getParentAssociationMapping());
+//
+//        $parentAdminObject = $parentAdmin->getObject($parentId);
+//        $objectParent = $propertyAccessor->getValue($object, $propertyPath);
+//
+//        // $objectParent may be an array or a Collection when the parent association is many to many.
+//        $parentObjectMatches = $this->equalsOrContains($objectParent, $parentAdminObject);
+//
+//        if (!$parentObjectMatches) {
+//            // NEXT_MAJOR: make this exception
+//            @trigger_error(
+//                'Accessing a child that isn\'t connected to a given parent is deprecated since sonata-project/admin-bundle 3.34 and won\'t be allowed in 4.0.',
+//                \E_USER_DEPRECATED
+//            );
+//        }
+//    }
 
     private function equalsOrContains($haystack, object $needle): bool
     {

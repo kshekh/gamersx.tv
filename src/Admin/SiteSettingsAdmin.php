@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Admin;
 
 use App\Entity\SiteSettings;
+use Doctrine\ORM\EntityManagerInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -14,12 +15,20 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 
 final class SiteSettingsAdmin extends AbstractAdmin
 {
+    public $entityManager;
+
+    public function __construct(?string $code = null, ?string $class = null, ?string $baseControllerName = null, EntityManagerInterface $entityManager)
+    {
+        parent::__construct($code, $class, $baseControllerName);
+        $this->entityManager = $entityManager;
+    }
+
     /**
      * @param RouteCollectionInterface $collection
      */
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
-        $row = $this->getConfigurationPool()->getContainer()->get('doctrine')->getManager()->getRepository(SiteSettings::class)->findOneBy([]);
+        $row = $this->entityManager->getRepository(SiteSettings::class)->findOneBy([]);
         $collection->add('save_theme_setting','save_theme_setting');
         $collection->add('save_theme','save_theme');
         $collection->add('get_theme_setting','get_theme_setting');
@@ -56,7 +65,7 @@ final class SiteSettingsAdmin extends AbstractAdmin
         }
     }
 
-    protected function configureBatchActions($actions)
+    protected function configureBatchActions($actions): array
     {
         unset($actions['export']);
         unset($actions['delete']);
@@ -64,9 +73,9 @@ final class SiteSettingsAdmin extends AbstractAdmin
         return $actions;
     }
 
-    public function configureActionButtons($action, $object = null)
+    public function configureActionButtons(array $buttonList, string $action, ?object $object = null): array
     {
-        $buttons = parent::configureActionButtons($action, $object);
+        $buttons = parent::configureActionButtons($buttonList, $action, $object);
         if (in_array($action, array('list'))) {
             unset($buttons['create']);
         }

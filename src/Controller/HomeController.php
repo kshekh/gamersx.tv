@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\{Response, RedirectResponse};
 
 class HomeController extends AbstractController
 {
-//    private $homeRowInfo;
+    private $homeRowInfo;
     private $session;
 
     public function __construct(HomeRowInfo $homeRowInfo, SessionInterface $session)

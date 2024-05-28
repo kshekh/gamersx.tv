@@ -55,7 +55,7 @@ services:
         class: App\Admin\HomeRowAdmin
         arguments: [~, App\Entity\HomeRow, App\Controller\HomeRowAdminController ]
         tags:
-            - { name: sonata.admin, manager_type: orm, group: home, label: Rows }
+            - { name: sonata.admin, model_class: App\Entity\HomeRow, manager_type: orm, group: home, label: Rows }
         public: true
         calls:
             - ['addChild', ['@admin.home_row_item', 'homeRow']]
@@ -64,7 +64,7 @@ services:
         class: App\Admin\HomeRowItemAdmin
         arguments: [~, App\Entity\HomeRowItem, App\Controller\HomeRowItemAdminController ]
         tags:
-            - { name: sonata.admin, manager_type: orm, group: home, label: Containers }
+            - { name: sonata.admin, model_class: App\Entity\HomeRowItem, manager_type: orm, group: home, label: Containers }
         calls:
             - [ setTemplate, [ 'edit', 'homerowitem/edit.html.twig' ] ]
         public: true
@@ -73,7 +73,7 @@ services:
         class: App\Admin\ThemeAdmin
         arguments: [~, App\Entity\Theme, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, group: admin, label: Pages }
+            - { name: sonata.admin, model_class: App\Entity\Theme, manager_type: orm, group: admin, label: Pages }
         public: true
 
     admin.site_settings:
@@ -82,28 +82,28 @@ services:
         calls:
             - [ setTemplate, [ 'list', 'sitesetting/list.html.twig' ] ]
         tags:
-            - { name: sonata.admin, manager_type: orm, group: admin, label: Site Settings }
+            - { name: sonata.admin, model_class: App\Entity\SiteSettings, manager_type: orm, group: admin, label: Site Settings }
         public: true
 
     admin.partner:
         class: App\Admin\PartnerAdmin
         arguments: [~, App\Entity\Partner, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, group: admin, label: Partners }
+            - { name: sonata.admin, model_class: App\Entity\Partner, manager_type: orm, group: admin, label: Partners }
         public: true
 
     admin.partner_role:
         class: App\Admin\PartnerRoleAdmin
         arguments: [~, App\Entity\PartnerRole, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, group: admin, label: Partner Roles }
+            - { name: sonata.admin, model_class: App\Entity\PartnerRole, manager_type: orm, group: admin, label: Partner Roles }
         public: true
 
     admin.container_access_control:
         class: App\Admin\ContainerAccessControlAdmin
         arguments: [~, App\Entity\HomeRowItemOperation, App\Controller\ContainerAccessControlController ]
         tags:
-            - { name: sonata.admin, manager_type: orm, group: admin, label: Container access control }
+            - { name: sonata.admin, model_class: App\Entity\HomeRowItemOperation, manager_type: orm, group: admin, label: Container access control }
         calls:
             - [ setTemplate, [ 'list', 'ContainerAccessControlAdmin/list.html.twig' ] ]
         public: true

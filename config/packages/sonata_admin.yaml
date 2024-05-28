@@ -28,9 +28,6 @@ sonata_admin:
                     - admin.partner
                     - admin.partner_role
 
-    options:
-        legacy_twig_text_extension: false
-
     assets:
         extra_javascripts:
             - 'js/custom-admin.js'

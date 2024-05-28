@@ -23,7 +23,7 @@ security:
             logout:
                 path:           /admin/logout
                 target:         /admin/login
-            anonymous:          true
+            anonymous:          lazy
 
         # -> end custom configuration
 

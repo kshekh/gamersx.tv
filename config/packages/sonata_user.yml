@@ -1,4 +1,7 @@
 sonata_user:
     class:
         user: App\Entity\User
-        group: App\Entity\UserGroup
+    resetting:
+        email:
+            address: "no-reply@gamersx.tv"
+            sender_name: "app@gamersx.tv"

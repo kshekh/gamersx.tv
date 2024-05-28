@@ -7,7 +7,8 @@ use App\Entity\MasterTheme;
 use App\Service\AwsS3Service;
 use App\Service\ThemeSettingValidator;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\{File\UploadedFile,
+use Symfony\Component\HttpFoundation\{File\Exception\FileException,
+    File\UploadedFile,
     HeaderUtils,
     JsonResponse,
     Request,
@@ -39,14 +40,12 @@ class ThemeSettingAdminController extends CRUDController
     /**
      * List action.
      *
-     * @throws AccessDeniedException If access is not granted
+     * @param Request $request * @return Response
+     *@throws AccessDeniedException If access is not granted
      *
-     * @return Response
      */
-    public function listAction()
+    public function listAction(Request $request): Response
     {
-        $request = $this->getRequest();
-
         $this->assertObjectExists($request);
 
         $this->admin->checkAccess('list');
@@ -95,12 +94,12 @@ class ThemeSettingAdminController extends CRUDController
     /**
      * Sets the admin form theme to form view. Used for compatibility between Symfony versions.
      */
-    private function setFormTheme(FormView $formView, ?array $theme = null): void
-    {
-        $twig = $this->get('twig');
-
-        $twig->getRuntime(FormRenderer::class)->setTheme($formView, $theme);
-    }
+//    private function setFormTheme(FormView $formView, ?array $theme = null): void
+//    {
+//        $twig = $this->get('twig');
+//
+//        $twig->getRuntime(FormRenderer::class)->setTheme($formView, $theme);
+//    }
 
     /**
      * @param $id

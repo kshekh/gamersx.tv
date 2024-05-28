@@ -75,9 +75,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
         $sortValues[DatagridInterface::SORT_BY] = 'sortIndex';
     }
 
-    public function configureActionButtons($action, $object = null): array
+    public function configureActionButtons(array $buttonList, string $action, ?object $object = null): array
     {
-        $list = parent::configureActionButtons($action, $object);
+        $list = parent::configureActionButtons($buttonList, $action, $object);
         $list['importForm']['template'] = 'CRUD/import_button.html.twig';
         return $list;
     }
