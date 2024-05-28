@@ -40,7 +40,7 @@ security:
                 failure_path:   null
             access_denied_url:  /access-denied
             logout:             true
-            anonymous:          true
+            anonymous:          lazy
 
         # activate different ways to authenticate
         # https://symfony.com/doc/current/security.html#firewalls-authentication
