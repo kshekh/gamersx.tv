@@ -59,6 +59,8 @@ services:
         public: true
         calls:
             - ['addChild', ['@admin.home_row_item', 'homeRow']]
+            - [setTokenStorage, ['@security.token_storage']]
+
 
     admin.home_row_item:
         class: App\Admin\HomeRowItemAdmin
