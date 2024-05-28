@@ -10,42 +10,74 @@ use Knp\Menu\ItemInterface as MenuItemInterface;
 use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, NumberType, TimeType, TimezoneType};
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
+use Sonata\AdminBundle\Datagrid\DatagridInterface;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
+use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 final class HomeRowAdmin extends AbstractAdmin
 {
-    public function createQuery($context = 'list'): ProxyQuery
-    {
-        /** @var ProxyQuery $query */
-        $query = parent::createQuery($context);
+    /**
+     * @var TokenStorageInterface
+     */
+    private $storageInterface;
 
-        return $query
-            ->setSortOrder('ASC')
-            ->setSortBy([], ['fieldName' => 'sortIndex'])
-            ;
+    public function __construct($code, $class, $baseControllerName = null, TokenStorageInterface $storageInterface)
+    {
+        parent::__construct($code, $class, $baseControllerName);
+        $this->storageInterface = $storageInterface;
     }
 
-    protected $datagridValues = array(
-        '_page' => 1,
-        '_sort_order' => 'ASC',
-        '_sort_by' => 'sortIndex'
-    );
-    public function configureActionButtons($action, $object = null)
+//    public function createQuery($context = 'list'): ProxyQuery
+//    {
+//        /** @var ProxyQuery $query */
+//        $query = parent::createQuery($context);
+//
+//        return $query
+//            ->setSortOrder('ASC')
+//            ->setSortBy([], ['fieldName' => 'sortIndex'])
+//            ;
+//    }
+
+//    protected $datagridValues = array(
+//        '_page' => 1,
+//        '_sort_order' => 'ASC',
+//        '_sort_by' => 'sortIndex'
+//    );
+    protected function configureDefaultSortValues(array &$sortValues): void
+    {
+        $sortValues[DatagridInterface::PAGE] = 1;
+        $sortValues[DatagridInterface::SORT_ORDER] = 'ASC';
+        $sortValues[DatagridInterface::SORT_BY] = 'sortIndex';
+    }
+
+    public function configureActionButtons($action, $object = null): array
     {
         $list = parent::configureActionButtons($action, $object);
         $list['importForm']['template'] = 'CRUD/import_button.html.twig';
         return $list;
     }
 
-    public function getDashboardActions()
-    {
-        $actions = parent::getDashboardActions();
+//    public function getDashboardActions()
+//    {
+//        $actions = parent::getDashboardActions();
+//
+//        $actions['importForm'] = [
+//            'label' => 'Import',
+//            'url' => $this->generateUrl('importForm'),
+//            'icon' => 'level-up',
+//        ];
+//
+//        return $actions;
+//    }
 
+    protected function configureDashboardActions(array $actions): array
+    {
         $actions['importForm'] = [
             'label' => 'Import',
             'url' => $this->generateUrl('importForm'),
@@ -254,7 +286,7 @@ final class HomeRowAdmin extends AbstractAdmin
         ;
     }
 
-    protected function configureBatchActions($actions)
+    protected function configureBatchActions($actions): array
     {
 
         if ($this->hasRoute('list') && $this->hasAccess('list')) {
@@ -278,7 +310,7 @@ final class HomeRowAdmin extends AbstractAdmin
 
     public function alterNewInstance(object $instance): void
     {
-        $user = $this->getConfigurationPool()->getContainer()->get('security.token_storage')->getToken()->getUser();
+        $user = $this->storageInterface->getToken()->getUser();
         $roles = $user->getPartnerRoles();
 
         if (!$roles->isEmpty()) {

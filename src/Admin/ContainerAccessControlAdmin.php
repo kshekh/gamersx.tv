@@ -10,23 +10,48 @@ use Knp\Menu\ItemInterface as MenuItemInterface;
 use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, NumberType, TimeType, TimezoneType};
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
+use Sonata\AdminBundle\Datagrid\DatagridInterface;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
+use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 final class ContainerAccessControlAdmin extends AbstractAdmin
 {
-    public function createQuery($context = 'list'): ProxyQuery
+    /**
+     * @var TokenStorageInterface
+     */
+    private $storageInterface;
+
+    public function __construct($code, $class, $baseControllerName = null, TokenStorageInterface $storageInterface)
     {
-        /** @var ProxyQuery $query */
-        $query = parent::createQuery($context);
-        $rootAlias = $query->getRootAliases()[0];
-        $query
-            ->setSortOrder('ASC')
-            ->setSortBy([], ['fieldName' => 'id']);
+        parent::__construct($code, $class, $baseControllerName);
+        $this->storageInterface = $storageInterface;
+    }
+
+//    public function createQuery($context = 'list'): ProxyQuery
+//    {
+//        /** @var ProxyQuery $query */
+//        $query = parent::createQuery($context);
+//        $rootAlias = $query->getRootAliases()[0];
+//        $query
+//            ->setSortOrder('ASC')
+//            ->setSortBy([], ['fieldName' => 'id']);
+//
+//        $query->where($rootAlias.'.is_blacklisted = 1');
+//        $query->orWhere($rootAlias.'.is_full_site_blacklisted = 1');
+//
+//        return $query;
+//    }
+
+    protected function configureQuery(ProxyQueryInterface $query): ProxyQueryInterface
+    {
+        $query = parent::configureQuery($query);
+        $rootAlias = current($query->getRootAliases());
 
         $query->where($rootAlias.'.is_blacklisted = 1');
         $query->orWhere($rootAlias.'.is_full_site_blacklisted = 1');
@@ -34,12 +59,18 @@ final class ContainerAccessControlAdmin extends AbstractAdmin
         return $query;
     }
 
-    protected $datagridValues = array(
-        '_page' => 1,
-        '_sort_order' => 'ASC',
-        '_sort_by' => 'sortIndex'
-    );
+//    protected $datagridValues = array(
+//        '_page' => 1,
+//        '_sort_order' => 'ASC',
+//        '_sort_by' => 'sortIndex'
+//    );
 
+    protected function configureDefaultSortValues(array &$sortValues): void
+    {
+        $sortValues[DatagridInterface::PAGE] = 1;
+        $sortValues[DatagridInterface::SORT_ORDER] = 'ASC';
+        $sortValues[DatagridInterface::SORT_BY] = 'sortIndex';
+    }
 
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
@@ -105,7 +136,7 @@ final class ContainerAccessControlAdmin extends AbstractAdmin
         ;
     }
 
-    protected function configureBatchActions($actions)
+    protected function configureBatchActions($actions): array
     {
 
         if ($this->hasRoute('list') && $this->hasAccess('list')) {
@@ -121,7 +152,7 @@ final class ContainerAccessControlAdmin extends AbstractAdmin
 
     public function alterNewInstance(object $instance): void
     {
-        $user = $this->getConfigurationPool()->getContainer()->get('security.token_storage')->getToken()->getUser();
+        $user = $this->storageInterface->getToken()->getUser();
         $roles = $user->getPartnerRoles();
 
         if (!$roles->isEmpty()) {
