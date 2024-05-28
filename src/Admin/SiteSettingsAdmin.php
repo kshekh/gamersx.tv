@@ -31,12 +31,12 @@ final class SiteSettingsAdmin extends AbstractAdmin
     }
 
     /**
-     * @param ListMapper $listMapper
+     * @param ListMapper $list
      */
-    protected function configureListFields(ListMapper $listMapper): void
+    protected function configureListFields(ListMapper $list): void
     {
         if ($this->isGranted('ROLE_LOGIN_ALLOWED')) {
-            $listMapper
+            $list
                 ->add('disableHomeAccess', null, [
                     'editable' => true,
                     'label' => 'Disable HomePage Access'
@@ -45,10 +45,10 @@ final class SiteSettingsAdmin extends AbstractAdmin
         }
     }
 
-    protected function configureFormFields(FormMapper $formMapper): void
+    protected function configureFormFields(FormMapper $form): void
     {
         if ($this->isGranted('ROLE_LOGIN_ALLOWED')) {
-            $formMapper
+            $form
                 ->add('disableHomeAccess', null, [
                     'label' => 'Disable HomePage Access'
                 ])

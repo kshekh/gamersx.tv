@@ -81,9 +81,9 @@ final class HomeRowAdmin extends AbstractAdmin
         }
     }
 
-    protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
+    protected function configureDatagridFilters(DatagridMapper $filter): void
     {
-        $datagridMapper
+        $filter
             ->add('title')
             ->add('partner')
             ->add('isPublished')
@@ -92,9 +92,9 @@ final class HomeRowAdmin extends AbstractAdmin
         ;
     }
 
-    protected function configureListFields(ListMapper $listMapper): void
+    protected function configureListFields(ListMapper $list): void
     {
-        $listMapper
+        $list
             ->add('title', null, [
                 'editable' => true,
                 'sortable' => false
@@ -162,9 +162,9 @@ final class HomeRowAdmin extends AbstractAdmin
         ;
     }
 
-    protected function configureFormFields(FormMapper $formMapper): void
+    protected function configureFormFields(FormMapper $form): void
     {
-        $formMapper
+        $form
             ->add('title')
             ->add('sortIndex')
             ->add('layout', ChoiceType::class, [
@@ -240,9 +240,9 @@ final class HomeRowAdmin extends AbstractAdmin
             ])
         ;
     }
-    protected function configureShowFields(ShowMapper $showMapper): void
+    protected function configureShowFields(ShowMapper $show): void
     {
-        $showMapper
+        $show
             ->add('title')
             ->add('sortIndex')
             ->add('layout')

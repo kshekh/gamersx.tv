@@ -18,9 +18,9 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 
 final class ThemeAdmin extends AbstractAdmin
 {
-    protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
+    protected function configureDatagridFilters(DatagridMapper $filter): void
     {
-        $datagridMapper
+        $filter
             ->add('topicId')
             ->add('label')
             ->add('itemType')
@@ -31,9 +31,9 @@ final class ThemeAdmin extends AbstractAdmin
             ;
     }
 
-    protected function configureListFields(ListMapper $listMapper): void
+    protected function configureListFields(ListMapper $list): void
     {
-        $listMapper
+        $list
             ->add('topicId')
             ->add('label')
             ->add('itemType')
@@ -50,9 +50,9 @@ final class ThemeAdmin extends AbstractAdmin
             ]);
     }
 
-    protected function configureFormFields(FormMapper $formMapper): void
+    protected function configureFormFields(FormMapper $form): void
     {
-        $formMapper
+        $form
             ->add('itemType', ChoiceType::class, [
                 'choices' => [
                     'Games' => HomeRowItem::TYPE_GAME,
@@ -82,9 +82,9 @@ final class ThemeAdmin extends AbstractAdmin
             ;
     }
 
-    protected function configureShowFields(ShowMapper $showMapper): void
+    protected function configureShowFields(ShowMapper $show): void
     {
-        $showMapper
+        $show
             ->add('id')
             ->add('topicId')
             ->add('label')

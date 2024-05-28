@@ -8,8 +8,10 @@ use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
 use App\Form\TopicType;
 use App\Form\SortAndTrimOptionsType;
+use Sonata\AdminBundle\Datagrid\DatagridInterface;
+use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, TimeType, TimezoneType};
+use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, TimeType, TimezoneType};
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\CallbackTransformer;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -20,20 +22,41 @@ use Sonata\AdminBundle\Form\Type\ModelType;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 final class HomeRowItemAdmin extends AbstractAdmin
 {
-
-    public function createQuery($context = 'list'): ProxyQuery
+    private $storageInterface;
+    public function __construct($code, $class, $baseControllerName = null, TokenStorageInterface $storageInterface)
     {
-        /** @var ProxyQuery $query */
-        $query = parent::createQuery($context);
-        $rootAlias = $query->getRootAliases()[0];
+        parent::__construct($code, $class, $baseControllerName);
+        $this->storageInterface = $storageInterface;
+    }
+//    public function createQuery($context = 'list'): ProxyQuery
+//    {
+//        /** @var ProxyQuery $query */
+//        $query = parent::createQuery($context);
+//        $rootAlias = $query->getRootAliases()[0];
+//
+//        $query
+//            ->setSortOrder('ASC')
+//            ->setSortBy([], ['fieldName' => 'sortIndex']);
+//
+//        $query->where($query->expr()->andX(
+//            $query->expr()->eq($rootAlias.'.itemType', ':itemType'),
+//            $query->expr()->isNull($rootAlias.'.playlistId')
+//        ));
+//        $query->orWhere($rootAlias.'.itemType != :itemType');
+//        $query->setParameter(':itemType', 'youtube_video');
+//
+//        return $query;
+//    }
 
-        $query
-            ->setSortOrder('ASC')
-            ->setSortBy([], ['fieldName' => 'sortIndex']);
+    protected function configureQuery(ProxyQueryInterface $query): ProxyQueryInterface
+    {
+        $query = parent::configureQuery($query);
+        $rootAlias = current($query->getRootAliases());
 
         $query->where($query->expr()->andX(
             $query->expr()->eq($rootAlias.'.itemType', ':itemType'),
@@ -45,23 +68,35 @@ final class HomeRowItemAdmin extends AbstractAdmin
         return $query;
     }
 
-    protected $datagridValues = array(
-        '_page' => 1,
-        '_sort_order' => 'ASC',
-        '_sort_by' => 'sortIndex'
-    );
+    protected function configureDefaultSortValues(array &$sortValues): void
+    {
+        $sortValues[DatagridInterface::PAGE] = 1;
+        $sortValues[DatagridInterface::SORT_ORDER] = 'ASC';
+        $sortValues[DatagridInterface::SORT_BY] = 'sortIndex';
+    }
 
-    public function configureActionButtons($action, $object = null)
+    public function configureActionButtons($action, $object = null): array
     {
         $list = parent::configureActionButtons($action, $object);
         $list['importForm']['template'] = 'CRUD/import_button.html.twig';
         return $list;
     }
 
-    public function getDashboardActions()
-    {
-        $actions = parent::getDashboardActions();
+//    public function getDashboardActions(): array
+//    {
+//        $actions = parent::getDashboardActions();
+//
+//        $actions['importForm'] = [
+//            'label' => 'Import',
+//            'url' => $this->generateUrl('importForm'),
+//            'icon' => 'level-up',
+//        ];
+//
+//        return $actions;
+//    }
 
+    protected function configureDashboardActions(array $actions): array
+    {
         $actions['importForm'] = [
             'label' => 'Import',
             'url' => $this->generateUrl('importForm'),
@@ -71,9 +106,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
         return $actions;
     }
 
-    protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
+    protected function configureDatagridFilters(DatagridMapper $filter): void
     {
-        $datagridMapper
+        $filter
             ->add('label')
             ->add('itemType')
             ->add('videoId')
@@ -87,7 +122,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ]);
     }
 
-    protected function configureListFields(ListMapper $listMapper): void
+    protected function configureListFields(ListMapper $list): void
     {
         $homeRows = $this->getModelManager()->findBy(HomeRow::class);
         $homeRowsObjects = [];
@@ -101,7 +136,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
         }
 
 
-        $listMapper
+        $list
             ->add('homeRow', 'choice', [
                 'editable' => true,
                 'class' => HomeRow::class,
@@ -171,9 +206,9 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ]);
     }
 
-    protected function configureFormFields(FormMapper $formMapper): void
+    protected function configureFormFields(FormMapper $form): void
     {
-        $formMapper
+        $form
             ->add('sortIndex')
             ->add('showArt', null, [
                 'label' => 'Show API Thumbnail'
@@ -303,16 +338,16 @@ final class HomeRowItemAdmin extends AbstractAdmin
                     $topic = $homeRowItem->getTopic();
                     if ($topic && array_key_exists('label', $topic)) {
                         $homeRowItem->setLabel($topic['label']);
-                    };
+                    }
 
                     return $homeRowItem;
                 }
             ));
     }
 
-    protected function configureShowFields(ShowMapper $showMapper): void
+    protected function configureShowFields(ShowMapper $show): void
     {
-        $showMapper
+        $show
             ->add('id')
             ->add('sortAndTrimOptions')
             ->add('topic')
@@ -332,7 +367,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPartner');
     }
 
-    protected function configureBatchActions($actions)
+    protected function configureBatchActions($actions): array
     {
 
         if ($this->hasRoute('list') && $this->hasAccess('list')) {
@@ -355,7 +390,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
 
     public function alterNewInstance(object $instance): void
     {
-        $user = $this->getConfigurationPool()->getContainer()->get('security.token_storage')->getToken()->getUser();
+        $user = $this->storageInterface->getToken()->getUser();
         $roles = $user->getPartnerRoles();
 
         if (!$roles->isEmpty()) {
