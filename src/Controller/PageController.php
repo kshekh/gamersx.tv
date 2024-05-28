@@ -23,7 +23,7 @@ class PageController extends AbstractController
      */
     public function channel(YouTubeApi $youtube, $id): Response
     {
-       
+
        if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
                 $this->generateUrl('sonata_user_admin_security_login')
@@ -41,7 +41,7 @@ class PageController extends AbstractController
      */
     public function query(YouTubeApi $youtube, $query): Response
     {
-        
+
         if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
                 $this->generateUrl('sonata_user_admin_security_login')
@@ -61,7 +61,7 @@ class PageController extends AbstractController
     public function apiChannel(YouTubeApi $youtube, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $id): Response
     {
-        $channelInfo = $gamersxCache->get("channel-${id}",
+        $channelInfo = $gamersxCache->get("channel-{$id}",
             function (ItemInterface $item) use ($id, $youtube, $themeInfoService) {
                 $channel = $youtube->getChannelInfo($id)->getItems()[0];
                 $themeInfo = $themeInfoService->getThemeInfo($id, HomeRowItem::TYPE_CHANNEL);
@@ -109,7 +109,7 @@ class PageController extends AbstractController
     public function apiQuery(YouTubeApi $youtube, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $query): Response
     {
-        $queryInfo = $gamersxCache->get("query-${query}",
+        $queryInfo = $gamersxCache->get("query-{$query}",
             function (ItemInterface $item) use ($query, $youtube, $themeInfoService) {
                 $themeInfo = $themeInfoService->getThemeInfo($query, HomeRowItem::TYPE_YOUTUBE);
 

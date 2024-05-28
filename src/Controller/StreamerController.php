@@ -21,7 +21,7 @@ class StreamerController extends AbstractController
      */
     public function index(TwitchApi $twitch, $id): Response
     {
-        
+
         if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
                 $this->generateUrl('sonata_user_admin_security_login')
@@ -41,14 +41,14 @@ class StreamerController extends AbstractController
     public function apiStreamer(TwitchApi $twitch, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $id): Response
     {
-       
+
         if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
                 $this->generateUrl('sonata_user_admin_security_login')
              );
         }
 
-        $streamerInfo = $gamersxCache->get("streamer-${id}",
+        $streamerInfo = $gamersxCache->get("streamer-{$id}",
             function (ItemInterface $item) use ($id, $twitch, $themeInfoService) {
 
             $streamer = $twitch->getStreamerInfo($id);

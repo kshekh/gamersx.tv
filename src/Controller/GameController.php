@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class GameController extends AbstractController
 {
-  
+
     /**
      * @Route("/game/{id}", name="game")
      */
@@ -48,7 +48,7 @@ class GameController extends AbstractController
              );
         }
 
-        $gameInfo = $gamersxCache->get("game-${id}",
+        $gameInfo = $gamersxCache->get("game-{$id}",
             function (ItemInterface $item) use ($id, $twitch, $themeInfoService) {
                 $game = $twitch->getGameInfo($id);
                 $themeInfo = $themeInfoService->getThemeInfo($id, HomeRowItem::TYPE_GAME);

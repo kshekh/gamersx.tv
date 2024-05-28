@@ -108,7 +108,7 @@ class RefreshTwitchTokenCommand extends Command
                 $response = $request->toArray();
                 if (array_key_exists('access_token', $response)) {
                     $token = $response['access_token'];
-                    $io->success("The new token is ${token}.");
+                    $io->success("The new token is {$token}.");
 
                     $result = $client->putParameter([
                         'Name' => "/gamersx/$env/TWITCH_APP_TOKEN",
@@ -123,15 +123,15 @@ class RefreshTwitchTokenCommand extends Command
                             while (!feof($envFile)) {
                                 $line = fgets($envFile);
                                 if (str_starts_with($line, 'TWITCH_APP_TOKEN')) {
-                                    $line = "TWITCH_APP_TOKEN=${token}\n";
+                                    $line = "TWITCH_APP_TOKEN={$token}\n";
                                 }
                                 $newFile .= $line;
                             }
                         } else {
-                            $newFile = "TWITCH_APP_TOKEN=${token}\n";
+                            $newFile = "TWITCH_APP_TOKEN={$token}\n";
                         }
                         $this->file->dumpFile($argFile, $newFile);
-                        $io->success("Wrote the new token to ${argFile}");
+                        $io->success("Wrote the new token to {$argFile}");
                     }
 
                     return 0;

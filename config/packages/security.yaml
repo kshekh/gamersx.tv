@@ -1,4 +1,5 @@
 security:
+    enable_authenticator_manager: true
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         fos_userbundle:
@@ -23,7 +24,7 @@ security:
             logout:
                 path:           /admin/logout
                 target:         /admin/login
-            anonymous:          lazy
+            security:           false
 
         # -> end custom configuration
 
@@ -40,7 +41,6 @@ security:
                 failure_path:   null
             access_denied_url:  /access-denied
             logout:             true
-            anonymous:          lazy
 
         # activate different ways to authenticate
         # https://symfony.com/doc/current/security.html#firewalls-authentication
