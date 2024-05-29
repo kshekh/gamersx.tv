@@ -36,5 +36,3 @@ return function (array $context) {
     $kernel->terminate($request, $response);
 };
 
-
-

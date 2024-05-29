@@ -2,7 +2,7 @@
 framework:
     secret: '%env(APP_SECRET)%'
     #csrf_protection: true
-    #http_method_override: true
+    http_method_override: false # maybe set to true
     http_client:
         scoped_clients:
             twitch:
@@ -23,4 +23,10 @@ framework:
     #fragments: true
     php_errors:
         log: true
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file
 
