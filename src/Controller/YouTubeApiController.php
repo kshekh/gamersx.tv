@@ -10,9 +10,7 @@ use Symfony\Component\HttpFoundation\{Request, Response, RedirectResponse};
 #[Route('/api', name: 'youtube_')]
 class YouTubeApiController extends AbstractController
 {
-    /**
-     * @Route("/query/channel/{query}", name="queryChannel")
-     */
+    #[Route('/query/channel/{query}', name: 'queryChannel')]
     public function channelQuery(Request $request, YouTubeApi $youtube, $query)
     {
 
