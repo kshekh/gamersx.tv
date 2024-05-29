@@ -24,14 +24,14 @@ class HomeVoter extends Voter
         $this->roles = $roles;
     }
 
-    protected function supports($attribute, $subject)
+    protected function supports(string $attribute, $subject): bool
     {
         //  This voter votes on HOME_ROW and HOME_ROW_ITEM permissions
         return $subject instanceof \App\Admin\HomeRowAdmin || $subject instanceof \App\Entity\HomeRow ||
             $subject instanceof \App\Admin\HomeRowItemAdmin || $subject instanceof \App\Entity\HomeRowItem;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         // if the user is anonymous, do not grant access
         $user = $token->getUser();
