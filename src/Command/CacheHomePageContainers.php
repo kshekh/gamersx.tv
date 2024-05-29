@@ -8,6 +8,7 @@ use App\Service\HomeRowInfo;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -19,13 +20,15 @@ use Symfony\Component\Serializer\Serializer;
 use Symfony\Contracts\Cache\ItemInterface;
 
 
+#[AsCommand(
+    name: 'app:cache-home-page-containers',
+    description: 'This command will cache the containers for home/api to save load time'
+)]
 class CacheHomePageContainers extends Command
 {
     private $containerizer;
     private $em;
     private $homeRowInfo;
-    protected static $defaultName = 'app:cache-home-page-containers';
-    protected static $defaultDescription = 'This command will cache the containers for home/api to save load time';
 
     public function __construct(EntityManagerInterface $em, ContainerizerFactory $containerizer, HomeRowInfo $homeRowInfo)
     {
@@ -35,7 +38,7 @@ class CacheHomePageContainers extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription(self::$defaultDescription);

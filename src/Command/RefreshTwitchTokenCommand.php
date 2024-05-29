@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -14,15 +15,16 @@ use Aws\Ssm\SsmClient;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
+#[AsCommand(
+    name: 'app:refresh-twitch-token',
+    description: 'Gets a new App Token from the Twitch ID service'
+)]
 class RefreshTwitchTokenCommand extends Command
 {
     private $client;
     private $params;
     private $file;
     private $logger;
-
-    protected static $defaultName = 'app:refresh-twitch-token';
-    protected static $defaultDescription = 'Gets a new App Token from the Twitch ID service';
 
     public function __construct(HttpClientInterface $client, ParameterBagInterface $params, Filesystem $file, LoggerInterface $logger)
     {
@@ -33,7 +35,7 @@ class RefreshTwitchTokenCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription(self::$defaultDescription)
