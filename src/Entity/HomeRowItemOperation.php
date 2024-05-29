@@ -3,79 +3,53 @@
 namespace App\Entity;
 
 use App\Repository\HomeRowItemOperationRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=HomeRowItemOperationRepository::class)
- */
+#[ORM\Entity(repositoryClass: HomeRowItemOperationRepository::class)]
+
 class HomeRowItemOperation
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=HomeRowItem::class, inversedBy="homeRowItemOperations")
-     */
-    private $home_row_item;
+    #[ORM\Column(length: 25)]
+    private ?string $item_type = null;
 
-    /**
-     * @ORM\Column(type="string", length=25)
-     */
-    private $item_type;
+    #[ORM\ManyToOne(inversedBy: 'homeRowItemOperations')]
+    private ?HomeRowItem $home_row_item = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true,options={"comment":"itemtype=streamer => livestreaming_id,itemtype=offline_streamer => userid"})
-     */
-    private $streamer_id;
+    #[ORM\Column(length: 255, nullable: true, options: ['comment' => 'itemType=streamer => livestreaming_id, itemType=offline_streamer => userid'])]
+    private ?string $streamer_id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $game_id;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $game_id = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $priority;
+    #[ORM\Column(nullable: true)]
+    private ?int $priority = null;
 
-    /**
-     * @ORM\Column(type="smallint", nullable=true)
-     */
-    private $is_whitelisted;
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    private ?int $is_whitelisted = null;
 
-    /**
-     * @ORM\Column(type="smallint", nullable=true)
-     */
-    private $is_blacklisted;
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    private ?int $is_blacklisted = null;
 
-    /**
-     * @ORM\Column(type="smallint", nullable=true)
-     */
-    private $is_full_site_blacklisted;
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    private ?int $is_full_site_blacklisted = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $streamer_name;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $streamer_name = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $game_name;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $game_name = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $viewer;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $viewer = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $user_id;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $user_id = null;
 
     public function getId(): ?int
     {

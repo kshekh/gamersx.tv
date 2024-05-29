@@ -5,34 +5,25 @@ namespace App\Entity;
 use App\Repository\MasterThemeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=MasterThemeRepository::class)
- */
+#[ORM\Entity(repositoryClass: MasterThemeRepository::class)]
 class MasterTheme
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity=MasterSetting::class, mappedBy="master_theme")
-     */
-    private $masterSettings;
+    #[ORM\OneToMany(mappedBy: 'master_theme', targetEntity: MasterSetting::class)]
+    private Collection $masterSettings;
 
-    /**
-     * @ORM\Column(type="smallint", nullable=true, options={"comment":"0-inactive, 1-active","default"= 0})
-     */
-    private $status;
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    private ?int $status = null;
 
     public function __construct()
     {

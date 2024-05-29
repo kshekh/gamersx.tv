@@ -13,36 +13,25 @@ use Sonata\UserBundle\Entity\BaseUser;
  */
 class User extends BaseUser
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    protected $id = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PartnerRole::class, mappedBy="user", orphanRemoval=true)
-     */
-    private $partnerRoles;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: PartnerRole::class, orphanRemoval: true)]
+    private Collection $partnerRoles;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $twitchUserId;
+    #[ORM\Column(length: 255)]
+    private ?string $twitchUserId = null;
 
-    /**
-     * @ORM\Column(type="string", length=500)
-     */
-    private $twitchAccessToken;
+    #[ORM\Column(length: 500)]
+    private ?string $twitchAccessToken = null;
 
-    /**
-     * @ORM\Column(type="string", length=500)
-     */
-    private $twitchRefreshToken;
+    #[ORM\Column(length: 500)]
+    private ?string $twitchRefreshToken = null;
 
     public function __construct()
     {
-        parent::__construct();
         $this->partnerRoles = new ArrayCollection();
     }
 
@@ -52,7 +41,7 @@ class User extends BaseUser
     }
 
     /**
-     * @return Collection|PartnerRole[]
+     * @return Collection
      */
     public function getPartnerRoles(): Collection
     {

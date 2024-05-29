@@ -11,32 +11,22 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Partner
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PartnerRole::class, mappedBy="partner")
-     */
-    private $partnerRoles;
+    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: PartnerRole::class)]
+    private Collection $partnerRoles;
 
-    /**
-     * @ORM\OneToMany(targetEntity=HomeRow::class, mappedBy="partner")
-     */
-    private $homeRows;
+    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: HomeRow::class)]
+    private Collection $homeRows;
 
-    /**
-     * @ORM\OneToMany(targetEntity=HomeRowItem::class, mappedBy="partner")
-     */
-    private $homeRowItems;
+    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: HomeRowItem::class)]
+    private Collection $homeRowItems;
 
     public function __construct()
     {
@@ -102,7 +92,7 @@ class Partner
     }
 
     /**
-     * @return Collection|HomeRow[]
+     * @return Collection
      */
     public function getHomeRows(): Collection
     {
@@ -132,7 +122,7 @@ class Partner
     }
 
     /**
-     * @return Collection|HomeRowItem[]
+     * @return Collection
      */
     public function getHomeRowItems(): Collection
     {
