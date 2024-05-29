@@ -2,8 +2,8 @@
 
 namespace App\Service;
 
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\User;
 class TwitchApi
@@ -11,29 +11,30 @@ class TwitchApi
     const TWITCH_ID_DOMAIN = 'https://id.twitch.tv/';
     const TWITCH_API_DOMAIN = 'https://api.twitch.tv/helix/';
     private $client;
-    private $session;
+    private $requestStack;
     private $em;
 
     public function __construct(
         HttpClientInterface $twitch,
-        SessionInterface $session,
+        RequestStack $requestStack,
         EntityManagerInterface $em
     )
     {
         $this->client = $twitch;
-        $this->session = $session;
+        $this->requestStack = $requestStack;
         $this->em = $em;
     }
 
     public function getLoginUrl($redirectUri, $clientId) {
         $endpoint = self::TWITCH_ID_DOMAIN . 'oauth2/authorize';
-        $this->session->set('twitch_state', md5(microtime() . mt_rand()));
+        $session = $this->requestStack->getSession();
+        $session->set('twitch_state', md5(microtime() . mt_rand()));
         $params = array(
             'client_id' => $clientId,
             'redirect_uri' => $redirectUri,
             'response_type' => 'code',
             'scope' => 'user:read:email',
-            'state' => $this->session->get('twitch_state')
+            'state' => $session->get('twitch_state')
         );
 
         return $endpoint . '?' .http_build_query($params);
@@ -62,9 +63,10 @@ class TwitchApi
     }
 
     public function logUserInWithTwitch($apiUserInfo, $clientAccessToken, $refreshToken) {
-        $this->session->set('twitch_user_info', $apiUserInfo);
-        $this->session->set('twitch_user_info.access_token', $clientAccessToken);
-        $this->session->set('twitch_user_info.refresh_token', $refreshToken);
+        $session = $this->requestStack->getSession();
+        $session->set('twitch_user_info', $apiUserInfo);
+        $session->set('twitch_user_info.access_token', $clientAccessToken);
+        $session->set('twitch_user_info.refresh_token', $refreshToken);
 
         $userInfoWithId = $this->em->getRepository(User::class)
             ->findOneBy([
@@ -85,10 +87,10 @@ class TwitchApi
             $userWithId->setTwitchAccessToken($clientAccessToken);
             $userWithId->setTwitchRefreshToken($refreshToken);
             $this->em->persist($userWithId);
-            $this->session->set('is_logged_in', true);
-            $this->session->set('user_info', $userWithId);
+            $session->set('is_logged_in', true);
+            $session->set('user_info', $userWithId);
         } elseif ($userInfoWithEmail && !$userInfoWithEmail->getTwitchUserId()) {
-            $this->session->set('login_required_to_connect_twitch', true);
+            $session->set('login_required_to_connect_twitch', true);
         } else {
             $user = new User();
             $user->setUsername($apiUserInfo['display_name']);
@@ -100,8 +102,8 @@ class TwitchApi
             $user->setTwitchAccessToken($clientAccessToken);
             $user->setTwitchRefreshToken($refreshToken);
             $this->em->persist($user);
-            $this->session->set('is_logged_in', true);
-            $this->session->set('user_info', $user);
+            $session->set('is_logged_in', true);
+            $session->set('user_info', $user);
         }
         $this->em->flush();
     }

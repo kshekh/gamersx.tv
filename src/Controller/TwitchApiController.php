@@ -7,13 +7,13 @@ use App\Entity\HomeRowItemOperation;
 use App\Service\TwitchApi;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -23,7 +23,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class TwitchApiController extends AbstractController
 {
     private $params;
-    private $session;
+    private $requestStack;
 
     /**
      * @var TranslatorInterface
@@ -38,14 +38,14 @@ class TwitchApiController extends AbstractController
 
     public function __construct(
         ParameterBagInterface $params,
-        SessionInterface $session,
+        RequestStack $requestStack,
         ?TranslatorInterface $translator = null,
         UrlGeneratorInterface $urlGenerator,
         EntityManagerInterface $em
     )
     {
         $this->params = $params;
-        $this->session = $session;
+        $this->requestStack = $requestStack;
         if (null === $translator) {
             @trigger_error(sprintf(
                 'Not passing an instance of "%s" as argument 6 to "%s()" is deprecated since'
@@ -89,13 +89,14 @@ class TwitchApiController extends AbstractController
         $clientSecret = $this->params->get('app.twitch_secret');
         $code = $request->get('code');
         $state = $request->get('state');
-        $sessionState = $this->session->get('twitch_state');
-        $this->session->set('login_required_to_connect_twitch', false);
-        $this->session->set('is_logged_in', false);
+        $session = $this->requestStack->getSession();
+        $sessionState = $session->get('twitch_state');
+        $session->set('login_required_to_connect_twitch', false);
+        $session->set('is_logged_in', false);
         if (isset($code) && isset($state) && $state == $sessionState) {
             $twitchLogin = $twitch->tryAndLoginWithTwitch($code, $redirectUri, $clientId, $clientSecret);
             if ($twitchLogin['status'] == 'ok') {
-                $this->session->getFlashBag()->add(
+                $session->getFlashBag()->add(
                     'loggedin',
                     $this->translator->trans('sonata_user_already_authenticated', [], 'SonataUserBundle')
                 );

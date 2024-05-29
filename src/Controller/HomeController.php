@@ -7,23 +7,26 @@ use App\Entity\HomeRowItem;
 use App\Entity\SiteSettings;
 use App\Containerizer\ContainerizerFactory;
 use App\Service\HomeRowInfo;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\HttpFoundation\{Response, RedirectResponse};
+use Symfony\Component\HttpFoundation\{RequestStack, Response, RedirectResponse};
 
 class HomeController extends AbstractController
 {
+    private $doctrine;
     private $homeRowInfo;
-    private $session;
+    private $requestStack;
 
-    public function __construct(HomeRowInfo $homeRowInfo, SessionInterface $session)
+    public function __construct(HomeRowInfo $homeRowInfo, RequestStack $requestStack, ManagerRegistry $doctrine)
     {
         $this->homeRowInfo = $homeRowInfo;
-        $this->session = $session;
+        $this->doctrine = $doctrine;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -31,7 +34,7 @@ class HomeController extends AbstractController
      */
     public function index(): Response
     {
-        $row = $this->getDoctrine()->getRepository(SiteSettings::class)->findOneBy([]);
+        $row = $this->doctrine->getRepository(SiteSettings::class)->findOneBy([]);
 
         if ($this->isGranted('ROLE_LOGIN_ALLOWED') || (isset($row) && (!$row->getDisableHomeAccess() || $row->getDisableHomeAccess() == false))) {
             return $this->render('home/index.html.twig');
@@ -98,8 +101,9 @@ class HomeController extends AbstractController
      */
     public function apiSessions(): Response
     {
-        $isLoggedIn = $this->session->get('is_logged_in');
-        $isRequiredToLoginTwitch = $this->session->get('login_required_to_connect_twitch');
+        $session = $this->requestStack->getSession();
+        $isLoggedIn = $session->get('is_logged_in');
+        $isRequiredToLoginTwitch = $session->get('login_required_to_connect_twitch');
         return $this->json([
             'isLoggedIn' => $isLoggedIn,
             'isRequiredToLoginTwitch' => $isRequiredToLoginTwitch
@@ -111,7 +115,7 @@ class HomeController extends AbstractController
      */
     public function streamer_list(): Response
     {
-        $streamer_list = $this->getDoctrine()->getRepository(HomeRowItem::class)->findStreamer();
+        $streamer_list = $this->doctrine->getRepository(HomeRowItem::class)->findStreamer();
         $return_data = [];
         foreach ($streamer_list as $streamer) {
             $item_type = $streamer->getItemType();

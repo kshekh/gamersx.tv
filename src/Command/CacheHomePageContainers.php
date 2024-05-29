@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Containerizer\ContainerizerFactory;
 use App\Entity\HomeRow;
 use App\Service\HomeRowInfo;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,15 +19,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class CacheHomePageContainers extends Command
 {
     private $containerizer;
-    private $container;
+    private $em;
     private $homeRowInfo;
     protected static $defaultName = 'app:cache-home-page-containers';
     protected static $defaultDescription = 'This command will cache the containers for home/api to save load time';
 
-    public function __construct(ContainerInterface $container, ContainerizerFactory $containerizer, HomeRowInfo $homeRowInfo)
+    public function __construct(EntityManagerInterface $em, ContainerizerFactory $containerizer, HomeRowInfo $homeRowInfo)
     {
         $this->containerizer = $containerizer;
-        $this->container = $container;
+        $this->em = $em;
         $this->homeRowInfo = $homeRowInfo;
         parent::__construct();
     }
@@ -58,9 +59,8 @@ class CacheHomePageContainers extends Command
             $cache->delete('home_item');
 
             $beta = 1.0;
-            $em = $this->container->get('doctrine')->getManager();
             $rowChannels = $cache->get('home_item', function (ItemInterface $item) use ($containerizer, $em) {
-                $rows = $em->getRepository(HomeRow::class)
+                $rows = $this->em->getRepository(HomeRow::class)
                     ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
 
 //                $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));

@@ -53,13 +53,13 @@ security:
     access_control:
 
         # Admin login page needs to be accessed without credential
-        - { path: ^/admin/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/admin/logout$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/admin/login_check$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/admin/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/login, role: PUBLIC_ACCESS }
+        - { path: ^/admin/logout, role: PUBLIC_ACCESS }
+        - { path: ^/admin/login_check, role: PUBLIC_ACCESS }
+        - { path: ^/admin/resetting, role: PUBLIC_ACCESS }
 
         # Home page needs to be accessed without credential
-        - { path: ^/$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/$, role: PUBLIC_ACCESS }
 
         # Secured part of the site
         # - { path: ^/.*, role: [ROLE_USER] }
@@ -79,5 +79,7 @@ security:
             - ROLE_SONATA_PAGE_ADMIN_PAGE_EDIT  # if you are using acl then this line must be commented
         ROLE_HOME_PAGE_LOGIN: [ROLE_LOGIN_ALLOWED]
 
-    encoders:
-        FOS\UserBundle\Model\UserInterface: bcrypt
+    password_hashers:
+        # Use native password hasher, which auto-selects and migrates the best
+        # possible hashing algorithm (starting from Symfony 5.3 this is "bcrypt")
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
