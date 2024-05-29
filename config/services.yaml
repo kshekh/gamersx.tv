@@ -82,11 +82,12 @@ services:
     admin.site_settings:
         class: App\Admin\SiteSettingsAdmin
         arguments: [ ~, App\Entity\SiteSettings, App\Controller\ThemeSettingAdminController ]
+        public: true
         calls:
             - [ setTemplate, [ 'list', 'sitesetting/list.html.twig' ] ]
+            - [ setEntityManager, ['@sonata.admin.entity_manager']]
         tags:
             - { name: sonata.admin, model_class: App\Entity\SiteSettings, manager_type: orm, group: admin, label: Site Settings }
-        public: true
 
     admin.partner:
         class: App\Admin\PartnerAdmin

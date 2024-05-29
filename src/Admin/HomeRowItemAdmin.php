@@ -390,7 +390,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
 
     public function alterNewInstance(object $instance): void
     {
-        $user = $this->storageInterface->getToken()->getUser();
+        $user = $this->tokenStorage->getToken()->getUser();
         $roles = $user->getPartnerRoles();
 
         if (!$roles->isEmpty()) {

@@ -6,14 +6,17 @@ use App\Containerizer\ContainerizerFactory;
 use App\Entity\HomeRow;
 use App\Service\HomeRowInfo;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 
 class CacheHomePageContainers extends Command
@@ -59,7 +62,7 @@ class CacheHomePageContainers extends Command
             $cache->delete('home_item');
 
             $beta = 1.0;
-            $rowChannels = $cache->get('home_item', function (ItemInterface $item) use ($containerizer, $em) {
+            $rowChannels = $cache->get('home_item', function (ItemInterface $item) use ($containerizer) {
                 $rows = $this->em->getRepository(HomeRow::class)
                     ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
 
@@ -119,10 +122,10 @@ class CacheHomePageContainers extends Command
 
             // Deleting cache
             $cache->delete('home_item');
-            $message = "Containers Cached successfully";;
+            $message = "Containers Cached successfully";
             $io->success($message);
             return 0;
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             $message = $ex->getMessage();
         }
         $io->error($message);
@@ -131,14 +134,12 @@ class CacheHomePageContainers extends Command
 
     protected function json($data, int $status = 200, array $headers = [], array $context = []): JsonResponse
     {
-        if ($this->container->has('serializer')) {
-            $json = $this->container->get('serializer')->serialize($data, 'json', array_merge([
-                'json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS,
-            ], $context));
+        $encoders = [new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders, $context);
 
-            return new JsonResponse($json, $status, $headers, true);
-        }
+        $jsonContent = $serializer->serialize($data, 'json');
 
-        return new JsonResponse($data, $status, $headers);
+        return new JsonResponse($jsonContent, $status, $headers, true);
     }
 }

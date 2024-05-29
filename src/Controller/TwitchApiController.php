@@ -39,9 +39,9 @@ class TwitchApiController extends AbstractController
     public function __construct(
         ParameterBagInterface $params,
         RequestStack $requestStack,
-        ?TranslatorInterface $translator = null,
         UrlGeneratorInterface $urlGenerator,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        ?TranslatorInterface $translator = null
     )
     {
         $this->params = $params;

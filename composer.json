@@ -31,8 +31,8 @@
         "symfony/doctrine-bridge": "^5.4",
         "symfony/dotenv": "^5.4",
         "symfony/error-handler": "^5.4",
-        "symfony/expression-language": "^5.4",
         "symfony/event-dispatcher": "^5.4",
+        "symfony/expression-language": "^5.4",
         "symfony/filesystem": "^5.4",
         "symfony/finder": "^5.4",
         "symfony/flex": "^1.19.3",
@@ -44,8 +44,8 @@
         "symfony/intl": "^5.4",
         "symfony/mailer": "^5.4",
         "symfony/mime": "^5.4",
-        "symfony/monolog-bundle": "^3.10",
         "symfony/monolog-bridge": "^5.4",
+        "symfony/monolog-bundle": "^3.10",
         "symfony/options-resolver": "^5.4",
         "symfony/process": "^5.4",
         "symfony/property-access": "^5.4",
@@ -58,7 +58,7 @@
         "symfony/security-csrf": "^5.4",
         "symfony/security-guard": "^5.3",
         "symfony/security-http": "^5.4",
-        "symfony/serializer": "^5.4",
+        "symfony/serializer": "5.4.*",
         "symfony/translation": "^5.4",
         "symfony/twig-bridge": "^5.4",
         "symfony/twig-bundle": "^5.4",
@@ -135,7 +135,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "4.4.*"
+            "require": "5.4.*"
         }
     }
 }

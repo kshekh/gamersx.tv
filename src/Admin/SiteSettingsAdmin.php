@@ -8,18 +8,16 @@ use App\Entity\SiteSettings;
 use Doctrine\ORM\EntityManagerInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
-use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
-use Vich\UploaderBundle\Form\Type\VichImageType;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 final class SiteSettingsAdmin extends AbstractAdmin
 {
     public $entityManager;
 
-    public function __construct(?string $code = null, ?string $class = null, ?string $baseControllerName = null, EntityManagerInterface $entityManager)
+    public function setEntityManager(EntityManagerInterface $entityManager): void
     {
-        parent::__construct($code, $class, $baseControllerName);
         $this->entityManager = $entityManager;
     }
 
@@ -34,7 +32,7 @@ final class SiteSettingsAdmin extends AbstractAdmin
         $collection->add('get_theme_setting','get_theme_setting');
         $collection->remove('export');
 
-        if (isset($row) && $row->getId() == true) {
+        if (isset($row) && $row->getId()) {
             $collection->remove('create');
         }
     }
@@ -65,7 +63,7 @@ final class SiteSettingsAdmin extends AbstractAdmin
         }
     }
 
-    protected function configureBatchActions($actions): array
+    protected function configureBatchActions(array $actions): array
     {
         unset($actions['export']);
         unset($actions['delete']);

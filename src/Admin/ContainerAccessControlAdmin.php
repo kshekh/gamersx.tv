@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace App\Admin;
 
-use App\Entity\HomeRow;
-use App\Form\SortAndTrimOptionsType;
-use Knp\Menu\ItemInterface as MenuItemInterface;
-use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, NumberType, TimeType, TimezoneType};
-use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridInterface;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -17,7 +12,6 @@ use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\AdminBundle\Show\ShowMapper;
-use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 final class ContainerAccessControlAdmin extends AbstractAdmin
@@ -75,7 +69,6 @@ final class ContainerAccessControlAdmin extends AbstractAdmin
             ->remove('delete')
             ->add('remove_blacklisted_container',$this->getRouterIdParameter().'/remove_blacklisted_container')
             ->add('full_site_blacklisted_container',$this->getRouterIdParameter().'/full_site_blacklisted_container');
-        ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $filter): void
@@ -132,7 +125,7 @@ final class ContainerAccessControlAdmin extends AbstractAdmin
         ;
     }
 
-    protected function configureBatchActions($actions): array
+    protected function configureBatchActions(array $actions): array
     {
 
         if ($this->hasRoute('list') && $this->hasAccess('list')) {
@@ -146,16 +139,16 @@ final class ContainerAccessControlAdmin extends AbstractAdmin
     }
 
 
-    public function alterNewInstance(object $instance): void
+    public function alterNewInstance(object $object): void
     {
-        $user = $this->storageInterface->getToken()->getUser();
+        $user = $this->tokenStorage->getToken()->getUser();
         $roles = $user->getPartnerRoles();
 
         if (!$roles->isEmpty()) {
             $partner = $roles->first()->getPartner();
 
             if ($partner !== null) {
-                $instance->setPartner($partner);
+                $object->setPartner($partner);
             }
         }
     }

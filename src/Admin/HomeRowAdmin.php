@@ -85,7 +85,7 @@ final class HomeRowAdmin extends AbstractAdmin
 
     protected function configureTabMenu(
         MenuItemInterface $menu,
-        $action,
+        string $action,
         AdminInterface $childAdmin = null
     ): void
     {
@@ -283,7 +283,7 @@ final class HomeRowAdmin extends AbstractAdmin
         ;
     }
 
-    protected function configureBatchActions($actions): array
+    protected function configureBatchActions(array $actions): array
     {
 
         if ($this->hasRoute('list') && $this->hasAccess('list')) {
@@ -305,16 +305,16 @@ final class HomeRowAdmin extends AbstractAdmin
         ;
     }
 
-    public function alterNewInstance(object $instance): void
+    protected function alterNewInstance(object $object): void
     {
-        $user = $this->storageInterface->getToken()->getUser();
+        $user = $this->tokenStorage->getToken()->getUser();
         $roles = $user->getPartnerRoles();
 
         if (!$roles->isEmpty()) {
             $partner = $roles->first()->getPartner();
 
             if ($partner !== null) {
-                $instance->setPartner($partner);
+                $object->setPartner($partner);
             }
         }
     }
