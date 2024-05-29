@@ -11,7 +11,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\{RequestStack, Response, RedirectResponse};
@@ -29,9 +29,7 @@ class HomeController extends AbstractController
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @Route("/", name="home")
-     */
+    #[Route('/', name: 'home')]
     public function index(): Response
     {
         $row = $this->doctrine->getRepository(SiteSettings::class)->findOneBy([]);
@@ -45,9 +43,7 @@ class HomeController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/home/api", name="home_api")
-     */
+    #[Route('/home/api', name: 'home_api')]
     public function apiHome(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
     {
 //         $cache = new FilesystemAdapter(
@@ -76,9 +72,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/home/rows/api", name="home_cache_api")
-     */
+    #[Route('/home/rows/api', name: 'home_cache_api')]
     public function apiHomeRows(): Response
     {
         $cache = new FilesystemAdapter();
@@ -96,9 +90,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/home/sessions/api", name="home_session_api")
-     */
+    #[Route('/home/sessions/api', name: 'home_session_api')]
     public function apiSessions(): Response
     {
         $session = $this->requestStack->getSession();
@@ -110,9 +102,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/api/streamer-list", name="streamer_list_api")
-     */
+    #[Route('/api/streamer-list', name: 'streamer_list_api')]
     public function streamer_list(): Response
     {
         $streamer_list = $this->doctrine->getRepository(HomeRowItem::class)->findStreamer();

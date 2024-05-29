@@ -7,7 +7,7 @@ use App\Service\ThemeInfo;
 use App\Entity\HomeRowItem;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -16,9 +16,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class StreamerController extends AbstractController
 {
-    /**
-     * @Route("/streamer/{id}", name="streamer")
-     */
+    #[Route('/streamer/{id}', name: 'streamer')]
     public function index(TwitchApi $twitch, $id): Response
     {
 
@@ -35,9 +33,7 @@ class StreamerController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/streamer/{id}/api", name="streamer_api")
-     */
+    #[Route('/streamer/{id}/api', name: 'streamer_api')]
     public function apiStreamer(TwitchApi $twitch, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $id): Response
     {
@@ -69,9 +65,7 @@ class StreamerController extends AbstractController
         return $this->json($streamerInfo);
     }
 
-    /**
-     * @Route("/streamer/info/{channel}/api", name="streamer_infor_api")
-     */
+    #[Route('/streamer/info/{channel}/api', name: 'streamer_infor_api')]
     public function apiStreamerInfo($channel, TwitchApi $twitch): Response
     {
         return $this->json($twitch->getStreamerInfoByChannel($channel));

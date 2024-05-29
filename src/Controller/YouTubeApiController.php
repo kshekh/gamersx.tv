@@ -4,12 +4,10 @@ namespace App\Controller;
 
 use App\Service\YouTubeApi;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\{Request, Response, RedirectResponse};
 
-/**
- * @Route("/api", name="youtube_")
- */
+#[Route('/api', name: 'youtube_')]
 class YouTubeApiController extends AbstractController
 {
     /**
@@ -32,9 +30,7 @@ class YouTubeApiController extends AbstractController
         return $this->json($result);
     }
 
-    /**
-     * @Route("/query/youtube/{query}", name="queryYoutube")
-     */
+    #[Route('/query/youtube/{query}', name: 'queryYoutube')]
     public function liveQuery(Request $request, YouTubeApi $youtube, $query)
     {
 

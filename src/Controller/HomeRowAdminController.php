@@ -73,12 +73,12 @@ class HomeRowAdminController extends CRUDController
         );
     }
 
-    public function importForm()
+    public function importForm(): Response
     {
         return $this->render('admin/import_form.html.twig');
     }
 
-    public function import(Request $request)
+    public function import(Request $request): RedirectResponse
     {
         $this->admin->checkAccess('create');
         $file = $request->files->get('import');

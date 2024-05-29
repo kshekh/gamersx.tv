@@ -9,7 +9,7 @@ use App\Entity\HomeRowItem;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -18,9 +18,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class PageController extends AbstractController
 {
-    /**
-     * @Route("/channel/{id}", name="channel")
-     */
+    #[Route('/channel/{id}', name: 'channel')]
     public function channel(YouTubeApi $youtube, $id): Response
     {
 
@@ -36,9 +34,8 @@ class PageController extends AbstractController
             ])
         ]);
     }
-    /**
-     * @Route("/query/{query}", name="query")
-     */
+
+    #[Route('/query/{query}', name: 'query')]
     public function query(YouTubeApi $youtube, $query): Response
     {
 
@@ -55,13 +52,11 @@ class PageController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/channel/{id}/api", name="channel_api")
-     */
+    #[Route('/channel/{id}/api', name: 'channel_api')]
     public function apiChannel(YouTubeApi $youtube, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $id): Response
     {
-        $channelInfo = $gamersxCache->get("channel-{$id}",
+        $channelInfo = $gamersxCache->get("channel-$id",
             function (ItemInterface $item) use ($id, $youtube, $themeInfoService) {
                 $channel = $youtube->getChannelInfo($id)->getItems()[0];
                 $themeInfo = $themeInfoService->getThemeInfo($id, HomeRowItem::TYPE_CHANNEL);
@@ -103,13 +98,11 @@ class PageController extends AbstractController
         return $this->json($channelInfo);
     }
 
-    /**
-     * @Route("/query/{query}/api", name="query_api")
-     */
+    #[Route('/query/{query}/api', name: 'query_api')]
     public function apiQuery(YouTubeApi $youtube, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $query): Response
     {
-        $queryInfo = $gamersxCache->get("query-{$query}",
+        $queryInfo = $gamersxCache->get("query-$query",
             function (ItemInterface $item) use ($query, $youtube, $themeInfoService) {
                 $themeInfo = $themeInfoService->getThemeInfo($query, HomeRowItem::TYPE_YOUTUBE);
 
@@ -205,9 +198,7 @@ class PageController extends AbstractController
 
     }
 
-    /**
-     * @Route("/access-denied", name="access_denied")
-     */
+    #[Route('/access-denied', name: 'access_denied')]
     public function accessDenied(): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         return $this->redirectToRoute('home');

@@ -102,7 +102,9 @@ class ThemeSettingAdminController extends CRUDController
 //    }
 
     /**
-     * @param $id
+     * @param Request $request
+     * @param AwsS3Service $awsS3Service
+     * @return JsonResponse
      */
     public function saveThemeSetting(Request $request,AwsS3Service $awsS3Service): JsonResponse
     {

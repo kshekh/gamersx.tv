@@ -10,16 +10,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-/**
- * @Route("/api", name="twitch_")
- */
+#[Route('/api', name: 'twitch_')]
 class TwitchApiController extends AbstractController
 {
     private $params;
@@ -61,9 +59,8 @@ class TwitchApiController extends AbstractController
 
         $this->em = $em;
     }
-    /**
-     * @Route("/query/streamer/{query}", name="queryStreamer")
-     */
+
+    #[Route('/query/streamer/{query}', name: 'queryStreamer')]
     public function channelQuery(Request $request, TwitchApi $twitch, $query)
     {
         if (!$this->isGranted('ROLE_LOCKED')) {
@@ -79,9 +76,7 @@ class TwitchApiController extends AbstractController
         return $this->json($result->toArray());
     }
 
-    /**
-     * @Route("/twitch-login", name="twitchLogin")
-     */
+    #[Route('/twitch-login', name: 'twitchLogin')]
     public function twitchLogin(Request $request, TwitchApi $twitch)
     {
         $redirectUri = $this->params->get('app.twitch_redirect_uri');
@@ -111,9 +106,7 @@ class TwitchApiController extends AbstractController
         return new RedirectResponse($twitchLoginUrl);
     }
 
-    /**
-     * @Route("/query/game/{query}", name="queryGame")
-     */
+    #[Route('/query/game/{query}', name: 'queryGame')]
     public function gameQuery(Request $request, TwitchApi $twitch, $query)
     {
 
@@ -130,9 +123,7 @@ class TwitchApiController extends AbstractController
         return $this->json($result->toArray());
     }
 
-    /**
-     * @Route("/stream/popular", name="popularStreams")
-     */
+    #[Route('/stream/popular', name: 'popularStreams')]
     public function getPopularStreams(Request $request, TwitchApi $twitch): \Symfony\Component\HttpFoundation\JsonResponse
     {
         $first = $request->get('first');
@@ -143,9 +134,7 @@ class TwitchApiController extends AbstractController
         return $this->json($result->toArray());
     }
 
-    /**
-     * @Route("/streams/{gameId}", name="gameStreamers")
-     */
+    #[Route('/streams/{gameId}', name: 'gameStreamers')]
     public function getGameStreamers($gameId,Request $request, TwitchApi $twitch): \Symfony\Component\HttpFoundation\JsonResponse
     {
         $first = $request->get('first');
@@ -180,9 +169,7 @@ class TwitchApiController extends AbstractController
         return $this->json($return);
     }
 
-    /**
-     * @Route("/streams/offline/{query}", name="gameOfflineStreamers")
-     */
+    #[Route('/streams/offline/{query}', name: 'gameOfflineStreamers')]
     public function getOfflineGameStreamers($query,Request $request, TwitchApi $twitch): \Symfony\Component\HttpFoundation\JsonResponse
     {
         $first = $request->get('first');
@@ -201,9 +188,7 @@ class TwitchApiController extends AbstractController
         return $this->json($return);
     }
 
-    /**
-     * @Route("/games/{query}", name="games")
-     */
+    #[Route('/games/{query}', name: 'games')]
     public function getGames($query,Request $request, TwitchApi $twitch): \Symfony\Component\HttpFoundation\JsonResponse
     {
         $first = $request->get('first');
@@ -237,9 +222,7 @@ class TwitchApiController extends AbstractController
         return $this->json($return);
     }
 
-    /**
-     * @Route("/check_unique_container", name="checkIsUniqueContainer")
-     */
+    #[Route('/check_unique_container', name: 'checkIsUniqueContainer')]
     public function checkIsUniqueContainer(Request $request): \Symfony\Component\HttpFoundation\JsonResponse
     {
         $item_type = $request->get('item_type');

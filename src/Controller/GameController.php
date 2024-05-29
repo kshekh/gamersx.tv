@@ -8,7 +8,7 @@ use App\Entity\HomeRowItem;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -17,9 +17,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 class GameController extends AbstractController
 {
 
-    /**
-     * @Route("/game/{id}", name="game")
-     */
+    #[Route('/game/{id}', name: 'game')]
     public function index(TwitchApi $twitch, $id): Response
     {
 
@@ -36,9 +34,7 @@ class GameController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/game/{id}/api", name="game_api")
-     */
+    #[Route('/game/{id}/api', name: 'game_api')]
     public function apiGame(TwitchApi $twitch, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $id): Response
     {
