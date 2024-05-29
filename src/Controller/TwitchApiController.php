@@ -133,7 +133,7 @@ class TwitchApiController extends AbstractController
     /**
      * @Route("/stream/popular", name="popularStreams")
      */
-    public function getPopularStreams(Request $request, TwitchApi $twitch)
+    public function getPopularStreams(Request $request, TwitchApi $twitch): \Symfony\Component\HttpFoundation\JsonResponse
     {
         $first = $request->get('first');
         $before = $request->get('before');
@@ -146,7 +146,7 @@ class TwitchApiController extends AbstractController
     /**
      * @Route("/streams/{gameId}", name="gameStreamers")
      */
-    public function getGameStreamers($gameId,Request $request, TwitchApi $twitch)
+    public function getGameStreamers($gameId,Request $request, TwitchApi $twitch): \Symfony\Component\HttpFoundation\JsonResponse
     {
         $first = $request->get('first');
         $before = $request->get('before');
@@ -183,7 +183,7 @@ class TwitchApiController extends AbstractController
     /**
      * @Route("/streams/offline/{query}", name="gameOfflineStreamers")
      */
-    public function getOfflineGameStreamers($query,Request $request, TwitchApi $twitch)
+    public function getOfflineGameStreamers($query,Request $request, TwitchApi $twitch): \Symfony\Component\HttpFoundation\JsonResponse
     {
         $first = $request->get('first');
         $before = $request->get('before');
@@ -204,7 +204,7 @@ class TwitchApiController extends AbstractController
     /**
      * @Route("/games/{query}", name="games")
      */
-    public function getGames($query,Request $request, TwitchApi $twitch)
+    public function getGames($query,Request $request, TwitchApi $twitch): \Symfony\Component\HttpFoundation\JsonResponse
     {
         $first = $request->get('first');
         $before = $request->get('before');
@@ -240,7 +240,7 @@ class TwitchApiController extends AbstractController
     /**
      * @Route("/check_unique_container", name="checkIsUniqueContainer")
      */
-    public function checkIsUniqueContainer(Request $request)
+    public function checkIsUniqueContainer(Request $request): \Symfony\Component\HttpFoundation\JsonResponse
     {
         $item_type = $request->get('item_type');
         $topic_id = $request->get('topic_id');

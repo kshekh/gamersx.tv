@@ -208,7 +208,7 @@ class PageController extends AbstractController
     /**
      * @Route("/access-denied", name="access_denied")
      */
-    public function accessDenied()
+    public function accessDenied(): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         return $this->redirectToRoute('home');
     }

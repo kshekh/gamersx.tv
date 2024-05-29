@@ -6,6 +6,7 @@ use App\Entity\HomeRowItem;
 use App\Entity\HomeRowItemOperation;
 use App\Service\YouTubeApi;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Sonata\AdminBundle\Exception\LockException;
 use Sonata\AdminBundle\Exception\ModelManagerException;
 use Sonata\AdminBundle\Exception\ModelManagerThrowable;
@@ -21,6 +22,7 @@ use Symfony\Component\HttpFoundation\{
     Response,
     ResponseHeaderBag,
     RedirectResponse};
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -28,6 +30,8 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
+use ZipArchive;
+use function assert;
 
 
 class HomeRowItemAdminController extends CRUDController
@@ -47,13 +51,13 @@ class HomeRowItemAdminController extends CRUDController
         $this->em = $em;
     }
 
-    public function createAction(Request $request): Response
+    public function create(Request $request): Response
     {
         $this->assertObjectExists($request);
 
         $this->admin->checkAccess('create');
 
-        // the key used to lookup the template
+        // the key used to look up the template
         $templateKey = 'edit';
 
         $class = new \ReflectionClass($this->admin->hasActiveSubClass() ? $this->admin->getActiveSubClass() : $this->admin->getClass());
@@ -89,7 +93,7 @@ class HomeRowItemAdminController extends CRUDController
             $isFormValid = $form->isValid();
 
             // persist if the form was valid and if in preview mode the preview was approved
-            if ($isFormValid && (!$this->isInPreviewMode() || $this->isPreviewApproved())) {
+            if ($isFormValid && (!$this->isInPreviewMode($request) || $this->isPreviewApproved($request))) {
                 /** @phpstan-var T $submittedObject */
                 $submittedObject = $form->getData();
                 $requestData = $request->request->all();
@@ -144,7 +148,7 @@ class HomeRowItemAdminController extends CRUDController
                 if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
                     $submittedObject->setIsPublished(false);
                 }
-                /*This condition added to initialize default value of youtube video and playlist*/
+                /*This condition added to initialize default value of YouTube video and playlist*/
                 if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO  || $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO  || $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_PLAYLIST) {
                     if($submittedObject->getIsPublishedStart() == '') {
                         $submittedObject->setIsPublishedStart('00:00:00');
@@ -326,7 +330,7 @@ class HomeRowItemAdminController extends CRUDController
                         }
                     }
 
-                    if ($this->isXmlHttpRequest()) {
+                    if ($this->isXmlHttpRequest($request)) {
                         return $this->handleXmlHttpRequestSuccessResponse($request, $newObject);
                     }
 
@@ -355,7 +359,7 @@ class HomeRowItemAdminController extends CRUDController
 
             // show an error message if the form failed validation
             if (!$isFormValid) {
-                if ($this->isXmlHttpRequest() && null !== ($response = $this->handleXmlHttpRequestErrorResponse($request, $form))) {
+                if ($this->isXmlHttpRequest($request) && null !== ($response = $this->handleXmlHttpRequestErrorResponse($request, $form))) {
                     return $response;
                 }
 
@@ -367,7 +371,7 @@ class HomeRowItemAdminController extends CRUDController
                         'SonataAdminBundle'
                     )
                 );
-            } elseif ($this->isPreviewRequested()) {
+            } elseif ($this->isPreviewRequested($request)) {
                 // pick the preview template if the form was valid and preview was requested
                 $templateKey = 'preview';
                 $this->admin->getShow();
@@ -390,7 +394,7 @@ class HomeRowItemAdminController extends CRUDController
         ]);
     }
 
-    public function editAction(Request $request): Response
+    public function edit(Request $request): Response
     {
         if (isset(\func_get_args()[0])) {
             @trigger_error(sprintf(
@@ -401,15 +405,15 @@ class HomeRowItemAdminController extends CRUDController
             ), \E_USER_DEPRECATED);
         }
 
-        // the key used to lookup the template
+        // the key used to look up the template
         $templateKey = 'edit';
 
         $this->assertObjectExists($request, true);
 
         $id = $request->get($this->admin->getIdParameter());
-        \assert(null !== $id);
+        assert(null !== $id);
         $existingObject = $this->admin->getObject($id);
-        \assert(null !== $existingObject);
+        assert(null !== $existingObject);
 
         $this->checkParentChildAssociation($request, $existingObject);
 
@@ -432,7 +436,7 @@ class HomeRowItemAdminController extends CRUDController
             $isFormValid = $form->isValid();
 
             // persist if the form was valid and if in preview mode the preview was approved
-            if ($isFormValid && (!$this->isInPreviewMode() || $this->isPreviewApproved())) {
+            if ($isFormValid && (!$this->isInPreviewMode($request) || $this->isPreviewApproved($request))) {
                 /** @phpstan-var T $submittedObject */
                 $submittedObject = $form->getData();
                 $requestData = $request->request->all();
@@ -491,7 +495,7 @@ class HomeRowItemAdminController extends CRUDController
                 if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
                     $submittedObject->setIsPublished(false);
                 }
-                /*This condition added to initialize default value of youtube video and playlist*/
+                /*This condition added to initialize default value of YouTube video and playlist*/
                 if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO  || $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO  || $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_PLAYLIST) {
                     if($submittedObject->getIsPublishedStart() == '') {
                         $submittedObject->setIsPublishedStart('00:00:00');
@@ -506,7 +510,7 @@ class HomeRowItemAdminController extends CRUDController
                 try {
                     $existingObject = $this->admin->update($submittedObject);
 
-                    if ($this->isXmlHttpRequest()) {
+                    if ($this->isXmlHttpRequest($request)) {
                         return $this->handleXmlHttpRequestSuccessResponse($request, $existingObject);
                     }
 
@@ -713,7 +717,7 @@ class HomeRowItemAdminController extends CRUDController
 
             // show an error message if the form failed validation
             if (!$isFormValid) {
-                if ($this->isXmlHttpRequest() && null !== ($response = $this->handleXmlHttpRequestErrorResponse($request, $form))) {
+                if ($this->isXmlHttpRequest($request) && null !== ($response = $this->handleXmlHttpRequestErrorResponse($request, $form))) {
                     return $response;
                 }
 
@@ -725,7 +729,7 @@ class HomeRowItemAdminController extends CRUDController
                         'SonataAdminBundle'
                     )
                 );
-            } elseif ($this->isPreviewRequested()) {
+            } elseif ($this->isPreviewRequested($request)) {
                 // enable the preview template if the form was valid and preview was requested
                 $templateKey = 'preview';
                 $this->admin->getShow();
@@ -748,14 +752,14 @@ class HomeRowItemAdminController extends CRUDController
         ]);
     }
 
-    public function deleteAction(Request $request): Response // NEXT_MAJOR: Remove the unused $id parameter
+    public function delete(Request $request): Response // NEXT_MAJOR: Remove the unused $id parameter
     {
         $this->assertObjectExists($request, true);
 
         $id = $request->get($this->admin->getIdParameter());
-        \assert(null !== $id);
+        assert(null !== $id);
         $object = $this->admin->getObject($id);
-        \assert(null !== $object);
+        assert(null !== $object);
 
         $this->checkParentChildAssociation($request, $object);
 
@@ -776,7 +780,7 @@ class HomeRowItemAdminController extends CRUDController
                 $playlist_id = $object->getId();
                 $this->admin->delete($object);
 
-                if ($this->isXmlHttpRequest()) {
+                if ($this->isXmlHttpRequest($request)) {
                     return $this->renderJson(['result' => 'ok'], Response::HTTP_OK, []);
                 }
 
@@ -800,7 +804,7 @@ class HomeRowItemAdminController extends CRUDController
                 // NEXT_MAJOR: Remove this catch.
                 $this->handleModelManagerException($e);
 
-                if ($this->isXmlHttpRequest()) {
+                if ($this->isXmlHttpRequest($request)) {
                     return $this->renderJson(['result' => 'error'], Response::HTTP_OK, []);
                 }
 
@@ -899,7 +903,7 @@ class HomeRowItemAdminController extends CRUDController
         return false;
     }
 
-    public function reorderAction(Request $request, $id, $childId=null): Response
+    public function reorder(Request $request, $id, $childId=null): Response
     {
         $object = $this->admin->getSubject();
         $direction = $request->get('direction');
@@ -953,17 +957,17 @@ class HomeRowItemAdminController extends CRUDController
         );
     }
 
-    public function importFormAction(Request $request)
+    public function importForm(): Response
     {
         return $this->render('admin/import_form.html.twig');
     }
 
-    public function importAction(Request $request)
+    public function import(Request $request): RedirectResponse
     {
         $this->admin->checkAccess('create');
         $file = $request->files->get('import');
 
-        $archive = new \ZipArchive();
+        $archive = new ZipArchive();
         $archive->open($file);
 
         if ($archive) {
@@ -1000,7 +1004,7 @@ class HomeRowItemAdminController extends CRUDController
                 }
                 $archive->close();
                 $this->addFlash('sonata_flash_success', "Successfully imported $success home rows.");
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->addFlash('sonata_flash_error', $e->getMessage());
 
                 return new RedirectResponse(
@@ -1018,15 +1022,15 @@ class HomeRowItemAdminController extends CRUDController
         );
     }
 
-    public function batchActionExport(ProxyQueryInterface $selectedModelQuery, Request $request): Response
+    public function batchActionExport(ProxyQueryInterface $selectedModelQuery): Response
     {
         $this->admin->checkAccess('list');
         $selectedModels = $selectedModelQuery->execute();
 
-        $archive = new \ZipArchive();
+        $archive = new ZipArchive();
         $filename = $this->filesystem->tempnam(sys_get_temp_dir(), 'export_');
         try {
-            $archive->open($filename, \ZipArchive::CREATE);
+            $archive->open($filename, ZipArchive::CREATE);
 
             foreach ($selectedModels as $selectedModel) {
                 if (!file_exists($selectedModel->getCustomArtFile())){
@@ -1056,7 +1060,7 @@ class HomeRowItemAdminController extends CRUDController
             }
 
             $archive->close();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->addFlash('sonata_flash_error', $e->getMessage());
             return new RedirectResponse(
                 $this->admin->generateUrl('list', [

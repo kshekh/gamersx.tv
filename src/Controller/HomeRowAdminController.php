@@ -22,7 +22,7 @@ class HomeRowAdminController extends CRUDController
         $this->filesystem = $filesystem;
     }
 
-    public function reorderAction(Request $request, $id): Response
+    public function reorder(Request $request, $id): Response
     {
         $object = $this->admin->getSubject();
         $direction = $request->get('direction');
@@ -73,12 +73,12 @@ class HomeRowAdminController extends CRUDController
         );
     }
 
-    public function importFormAction(Request $request)
+    public function importForm()
     {
         return $this->render('admin/import_form.html.twig');
     }
 
-    public function importAction(Request $request)
+    public function import(Request $request)
     {
         $this->admin->checkAccess('create');
         $file = $request->files->get('import');
@@ -116,7 +116,7 @@ class HomeRowAdminController extends CRUDController
         );
     }
 
-    public function batchActionExport(ProxyQueryInterface $selectedModelQuery, Request $request): Response
+    public function batchActionExport(ProxyQueryInterface $selectedModelQuery): Response
     {
         $this->admin->checkAccess('list');
         $selectedModels = $selectedModelQuery->execute();

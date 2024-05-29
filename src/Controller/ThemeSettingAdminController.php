@@ -44,7 +44,7 @@ class ThemeSettingAdminController extends CRUDController
      *@throws AccessDeniedException If access is not granted
      *
      */
-    public function listAction(Request $request): Response
+    public function list(Request $request): Response
     {
         $this->assertObjectExists($request);
 
@@ -104,7 +104,7 @@ class ThemeSettingAdminController extends CRUDController
     /**
      * @param $id
      */
-    public function saveThemeSettingAction(Request $request,AwsS3Service $awsS3Service): JsonResponse
+    public function saveThemeSetting(Request $request,AwsS3Service $awsS3Service): JsonResponse
     {
         $data = $request->request->all();
         $image_dir = $this->getParameter('app.images');
@@ -319,7 +319,7 @@ class ThemeSettingAdminController extends CRUDController
         return new JsonResponse($return);
     }
 
-    public function saveThemeAction(Request $request): JsonResponse
+    public function saveTheme(Request $request): JsonResponse
     {
         $data = $request->request->all();
         $theme_name = $data['theme_name']??'';
@@ -343,7 +343,7 @@ class ThemeSettingAdminController extends CRUDController
         return new JsonResponse($return);
     }
 
-    public function getThemeSettingAction(Request $request): JsonResponse
+    public function getThemeSetting(Request $request): JsonResponse
     {
         $data = $request->request->all();
         $s3_custom_url = $this->getParameter('app.aws_s3_custom.uri_prefix');

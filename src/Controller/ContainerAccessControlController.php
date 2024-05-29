@@ -36,7 +36,7 @@ class ContainerAccessControlController extends CRUDController
     /**
      * @param $id
      */
-    public function removeBlacklistedContainerAction(Request $request,$id): JsonResponse
+    public function removeBlacklistedContainer(Request $request,$id): JsonResponse
     {
         $data = $request->request->all();
         $return = [];
@@ -58,7 +58,7 @@ class ContainerAccessControlController extends CRUDController
     /**
      * @param $id
      */
-    public function fullSiteBlacklistedContainerAction(Request $request,$id): JsonResponse
+    public function fullSiteBlacklistedContainer(Request $request,$id): JsonResponse
     {
         $data = $request->request->all();
         $return = [];
