@@ -27,11 +27,11 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 
 final class HomeRowItemAdmin extends AbstractAdmin
 {
-    private $storageInterface;
-    public function __construct($code, $class, $baseControllerName = null, TokenStorageInterface $storageInterface)
+    private $tokenStorage;
+
+    public function setTokenStorage(TokenStorageInterface $tokenStorage): void
     {
-        parent::__construct($code, $class, $baseControllerName);
-        $this->storageInterface = $storageInterface;
+        $this->tokenStorage = $tokenStorage;
     }
 //    public function createQuery($context = 'list'): ProxyQuery
 //    {

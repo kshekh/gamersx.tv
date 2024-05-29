@@ -22,15 +22,11 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 final class ContainerAccessControlAdmin extends AbstractAdmin
 {
-    /**
-     * @var TokenStorageInterface
-     */
-    private $storageInterface;
+    private $tokenStorage;
 
-    public function __construct($code, $class, $baseControllerName = null, TokenStorageInterface $storageInterface)
+    public function setTokenStorage(TokenStorageInterface $tokenStorage): void
     {
-        parent::__construct($code, $class, $baseControllerName);
-        $this->storageInterface = $storageInterface;
+        $this->tokenStorage = $tokenStorage;
     }
 
 //    public function createQuery($context = 'list'): ProxyQuery
