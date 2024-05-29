@@ -1,6 +1,4 @@
 security:
-    enable_authenticator_manager: true
-
     providers:
         fos_userbundle:
             id: fos_user.user_provider.username
