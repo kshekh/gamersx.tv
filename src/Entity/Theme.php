@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Repository\ThemeRepository;
+use Doctrine\DBAL\Types\Types;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @Vich\Uploadable
  */
+#[ORM\Entity(repositoryClass: ThemeRepository::class)]
 class Theme
 {
     #[ORM\Id]

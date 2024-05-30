@@ -4,8 +4,6 @@ namespace App\Repository;
 
 use App\Entity\HomeRowItemOperation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -24,8 +22,6 @@ class HomeRowItemOperationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @throws ORMException
-     * @throws OptimisticLockException
      */
     public function add(HomeRowItemOperation $entity, bool $flush = true): void
     {
@@ -36,8 +32,6 @@ class HomeRowItemOperationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @throws ORMException
-     * @throws OptimisticLockException
      */
     public function remove(HomeRowItemOperation $entity, bool $flush = true): void
     {

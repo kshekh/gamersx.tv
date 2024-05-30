@@ -41,7 +41,7 @@ class CacheHomePageContainers extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription);
+            ->setDescription('This command will cache the containers for home/api to save load time');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
