@@ -46,7 +46,7 @@
               onmouseout="changeNormalBtnColor(event)"
               class="flex items-center elementor-button text-xxs xs:text-xxs sm:text-xs md:text-sm lg:text-sm xl:text-xl xxl:text-lg mx-2 sm:py-0 h-7 sm:h-10 xxs:px-0 xs:-x-1 md:px-6">
               <span class="elementor-button-text">Login With Twitch</span>
-              <img src="/images/twitch-icon-white.png" class="ml-2 w-2.5 h-2.5 sm:w-5 sm:h-5 twitch-btn-icon">
+              <img :src="TwitchIconWhite" class="ml-2 w-2.5 h-2.5 sm:w-5 sm:h-5 twitch-btn-icon">
             </a>
           </div>
         </div>
@@ -57,7 +57,7 @@
 <script>
 import axios from "axios";
 import LazyLoadComponent from "./LazyLoad";
-import FullWidthDescriptiveSkeleton from "./skeletons/FullWidthDescriptiveSkeleton";
+import FullWidthDescriptiveSkeleton from "./skeletons/FullWidthDescriptiveSkeleton.vue";
 import ClassicSmSkeleton from "./skeletons/ClassicSmSkeleton.vue";
 import ClassicMdSkeleton from "./skeletons/ClassicMdSkeleton.vue";
 import ClassicLgSkeleton from "./skeletons/ClassicLgSkeleton.vue";
@@ -65,10 +65,13 @@ import ClassicVerticalSkeleton from "./skeletons/ClassicVerticalSkeleton.vue";
 import NumberedRowSkeleton from "./skeletons/NumberedRowSkeleton.vue";
 import ParallaxSkeleton from "./skeletons/ParallaxSkeleton.vue";
 import FullWidthImagerySkeleton from "./skeletons/FullWidthImagerySkeleton.vue";
-import Modal from "./Modal";
+import Modal from "./Modal.vue";
 import Cookies from "js-cookie";
+import TwitchIconWhite from "~/images/twitch-icon-white.png"
+
 export default {
   components: {
+    TwitchIconWhite: TwitchIconWhite,
     FullWidthDescriptiveSkeleton: FullWidthDescriptiveSkeleton,
     ClassicSmSkeleton: ClassicSmSkeleton,
     ClassicMdSkeleton: ClassicMdSkeleton,

@@ -1,0 +1,16 @@
+pentatrion_vite:
+    public_directory: public
+    build_directory: build
+
+    throw_on_missing_entry: true
+    throw_on_missing_asset: false
+
+when@prod:
+    pentatrion_vite:
+        cache: true
+
+framework:
+    assets:
+        packages:
+            vite:
+                version_strategy: 'Pentatrion\ViteBundle\Asset\ViteAssetVersionStrategy'

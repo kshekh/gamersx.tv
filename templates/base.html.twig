@@ -18,7 +18,7 @@
 			{% endblock %}
 		</title>
 		{% block stylesheets %}
-			{{ encore_entry_link_tags('app') }}
+            {{ vite_entry_link_tags('app') }}
 		{% endblock %}
 		<meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- Google tag (gtag.js) -->
@@ -32,11 +32,12 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.png') }}">
 		<!--<script src="https://cdn.tailwindcss.com"></script>-->
 		{% block javascripts %}
+            {{ vite_entry_script_tags('app') }}
 			<!-- Load the Twitch embed script -->
 			<script src="https://embed.twitch.tv/embed/v1.js"></script>
 			<script src="https://www.youtube.com/player_api"></script>
-			{{ encore_entry_script_tags('app') }}
-			{{ encore_entry_script_tags('main') }}
+			{{ vite_entry_script_tags('app') }}
+			{{ vite_entry_script_tags('main') }}
 		{% endblock %}
         {% set get_active_theme = master_theme.findOneBy({'status':1}) %}
         {% set get_theme_setting = [] %}
