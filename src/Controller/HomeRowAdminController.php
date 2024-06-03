@@ -2,19 +2,22 @@
 
 namespace App\Controller;
 
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\{ HeaderUtils, Request, Response, ResponseHeaderBag, RedirectResponse };
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
+use ZipArchive;
 
 class HomeRowAdminController extends CRUDController
 {
-    private $serializer;
-    private $filesystem;
+    private SerializerInterface $serializer;
+    private Filesystem $filesystem;
 
     public function __construct(SerializerInterface $serializer, Filesystem $filesystem)
     {
@@ -28,14 +31,13 @@ class HomeRowAdminController extends CRUDController
         $direction = $request->get('direction');
 
         if (!$object) {
-            throw new NotFoundHttpException(sprintf('unable to find the object with id: %s', $id));
+            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
         }
 
         $qb = $this->admin->getModelManager()->getEntityManager('App:HomeRow')
             ->createQueryBuilder()
             ->addSelect('hr')
             ->from('App:HomeRow', 'hr');
-            ;
 
         if ($direction === 'down') {
             $qb->where('hr.sortIndex >= :thisSort')
@@ -83,30 +85,28 @@ class HomeRowAdminController extends CRUDController
         $this->admin->checkAccess('create');
         $file = $request->files->get('import');
 
-        $archive = new \ZipArchive();
+        $archive = new ZipArchive();
         $archive->open($file);
 
-        if ($archive) {
-            try {
-                for ( $i = 0; $i < $archive->numFiles; $i++ ) {
-                    $json = $archive->getFromIndex($i);
-                    $row = $this->serializer->deserialize($json, $this->admin->getClass(), 'json');
-                    $row->setIsPublished(FALSE);
-                    $row->setPartner(NULL);
-                    $this->admin->getModelManager()->create($row);
-                }
-
-                $archive->close();
-                $this->addFlash('sonata_flash_success', "Successfully imported $i home rows.");
-            } catch (\Exception $e) {
-                $this->addFlash('sonata_flash_error', 'Couldn\'t import Home Row file');
-
-                return new RedirectResponse(
-                    $this->admin->generateUrl('list', [
-                        'filter' => $this->admin->getFilterParameters()
-                    ])
-                );
+        try {
+            for ( $i = 0; $i < $archive->numFiles; $i++ ) {
+                $json = $archive->getFromIndex($i);
+                $row = $this->serializer->deserialize($json, $this->admin->getClass(), 'json');
+                $row->setIsPublished(FALSE);
+                $row->setPartner(NULL);
+                $this->admin->getModelManager()->create($row);
             }
+
+            $archive->close();
+            $this->addFlash('sonata_flash_success', "Successfully imported $i home rows.");
+        } catch (Exception $e) {
+            $this->addFlash('sonata_flash_error', 'Couldn\'t import Home Row file');
+
+            return new RedirectResponse(
+                $this->admin->generateUrl('list', [
+                    'filter' => $this->admin->getFilterParameters()
+                ])
+            );
         }
 
         return new RedirectResponse(
@@ -121,11 +121,11 @@ class HomeRowAdminController extends CRUDController
         $this->admin->checkAccess('list');
         $selectedModels = $selectedModelQuery->execute();
 
-        $archive = new \ZipArchive();
+        $archive = new ZipArchive();
         $filename = $this->filesystem->tempnam(sys_get_temp_dir(), 'export_');
 
         try {
-            $archive->open($filename, \ZipArchive::CREATE);
+            $archive->open($filename, ZipArchive::CREATE);
 
             foreach ($selectedModels as $selectedModel) {
                 $json = $this->serializer->serialize($selectedModel, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['partner', 'items']]);
@@ -134,7 +134,7 @@ class HomeRowAdminController extends CRUDController
 
             $archive->close();
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->addFlash('sonata_flash_error', 'Couldn\'t create Zip file for export');
 
             return new RedirectResponse(

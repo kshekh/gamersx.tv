@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Helper\ValidationMessageHelper;
 use App\Validator\RemoteFont;
-use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Validator\ValidatorInterface;

@@ -2,15 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
 use App\Entity\SiteSettings;
 use App\Containerizer\ContainerizerFactory;
 use App\Service\HomeRowInfo;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Contracts\Cache\ItemInterface;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -18,9 +16,9 @@ use Symfony\Component\HttpFoundation\{RequestStack, Response, RedirectResponse};
 
 class HomeController extends AbstractController
 {
-    private $doctrine;
-    private $homeRowInfo;
-    private $requestStack;
+    private ManagerRegistry $doctrine;
+    private HomeRowInfo $homeRowInfo;
+    private RequestStack $requestStack;
 
     public function __construct(HomeRowInfo $homeRowInfo, RequestStack $requestStack, ManagerRegistry $doctrine)
     {
@@ -34,7 +32,7 @@ class HomeController extends AbstractController
     {
         $row = $this->doctrine->getRepository(SiteSettings::class)->findOneBy([]);
 
-        if ($this->isGranted('ROLE_LOGIN_ALLOWED') || (isset($row) && (!$row->getDisableHomeAccess() || $row->getDisableHomeAccess() == false))) {
+        if ($this->isGranted('ROLE_LOGIN_ALLOWED') || (isset($row) && (!$row->getDisableHomeAccess()))) {
             return $this->render('home/index.html.twig');
         }
 
@@ -43,6 +41,9 @@ class HomeController extends AbstractController
         );
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     #[Route('/home/api', name: 'home_api')]
     public function apiHome(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
     {
@@ -72,6 +73,9 @@ class HomeController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     #[Route('/home/rows/api', name: 'home_cache_api')]
     public function apiHomeRows(): Response
     {

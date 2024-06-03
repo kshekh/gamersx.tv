@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ThemeRepository;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -62,7 +64,7 @@ class Theme
     private ?File $artBackgroundFile = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $updatedAt = null;
+    private ?DateTimeInterface $updatedAt = null;
 
     public function getId(): ?int
     {
@@ -127,7 +129,7 @@ class Theme
         $this->bannerImageFile = $bannerImageFile;
 
         if (null !== $bannerImageFile ) {
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->updatedAt = new DateTimeImmutable();
         }
 
         return $this;
@@ -155,7 +157,7 @@ class Theme
         $this->embedBackgroundFile = $embedBackgroundFile;
 
         if (null !== $embedBackgroundFile ) {
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->updatedAt = new DateTimeImmutable();
         }
 
         return $this;
@@ -183,7 +185,7 @@ class Theme
         $this->customArtFile = $customArtFile;
 
         if (null !== $customArtFile ) {
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->updatedAt = new DateTimeImmutable();
         }
 
         return $this;
@@ -211,19 +213,19 @@ class Theme
         $this->artBackgroundFile = $artBackgroundFile;
 
         if (null !== $artBackgroundFile ) {
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->updatedAt = new DateTimeImmutable();
         }
 
         return $this;
     }
 
 
-    public function getUpdatedAt(): ?\DateTimeInterface
+    public function getUpdatedAt(): ?DateTimeInterface
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    public function setUpdatedAt(?DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
 
@@ -233,6 +235,8 @@ class Theme
 
     public function __toString(): string
     {
+        $label = "";
+
         if ($this->getLabel()) {
             $label = $this->getLabel();
         } else if ($this->getTopicId()) {

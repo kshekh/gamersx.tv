@@ -3,15 +3,19 @@
 namespace App\Controller;
 
 use App\Service\YouTubeApi;
+use Google\Service\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\{Request, Response, RedirectResponse};
+use Symfony\Component\HttpFoundation\{JsonResponse, Request, RedirectResponse};
 
 #[Route('/api', name: 'youtube_')]
 class YouTubeApiController extends AbstractController
 {
+    /**
+     * @throws Exception
+     */
     #[Route('/query/channel/{query}', name: 'queryChannel')]
-    public function channelQuery(Request $request, YouTubeApi $youtube, $query)
+    public function channelQuery(Request $request, YouTubeApi $youtube, $query): RedirectResponse|JsonResponse
     {
 
         if (!$this->isGranted('ROLE_LOCKED')) {
@@ -28,8 +32,11 @@ class YouTubeApiController extends AbstractController
         return $this->json($result);
     }
 
+    /**
+     * @throws Exception
+     */
     #[Route('/query/youtube/{query}', name: 'queryYoutube')]
-    public function liveQuery(Request $request, YouTubeApi $youtube, $query)
+    public function liveQuery(Request $request, YouTubeApi $youtube, $query): RedirectResponse|JsonResponse
     {
 
         if (!$this->isGranted('ROLE_LOCKED')) {

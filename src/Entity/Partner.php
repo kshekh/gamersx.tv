@@ -53,7 +53,7 @@ class Partner
     }
 
     /**
-     * @return Collection|PartnerRole[]
+     * @return Collection
      */
     public function getPartnerRoles(): Collection
     {

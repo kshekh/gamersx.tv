@@ -7,24 +7,20 @@ use App\Entity\HomeRowItemOperation;
 use App\Service\YouTubeApi;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use ReflectionClass;
+use ReflectionException;
 use Sonata\AdminBundle\Exception\LockException;
 use Sonata\AdminBundle\Exception\ModelManagerException;
 use Sonata\AdminBundle\Exception\ModelManagerThrowable;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Form\FormRenderer;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\{
     File\UploadedFile,
     HeaderUtils,
     Request,
     Response,
-    ResponseHeaderBag,
     RedirectResponse};
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Sonata\AdminBundle\Controller\CRUDController;
@@ -36,11 +32,11 @@ use function assert;
 
 class HomeRowItemAdminController extends CRUDController
 {
-    private $serializer;
-    private $filesystem;
-    private $storage;
-    private $youtube;
-    private $em;
+    private SerializerInterface $serializer;
+    private Filesystem $filesystem;
+    private StorageInterface $storage;
+    private YouTubeApi $youtube;
+    private EntityManagerInterface $em;
 
     public function __construct(SerializerInterface $serializer, Filesystem $filesystem, StorageInterface $storage,YouTubeApi $youtube, EntityManagerInterface $em)
     {
@@ -51,6 +47,11 @@ class HomeRowItemAdminController extends CRUDController
         $this->em = $em;
     }
 
+    /**
+     * @throws ReflectionException
+     * @throws ModelManagerThrowable
+     * @throws \Google\Service\Exception
+     */
     public function create(Request $request): Response
     {
         $this->assertObjectExists($request);
@@ -60,7 +61,7 @@ class HomeRowItemAdminController extends CRUDController
         // the key used to look up the template
         $templateKey = 'edit';
 
-        $class = new \ReflectionClass($this->admin->hasActiveSubClass() ? $this->admin->getActiveSubClass() : $this->admin->getClass());
+        $class = new ReflectionClass($this->admin->hasActiveSubClass() ? $this->admin->getActiveSubClass() : $this->admin->getClass());
 
         if ($class->isAbstract()) {
             return $this->renderWithExtraParams(
@@ -903,6 +904,9 @@ class HomeRowItemAdminController extends CRUDController
         return false;
     }
 
+    /**
+     * @throws ModelManagerThrowable
+     */
     public function reorder(Request $request, $id, $childId=null): Response
     {
         $object = $this->admin->getSubject();

@@ -2,24 +2,24 @@
   Line   Admin/ContainerAccessControlAdmin.php                                                                                                       
  ------ -------------------------------------------------------------------------------------------------------------------------------------------- 
   17     Class App\Admin\ContainerAccessControlAdmin extends generic class Sonata\AdminBundle\Admin\AbstractAdmin but does not specify its types: T  
-  19     Property App\Admin\ContainerAccessControlAdmin::$tokenStorage has no type specified.                                                        
   44     Call to an undefined method Sonata\AdminBundle\Datagrid\ProxyQueryInterface<object>::getRootAliases().                                      
-  46     Call to an undefined method Sonata\AdminBundle\Datagrid\ProxyQueryInterface<object>::where().                                               
-  47     Call to an undefined method Sonata\AdminBundle\Datagrid\ProxyQueryInterface<object>::orWhere().                                             
+  46     Call to an undefined method Sonata\AdminBundle\Datagrid\ProxyQueryInterface<object>::andWhere().                                            
+  47     Call to an undefined method Sonata\AdminBundle\Datagrid\ProxyQueryInterface<object>::expr().                                                
+  49     Call to an undefined method Sonata\AdminBundle\Datagrid\ProxyQueryInterface<object>::orWhere().                                             
+  147    Call to an undefined method Symfony\Component\Security\Core\User\UserInterface::getPartnerRoles().                                          
  ------ -------------------------------------------------------------------------------------------------------------------------------------------- 
 
  ------ ----------------------------------------------------------------------------------------------------------------------------- 
   Line   Admin/HomeRowAdmin.php                                                                                                       
  ------ ----------------------------------------------------------------------------------------------------------------------------- 
   21     Class App\Admin\HomeRowAdmin extends generic class Sonata\AdminBundle\Admin\AbstractAdmin but does not specify its types: T  
-  23     Property App\Admin\HomeRowAdmin::$tokenStorage has no type specified.                                                        
+  309    Call to an undefined method Symfony\Component\Security\Core\User\UserInterface::getPartnerRoles().                           
  ------ ----------------------------------------------------------------------------------------------------------------------------- 
 
  ------ --------------------------------------------------------------------------------------------------------------------------------- 
   Line   Admin/HomeRowItemAdmin.php                                                                                                       
  ------ --------------------------------------------------------------------------------------------------------------------------------- 
   28     Class App\Admin\HomeRowItemAdmin extends generic class Sonata\AdminBundle\Admin\AbstractAdmin but does not specify its types: T  
-  30     Property App\Admin\HomeRowItemAdmin::$tokenStorage has no type specified.                                                        
   59     Call to an undefined method Sonata\AdminBundle\Datagrid\ProxyQueryInterface<object>::getRootAliases().                           
   61     Call to an undefined method Sonata\AdminBundle\Datagrid\ProxyQueryInterface<object>::expr().                                     
   61     Call to an undefined method Sonata\AdminBundle\Datagrid\ProxyQueryInterface<object>::where().                                    
@@ -27,6 +27,7 @@
   63     Call to an undefined method Sonata\AdminBundle\Datagrid\ProxyQueryInterface<object>::expr().                                     
   65     Call to an undefined method Sonata\AdminBundle\Datagrid\ProxyQueryInterface<object>::orWhere().                                  
   66     Call to an undefined method Sonata\AdminBundle\Datagrid\ProxyQueryInterface<object>::setParameter().                             
+  394    Call to an undefined method Symfony\Component\Security\Core\User\UserInterface::getPartnerRoles().                               
  ------ --------------------------------------------------------------------------------------------------------------------------------- 
 
  ------ ----------------------------------------------------------------------------------------------------------------------------- 
@@ -45,8 +46,7 @@
   Line   Admin/SiteSettingsAdmin.php                                                                                                                                                
  ------ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
   15     Class App\Admin\SiteSettingsAdmin extends generic class Sonata\AdminBundle\Admin\AbstractAdmin but does not specify its types: T                                           
-  17     Property App\Admin\SiteSettingsAdmin::$entityManager has no type specified.                                                                                                
-  43     Method App\Admin\SiteSettingsAdmin::configureListFields() has parameter $list with generic class Sonata\AdminBundle\Datagrid\ListMapper but does not specify its types: T  
+  44     Method App\Admin\SiteSettingsAdmin::configureListFields() has parameter $list with generic class Sonata\AdminBundle\Datagrid\ListMapper but does not specify its types: T  
  ------ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
 
  ------ --------------------------------------------------------------------------------------------------------------------------- 
@@ -58,46 +58,16 @@
  ------ -------------------------------------------------------------------------------------------------------------------------------- 
   Line   Command/CacheHomePageContainers.php                                                                                             
  ------ -------------------------------------------------------------------------------------------------------------------------------- 
-  29     Property App\Command\CacheHomePageContainers::$containerizer has no type specified.                                             
-  30     Property App\Command\CacheHomePageContainers::$em has no type specified.                                                        
-  31     Property App\Command\CacheHomePageContainers::$homeRowInfo has no type specified.                                               
-  138    Method App\Command\CacheHomePageContainers::json() has parameter $context with no value type specified in iterable type array.  
-         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                       
   138    Method App\Command\CacheHomePageContainers::json() has parameter $data with no type specified.                                  
   138    Method App\Command\CacheHomePageContainers::json() has parameter $headers with no value type specified in iterable type array.  
          💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                       
-  142    Class Symfony\Component\Serializer\Serializer constructor invoked with 3 parameters, 0-2 required.                              
  ------ -------------------------------------------------------------------------------------------------------------------------------- 
 
- ------ ----------------------------------------------------------------------------------------------------------------- 
-  Line   Command/RefreshTwitchTokenCommand.php                                                                            
- ------ ----------------------------------------------------------------------------------------------------------------- 
-  24     Property App\Command\RefreshTwitchTokenCommand::$client has no type specified.                                   
-  25     Property App\Command\RefreshTwitchTokenCommand::$params has no type specified.                                   
-  26     Property App\Command\RefreshTwitchTokenCommand::$file has no type specified.                                     
-  27     Property App\Command\RefreshTwitchTokenCommand::$logger has no type specified.                                   
-  154    Method App\Command\RefreshTwitchTokenCommand::str_starts_with() has no return type specified.                    
-  154    Method App\Command\RefreshTwitchTokenCommand::str_starts_with() has parameter $haystack with no type specified.  
-  154    Method App\Command\RefreshTwitchTokenCommand::str_starts_with() has parameter $needle with no type specified.    
-  154    Method App\Command\RefreshTwitchTokenCommand::str_starts_with() is unused.                                       
- ------ ----------------------------------------------------------------------------------------------------------------- 
-
- ------ --------------------------------------------------------------------------------------------------------------------------------------------------- 
-  Line   Containerizer/ContainerizerFactory.php                                                                                                             
- ------ --------------------------------------------------------------------------------------------------------------------------------------------------- 
-  14     Property App\Containerizer\ContainerizerFactory::$twitch has no type specified.                                                                    
-  15     Property App\Containerizer\ContainerizerFactory::$youtube has no type specified.                                                                   
-  16     Property App\Containerizer\ContainerizerFactory::$logger has no type specified.                                                                    
-  17     Property App\Containerizer\ContainerizerFactory::$uploader has no type specified.                                                                  
-  18     Property App\Containerizer\ContainerizerFactory::$containerizers has no type specified.                                                            
-  18     Property App\Containerizer\ContainerizerFactory::$containerizers is unused.                                                                        
-         💡 See: https://phpstan.org/developing-extensions/always-read-written-properties                                                                   
-  31     Method App\Containerizer\ContainerizerFactory::__invoke() has parameter $toBeContainerized with no type specified.                                 
-  33     Method App\Containerizer\ContainerizerFactory::__invoke() should return App\Containerizer\ContainerizerInterface but return statement is missing.  
-  62     Variable $containerized might not be defined.                                                                                                      
-  63     Variable $containerized might not be defined.                                                                                                      
-  64     Variable $containerized might not be defined.                                                                                                      
- ------ --------------------------------------------------------------------------------------------------------------------------------------------------- 
+ ------ -------------------------------------------------------------------------------------------------------------------- 
+  Line   Containerizer/ContainerizerFactory.php                                                                              
+ ------ -------------------------------------------------------------------------------------------------------------------- 
+  32     Method App\Containerizer\ContainerizerFactory::__invoke() has parameter $toBeContainerized with no type specified.  
+ ------ -------------------------------------------------------------------------------------------------------------------- 
 
  ------ ---------------------------------------------------------------------------------------------------------------------------------- 
   Line   Containerizer/ContainerizerInterface.php                                                                                          
@@ -109,44 +79,37 @@
  ------ -------------------------------------------------------------------------------------------------------------------------------- 
   Line   Containerizer/HomeRowContainerizer.php                                                                                          
  ------ -------------------------------------------------------------------------------------------------------------------------------- 
-  10     Property App\Containerizer\HomeRowContainerizer::$containerizer has no type specified.                                          
-  11     Property App\Containerizer\HomeRowContainerizer::$homeRow has no type specified.                                                
-  18     Method App\Containerizer\HomeRowContainerizer::getContainers() return type has no value type specified in iterable type array.  
+  17     Method App\Containerizer\HomeRowContainerizer::getContainers() return type has no value type specified in iterable type array.  
          💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                       
-  34     Method App\Containerizer\HomeRowContainerizer::sort() return type has no value type specified in iterable type array.           
+  33     Method App\Containerizer\HomeRowContainerizer::sort() return type has no value type specified in iterable type array.           
          💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                       
  ------ -------------------------------------------------------------------------------------------------------------------------------- 
 
- ------ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
-  Line   Containerizer/LiveContainerizer.php                                                                                                                                       
- ------ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
-  13     Property App\Containerizer\LiveContainerizer::$logger has no type specified.                                                                                              
-  14     Property App\Containerizer\LiveContainerizer::$items has no type specified.                                                                                               
-  15     Property App\Containerizer\LiveContainerizer::$options has no type specified.                                                                                             
-  16     Property App\Containerizer\LiveContainerizer::$uploader has no type specified.                                                                                            
-  18     Method App\Containerizer\LiveContainerizer::getContainers() return type has no value type specified in iterable type array.                                               
-         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                 
-  20     Return type mixed of method App\Containerizer\LiveContainerizer::setLogger() is not covariant with return type void of method Psr\Log\LoggerAwareInterface::setLogger().  
-  24     Method App\Containerizer\LiveContainerizer::setUploader() has no return type specified.                                                                                   
-  28     Method App\Containerizer\LiveContainerizer::sort() return type has no value type specified in iterable type array.                                                        
-         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                 
-  45     Method App\Containerizer\LiveContainerizer::trim() return type has no value type specified in iterable type array.                                                        
-         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                 
-  63     Method App\Containerizer\LiveContainerizer::sortDescendingPopularity() has no return type specified.                                                                      
-  63     Method App\Containerizer\LiveContainerizer::sortDescendingPopularity() has parameter $first with no type specified.                                                       
-  63     Method App\Containerizer\LiveContainerizer::sortDescendingPopularity() has parameter $second with no type specified.                                                      
-  78     Method App\Containerizer\LiveContainerizer::sortAscendingPopularity() has no return type specified.                                                                       
-  78     Method App\Containerizer\LiveContainerizer::sortAscendingPopularity() has parameter $first with no type specified.                                                        
-  78     Method App\Containerizer\LiveContainerizer::sortAscendingPopularity() has parameter $second with no type specified.                                                       
-  83     Method App\Containerizer\LiveContainerizer::sortByIndex() has no return type specified.                                                                                   
-  83     Method App\Containerizer\LiveContainerizer::sortByIndex() has parameter $first with no type specified.                                                                    
-  83     Method App\Containerizer\LiveContainerizer::sortByIndex() has parameter $second with no type specified.                                                                   
- ------ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+  Line   Containerizer/LiveContainerizer.php                                                                                          
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+  14     Property App\Containerizer\LiveContainerizer::$items has no type specified.                                                  
+  15     Property App\Containerizer\LiveContainerizer::$options has no type specified.                                                
+  18     Method App\Containerizer\LiveContainerizer::getContainers() return type has no value type specified in iterable type array.  
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                    
+  30     Method App\Containerizer\LiveContainerizer::sort() return type has no value type specified in iterable type array.           
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                    
+  47     Method App\Containerizer\LiveContainerizer::trim() return type has no value type specified in iterable type array.           
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                    
+  65     Method App\Containerizer\LiveContainerizer::sortDescendingPopularity() has no return type specified.                         
+  65     Method App\Containerizer\LiveContainerizer::sortDescendingPopularity() has parameter $first with no type specified.          
+  65     Method App\Containerizer\LiveContainerizer::sortDescendingPopularity() has parameter $second with no type specified.         
+  80     Method App\Containerizer\LiveContainerizer::sortAscendingPopularity() has no return type specified.                          
+  80     Method App\Containerizer\LiveContainerizer::sortAscendingPopularity() has parameter $first with no type specified.           
+  80     Method App\Containerizer\LiveContainerizer::sortAscendingPopularity() has parameter $second with no type specified.          
+  85     Method App\Containerizer\LiveContainerizer::sortByIndex() has no return type specified.                                      
+  85     Method App\Containerizer\LiveContainerizer::sortByIndex() has parameter $first with no type specified.                       
+  85     Method App\Containerizer\LiveContainerizer::sortByIndex() has parameter $second with no type specified.                      
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
 
  ------ ---------------------------------------------------------------------------------------------------------------------------- 
   Line   Containerizer/NoEmbedContainer.php                                                                                          
  ------ ---------------------------------------------------------------------------------------------------------------------------- 
-  10     Property App\Containerizer\NoEmbedContainer::$homeRowItem has no type specified.                                            
   17     Method App\Containerizer\NoEmbedContainer::getContainers() return type has no value type specified in iterable type array.  
          💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                   
  ------ ---------------------------------------------------------------------------------------------------------------------------- 
@@ -154,114 +117,94 @@
  ------ ----------------------------------------------------------------------------------------------------------------------------------- 
   Line   Containerizer/TwitchGameContainerizer.php                                                                                          
  ------ ----------------------------------------------------------------------------------------------------------------------------------- 
-  12     Property App\Containerizer\TwitchGameContainerizer::$homeRowItem has no type specified.                                            
-  13     Property App\Containerizer\TwitchGameContainerizer::$twitch has no type specified.                                                 
-  14     Property App\Containerizer\TwitchGameContainerizer::$entityManager has no type specified.                                          
-  16     Method App\Containerizer\TwitchGameContainerizer::__construct() has parameter $entityManager with no type specified.               
-  16     Method App\Containerizer\TwitchGameContainerizer::__construct() has parameter $twitch with no type specified.                      
-  23     Method App\Containerizer\TwitchGameContainerizer::getContainers() return type has no value type specified in iterable type array.  
+  35     Method App\Containerizer\TwitchGameContainerizer::getContainers() return type has no value type specified in iterable type array.  
          💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                          
-  195    Parameter #2 $replace of function str_replace expects array|string, int given.                                                     
-  196    Parameter #2 $replace of function str_replace expects array|string, int given.                                                     
+  39     Call to an undefined method Doctrine\ORM\EntityRepository<App\Entity\HomeRowItem>::findUniqueItem().                               
+  75     Variable $getSelectedRowItemOperation in empty() always exists and is not falsy.                                                   
  ------ ----------------------------------------------------------------------------------------------------------------------------------- 
 
  ------ --------------------------------------------------------------------------------------------------------------------------------------- 
   Line   Containerizer/TwitchStreamerContainerizer.php                                                                                          
  ------ --------------------------------------------------------------------------------------------------------------------------------------- 
-  10     Property App\Containerizer\TwitchStreamerContainerizer::$homeRowItem has no type specified.                                            
-  11     Property App\Containerizer\TwitchStreamerContainerizer::$twitch has no type specified.                                                 
-  12     Property App\Containerizer\TwitchStreamerContainerizer::$entityManager has no type specified.                                          
-  14     Method App\Containerizer\TwitchStreamerContainerizer::__construct() has parameter $entityManager with no type specified.               
-  14     Method App\Containerizer\TwitchStreamerContainerizer::__construct() has parameter $twitch with no type specified.                      
-  21     Method App\Containerizer\TwitchStreamerContainerizer::getContainers() return type has no value type specified in iterable type array.  
+  35     Method App\Containerizer\TwitchStreamerContainerizer::getContainers() return type has no value type specified in iterable type array.  
          💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                              
-  116    Parameter #2 $replace of function str_replace expects array|string, int given.                                                         
-  117    Parameter #2 $replace of function str_replace expects array|string, int given.                                                         
+  38     Call to an undefined method Doctrine\ORM\EntityRepository<App\Entity\HomeRowItem>::findUniqueItem().                                   
+  88     Variable $getSelectedRowItemOperation in empty() always exists and is not falsy.                                                       
+  130    Parameter #2 $replace of function str_replace expects array|string, int given.                                                         
+  131    Parameter #2 $replace of function str_replace expects array|string, int given.                                                         
  ------ --------------------------------------------------------------------------------------------------------------------------------------- 
 
  ------ ------------------------------------------------------------------------------------------------------------------------------------ 
   Line   Containerizer/TwitchVideoContainerizer.php                                                                                          
  ------ ------------------------------------------------------------------------------------------------------------------------------------ 
-  10     Property App\Containerizer\TwitchVideoContainerizer::$homeRowItem has no type specified.                                            
-  11     Property App\Containerizer\TwitchVideoContainerizer::$twitch has no type specified.                                                 
-  12     Property App\Containerizer\TwitchVideoContainerizer::$entityManager has no type specified.                                          
-  14     Method App\Containerizer\TwitchVideoContainerizer::__construct() has parameter $entityManager with no type specified.               
-  14     Method App\Containerizer\TwitchVideoContainerizer::__construct() has parameter $twitch with no type specified.                      
-  21     Method App\Containerizer\TwitchVideoContainerizer::getContainers() return type has no value type specified in iterable type array.  
+  24     Method App\Containerizer\TwitchVideoContainerizer::getContainers() return type has no value type specified in iterable type array.  
          💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                           
-  133    Ternary operator condition is always false.                                                                                         
+  135    Ternary operator condition is always false.                                                                                         
  ------ ------------------------------------------------------------------------------------------------------------------------------------ 
 
- ------ --------------------------------------------------------------------------------------------------------------------------------------- 
-  Line   Containerizer/YouTubeChannelContainerizer.php                                                                                          
- ------ --------------------------------------------------------------------------------------------------------------------------------------- 
-  10     Property App\Containerizer\YouTubeChannelContainerizer::$homeRowItem has no type specified.                                            
-  11     Property App\Containerizer\YouTubeChannelContainerizer::$youtube has no type specified.                                                
-  12     Property App\Containerizer\YouTubeChannelContainerizer::$entityManager has no type specified.                                          
-  14     Method App\Containerizer\YouTubeChannelContainerizer::__construct() has parameter $entityManager with no type specified.               
-  14     Method App\Containerizer\YouTubeChannelContainerizer::__construct() has parameter $youtube with no type specified.                     
-  21     Method App\Containerizer\YouTubeChannelContainerizer::getContainers() return type has no value type specified in iterable type array.  
-         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                              
-  41     Call to an undefined method Exception::getErrors().                                                                                    
- ------ --------------------------------------------------------------------------------------------------------------------------------------- 
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Containerizer/YouTubeChannelContainerizer.php                                                                                                    
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------- 
+  23     Method App\Containerizer\YouTubeChannelContainerizer::getContainers() return type has no value type specified in iterable type array.            
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                        
+  26     Call to an undefined method Doctrine\ORM\EntityRepository<App\Entity\HomeRowItem>::findUniqueItem().                                             
+  43     Call to an undefined method Exception::getErrors().                                                                                              
+  54     Access to an undefined property Google\Service\YouTube\Video::$liveStreamingDetails.                                                             
+         💡 Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property                                                             
+  79     Else branch is unreachable because previous condition is always true.                                                                            
+         💡 Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your phpstan.dist.neon.  
+  98     Ternary operator condition is always true.                                                                                                       
+         💡 Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your phpstan.dist.neon.  
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------- 
 
  ------ ---------------------------------------------------------------------------------------------------------------------------------------- 
   Line   Containerizer/YouTubePlayListContainerizer.php                                                                                          
  ------ ---------------------------------------------------------------------------------------------------------------------------------------- 
-  10     Property App\Containerizer\YouTubePlayListContainerizer::$homeRowItem has no type specified.                                            
   10     Property App\Containerizer\YouTubePlayListContainerizer::$homeRowItem is never read, only written.                                      
          💡 See: https://phpstan.org/developing-extensions/always-read-written-properties                                                        
-  11     Property App\Containerizer\YouTubePlayListContainerizer::$youtube has no type specified.                                                
   11     Property App\Containerizer\YouTubePlayListContainerizer::$youtube is never read, only written.                                          
          💡 See: https://phpstan.org/developing-extensions/always-read-written-properties                                                        
-  13     Method App\Containerizer\YouTubePlayListContainerizer::__construct() has parameter $youtube with no type specified.                     
   19     Method App\Containerizer\YouTubePlayListContainerizer::getContainers() return type has no value type specified in iterable type array.  
          💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                               
-  23     Unreachable statement - code above always terminates.                                                                                   
  ------ ---------------------------------------------------------------------------------------------------------------------------------------- 
 
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
-  Line   Containerizer/YouTubeQueryContainerizer.php                                                                                          
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
-  10     Property App\Containerizer\YouTubeQueryContainerizer::$homeRowItem has no type specified.                                            
-  11     Property App\Containerizer\YouTubeQueryContainerizer::$youtube has no type specified.                                                
-  13     Method App\Containerizer\YouTubeQueryContainerizer::__construct() has parameter $youtube with no type specified.                     
-  19     Method App\Containerizer\YouTubeQueryContainerizer::getContainers() return type has no value type specified in iterable type array.  
-         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                            
-  51     Variable $max might not be defined.                                                                                                  
-  53     Call to an undefined method Exception::getErrors().                                                                                  
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Containerizer/YouTubeQueryContainerizer.php                                                                                                      
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------- 
+  21     Method App\Containerizer\YouTubeQueryContainerizer::getContainers() return type has no value type specified in iterable type array.              
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                        
+  56     Call to an undefined method Exception::getErrors().                                                                                              
+  88     Ternary operator condition is always true.                                                                                                       
+         💡 Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your phpstan.dist.neon.  
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------- 
 
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
-  Line   Containerizer/YouTubeVideoContainerizer.php                                                                                          
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
-  10     Property App\Containerizer\YouTubeVideoContainerizer::$homeRowItem has no type specified.                                            
-  11     Property App\Containerizer\YouTubeVideoContainerizer::$youtube has no type specified.                                                
-  12     Property App\Containerizer\YouTubeVideoContainerizer::$entityManager has no type specified.                                          
-  14     Method App\Containerizer\YouTubeVideoContainerizer::__construct() has parameter $entityManager with no type specified.               
-  14     Method App\Containerizer\YouTubeVideoContainerizer::__construct() has parameter $youtube with no type specified.                     
-  21     Method App\Containerizer\YouTubeVideoContainerizer::getContainers() return type has no value type specified in iterable type array.  
-         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                            
-  84     Variable $channel_info might not be defined.                                                                                         
-  123    Ternary operator condition is always false.                                                                                          
-  125    If condition is always true.                                                                                                         
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Containerizer/YouTubeVideoContainerizer.php                                                                                                      
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------- 
+  24     Method App\Containerizer\YouTubeVideoContainerizer::getContainers() return type has no value type specified in iterable type array.              
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                        
+  87     Variable $channel_info might not be defined.                                                                                                     
+  88     Ternary operator condition is always true.                                                                                                       
+         💡 Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your phpstan.dist.neon.  
+  104    Ternary operator condition is always true.                                                                                                       
+         💡 Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your phpstan.dist.neon.  
+  126    Ternary operator condition is always false.                                                                                                      
+  128    If condition is always true.                                                                                                                     
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------- 
 
  ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------ 
   Line   Controller/ContainerAccessControlController.php                                                                                                             
  ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------ 
-  23     Class App\Controller\ContainerAccessControlController extends generic class Sonata\AdminBundle\Controller\CRUDController but does not specify its types: T  
-  25     Property App\Controller\ContainerAccessControlController::$serializer has no type specified.                                                                
-  25     Property App\Controller\ContainerAccessControlController::$serializer is never read, only written.                                                          
+  13     Class App\Controller\ContainerAccessControlController extends generic class Sonata\AdminBundle\Controller\CRUDController but does not specify its types: T  
+  15     Property App\Controller\ContainerAccessControlController::$serializer is never read, only written.                                                          
          💡 See: https://phpstan.org/developing-extensions/always-read-written-properties                                                                            
-  26     Property App\Controller\ContainerAccessControlController::$filesystem has no type specified.                                                                
-  26     Property App\Controller\ContainerAccessControlController::$filesystem is never read, only written.                                                          
+  16     Property App\Controller\ContainerAccessControlController::$filesystem is never read, only written.                                                          
          💡 See: https://phpstan.org/developing-extensions/always-read-written-properties                                                                            
-  39     Method App\Controller\ContainerAccessControlController::removeBlacklistedContainer() has parameter $id with no type specified.                              
-  44     Negated boolean expression is always false.                                                                                                                 
+  31     Method App\Controller\ContainerAccessControlController::removeBlacklistedContainer() has parameter $id with no type specified.                              
+  35     Negated boolean expression is always false.                                                                                                                 
          💡 Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your phpstan.dist.neon.             
-  61     Method App\Controller\ContainerAccessControlController::fullSiteBlacklistedContainer() has parameter $id with no type specified.                            
-  66     Negated boolean expression is always false.                                                                                                                 
+  54     Method App\Controller\ContainerAccessControlController::fullSiteBlacklistedContainer() has parameter $id with no type specified.                            
+  58     Negated boolean expression is always false.                                                                                                                 
          💡 Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your phpstan.dist.neon.             
  ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------ 
 
@@ -269,34 +212,25 @@
   Line   Controller/GameController.php                                                              
  ------ ------------------------------------------------------------------------------------------- 
   20     Method App\Controller\GameController::index() has parameter $id with no type specified.    
-  37     Method App\Controller\GameController::apiGame() has parameter $id with no type specified.  
+  40     Method App\Controller\GameController::apiGame() has parameter $id with no type specified.  
  ------ ------------------------------------------------------------------------------------------- 
 
- ------ ----------------------------------------------------------------------------------- 
-  Line   Controller/HomeController.php                                                      
- ------ ----------------------------------------------------------------------------------- 
-  21     Property App\Controller\HomeController::$doctrine has no type specified.           
-  22     Property App\Controller\HomeController::$homeRowInfo has no type specified.        
-  22     Property App\Controller\HomeController::$homeRowInfo is never read, only written.  
-         💡 See: https://phpstan.org/developing-extensions/always-read-written-properties   
-  23     Property App\Controller\HomeController::$requestStack has no type specified.       
- ------ ----------------------------------------------------------------------------------- 
+ ------ ------------------------------------------------------------------------------------------------------------ 
+  Line   Controller/HomeController.php                                                                               
+ ------ ------------------------------------------------------------------------------------------------------------ 
+  20     Property App\Controller\HomeController::$homeRowInfo is never read, only written.                           
+         💡 See: https://phpstan.org/developing-extensions/always-read-written-properties                            
+  112    Call to an undefined method Doctrine\Persistence\ObjectRepository<App\Entity\HomeRowItem>::findStreamer().  
+ ------ ------------------------------------------------------------------------------------------------------------ 
 
  ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
   Line   Controller/HomeRowAdminController.php                                                                                                                                                
  ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
-  14     Class App\Controller\HomeRowAdminController extends generic class Sonata\AdminBundle\Controller\CRUDController but does not specify its types: T                                     
-  16     Property App\Controller\HomeRowAdminController::$serializer has no type specified.                                                                                                   
-  17     Property App\Controller\HomeRowAdminController::$filesystem has no type specified.                                                                                                   
-  25     Method App\Controller\HomeRowAdminController::reorder() has parameter $id with no type specified.                                                                                    
-  30     Negated boolean expression is always false.                                                                                                                                          
+  17     Class App\Controller\HomeRowAdminController extends generic class Sonata\AdminBundle\Controller\CRUDController but does not specify its types: T                                     
+  28     Method App\Controller\HomeRowAdminController::reorder() has parameter $id with no type specified.                                                                                    
+  33     Negated boolean expression is always false.                                                                                                                                          
          💡 Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your phpstan.dist.neon.                                      
-  31     Instantiated class App\Controller\NotFoundHttpException not found.                                                                                                                   
-         💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                  
-  31     Throwing object of an unknown class App\Controller\NotFoundHttpException.                                                                                                            
-         💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                  
-  34     Call to an undefined method Sonata\AdminBundle\Model\ModelManagerInterface<object>::getEntityManager().                                                                              
-  89     If condition is always true.                                                                                                                                                         
+  37     Call to an undefined method Sonata\AdminBundle\Model\ModelManagerInterface<object>::getEntityManager().                                                                              
   119    Method App\Controller\HomeRowAdminController::batchActionExport() has parameter $selectedModelQuery with generic interface Sonata\AdminBundle\Datagrid\ProxyQueryInterface but does  
          not specify its types: T                                                                                                                                                             
  ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
@@ -304,15 +238,8 @@
  ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
   Line   Controller/HomeRowItemAdminController.php                                                                                                                                           
  ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
-  37     Class App\Controller\HomeRowItemAdminController extends generic class Sonata\AdminBundle\Controller\CRUDController but does not specify its types: T                                
-  39     Property App\Controller\HomeRowItemAdminController::$serializer has no type specified.                                                                                              
-  40     Property App\Controller\HomeRowItemAdminController::$filesystem has no type specified.                                                                                              
-  41     Property App\Controller\HomeRowItemAdminController::$storage has no type specified.                                                                                                 
-  42     Property App\Controller\HomeRowItemAdminController::$youtube has no type specified.                                                                                                 
-  43     Property App\Controller\HomeRowItemAdminController::$em has no type specified.                                                                                                      
-  98     PHPDoc tag @var for variable $submittedObject contains unknown class App\Controller\T.                                                                                              
-         💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  102    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  33     Class App\Controller\HomeRowItemAdminController extends generic class Sonata\AdminBundle\Controller\CRUDController but does not specify its types: T                                
+  99     PHPDoc tag @var for variable $submittedObject contains unknown class App\Controller\T.                                                                                              
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
   103    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
@@ -320,102 +247,103 @@
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
   105    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  107    Call to an undefined method Sonata\AdminBundle\Model\ModelManagerInterface<object>::getEntityManager().                                                                             
-  114    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  106    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  114    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  108    Call to an undefined method Sonata\AdminBundle\Model\ModelManagerInterface<object>::getEntityManager().                                                                             
+  115    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  116    Call to method getVideoId() on an unknown class App\Controller\T.                                                                                                                   
+  115    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  117    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  117    Call to method getVideoId() on an unknown class App\Controller\T.                                                                                                                   
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  117    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  118    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  119    Call to method getPlaylistId() on an unknown class App\Controller\T.                                                                                                                
+  118    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  123    Call to method getTopic() on an unknown class App\Controller\T.                                                                                                                     
+  120    Call to method getPlaylistId() on an unknown class App\Controller\T.                                                                                                                
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  136    Call to an undefined method Sonata\AdminBundle\Admin\AdminInterface<object>::getTemplate().                                                                                         
-  148    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  124    Call to method getTopic() on an unknown class App\Controller\T.                                                                                                                     
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  149    Call to method setIsPublished() on an unknown class App\Controller\T.                                                                                                               
+  125    Call to an undefined method Doctrine\ORM\EntityRepository<App\Entity\HomeRowItem>::findUniqueItem().                                                                                
+  137    Call to an undefined method Sonata\AdminBundle\Admin\AdminInterface<object>::getTemplate().                                                                                         
+  149    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  152    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  150    Call to method setIsPublished() on an unknown class App\Controller\T.                                                                                                               
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  152    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  153    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  152    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  153    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  152    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  153    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  153    Call to method getIsPublishedStart() on an unknown class App\Controller\T.                                                                                                          
+  153    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  154    Call to method setIsPublishedStart() on an unknown class App\Controller\T.                                                                                                          
+  154    Call to method getIsPublishedStart() on an unknown class App\Controller\T.                                                                                                          
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  156    Call to method getIsPublishedEnd() on an unknown class App\Controller\T.                                                                                                            
+  155    Call to method setIsPublishedStart() on an unknown class App\Controller\T.                                                                                                          
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  157    Call to method setIsPublishedEnd() on an unknown class App\Controller\T.                                                                                                            
+  157    Call to method getIsPublishedEnd() on an unknown class App\Controller\T.                                                                                                            
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  160    Call to method setUpdatedAt() on an unknown class App\Controller\T.                                                                                                                 
+  158    Call to method setIsPublishedEnd() on an unknown class App\Controller\T.                                                                                                            
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  162    Call to method getSortAndTrimOptions() on an unknown class App\Controller\T.                                                                                                        
+  161    Call to method setUpdatedAt() on an unknown class App\Controller\T.                                                                                                                 
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
   163    Call to method getSortAndTrimOptions() on an unknown class App\Controller\T.                                                                                                        
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  167    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  164    Call to method getSortAndTrimOptions() on an unknown class App\Controller\T.                                                                                                        
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  169    Call to method getTopic() on an unknown class App\Controller\T.                                                                                                                     
+  168    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
   170    Call to method getTopic() on an unknown class App\Controller\T.                                                                                                                     
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  219    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  171    Call to method getTopic() on an unknown class App\Controller\T.                                                                                                                     
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  257    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  220    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  259    Call to method getPlaylistId() on an unknown class App\Controller\T.                                                                                                                
+  258    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  295    Variable $maxContainers in empty() always exists and is not falsy.                                                                                                                  
-  305    Call to method getHomeRow() on an unknown class App\Controller\T.                                                                                                                   
+  260    Call to method getPlaylistId() on an unknown class App\Controller\T.                                                                                                                
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  306    Call to method getPartner() on an unknown class App\Controller\T.                                                                                                                   
+  296    Variable $maxContainers in empty() always exists and is not falsy.                                                                                                                  
+  306    Call to method getHomeRow() on an unknown class App\Controller\T.                                                                                                                   
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  307    Call to method getLabel() on an unknown class App\Controller\T.                                                                                                                     
+  307    Call to method getPartner() on an unknown class App\Controller\T.                                                                                                                   
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  308    Call to method getSortIndex() on an unknown class App\Controller\T.                                                                                                                 
+  308    Call to method getLabel() on an unknown class App\Controller\T.                                                                                                                     
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  310    Call to method getSortAndTrimOptions() on an unknown class App\Controller\T.                                                                                                        
+  309    Call to method getSortIndex() on an unknown class App\Controller\T.                                                                                                                 
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  311    Call to method getShowArt() on an unknown class App\Controller\T.                                                                                                                   
+  311    Call to method getSortAndTrimOptions() on an unknown class App\Controller\T.                                                                                                        
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  312    Call to method getCustomArt() on an unknown class App\Controller\T.                                                                                                                 
+  312    Call to method getShowArt() on an unknown class App\Controller\T.                                                                                                                   
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  313    Call to method getOverlayArt() on an unknown class App\Controller\T.                                                                                                                
+  313    Call to method getCustomArt() on an unknown class App\Controller\T.                                                                                                                 
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  314    Call to method getOfflineDisplayType() on an unknown class App\Controller\T.                                                                                                        
+  314    Call to method getOverlayArt() on an unknown class App\Controller\T.                                                                                                                
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  315    Call to method getLinkType() on an unknown class App\Controller\T.                                                                                                                  
+  315    Call to method getOfflineDisplayType() on an unknown class App\Controller\T.                                                                                                        
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  316    Call to method getTopic() on an unknown class App\Controller\T.                                                                                                                     
+  316    Call to method getLinkType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  317    Call to method getCustomLink() on an unknown class App\Controller\T.                                                                                                                
+  317    Call to method getTopic() on an unknown class App\Controller\T.                                                                                                                     
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  319    Call to method getDescription() on an unknown class App\Controller\T.                                                                                                               
+  318    Call to method getCustomLink() on an unknown class App\Controller\T.                                                                                                                
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  320    Call to method getIsPublishedStart() on an unknown class App\Controller\T.                                                                                                          
+  320    Call to method getDescription() on an unknown class App\Controller\T.                                                                                                               
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  321    Call to method getIsPublishedEnd() on an unknown class App\Controller\T.                                                                                                            
+  321    Call to method getIsPublishedStart() on an unknown class App\Controller\T.                                                                                                          
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  322    Call to method getIsPartner() on an unknown class App\Controller\T.                                                                                                                 
+  322    Call to method getIsPublishedEnd() on an unknown class App\Controller\T.                                                                                                            
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  323    Call to method getIsUniqueContainer() on an unknown class App\Controller\T.                                                                                                         
+  323    Call to method getIsPartner() on an unknown class App\Controller\T.                                                                                                                 
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  326    Call to method getUpdatedAt() on an unknown class App\Controller\T.                                                                                                                 
+  324    Call to method getIsUniqueContainer() on an unknown class App\Controller\T.                                                                                                         
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  347    Method Sonata\AdminBundle\Controller\CRUDController<object>::redirectTo() invoked with 1 parameter, 2 required.                                                                     
-  386    Call to an undefined method Sonata\AdminBundle\Admin\AdminInterface<object>::getTemplate().                                                                                         
-  441    PHPDoc tag @var for variable $submittedObject contains unknown class App\Controller\T.                                                                                              
+  327    Call to method getUpdatedAt() on an unknown class App\Controller\T.                                                                                                                 
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  445    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  348    Method Sonata\AdminBundle\Controller\CRUDController<object>::redirectTo() invoked with 1 parameter, 2 required.                                                                     
+  387    Call to an undefined method Sonata\AdminBundle\Admin\AdminInterface<object>::getTemplate().                                                                                         
+  442    PHPDoc tag @var for variable $submittedObject contains unknown class App\Controller\T.                                                                                              
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
   446    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
@@ -423,180 +351,170 @@
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
   448    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  451    Call to an undefined method Sonata\AdminBundle\Model\ModelManagerInterface<object>::getEntityManager().                                                                             
-  460    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  449    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  460    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  452    Call to an undefined method Sonata\AdminBundle\Model\ModelManagerInterface<object>::getEntityManager().                                                                             
+  461    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  462    Call to method getVideoId() on an unknown class App\Controller\T.                                                                                                                   
+  461    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  463    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  463    Call to method getVideoId() on an unknown class App\Controller\T.                                                                                                                   
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  463    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  464    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  465    Call to method getPlaylistId() on an unknown class App\Controller\T.                                                                                                                
+  464    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  469    Call to method getTopic() on an unknown class App\Controller\T.                                                                                                                     
+  466    Call to method getPlaylistId() on an unknown class App\Controller\T.                                                                                                                
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  483    Call to an undefined method Sonata\AdminBundle\Admin\AdminInterface<object>::getTemplate().                                                                                         
-  495    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  470    Call to method getTopic() on an unknown class App\Controller\T.                                                                                                                     
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  496    Call to method setIsPublished() on an unknown class App\Controller\T.                                                                                                               
+  471    Call to an undefined method Doctrine\ORM\EntityRepository<App\Entity\HomeRowItem>::findUniqueItem().                                                                                
+  484    Call to an undefined method Sonata\AdminBundle\Admin\AdminInterface<object>::getTemplate().                                                                                         
+  496    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  499    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  497    Call to method setIsPublished() on an unknown class App\Controller\T.                                                                                                               
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  499    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  500    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  499    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  500    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  499    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  500    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  500    Call to method getIsPublishedStart() on an unknown class App\Controller\T.                                                                                                          
+  500    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  501    Call to method setIsPublishedStart() on an unknown class App\Controller\T.                                                                                                          
+  501    Call to method getIsPublishedStart() on an unknown class App\Controller\T.                                                                                                          
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  503    Call to method getIsPublishedEnd() on an unknown class App\Controller\T.                                                                                                            
+  502    Call to method setIsPublishedStart() on an unknown class App\Controller\T.                                                                                                          
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  504    Call to method setIsPublishedEnd() on an unknown class App\Controller\T.                                                                                                            
+  504    Call to method getIsPublishedEnd() on an unknown class App\Controller\T.                                                                                                            
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  507    Call to method getSortAndTrimOptions() on an unknown class App\Controller\T.                                                                                                        
+  505    Call to method setIsPublishedEnd() on an unknown class App\Controller\T.                                                                                                            
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
   508    Call to method getSortAndTrimOptions() on an unknown class App\Controller\T.                                                                                                        
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  520    Call to method getTopic() on an unknown class App\Controller\T.                                                                                                                     
+  509    Call to method getSortAndTrimOptions() on an unknown class App\Controller\T.                                                                                                        
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
+  520    Call to an undefined method Doctrine\ORM\EntityRepository<App\Entity\HomeRowItemOperation>::deleteByHomeRowItem().                                                                  
   521    Call to method getTopic() on an unknown class App\Controller\T.                                                                                                                     
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  570    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  522    Call to method getTopic() on an unknown class App\Controller\T.                                                                                                                     
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  609    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
+  571    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  611    Call to method getPlaylistId() on an unknown class App\Controller\T.                                                                                                                
+  573    Call to an undefined method Doctrine\ORM\EntityRepository<App\Entity\HomeRowItemOperation>::deleteByHomeRowItem().                                                                  
+  610    Call to method getItemType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  614    Call to method getId() on an unknown class App\Controller\T.                                                                                                                        
+  612    Call to method getPlaylistId() on an unknown class App\Controller\T.                                                                                                                
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  652    Variable $maxContainers in empty() always exists and is not falsy.                                                                                                                  
-  661    Call to method getHomeRow() on an unknown class App\Controller\T.                                                                                                                   
+  615    Call to method getId() on an unknown class App\Controller\T.                                                                                                                        
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  662    Call to method getPartner() on an unknown class App\Controller\T.                                                                                                                   
+  653    Variable $maxContainers in empty() always exists and is not falsy.                                                                                                                  
+  662    Call to method getHomeRow() on an unknown class App\Controller\T.                                                                                                                   
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  663    Call to method getLabel() on an unknown class App\Controller\T.                                                                                                                     
+  663    Call to method getPartner() on an unknown class App\Controller\T.                                                                                                                   
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  664    Call to method getSortIndex() on an unknown class App\Controller\T.                                                                                                                 
+  664    Call to method getLabel() on an unknown class App\Controller\T.                                                                                                                     
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  666    Call to method getSortAndTrimOptions() on an unknown class App\Controller\T.                                                                                                        
+  665    Call to method getSortIndex() on an unknown class App\Controller\T.                                                                                                                 
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  667    Call to method getShowArt() on an unknown class App\Controller\T.                                                                                                                   
+  667    Call to method getSortAndTrimOptions() on an unknown class App\Controller\T.                                                                                                        
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  668    Call to method getCustomArt() on an unknown class App\Controller\T.                                                                                                                 
+  668    Call to method getShowArt() on an unknown class App\Controller\T.                                                                                                                   
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  669    Call to method getOverlayArt() on an unknown class App\Controller\T.                                                                                                                
+  669    Call to method getCustomArt() on an unknown class App\Controller\T.                                                                                                                 
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  670    Call to method getOfflineDisplayType() on an unknown class App\Controller\T.                                                                                                        
+  670    Call to method getOverlayArt() on an unknown class App\Controller\T.                                                                                                                
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  671    Call to method getLinkType() on an unknown class App\Controller\T.                                                                                                                  
+  671    Call to method getOfflineDisplayType() on an unknown class App\Controller\T.                                                                                                        
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  672    Call to method getTopic() on an unknown class App\Controller\T.                                                                                                                     
+  672    Call to method getLinkType() on an unknown class App\Controller\T.                                                                                                                  
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  673    Call to method getCustomLink() on an unknown class App\Controller\T.                                                                                                                
+  673    Call to method getTopic() on an unknown class App\Controller\T.                                                                                                                     
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  675    Call to method getDescription() on an unknown class App\Controller\T.                                                                                                               
+  674    Call to method getCustomLink() on an unknown class App\Controller\T.                                                                                                                
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  676    Call to method getIsPublishedStart() on an unknown class App\Controller\T.                                                                                                          
+  676    Call to method getDescription() on an unknown class App\Controller\T.                                                                                                               
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  677    Call to method getIsPublishedEnd() on an unknown class App\Controller\T.                                                                                                            
+  677    Call to method getIsPublishedStart() on an unknown class App\Controller\T.                                                                                                          
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  678    Call to method getIsPartner() on an unknown class App\Controller\T.                                                                                                                 
+  678    Call to method getIsPublishedEnd() on an unknown class App\Controller\T.                                                                                                            
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  679    Call to method getIsUniqueContainer() on an unknown class App\Controller\T.                                                                                                         
+  679    Call to method getIsPartner() on an unknown class App\Controller\T.                                                                                                                 
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  681    Call to method getId() on an unknown class App\Controller\T.                                                                                                                        
+  680    Call to method getIsUniqueContainer() on an unknown class App\Controller\T.                                                                                                         
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  682    Call to method getUpdatedAt() on an unknown class App\Controller\T.                                                                                                                 
+  682    Call to method getId() on an unknown class App\Controller\T.                                                                                                                        
          💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
-  699    Method Sonata\AdminBundle\Controller\CRUDController<object>::redirectTo() invoked with 1 parameter, 2 required.                                                                     
-  744    Call to an undefined method Sonata\AdminBundle\Admin\AdminInterface<object>::getTemplate().                                                                                         
-  775    Method Sonata\AdminBundle\Controller\CRUDController<object>::validateCsrfToken() invoked with 1 parameter, 2 required.                                                              
-  775    Parameter #1 $request of method Sonata\AdminBundle\Controller\CRUDController<object>::validateCsrfToken() expects Symfony\Component\HttpFoundation\Request, string given.           
-  822    Method Sonata\AdminBundle\Controller\CRUDController<object>::isXmlHttpRequest() invoked with 0 parameters, 1 required.                                                              
-  836    Method Sonata\AdminBundle\Controller\CRUDController<object>::redirectTo() invoked with 1 parameter, 2 required.                                                                     
-  840    Call to an undefined method Sonata\AdminBundle\Admin\AdminInterface<object>::getTemplate().                                                                                         
-  889    Method App\Controller\HomeRowItemAdminController::equalsOrContains() has parameter $haystack with no type specified.                                                                
-  889    Method App\Controller\HomeRowItemAdminController::equalsOrContains() is unused.                                                                                                     
-  906    Method App\Controller\HomeRowItemAdminController::reorder() has parameter $childId with no type specified.                                                                          
-  906    Method App\Controller\HomeRowItemAdminController::reorder() has parameter $id with no type specified.                                                                               
-  911    Negated boolean expression is always false.                                                                                                                                         
+  683    Call to method getUpdatedAt() on an unknown class App\Controller\T.                                                                                                                 
+         💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                                                 
+  700    Method Sonata\AdminBundle\Controller\CRUDController<object>::redirectTo() invoked with 1 parameter, 2 required.                                                                     
+  745    Call to an undefined method Sonata\AdminBundle\Admin\AdminInterface<object>::getTemplate().                                                                                         
+  776    Method Sonata\AdminBundle\Controller\CRUDController<object>::validateCsrfToken() invoked with 1 parameter, 2 required.                                                              
+  776    Parameter #1 $request of method Sonata\AdminBundle\Controller\CRUDController<object>::validateCsrfToken() expects Symfony\Component\HttpFoundation\Request, string given.           
+  823    Method Sonata\AdminBundle\Controller\CRUDController<object>::isXmlHttpRequest() invoked with 0 parameters, 1 required.                                                              
+  837    Method Sonata\AdminBundle\Controller\CRUDController<object>::redirectTo() invoked with 1 parameter, 2 required.                                                                     
+  841    Call to an undefined method Sonata\AdminBundle\Admin\AdminInterface<object>::getTemplate().                                                                                         
+  890    Method App\Controller\HomeRowItemAdminController::equalsOrContains() has parameter $haystack with no type specified.                                                                
+  890    Method App\Controller\HomeRowItemAdminController::equalsOrContains() is unused.                                                                                                     
+  910    Method App\Controller\HomeRowItemAdminController::reorder() has parameter $childId with no type specified.                                                                          
+  910    Method App\Controller\HomeRowItemAdminController::reorder() has parameter $id with no type specified.                                                                               
+  915    Negated boolean expression is always false.                                                                                                                                         
          💡 Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain: false in your phpstan.dist.neon.                                     
-  915    Call to an undefined method Sonata\AdminBundle\Model\ModelManagerInterface<object>::getEntityManager().                                                                             
-  973    If condition is always true.                                                                                                                                                        
-  1025   Method App\Controller\HomeRowItemAdminController::batchActionExport() has parameter $selectedModelQuery with generic interface Sonata\AdminBundle\Datagrid\ProxyQueryInterface but  
+  919    Call to an undefined method Sonata\AdminBundle\Model\ModelManagerInterface<object>::getEntityManager().                                                                             
+  977    If condition is always true.                                                                                                                                                        
+  1029   Method App\Controller\HomeRowItemAdminController::batchActionExport() has parameter $selectedModelQuery with generic interface Sonata\AdminBundle\Datagrid\ProxyQueryInterface but  
          does not specify its types: T                                                                                                                                                       
  ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
 
- ------ -------------------------------------------------------------------------------------------------------------------- 
-  Line   Controller/PageController.php                                                                                       
- ------ -------------------------------------------------------------------------------------------------------------------- 
-  21     Method App\Controller\PageController::channel() has parameter $id with no type specified.                           
-  38     Method App\Controller\PageController::query() has parameter $query with no type specified.                          
-  55     Method App\Controller\PageController::apiChannel() has parameter $id with no type specified.                        
-  101    Method App\Controller\PageController::apiQuery() has parameter $query with no type specified.                       
-  168    Method App\Controller\PageController::youtubeResultToEmbedContainer() has no return type specified.                 
-  168    Method App\Controller\PageController::youtubeResultToEmbedContainer() has parameter $embed with no type specified.  
-  189    Method App\Controller\PageController::youtubeChannelInfoToImage() has no return type specified.                     
-  189    Method App\Controller\PageController::youtubeChannelInfoToImage() has parameter $info with no type specified.       
- ------ -------------------------------------------------------------------------------------------------------------------- 
+ ------ --------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Controller/PageController.php                                                                                                          
+ ------ --------------------------------------------------------------------------------------------------------------------------------------- 
+  20     Method App\Controller\PageController::channel() has parameter $id with no type specified.                                              
+  37     Method App\Controller\PageController::query() has parameter $query with no type specified.                                             
+  57     Method App\Controller\PageController::apiChannel() has parameter $id with no type specified.                                           
+  106    Method App\Controller\PageController::apiQuery() has parameter $query with no type specified.                                          
+  173    Method App\Controller\PageController::youtubeResultToEmbedContainer() has parameter $embed with no type specified.                     
+  173    Method App\Controller\PageController::youtubeResultToEmbedContainer() return type has no value type specified in iterable type array.  
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                              
+  195    Method App\Controller\PageController::youtubeChannelInfoToImage() has parameter $info with no type specified.                          
+  195    Method App\Controller\PageController::youtubeChannelInfoToImage() return type has no value type specified in iterable type array.      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                              
+ ------ --------------------------------------------------------------------------------------------------------------------------------------- 
 
  ------ ------------------------------------------------------------------------------------------------------------ 
   Line   Controller/StreamerController.php                                                                           
  ------ ------------------------------------------------------------------------------------------------------------ 
-  19     Method App\Controller\StreamerController::index() has parameter $id with no type specified.                 
-  36     Method App\Controller\StreamerController::apiStreamer() has parameter $id with no type specified.           
-  68     Method App\Controller\StreamerController::apiStreamerInfo() has parameter $channel with no type specified.  
+  21     Method App\Controller\StreamerController::index() has parameter $id with no type specified.                 
+  41     Method App\Controller\StreamerController::apiStreamer() has parameter $id with no type specified.           
+  76     Method App\Controller\StreamerController::apiStreamerInfo() has parameter $channel with no type specified.  
  ------ ------------------------------------------------------------------------------------------------------------ 
 
  ------ ------------------------------------------------------------------------------------------------------------------------------------------------------- 
   Line   Controller/ThemeSettingAdminController.php                                                                                                             
  ------ ------------------------------------------------------------------------------------------------------------------------------------------------------- 
-  28     Class App\Controller\ThemeSettingAdminController extends generic class Sonata\AdminBundle\Controller\CRUDController but does not specify its types: T  
-  31     Property App\Controller\ThemeSettingAdminController::$em has no type specified.                                                                        
-  69     Call to an undefined method Sonata\AdminBundle\Admin\AdminInterface<object>::getTemplate().                                                            
-  88     Call to an undefined method App\Controller\ThemeSettingAdminController::has().                                                                         
-  89     Call to an undefined method App\Controller\ThemeSettingAdminController::get().                                                                         
-  317    Dead catch - Symfony\Component\HttpFoundation\File\Exception\FileException is already caught above.                                                    
+  18     Class App\Controller\ThemeSettingAdminController extends generic class Sonata\AdminBundle\Controller\CRUDController but does not specify its types: T  
+  72     Undefined variable: $template                                                                                                                          
+  78     Call to an undefined method App\Controller\ThemeSettingAdminController::has().                                                                         
+  79     Call to an undefined method App\Controller\ThemeSettingAdminController::get().                                                                         
  ------ ------------------------------------------------------------------------------------------------------------------------------------------------------- 
 
- ------ ------------------------------------------------------------------------------------------------------------------------------------------------------- 
-  Line   Controller/TwitchApiController.php                                                                                                                     
- ------ ------------------------------------------------------------------------------------------------------------------------------------------------------- 
-  23     Property App\Controller\TwitchApiController::$params has no type specified.                                                                            
-  24     Property App\Controller\TwitchApiController::$requestStack has no type specified.                                                                      
-  29     Property App\Controller\TwitchApiController::$translator has unknown class Symfony\Component\Translation\TranslatorInterface as its type.              
-         💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                    
-  42     Parameter $translator of method App\Controller\TwitchApiController::__construct() has invalid type Symfony\Component\Translation\TranslatorInterface.  
-  51     Class Symfony\Component\Translation\TranslatorInterface not found.                                                                                     
-         💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                    
-  54     Instantiated class App\Controller\IdentityTranslator not found.                                                                                        
-         💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                    
-  63     Method App\Controller\TwitchApiController::channelQuery() has no return type specified.                                                                
-  63     Method App\Controller\TwitchApiController::channelQuery() has parameter $query with no type specified.                                                 
-  79     Method App\Controller\TwitchApiController::twitchLogin() has no return type specified.                                                                 
-  96     Call to method trans() on an unknown class Symfony\Component\Translation\TranslatorInterface.                                                          
-         💡 Learn more at https://phpstan.org/user-guide/discovering-symbols                                                                                    
-  109    Method App\Controller\TwitchApiController::gameQuery() has no return type specified.                                                                   
-  109    Method App\Controller\TwitchApiController::gameQuery() has parameter $query with no type specified.                                                    
-  137    Method App\Controller\TwitchApiController::getGameStreamers() has parameter $gameId with no type specified.                                            
-  172    Method App\Controller\TwitchApiController::getOfflineGameStreamers() has parameter $query with no type specified.                                      
-  191    Method App\Controller\TwitchApiController::getGames() has parameter $query with no type specified.                                                     
-  232    Call to an undefined method Doctrine\ORM\EntityRepository<App\Entity\HomeRowItem>::findUniqueItem().                                                   
- ------ ------------------------------------------------------------------------------------------------------------------------------------------------------- 
+ ------ ------------------------------------------------------------------------------------------------------------------- 
+  Line   Controller/TwitchApiController.php                                                                                 
+ ------ ------------------------------------------------------------------------------------------------------------------- 
+  77     Method App\Controller\TwitchApiController::channelQuery() has parameter $query with no type specified.             
+  108    Call to an undefined method Symfony\Component\HttpFoundation\Session\SessionInterface::getFlashBag().              
+  130    Method App\Controller\TwitchApiController::gameQuery() has parameter $query with no type specified.                
+  172    Method App\Controller\TwitchApiController::getGameStreamers() has parameter $gameId with no type specified.        
+  214    Method App\Controller\TwitchApiController::getOfflineGameStreamers() has parameter $query with no type specified.  
+  240    Method App\Controller\TwitchApiController::getGames() has parameter $query with no type specified.                 
+  281    Call to an undefined method Doctrine\ORM\EntityRepository<App\Entity\HomeRowItem>::findUniqueItem().               
+ ------ ------------------------------------------------------------------------------------------------------------------- 
 
  ------ --------------------------------------------------------------------------------------------------------- 
   Line   Controller/YouTubeApiController.php                                                                      
  ------ --------------------------------------------------------------------------------------------------------- 
-  13     Method App\Controller\YouTubeApiController::channelQuery() has no return type specified.                 
-  13     Method App\Controller\YouTubeApiController::channelQuery() has parameter $query with no type specified.  
-  31     Method App\Controller\YouTubeApiController::liveQuery() has no return type specified.                    
-  31     Method App\Controller\YouTubeApiController::liveQuery() has parameter $query with no type specified.     
+  17     Method App\Controller\YouTubeApiController::channelQuery() has parameter $query with no type specified.  
+  38     Method App\Controller\YouTubeApiController::liveQuery() has parameter $query with no type specified.     
  ------ --------------------------------------------------------------------------------------------------------- 
 
  ------ ----------------------------------------------------------------------------------------------------------------------------------------------------- 
@@ -647,13 +565,6 @@
   127    Method App\Entity\Partner::getHomeRowItems() return type with generic interface Doctrine\Common\Collections\Collection does not specify its types: TKey, T  
  ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------ 
 
- ------ --------------------------------------- 
-  Line   Entity/Theme.php                       
- ------ --------------------------------------- 
-  242    Variable $label might not be defined.  
-  244    Variable $label might not be defined.  
- ------ --------------------------------------- 
-
  ------ --------------------------------------------------------------------------------------------------------------------------------------------------------- 
   Line   Entity/User.php                                                                                                                                          
  ------ --------------------------------------------------------------------------------------------------------------------------------------------------------- 
@@ -664,56 +575,49 @@
  ------ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
   Line   EventSubscriber/SonataPersistenceSubscriber.php                                                                                                                                         
  ------ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
-  14     Property App\EventSubscriber\SonataPersistenceSubscriber::$gamersxCache has no type specified.                                                                                          
-  21     Method App\EventSubscriber\SonataPersistenceSubscriber::clearCache() has no return type specified.                                                                                      
   21     Method App\EventSubscriber\SonataPersistenceSubscriber::clearCache() has parameter $event with generic class Sonata\AdminBundle\Event\PersistenceEvent but does not specify its types:  
          T                                                                                                                                                                                       
+  26     Call to an undefined method Symfony\Contracts\Cache\CacheInterface::clear().                                                                                                            
  ------ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
 
  ------ ---------------------------------------------------------------------------------------------------------------------------- 
   Line   Repository/HomeRowItemOperationRepository.php                                                                               
  ------ ---------------------------------------------------------------------------------------------------------------------------- 
-  44     Method App\Repository\HomeRowItemOperationRepository::deleteByHomeRowItem() has no return type specified.                   
   44     Method App\Repository\HomeRowItemOperationRepository::deleteByHomeRowItem() has parameter $item_id with no type specified.  
  ------ ---------------------------------------------------------------------------------------------------------------------------- 
 
  ------ ---------------------------------------------------------------------------------------------------------------------- 
   Line   Repository/HomeRowItemRepository.php                                                                                  
  ------ ---------------------------------------------------------------------------------------------------------------------- 
-  50     Method App\Repository\HomeRowItemRepository::findUniqueItem() has no return type specified.                           
-  50     Method App\Repository\HomeRowItemRepository::findUniqueItem() has parameter $how_row_item_id with no type specified.  
-  50     Method App\Repository\HomeRowItemRepository::findUniqueItem() has parameter $key with no type specified.              
-  50     Method App\Repository\HomeRowItemRepository::findUniqueItem() has parameter $value with no type specified.            
-  64     Call to an undefined method Doctrine\DBAL\Statement::fetchAll().                                                      
+  49     Method App\Repository\HomeRowItemRepository::findUniqueItem() has parameter $how_row_item_id with no type specified.  
+  49     Method App\Repository\HomeRowItemRepository::findUniqueItem() has parameter $key with no type specified.              
+  49     Method App\Repository\HomeRowItemRepository::findUniqueItem() has parameter $value with no type specified.            
   67     Method App\Repository\HomeRowItemRepository::findStreamer() has no return type specified.                             
  ------ ---------------------------------------------------------------------------------------------------------------------- 
 
- ------ ---------------------------------------------------------------------------------------------------------------------------------------------------------------- 
-  Line   Repository/SiteSettingRepository.php                                                                                                                            
- ------ ---------------------------------------------------------------------------------------------------------------------------------------------------------------- 
-  19     PHPDoc tag @extends has invalid type App\Repository\MasterSetting.                                                                                              
-  23     Parameter #2 $entityClass of method Doctrine\Bundle\DoctrineBundle\Repository\LazyServiceEntityRepository<App\Repository\MasterSetting>::__construct() expects  
-         class-string<App\Repository\MasterSetting>, string given.                                                                                                       
- ------ ---------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+  Line   Repository/SiteSettingRepository.php                                                                                                                        
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+  22     Parameter #2 $entityClass of method Doctrine\Bundle\DoctrineBundle\Repository\LazyServiceEntityRepository<App\Entity\MasterSetting>::__construct() expects  
+         class-string<App\Entity\MasterSetting>, string given.                                                                                                       
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------ 
 
  ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
   Line   Security/Voter/HomeVoter.php                                                                                                                                             
  ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
-  16     Class App\Security\Voter\HomeVoter extends generic class Symfony\Component\Security\Core\Authorization\Voter\Voter but does not specify its types: TAttribute, TSubject  
-  18     Property App\Security\Voter\HomeVoter::$security has no type specified.                                                                                                  
-  19     Property App\Security\Voter\HomeVoter::$roles has no type specified.                                                                                                     
-  19     Property App\Security\Voter\HomeVoter::$roles is never read, only written.                                                                                               
+  18     Class App\Security\Voter\HomeVoter extends generic class Symfony\Component\Security\Core\Authorization\Voter\Voter but does not specify its types: TAttribute, TSubject  
+  21     Property App\Security\Voter\HomeVoter::$roles is never read, only written.                                                                                               
          💡 See: https://phpstan.org/developing-extensions/always-read-written-properties                                                                                         
-  50     Call to an undefined method Symfony\Component\Security\Core\User\UserInterface::getPartnerRoles().                                                                       
+  52     Call to an undefined method Symfony\Component\Security\Core\User\UserInterface::getPartnerRoles().                                                                       
  ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
 
- ------ ---------------------------------------------------------------------------------------------------- 
-  Line   Service/AwsS3Service.php                                                                            
- ------ ---------------------------------------------------------------------------------------------------- 
-  9      Property App\Service\AwsS3Service::$s3Client has no type specified.                                 
-  16     Method App\Service\AwsS3Service::uploadFile() has no return type specified.                         
-  16     Method App\Service\AwsS3Service::uploadFile() has parameter $file_temp_src with no type specified.  
- ------ ---------------------------------------------------------------------------------------------------- 
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  Line   Service/AwsS3Service.php                                                                                       
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  16     Method App\Service\AwsS3Service::uploadFile() has parameter $file_temp_src with no type specified.             
+  16     Method App\Service\AwsS3Service::uploadFile() return type has no value type specified in iterable type array.  
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                      
+ ------ --------------------------------------------------------------------------------------------------------------- 
 
  ------ ------------------------------------------------------------------------------------------------------------ 
   Line   Service/HomeRowInfo.php                                                                                     
@@ -722,152 +626,130 @@
   9      Method App\Service\HomeRowInfo::convertHoursMinutesToSeconds() has parameter $time with no type specified.  
  ------ ------------------------------------------------------------------------------------------------------------ 
 
- ------ ---------------------------------------------------------------------------------------------- 
-  Line   Service/ThemeInfo.php                                                                         
- ------ ---------------------------------------------------------------------------------------------- 
-  11     Property App\Service\ThemeInfo::$helper has no type specified.                                
-  12     Property App\Service\ThemeInfo::$em has no type specified.                                    
-  20     Method App\Service\ThemeInfo::getThemeInfo() has no return type specified.                    
-  20     Method App\Service\ThemeInfo::getThemeInfo() has parameter $id with no type specified.        
-  20     Method App\Service\ThemeInfo::getThemeInfo() has parameter $itemType with no type specified.  
-  38     Unreachable statement - code above always terminates.                                         
- ------ ---------------------------------------------------------------------------------------------- 
+ ------ -------------------------------------------------------------------------------------------------------------- 
+  Line   Service/ThemeInfo.php                                                                                         
+ ------ -------------------------------------------------------------------------------------------------------------- 
+  20     Method App\Service\ThemeInfo::getThemeInfo() has parameter $id with no type specified.                        
+  20     Method App\Service\ThemeInfo::getThemeInfo() has parameter $itemType with no type specified.                  
+  20     Method App\Service\ThemeInfo::getThemeInfo() return type has no value type specified in iterable type array.  
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                     
+ ------ -------------------------------------------------------------------------------------------------------------- 
 
  ------ -------------------------------------------------------------------------------------------------------------------------------------------- 
   Line   Service/ThemeSettingValidator.php                                                                                                           
  ------ -------------------------------------------------------------------------------------------------------------------------------------------- 
-  20     Method App\Service\ThemeSettingValidator::validateData() has parameter $requestParams with no value type specified in iterable type array.  
+  19     Method App\Service\ThemeSettingValidator::validateData() has parameter $requestParams with no value type specified in iterable type array.  
          💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                   
-  20     Method App\Service\ThemeSettingValidator::validateData() return type has no value type specified in iterable type array.                    
+  19     Method App\Service\ThemeSettingValidator::validateData() return type has no value type specified in iterable type array.                    
          💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                   
  ------ -------------------------------------------------------------------------------------------------------------------------------------------- 
 
- ------ -------------------------------------------------------------------------------------------------------------- 
-  Line   Service/TwitchApi.php                                                                                         
- ------ -------------------------------------------------------------------------------------------------------------- 
-  13     Property App\Service\TwitchApi::$client has no type specified.                                                
-  14     Property App\Service\TwitchApi::$requestStack has no type specified.                                          
-  15     Property App\Service\TwitchApi::$em has no type specified.                                                    
-  28     Method App\Service\TwitchApi::getLoginUrl() has no return type specified.                                     
-  28     Method App\Service\TwitchApi::getLoginUrl() has parameter $clientId with no type specified.                   
-  28     Method App\Service\TwitchApi::getLoginUrl() has parameter $redirectUri with no type specified.                
-  43     Method App\Service\TwitchApi::tryAndLoginWithTwitch() has no return type specified.                           
-  43     Method App\Service\TwitchApi::tryAndLoginWithTwitch() has parameter $clientId with no type specified.         
-  43     Method App\Service\TwitchApi::tryAndLoginWithTwitch() has parameter $clientSecret with no type specified.     
-  43     Method App\Service\TwitchApi::tryAndLoginWithTwitch() has parameter $code with no type specified.             
-  43     Method App\Service\TwitchApi::tryAndLoginWithTwitch() has parameter $redirectUri with no type specified.      
-  65     Method App\Service\TwitchApi::logUserInWithTwitch() has no return type specified.                             
-  65     Method App\Service\TwitchApi::logUserInWithTwitch() has parameter $apiUserInfo with no type specified.        
-  65     Method App\Service\TwitchApi::logUserInWithTwitch() has parameter $clientAccessToken with no type specified.  
-  65     Method App\Service\TwitchApi::logUserInWithTwitch() has parameter $refreshToken with no type specified.       
-  100    Call to an undefined method App\Entity\User::setFirstname().                                                  
-  110    Method App\Service\TwitchApi::getUserInfo() has no return type specified.                                     
-  110    Method App\Service\TwitchApi::getUserInfo() has parameter $accessToken with no type specified.                
-  110    Method App\Service\TwitchApi::getUserInfo() has parameter $clientId with no type specified.                   
-  122    Method App\Service\TwitchApi::getAuthorizationHeaders() has no return type specified.                         
-  122    Method App\Service\TwitchApi::getAuthorizationHeaders() has parameter $accessToken with no type specified.    
-  122    Method App\Service\TwitchApi::getAuthorizationHeaders() has parameter $clientId with no type specified.       
-  128    Method App\Service\TwitchApi::getTwitchAccessToken() has no return type specified.                            
-  128    Method App\Service\TwitchApi::getTwitchAccessToken() has parameter $clientId with no type specified.          
-  128    Method App\Service\TwitchApi::getTwitchAccessToken() has parameter $clientSecret with no type specified.      
-  128    Method App\Service\TwitchApi::getTwitchAccessToken() has parameter $code with no type specified.              
-  128    Method App\Service\TwitchApi::getTwitchAccessToken() has parameter $redirectUri with no type specified.       
-  145    Method App\Service\TwitchApi::makeApiCall() has no return type specified.                                     
-  145    Method App\Service\TwitchApi::makeApiCall() has parameter $params with no type specified.                     
-  185    Method App\Service\TwitchApi::searchChannels() has no return type specified.                                  
-  185    Method App\Service\TwitchApi::searchChannels() has parameter $after with no type specified.                   
-  185    Method App\Service\TwitchApi::searchChannels() has parameter $before with no type specified.                  
-  185    Method App\Service\TwitchApi::searchChannels() has parameter $first with no type specified.                   
-  185    Method App\Service\TwitchApi::searchChannels() has parameter $query with no type specified.                   
-  192    Method App\Service\TwitchApi::searchGames() has no return type specified.                                     
-  192    Method App\Service\TwitchApi::searchGames() has parameter $after with no type specified.                      
-  192    Method App\Service\TwitchApi::searchGames() has parameter $before with no type specified.                     
-  192    Method App\Service\TwitchApi::searchGames() has parameter $first with no type specified.                      
-  192    Method App\Service\TwitchApi::searchGames() has parameter $query with no type specified.                      
-  199    Method App\Service\TwitchApi::getGameInfo() has no return type specified.                                     
-  199    Method App\Service\TwitchApi::getGameInfo() has parameter $gameId with no type specified.                     
-  209    Method App\Service\TwitchApi::getStreamerInfo() has no return type specified.                                 
-  209    Method App\Service\TwitchApi::getStreamerInfo() has parameter $streamerId with no type specified.             
-  218    Method App\Service\TwitchApi::getStreamForStreamer() has no return type specified.                            
-  218    Method App\Service\TwitchApi::getStreamForStreamer() has parameter $streamerId with no type specified.        
-  228    Method App\Service\TwitchApi::getFollowersForStreamer() has no return type specified.                         
-  228    Method App\Service\TwitchApi::getFollowersForStreamer() has parameter $streamerId with no type specified.     
-  238    Method App\Service\TwitchApi::getPopularStreams() has no return type specified.                               
-  238    Method App\Service\TwitchApi::getPopularStreams() has parameter $after with no type specified.                
-  238    Method App\Service\TwitchApi::getPopularStreams() has parameter $before with no type specified.               
-  238    Method App\Service\TwitchApi::getPopularStreams() has parameter $first with no type specified.                
-  244    Method App\Service\TwitchApi::getTopLiveBroadcastForGame() has no return type specified.                      
-  244    Method App\Service\TwitchApi::getTopLiveBroadcastForGame() has parameter $after with no type specified.       
-  244    Method App\Service\TwitchApi::getTopLiveBroadcastForGame() has parameter $before with no type specified.      
-  244    Method App\Service\TwitchApi::getTopLiveBroadcastForGame() has parameter $first with no type specified.       
-  244    Method App\Service\TwitchApi::getTopLiveBroadcastForGame() has parameter $gameId with no type specified.      
-  244    Method App\Service\TwitchApi::getTopLiveBroadcastForGame() has parameter $user_login with no type specified.  
-  253    Method App\Service\TwitchApi::getTopGames() has no return type specified.                                     
-  253    Method App\Service\TwitchApi::getTopGames() has parameter $after with no type specified.                      
-  253    Method App\Service\TwitchApi::getTopGames() has parameter $before with no type specified.                     
-  253    Method App\Service\TwitchApi::getTopGames() has parameter $first with no type specified.                      
-  258    Method App\Service\TwitchApi::getVideosForStreamer() has no return type specified.                            
-  258    Method App\Service\TwitchApi::getVideosForStreamer() has parameter $after with no type specified.             
-  258    Method App\Service\TwitchApi::getVideosForStreamer() has parameter $before with no type specified.            
-  258    Method App\Service\TwitchApi::getVideosForStreamer() has parameter $first with no type specified.             
-  258    Method App\Service\TwitchApi::getVideosForStreamer() has parameter $streamerId with no type specified.        
-  265    Method App\Service\TwitchApi::getVideoInfo() has no return type specified.                                    
-  265    Method App\Service\TwitchApi::getVideoInfo() has parameter $after with no type specified.                     
-  265    Method App\Service\TwitchApi::getVideoInfo() has parameter $before with no type specified.                    
-  265    Method App\Service\TwitchApi::getVideoInfo() has parameter $first with no type specified.                     
-  265    Method App\Service\TwitchApi::getVideoInfo() has parameter $videoId with no type specified.                   
-  272    Method App\Service\TwitchApi::getClipInfo() has no return type specified.                                     
-  272    Method App\Service\TwitchApi::getClipInfo() has parameter $after with no type specified.                      
-  272    Method App\Service\TwitchApi::getClipInfo() has parameter $before with no type specified.                     
-  272    Method App\Service\TwitchApi::getClipInfo() has parameter $first with no type specified.                      
-  272    Method App\Service\TwitchApi::getClipInfo() has parameter $videoId with no type specified.                    
-  281    Method App\Service\TwitchApi::getPaginatedQuery() has no return type specified.                               
-  281    Method App\Service\TwitchApi::getPaginatedQuery() has parameter $after with no type specified.                
-  281    Method App\Service\TwitchApi::getPaginatedQuery() has parameter $before with no type specified.               
-  281    Method App\Service\TwitchApi::getPaginatedQuery() has parameter $first with no type specified.                
-  281    Method App\Service\TwitchApi::getPaginatedQuery() has parameter $queryParams with no type specified.          
-  281    Method App\Service\TwitchApi::getPaginatedQuery() has parameter $url with no type specified.                  
-  296    Method App\Service\TwitchApi::getStreamerInfoByChannel() has no return type specified.                        
-  296    Method App\Service\TwitchApi::getStreamerInfoByChannel() has parameter $channelName with no type specified.   
- ------ -------------------------------------------------------------------------------------------------------------- 
+ ------ ------------------------------------------------------------------------------------------------------------------------- 
+  Line   Service/TwitchApi.php                                                                                                    
+ ------ ------------------------------------------------------------------------------------------------------------------------- 
+  31     Method App\Service\TwitchApi::getLoginUrl() has parameter $clientId with no type specified.                              
+  31     Method App\Service\TwitchApi::getLoginUrl() has parameter $redirectUri with no type specified.                           
+  47     Method App\Service\TwitchApi::tryAndLoginWithTwitch() has parameter $clientId with no type specified.                    
+  47     Method App\Service\TwitchApi::tryAndLoginWithTwitch() has parameter $clientSecret with no type specified.                
+  47     Method App\Service\TwitchApi::tryAndLoginWithTwitch() has parameter $code with no type specified.                        
+  47     Method App\Service\TwitchApi::tryAndLoginWithTwitch() has parameter $redirectUri with no type specified.                 
+  47     Method App\Service\TwitchApi::tryAndLoginWithTwitch() return type has no value type specified in iterable type array.    
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                
+  70     Method App\Service\TwitchApi::logUserInWithTwitch() has parameter $apiUserInfo with no type specified.                   
+  70     Method App\Service\TwitchApi::logUserInWithTwitch() has parameter $clientAccessToken with no type specified.             
+  70     Method App\Service\TwitchApi::logUserInWithTwitch() has parameter $refreshToken with no type specified.                  
+  116    Method App\Service\TwitchApi::getUserInfo() has parameter $accessToken with no type specified.                           
+  116    Method App\Service\TwitchApi::getUserInfo() has parameter $clientId with no type specified.                              
+  116    Method App\Service\TwitchApi::getUserInfo() return type has no value type specified in iterable type array.              
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                
+  129    Method App\Service\TwitchApi::getAuthorizationHeaders() has parameter $accessToken with no type specified.               
+  129    Method App\Service\TwitchApi::getAuthorizationHeaders() has parameter $clientId with no type specified.                  
+  129    Method App\Service\TwitchApi::getAuthorizationHeaders() return type has no value type specified in iterable type array.  
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                
+  136    Method App\Service\TwitchApi::getTwitchAccessToken() has parameter $clientId with no type specified.                     
+  136    Method App\Service\TwitchApi::getTwitchAccessToken() has parameter $clientSecret with no type specified.                 
+  136    Method App\Service\TwitchApi::getTwitchAccessToken() has parameter $code with no type specified.                         
+  136    Method App\Service\TwitchApi::getTwitchAccessToken() has parameter $redirectUri with no type specified.                  
+  136    Method App\Service\TwitchApi::getTwitchAccessToken() return type has no value type specified in iterable type array.     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                
+  154    Method App\Service\TwitchApi::makeApiCall() has parameter $params with no type specified.                                
+  154    Method App\Service\TwitchApi::makeApiCall() return type has no value type specified in iterable type array.              
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                
+  199    Method App\Service\TwitchApi::searchChannels() has parameter $after with no type specified.                              
+  199    Method App\Service\TwitchApi::searchChannels() has parameter $before with no type specified.                             
+  199    Method App\Service\TwitchApi::searchChannels() has parameter $first with no type specified.                              
+  199    Method App\Service\TwitchApi::searchChannels() has parameter $query with no type specified.                              
+  209    Method App\Service\TwitchApi::searchGames() has parameter $after with no type specified.                                 
+  209    Method App\Service\TwitchApi::searchGames() has parameter $before with no type specified.                                
+  209    Method App\Service\TwitchApi::searchGames() has parameter $first with no type specified.                                 
+  209    Method App\Service\TwitchApi::searchGames() has parameter $query with no type specified.                                 
+  219    Method App\Service\TwitchApi::getGameInfo() has parameter $gameId with no type specified.                                
+  232    Method App\Service\TwitchApi::getStreamerInfo() has parameter $streamerId with no type specified.                        
+  244    Method App\Service\TwitchApi::getStreamForStreamer() has parameter $streamerId with no type specified.                   
+  257    Method App\Service\TwitchApi::getFollowersForStreamer() has parameter $streamerId with no type specified.                
+  270    Method App\Service\TwitchApi::getPopularStreams() has parameter $after with no type specified.                           
+  270    Method App\Service\TwitchApi::getPopularStreams() has parameter $before with no type specified.                          
+  270    Method App\Service\TwitchApi::getPopularStreams() has parameter $first with no type specified.                           
+  279    Method App\Service\TwitchApi::getTopLiveBroadcastForGame() has parameter $after with no type specified.                  
+  279    Method App\Service\TwitchApi::getTopLiveBroadcastForGame() has parameter $before with no type specified.                 
+  279    Method App\Service\TwitchApi::getTopLiveBroadcastForGame() has parameter $first with no type specified.                  
+  279    Method App\Service\TwitchApi::getTopLiveBroadcastForGame() has parameter $gameId with no type specified.                 
+  279    Method App\Service\TwitchApi::getTopLiveBroadcastForGame() has parameter $user_login with no type specified.             
+  291    Method App\Service\TwitchApi::getTopGames() has parameter $after with no type specified.                                 
+  291    Method App\Service\TwitchApi::getTopGames() has parameter $before with no type specified.                                
+  291    Method App\Service\TwitchApi::getTopGames() has parameter $first with no type specified.                                 
+  299    Method App\Service\TwitchApi::getVideosForStreamer() has parameter $after with no type specified.                        
+  299    Method App\Service\TwitchApi::getVideosForStreamer() has parameter $before with no type specified.                       
+  299    Method App\Service\TwitchApi::getVideosForStreamer() has parameter $first with no type specified.                        
+  299    Method App\Service\TwitchApi::getVideosForStreamer() has parameter $streamerId with no type specified.                   
+  309    Method App\Service\TwitchApi::getVideoInfo() has parameter $after with no type specified.                                
+  309    Method App\Service\TwitchApi::getVideoInfo() has parameter $before with no type specified.                               
+  309    Method App\Service\TwitchApi::getVideoInfo() has parameter $first with no type specified.                                
+  309    Method App\Service\TwitchApi::getVideoInfo() has parameter $videoId with no type specified.                              
+  319    Method App\Service\TwitchApi::getClipInfo() has parameter $after with no type specified.                                 
+  319    Method App\Service\TwitchApi::getClipInfo() has parameter $before with no type specified.                                
+  319    Method App\Service\TwitchApi::getClipInfo() has parameter $first with no type specified.                                 
+  319    Method App\Service\TwitchApi::getClipInfo() has parameter $videoId with no type specified.                               
+  329    Method App\Service\TwitchApi::getPaginatedQuery() has parameter $after with no type specified.                           
+  329    Method App\Service\TwitchApi::getPaginatedQuery() has parameter $before with no type specified.                          
+  329    Method App\Service\TwitchApi::getPaginatedQuery() has parameter $first with no type specified.                           
+  329    Method App\Service\TwitchApi::getPaginatedQuery() has parameter $queryParams with no type specified.                     
+  329    Method App\Service\TwitchApi::getPaginatedQuery() has parameter $url with no type specified.                             
+  347    Method App\Service\TwitchApi::getStreamerInfoByChannel() has parameter $channelName with no type specified.              
+ ------ ------------------------------------------------------------------------------------------------------------------------- 
 
  ------ ----------------------------------------------------------------------------------------------------------- 
   Line   Service/YouTubeApi.php                                                                                     
  ------ ----------------------------------------------------------------------------------------------------------- 
-  11     Property App\Service\YouTubeApi::$service has no type specified.                                           
-  20     Method App\Service\YouTubeApi::getPopularStreams() has parameter $after with no type specified.            
-  20     Method App\Service\YouTubeApi::getPopularStreams() has parameter $before with no type specified.           
-  20     Method App\Service\YouTubeApi::getPopularStreams() has parameter $first with no type specified.            
-  30     Method App\Service\YouTubeApi::getLiveChannel() has parameter $channelId with no type specified.           
-  43     Method App\Service\YouTubeApi::getPopularChannelVideos() has parameter $after with no type specified.      
-  43     Method App\Service\YouTubeApi::getPopularChannelVideos() has parameter $before with no type specified.     
-  43     Method App\Service\YouTubeApi::getPopularChannelVideos() has parameter $channelId with no type specified.  
-  43     Method App\Service\YouTubeApi::getPopularChannelVideos() has parameter $first with no type specified.      
-  56     Method App\Service\YouTubeApi::getRecentChannelVideos() has parameter $after with no type specified.       
-  56     Method App\Service\YouTubeApi::getRecentChannelVideos() has parameter $before with no type specified.      
-  56     Method App\Service\YouTubeApi::getRecentChannelVideos() has parameter $channelId with no type specified.   
-  56     Method App\Service\YouTubeApi::getRecentChannelVideos() has parameter $first with no type specified.       
-  69     Method App\Service\YouTubeApi::searchChannels() has parameter $after with no type specified.               
-  69     Method App\Service\YouTubeApi::searchChannels() has parameter $before with no type specified.              
-  69     Method App\Service\YouTubeApi::searchChannels() has parameter $first with no type specified.               
-  69     Method App\Service\YouTubeApi::searchChannels() has parameter $query with no type specified.               
-  79     Method App\Service\YouTubeApi::getChannelInfo() has parameter $channelIds with no type specified.          
-  92     Method App\Service\YouTubeApi::searchLiveChannels() has parameter $after with no type specified.           
-  92     Method App\Service\YouTubeApi::searchLiveChannels() has parameter $before with no type specified.          
-  92     Method App\Service\YouTubeApi::searchLiveChannels() has parameter $first with no type specified.           
-  92     Method App\Service\YouTubeApi::searchLiveChannels() has parameter $query with no type specified.           
-  104    Method App\Service\YouTubeApi::getChannelVideosStats() has parameter $videoIds with no type specified.     
-  119    Method App\Service\YouTubeApi::searchPopularVideos() has parameter $after with no type specified.          
-  119    Method App\Service\YouTubeApi::searchPopularVideos() has parameter $before with no type specified.         
-  119    Method App\Service\YouTubeApi::searchPopularVideos() has parameter $first with no type specified.          
-  119    Method App\Service\YouTubeApi::searchPopularVideos() has parameter $query with no type specified.          
-  130    Method App\Service\YouTubeApi::getVideoInfo() has parameter $videoIds with no type specified.              
-  141    Method App\Service\YouTubeApi::getPlaylistInfo() has parameter $playlistIds with no type specified.        
-  155    Method App\Service\YouTubeApi::getPlaylistItemsInfo() has parameter $playlistIds with no type specified.   
-  171    Method App\Service\YouTubeApi::getPaginatedQuery() has parameter $after with no type specified.            
-  171    Method App\Service\YouTubeApi::getPaginatedQuery() has parameter $before with no type specified.           
-  171    Method App\Service\YouTubeApi::getPaginatedQuery() has parameter $first with no type specified.            
-  171    Method App\Service\YouTubeApi::getPaginatedQuery() has parameter $queryParams with no type specified.      
+  35     Method App\Service\YouTubeApi::getLiveChannel() has parameter $channelId with no type specified.           
+  51     Method App\Service\YouTubeApi::getPopularChannelVideos() has parameter $after with no type specified.      
+  51     Method App\Service\YouTubeApi::getPopularChannelVideos() has parameter $before with no type specified.     
+  51     Method App\Service\YouTubeApi::getPopularChannelVideos() has parameter $channelId with no type specified.  
+  51     Method App\Service\YouTubeApi::getPopularChannelVideos() has parameter $first with no type specified.      
+  67     Method App\Service\YouTubeApi::getRecentChannelVideos() has parameter $after with no type specified.       
+  67     Method App\Service\YouTubeApi::getRecentChannelVideos() has parameter $before with no type specified.      
+  67     Method App\Service\YouTubeApi::getRecentChannelVideos() has parameter $channelId with no type specified.   
+  67     Method App\Service\YouTubeApi::getRecentChannelVideos() has parameter $first with no type specified.       
+  83     Method App\Service\YouTubeApi::searchChannels() has parameter $after with no type specified.               
+  83     Method App\Service\YouTubeApi::searchChannels() has parameter $before with no type specified.              
+  83     Method App\Service\YouTubeApi::searchChannels() has parameter $first with no type specified.               
+  83     Method App\Service\YouTubeApi::searchChannels() has parameter $query with no type specified.               
+  96     Method App\Service\YouTubeApi::getChannelInfo() has parameter $channelIds with no type specified.          
+  112    Method App\Service\YouTubeApi::searchLiveChannels() has parameter $after with no type specified.           
+  112    Method App\Service\YouTubeApi::searchLiveChannels() has parameter $before with no type specified.          
+  112    Method App\Service\YouTubeApi::searchLiveChannels() has parameter $first with no type specified.           
+  112    Method App\Service\YouTubeApi::searchLiveChannels() has parameter $query with no type specified.           
+  127    Method App\Service\YouTubeApi::getChannelVideosStats() has parameter $videoIds with no type specified.     
+  145    Method App\Service\YouTubeApi::searchPopularVideos() has parameter $after with no type specified.          
+  145    Method App\Service\YouTubeApi::searchPopularVideos() has parameter $before with no type specified.         
+  145    Method App\Service\YouTubeApi::searchPopularVideos() has parameter $first with no type specified.          
+  145    Method App\Service\YouTubeApi::searchPopularVideos() has parameter $query with no type specified.          
+  159    Method App\Service\YouTubeApi::getVideoInfo() has parameter $videoIds with no type specified.              
+  187    Method App\Service\YouTubeApi::getPlaylistItemsInfo() has parameter $playlistIds with no type specified.   
+  204    Method App\Service\YouTubeApi::getPaginatedQuery() has parameter $after with no type specified.            
+  204    Method App\Service\YouTubeApi::getPaginatedQuery() has parameter $before with no type specified.           
+  204    Method App\Service\YouTubeApi::getPaginatedQuery() has parameter $first with no type specified.            
+  204    Method App\Service\YouTubeApi::getPaginatedQuery() has parameter $queryParams with no type specified.      
  ------ ----------------------------------------------------------------------------------------------------------- 
 
  ------ -------------------------------------------------------------------- 
@@ -884,5 +766,5 @@
          💡 Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property               
  ------ --------------------------------------------------------------------------------------------------- 
 
- [ERROR] Found 489 errors                                                                                               
+ [ERROR] Found 374 errors                                                                                               
 

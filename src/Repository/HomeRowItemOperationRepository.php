@@ -41,7 +41,7 @@ class HomeRowItemOperationRepository extends ServiceEntityRepository
         }
     }
 
-    public function deleteByHomeRowItem($item_id)
+    public function deleteByHomeRowItem($item_id): mixed
     {
         $queryBuilder = $this->createQueryBuilder('e')
             ->delete()

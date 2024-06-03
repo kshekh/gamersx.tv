@@ -2,11 +2,10 @@
 
 namespace App\Controller;
 
-use App\Service\TwitchApi;
 use App\Service\YouTubeApi;
 use App\Service\ThemeInfo;
 use App\Entity\HomeRowItem;
-use Doctrine\Common\Collections\ArrayCollection;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -52,6 +51,9 @@ class PageController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     #[Route('/channel/{id}/api', name: 'channel_api')]
     public function apiChannel(YouTubeApi $youtube, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $id): Response
@@ -98,6 +100,9 @@ class PageController extends AbstractController
         return $this->json($channelInfo);
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     #[Route('/query/{query}/api', name: 'query_api')]
     public function apiQuery(YouTubeApi $youtube, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $query): Response
@@ -165,7 +170,8 @@ class PageController extends AbstractController
         return $this->json($queryInfo);
     }
 
-    private function youtubeResultToEmbedContainer($embed) {
+    private function youtubeResultToEmbedContainer($embed): array
+    {
         $title = "<".$embed->getSnippet()->getChannelTitle() . "> " . $embed->getSnippet()->getDescription();
         return [
             'componentName' => 'EmbedContainer',
@@ -186,7 +192,8 @@ class PageController extends AbstractController
         ];
     }
 
-    private function youtubeChannelInfoToImage($info) {
+    private function youtubeChannelInfoToImage($info): array
+    {
         $imageInfo = $info->getSnippet()->getThumbnails();
         $imageInfo = $imageInfo->getMedium() ? $imageInfo->getMedium() : $imageInfo->getStandard();
         return [
@@ -199,7 +206,7 @@ class PageController extends AbstractController
     }
 
     #[Route('/access-denied', name: 'access_denied')]
-    public function accessDenied(): \Symfony\Component\HttpFoundation\RedirectResponse
+    public function accessDenied(): RedirectResponse
     {
         return $this->redirectToRoute('home');
     }

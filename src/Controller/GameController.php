@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Service\TwitchApi;
 use App\Service\ThemeInfo;
 use App\Entity\HomeRowItem;
-use Doctrine\Common\Collections\ArrayCollection;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -34,6 +34,9 @@ class GameController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     #[Route('/game/{id}/api', name: 'game_api')]
     public function apiGame(TwitchApi $twitch, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $id): Response
@@ -44,7 +47,7 @@ class GameController extends AbstractController
              );
         }
 
-        $gameInfo = $gamersxCache->get("game-{$id}",
+        $gameInfo = $gamersxCache->get("game-$id",
             function (ItemInterface $item) use ($id, $twitch, $themeInfoService) {
                 $game = $twitch->getGameInfo($id);
                 $themeInfo = $themeInfoService->getThemeInfo($id, HomeRowItem::TYPE_GAME);
