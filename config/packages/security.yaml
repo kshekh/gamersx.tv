@@ -5,8 +5,10 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
 
     providers:
-        fos_userbundle:
-            id: fos_user.user_provider.username
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: username
 
     firewalls:
         dev:
@@ -18,7 +20,7 @@ security:
             pattern:            /admin(.*)
             context:            user
             form_login:
-                provider:       fos_userbundle
+                provider:       app_user_provider
                 login_path:     /admin/login
                 use_forward:    false
                 check_path:     /admin/login_check
@@ -37,7 +39,7 @@ security:
             pattern:             .*
             context:             user
             form_login:
-                provider:       fos_userbundle
+                provider:       app_user_provider
                 login_path:     /admin/login
                 use_forward:    false
                 check_path:     /admin/login_check
@@ -74,7 +76,6 @@ security:
 
     role_hierarchy:
         ROLE_LOCKED:     ROLE_USER
-
         ROLE_ADMIN:       [ROLE_LOCKED, ROLE_SONATA_ADMIN]
         ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH, ROLE_ADMIN_DASHBOARD_ACCESS]
         SONATA:

@@ -14,9 +14,7 @@ class PartnerRole
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'partnerRoles')]
-    private ?User $user = null;
-
-    #[ORM\ManyToOne(inversedBy: 'partnerRoles')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Partner $partner = null;
 
     const ADMIN = 'ROLE_PARTNER_ADMIN';
@@ -25,6 +23,10 @@ class PartnerRole
 
     #[ORM\Column(length: 255)]
     private ?string $role = null;
+
+    #[ORM\ManyToOne(inversedBy: 'partnerRoles')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
     public function getId(): ?int
     {

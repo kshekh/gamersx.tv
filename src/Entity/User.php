@@ -6,20 +6,36 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Sonata\UserBundle\Entity\BaseUser;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="fos_user__user")
- */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User extends BaseUser
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    protected $id = null;
+    private ?int $id = null;
 
+    #[ORM\Column(length: 180)]
+    private ?string $username = null;
+
+    /**
+     * @var list<string> The user roles
+     */
+    #[ORM\Column]
+    private array $roles = [];
+
+    /**
+     * @var ?string The hashed password
+     */
+    #[ORM\Column]
+    private ?string $password = null;
+
+    /**
+     * @var Collection<int, PartnerRole>
+     */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: PartnerRole::class, orphanRemoval: true)]
     private Collection $partnerRoles;
 
@@ -42,25 +58,95 @@ class User extends BaseUser
         return $this->id;
     }
 
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(string $username): static
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
     /**
-     * @return Collection
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->username;
+    }
+
+    /**
+     * @see UserInterface
+     *
+     * @return list<string>
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    /**
+     * @param list<string> $roles
+     */
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, PartnerRole>
      */
     public function getPartnerRoles(): Collection
     {
         return $this->partnerRoles;
     }
 
-    public function addPartnerRole(PartnerRole $partnerRole): self
+    public function addPartnerRole(PartnerRole $partnerRole): static
     {
         if (!$this->partnerRoles->contains($partnerRole)) {
-            $this->partnerRoles[] = $partnerRole;
+            $this->partnerRoles->add($partnerRole);
             $partnerRole->setUser($this);
         }
 
         return $this;
     }
 
-    public function removePartnerRole(PartnerRole $partnerRole): self
+    public function removePartnerRole(PartnerRole $partnerRole): static
     {
         if ($this->partnerRoles->removeElement($partnerRole)) {
             // set the owning side to null (unless already changed)
@@ -77,7 +163,7 @@ class User extends BaseUser
         return $this->twitchUserId;
     }
 
-    public function setTwitchUserId(string $twitchUserId): self
+    public function setTwitchUserId(string $twitchUserId): static
     {
         $this->twitchUserId = $twitchUserId;
 
@@ -89,7 +175,7 @@ class User extends BaseUser
         return $this->twitchAccessToken;
     }
 
-    public function setTwitchAccessToken(string $twitchAccessToken): self
+    public function setTwitchAccessToken(string $twitchAccessToken): static
     {
         $this->twitchAccessToken = $twitchAccessToken;
 
@@ -101,7 +187,7 @@ class User extends BaseUser
         return $this->twitchRefreshToken;
     }
 
-    public function setTwitchRefreshToken(string $twitchRefreshToken): self
+    public function setTwitchRefreshToken(string $twitchRefreshToken): static
     {
         $this->twitchRefreshToken = $twitchRefreshToken;
 
