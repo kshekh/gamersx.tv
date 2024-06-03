@@ -12,17 +12,20 @@ use Symfony\Component\HttpFoundation\{JsonResponse,
     Request,
     Response};
 use Sonata\AdminBundle\Controller\CRUDController;
+use Sonata\AdminBundle\Templating\TemplateRegistry;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ThemeSettingAdminController extends CRUDController
 {
 
     public EntityManagerInterface $em;
+    private TemplateRegistry $templateRegistry;
     private ThemeSettingValidator $themeSettingValidator;
 
-    public function __construct(EntityManagerInterface $em, ThemeSettingValidator $themeSettingValidator)
+    public function __construct(EntityManagerInterface $em, TemplateRegistry $templateRegistry, ThemeSettingValidator $themeSettingValidator)
     {
         $this->em = $em;
+        $this->templateRegistry = $templateRegistry;
         $this->themeSettingValidator = $themeSettingValidator;
     }
 
@@ -48,15 +51,13 @@ class ThemeSettingAdminController extends CRUDController
             $this->admin->setListMode($listMode);
         }
 
-        $datagrid = $this->admin->getDatagrid();
-        $formView = $datagrid->getForm()->createView();
+        $dataGrid = $this->admin->getDatagrid();
+        $formView = $dataGrid->getForm()->createView();
 
         // set the theme for the current Admin Form
         $this->setFormTheme($formView, $this->admin->getFilterTheme());
 
-        // NEXT_MAJOR: Remove this line and use commented line below it instead
-        $template = $this->admin->getTemplate('list');
-        // $template = $this->templateRegistry->getTemplate('list');
+        $template = $this->templateRegistry->getTemplate('list');
 
         $getMasterTheme = $this->em->getRepository(MasterTheme::class)->findAll();
         if(empty($getMasterTheme)) {
@@ -68,11 +69,11 @@ class ThemeSettingAdminController extends CRUDController
             $getMasterTheme = $this->em->getRepository(MasterTheme::class)->findAll();
         }
 
-        return $this->renderWithExtraParams($template, [
+        return $this->render($template, [
             'action' => 'list',
             'form' => $formView,
             'masterThemes' => $getMasterTheme,
-            'datagrid' => $datagrid,
+            'datagrid' => $dataGrid,
             'csrf_token' => $this->getCsrfToken('sonata.batch'),
             'export_formats' => $this->has('sonata.admin.admin_exporter.do-not-use') ?
                 $this->get('sonata.admin.admin_exporter.do-not-use')->getAvailableFormats($this->admin) :
