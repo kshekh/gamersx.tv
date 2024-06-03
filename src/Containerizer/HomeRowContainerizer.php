@@ -3,19 +3,18 @@
 namespace App\Containerizer;
 
 use App\Entity\HomeRow;
-use App\Entity\HomeRowItem;
 
 class HomeRowContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
-    private $containerizer;
-    private $homeRow;
+    private ContainerizerFactory $containerizer;
+    private HomeRow $homeRow;
 
     public function __construct(HomeRow $homeRow, ContainerizerFactory $containerizer) {
         $this->homeRow = $homeRow;
         $this->containerizer = $containerizer;
     }
 
-    public function getContainers(): Array {
+    public function getContainers(): array {
         $containers = Array();
         $containerizer = $this->containerizer;
         foreach ($this->homeRow->getItems() as $item) {

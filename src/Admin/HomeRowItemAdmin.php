@@ -27,7 +27,7 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 
 final class HomeRowItemAdmin extends AbstractAdmin
 {
-    private $tokenStorage;
+    private TokenStorageInterface $tokenStorage;
 
     public function setTokenStorage(TokenStorageInterface $tokenStorage): void
     {

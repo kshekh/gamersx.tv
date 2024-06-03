@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 final class ContainerAccessControlAdmin extends AbstractAdmin
 {
-    private $tokenStorage;
+    private TokenStorageInterface $tokenStorage;
 
     public function setTokenStorage(TokenStorageInterface $tokenStorage): void
     {
@@ -43,7 +43,9 @@ final class ContainerAccessControlAdmin extends AbstractAdmin
         $query = parent::configureQuery($query);
         $rootAlias = current($query->getRootAliases());
 
-        $query->where($rootAlias.'.is_blacklisted = 1');
+        $query->andWhere(
+            $query->expr()->eq($rootAlias . '.is_blacklisted', '1')
+        );
         $query->orWhere($rootAlias.'.is_full_site_blacklisted = 1');
 
         return $query;

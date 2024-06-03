@@ -53,7 +53,6 @@ services:
 
     admin.home_row:
         class: App\Admin\HomeRowAdmin
-        arguments: [~, App\Entity\HomeRow, App\Controller\HomeRowAdminController ]
         tags:
             - { name: sonata.admin, model_class: App\Entity\HomeRow, manager_type: orm, group: home, label: Rows }
         public: true

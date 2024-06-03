@@ -26,9 +26,9 @@ use Symfony\Contracts\Cache\ItemInterface;
 )]
 class CacheHomePageContainers extends Command
 {
-    private $containerizer;
-    private $em;
-    private $homeRowInfo;
+    private ContainerizerFactory $containerizer;
+    private EntityManagerInterface $em;
+    private HomeRowInfo $homeRowInfo;
 
     public function __construct(EntityManagerInterface $em, ContainerizerFactory $containerizer, HomeRowInfo $homeRowInfo)
     {
@@ -135,11 +135,11 @@ class CacheHomePageContainers extends Command
         return -1;
     }
 
-    protected function json($data, int $status = 200, array $headers = [], array $context = []): JsonResponse
+    protected function json($data, int $status = 200, array $headers = []): JsonResponse
     {
         $encoders = [new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];
-        $serializer = new Serializer($normalizers, $encoders, $context);
+        $serializer = new Serializer($normalizers, $encoders);
 
         $jsonContent = $serializer->serialize($data, 'json');
 

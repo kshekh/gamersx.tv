@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 final class SiteSettingsAdmin extends AbstractAdmin
 {
-    public $entityManager;
+    public EntityManagerInterface $entityManager;
 
     public function setEntityManager(EntityManagerInterface $entityManager): void
     {
@@ -39,6 +39,7 @@ final class SiteSettingsAdmin extends AbstractAdmin
 
     /**
      * @param ListMapper $list
+     * @throws \JsonException
      */
     protected function configureListFields(ListMapper $list): void
     {

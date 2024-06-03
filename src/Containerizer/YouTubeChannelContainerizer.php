@@ -4,21 +4,23 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
+use App\Service\YouTubeApi;
+use Doctrine\ORM\EntityManagerInterface;
 
 class YouTubeChannelContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
-    private $homeRowItem;
-    private $youtube;
-    private $entityManager;
+    private HomeRowItem $homeRowItem;
+    private YouTubeApi $youtube;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(HomeRowItem $homeRowItem, $youtube,$entityManager)
+    public function __construct(HomeRowItem $homeRowItem, YouTubeApi $youtube, EntityManagerInterface $entityManager)
     {
         $this->homeRowItem = $homeRowItem;
         $this->youtube = $youtube;
         $this->entityManager = $entityManager;
     }
 
-    public function getContainers(): Array
+    public function getContainers(): array
     {
         $topic_id = $this->homeRowItem->getTopic()['topicId'];
         $check_unique_item =  $this->entityManager->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
@@ -93,7 +95,7 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
                 $homeRowItem->getShowArt() === TRUE) {
                 // Get the sized art link
                 $imageInfo = $info->getSnippet()->getThumbnails();
-                $imageInfo = $imageInfo->getMedium() ? $imageInfo->getMedium() : $imageInfo->getStandard();
+                $imageInfo = $imageInfo->getMedium() ?: $imageInfo->getStandard();
 
                 $image = [
                     'url' => $imageInfo->getUrl(),

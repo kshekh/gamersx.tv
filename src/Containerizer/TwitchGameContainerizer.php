@@ -2,25 +2,37 @@
 
 namespace App\Containerizer;
 
-use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
-use App\Entity\HomeRowItemOperation;
 use App\Service\HomeRowInfo;
+use App\Service\TwitchApi;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class TwitchGameContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
-    private $homeRowItem;
-    private $twitch;
-    private $entityManager;
+    private HomeRowItem $homeRowItem;
+    private TwitchApi $twitch;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(HomeRowItem $homeRowItem, $twitch,$entityManager)
+    public function __construct(HomeRowItem $homeRowItem, TwitchApi $twitch, EntityManagerInterface $entityManager)
     {
         $this->homeRowItem = $homeRowItem;
         $this->twitch = $twitch;
         $this->entityManager = $entityManager;
     }
 
-    public function getContainers(): Array
+    /**
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function getContainers(): array
     {
 
         $topic_id = $this->homeRowItem->getTopic()['topicId'];
@@ -47,7 +59,7 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
         // Get the info for the game, use that for every game
         $info = $infos->toArray()['data'];
 
-        if (!isset($info) || empty($info)) {
+        if (empty($info)) {
             return Array();
         }
 
@@ -126,19 +138,12 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
             !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
             (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
         ) {
-            switch ($homeRowItem->getLinkType()) {
-            case HomeRowItem::LINK_TYPE_GAMERSX:
-                $link = '/game/'.$info['id'];
-                break;
-            case HomeRowItem::LINK_TYPE_EXTERNAL:
-                $link = 'https://www.twitch.tv/directory/game/'.$info['name'];
-                break;
-            case HomeRowItem::LINK_TYPE_CUSTOM:
-                $link = $homeRowItem->getCustomLink();
-                break;
-            default:
-                $link = '#';
-            }
+            $link = match ($homeRowItem->getLinkType()) {
+                HomeRowItem::LINK_TYPE_GAMERSX => '/game/' . $info['id'],
+                HomeRowItem::LINK_TYPE_EXTERNAL => 'https://www.twitch.tv/directory/game/' . $info['name'],
+                HomeRowItem::LINK_TYPE_CUSTOM => $homeRowItem->getCustomLink(),
+                default => '#',
+            };
 
             $channels = Array();
             foreach ($broadcasts as $i => $broadcast) {
@@ -192,8 +197,8 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
                 $imageWidth = 225;
                 $imageHeight = 300;
                 $imageUrl = $info['box_art_url'];
-                $imageUrl = str_replace('{height}', $imageHeight, $imageUrl);
-                $imageUrl = str_replace('{width}', $imageWidth, $imageUrl);
+                $imageUrl = str_replace('{height}', (string)$imageHeight, $imageUrl);
+                $imageUrl = str_replace('{width}', (string)$imageWidth, $imageUrl);
 
                 $image = [
                     'url' => $imageUrl,

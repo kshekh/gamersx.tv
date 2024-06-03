@@ -4,21 +4,24 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
+use App\Service\TwitchApi;
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 
 class TwitchVideoContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
-    private $homeRowItem;
-    private $twitch;
-    private $entityManager;
+    private HomeRowItem $homeRowItem;
+    private TwitchApi $twitch;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(HomeRowItem $homeRowItem, $twitch,$entityManager)
+    public function __construct(HomeRowItem $homeRowItem, TwitchApi $twitch, EntityManagerInterface $entityManager)
     {
         $this->homeRowItem = $homeRowItem;
         $this->twitch = $twitch;
         $this->entityManager = $entityManager;
     }
 
-    public function getContainers(): Array
+    public function getContainers(): array
     {
         $qb = $this->entityManager->createQueryBuilder();
         $query = $qb->select('hri')
@@ -59,7 +62,7 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
             } else {
                 $info = $twitch->getClipInfo($videoId)->toArray();
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error("Call to twitch failed with the message \"".$e->getMessage()."\"");
             return Array();
         }
@@ -101,7 +104,6 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
                 $homeRowItem->getShowArt() === TRUE) {
                 // Get the sized art link
                 $imageUrl = $info['thumbnail_url'];
-                $imageUrl = $imageUrl;
                 $imageWidth = '200';
                 $imageHeight = '200';
 

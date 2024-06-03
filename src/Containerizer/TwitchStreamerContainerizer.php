@@ -4,21 +4,35 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
+use App\Service\TwitchApi;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class TwitchStreamerContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
-    private $homeRowItem;
-    private $twitch;
-    private $entityManager;
+    private HomeRowItem $homeRowItem;
+    private TwitchApi $twitch;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(HomeRowItem $homeRowItem, $twitch,$entityManager)
+    public function __construct(HomeRowItem $homeRowItem, TwitchApi $twitch, EntityManagerInterface $entityManager)
     {
         $this->homeRowItem = $homeRowItem;
         $this->twitch = $twitch;
         $this->entityManager = $entityManager;
     }
 
-    public function getContainers(): Array
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     */
+    public function getContainers(): array
     {
         $topic_id = $this->homeRowItem->getTopic()['topicId'];
         $check_unique_item =  $this->entityManager->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
@@ -133,19 +147,12 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
                 $embedData = NULL;
             }
 
-            switch ($homeRowItem->getLinkType()) {
-            case HomeRowItem::LINK_TYPE_GAMERSX:
-                $link = '/streamer/'.$info['id'];
-                break;
-            case HomeRowItem::LINK_TYPE_EXTERNAL:
-                $link = 'https://www.twitch.tv/'.$info['login'];
-                break;
-            case HomeRowItem::LINK_TYPE_CUSTOM:
-                $link = $homeRowItem->getCustomLink();
-                break;
-            default:
-                $link = '#';
-            }
+            $link = match ($homeRowItem->getLinkType()) {
+                HomeRowItem::LINK_TYPE_GAMERSX => '/streamer/' . $info['id'],
+                HomeRowItem::LINK_TYPE_EXTERNAL => 'https://www.twitch.tv/' . $info['login'],
+                HomeRowItem::LINK_TYPE_CUSTOM => $homeRowItem->getCustomLink(),
+                default => '#',
+            };
 
             $channels = [
                 [

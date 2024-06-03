@@ -21,10 +21,10 @@ use Throwable;
 )]
 class RefreshTwitchTokenCommand extends Command
 {
-    private $client;
-    private $params;
-    private $file;
-    private $logger;
+    private HttpClientInterface $client;
+    private ParameterBagInterface $params;
+    private Filesystem $file;
+    private LoggerInterface $logger;
 
     public function __construct(HttpClientInterface $client, ParameterBagInterface $params, Filesystem $file, LoggerInterface $logger)
     {
@@ -38,7 +38,6 @@ class RefreshTwitchTokenCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
             ->addOption('topicId', 'i', InputOption::VALUE_OPTIONAL, 'Your Client ID for your Twitch application')
             ->addOption('twitchSecret', 's', InputOption::VALUE_OPTIONAL, 'Your Client Secret for your Twitch application')
             ->addOption('envFile', 'f', InputOption::VALUE_OPTIONAL, 'The .env.local file to rewrite the TWITCH_APP_TOKEN variable');
@@ -151,8 +150,8 @@ class RefreshTwitchTokenCommand extends Command
     }
 
     /* From Laravel */
-    private function str_starts_with($haystack, $needle)
-    {
-        return (string)$needle !== '' && strncmp($haystack, $needle, strlen($needle)) === 0;
-    }
+//    private function str_starts_with($haystack, $needle): bool
+//    {
+//        return (string)$needle !== '' && strncmp($haystack, $needle, strlen($needle)) === 0;
+//    }
 }
