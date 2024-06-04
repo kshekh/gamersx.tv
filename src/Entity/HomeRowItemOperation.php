@@ -18,9 +18,6 @@ class HomeRowItemOperation
     #[ORM\Column(length: 25)]
     private ?string $item_type = null;
 
-    #[ORM\ManyToOne(inversedBy: 'homeRowItemOperations')]
-    private ?HomeRowItem $home_row_item = null;
-
     #[ORM\Column(length: 255, nullable: true, options: ['comment' => 'itemType=streamer => livestreaming_id, itemType=offline_streamer => userid'])]
     private ?string $streamer_id = null;
 
@@ -51,6 +48,9 @@ class HomeRowItemOperation
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $user_id = null;
 
+    #[ORM\ManyToOne(inversedBy: 'homeRowItemOperations')]
+    private ?HomeRowItem $homeRowItem = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -58,12 +58,12 @@ class HomeRowItemOperation
 
     public function getHomeRowItem(): ?HomeRowItem
     {
-        return $this->home_row_item;
+        return $this->homeRowItem;
     }
 
-    public function setHomeRowItem(?HomeRowItem $home_row_item): self
+    public function setHomeRowItem(?HomeRowItem $homeRowItem): self
     {
-        $this->home_row_item = $home_row_item;
+        $this->homeRowItem = $homeRowItem;
 
         return $this;
     }

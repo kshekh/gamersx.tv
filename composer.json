@@ -15,6 +15,7 @@
         "doctrine/doctrine-bundle": "^2.2",
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^2.8",
+        "easycorp/easyadmin-bundle": "*",
         "friendsofsymfony/user-bundle": "^3.0",
         "google/apiclient": "^2.0",
         "knplabs/knp-gaufrette-bundle": "^0.7.2",
@@ -23,9 +24,6 @@
         "oneup/flysystem-bundle": "^4.12",
         "pentatrion/vite-bundle": "*",
         "phpdocumentor/reflection-docblock": "^5.2",
-        "sonata-project/admin-bundle": "^4.0",
-        "sonata-project/doctrine-orm-admin-bundle": "^4.0",
-        "sonata-project/user-bundle": "^5.0",
         "symfony/apache-pack": "^1.0",
         "symfony/asset": "^6.4",
         "symfony/cache": "^6.4",
@@ -73,6 +71,7 @@
         "vich/uploader-bundle": "^2.0"
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.6",
         "phpunit/phpunit": "^9.5",
         "rector/rector": "*",
         "symfony/browser-kit": "^6.4",

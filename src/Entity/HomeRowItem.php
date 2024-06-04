@@ -86,7 +86,7 @@ class HomeRowItem implements PartneredInterface
     #[ORM\Column(length: 32)]
     private ?string $linkType = null;
 
-    #[ORM\ManyToOne(inversedBy: 'homeRowItems')]
+    #[ORM\ManyToOne(targetEntity: HomeRow::class, inversedBy: 'items')]
     #[ORM\JoinColumn]
     private ?HomeRow $homeRow = null;
 
@@ -117,7 +117,7 @@ class HomeRowItem implements PartneredInterface
     #[ORM\Column(options: ['default' => 0])]
     private ?bool $isPartner = null;
 
-    #[ORM\OneToMany(mappedBy: 'homeRowItem', targetEntity: self::class)]
+    #[ORM\OneToMany(mappedBy: 'homeRowItem', targetEntity: HomeRowItemOperation::class)]
     private Collection $homeRowItemOperations;
 
     #[ORM\Column(options: ['default' => 0, 'comment' => '0 = unique, 1 = allow repeat'])]

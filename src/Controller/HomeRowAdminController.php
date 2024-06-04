@@ -10,11 +10,9 @@ use Symfony\Component\HttpFoundation\{ HeaderUtils, Request, Response, ResponseH
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Sonata\AdminBundle\Controller\CRUDController;
-use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use ZipArchive;
 
-class HomeRowAdminController extends CRUDController
+class HomeRowAdminController
 {
     private SerializerInterface $serializer;
     private Filesystem $filesystem;
@@ -61,13 +59,13 @@ class HomeRowAdminController extends CRUDController
 
                     $row->setSortIndex($current);
                     $this->admin->getModelManager()->update($row);
-                    $this->addFlash('sonata_flash_success', "Swapped position for rows ".$object->getTitle()." and ".$row->getTitle());
+//                    $this->addFlash('sonata_flash_success', "Swapped position for rows ".$object->getTitle()." and ".$row->getTitle());
                     break;
                 }
 
             }
         } else {
-            $this->addFlash('sonata_flash_error', "Moving ".$object->getTitle()." that way is not possible.");
+//            $this->addFlash('sonata_flash_error', "Moving ".$object->getTitle()." that way is not possible.");
         }
 
         return new RedirectResponse(
@@ -98,9 +96,9 @@ class HomeRowAdminController extends CRUDController
             }
 
             $archive->close();
-            $this->addFlash('sonata_flash_success', "Successfully imported $i home rows.");
+//            $this->addFlash('sonata_flash_success', "Successfully imported $i home rows.");
         } catch (Exception $e) {
-            $this->addFlash('sonata_flash_error', 'Couldn\'t import Home Row file');
+//            $this->addFlash('sonata_flash_error', 'Couldn\'t import Home Row file');
 
             return new RedirectResponse(
                 $this->admin->generateUrl('list', [
@@ -135,7 +133,7 @@ class HomeRowAdminController extends CRUDController
             $archive->close();
 
         } catch (Exception $e) {
-            $this->addFlash('sonata_flash_error', 'Couldn\'t create Zip file for export');
+//            $this->addFlash('sonata_flash_error', 'Couldn\'t create Zip file for export');
 
             return new RedirectResponse(
                 $this->admin->generateUrl('list', [

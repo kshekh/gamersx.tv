@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Model\PartneredInterface;
 use App\Repository\HomeRowRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -31,33 +32,32 @@ class HomeRow implements PartneredInterface
     const SORT_DESC = 'desc';
     const SORT_FIXED = 'fixed';
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $options = null;
 
     #[ORM\OneToMany(mappedBy: 'homeRow', targetEntity: HomeRowItem::class, orphanRemoval: true)]
-    #[ORM\OrderBy(['position' => 'ASC'])]
     private ?Collection $items;
 
-    #[ORM\ManyToOne(inversedBy: 'homeRows')]
+    #[ORM\ManyToOne(targetEntity: Partner::class, inversedBy: 'homeRows')]
     private ?Partner $partner = null;
 
     #[ORM\Column]
     private bool $isPublished;
 
-    #[ORM\Column(length: 50)]
-    private ?string $isGlowStyling = null;
+    #[ORM\Column(length: 50, options: ['default' => 0])]
+    private ?bool $isGlowStyling = null;
 
     #[ORM\Column(length: 50, options: ['default' => 0])]
-    private ?string $isCornerCut = null;
+    private ?bool $isCornerCut = null;
 
     #[ORM\Column(length: 255)]
     private ?string $timezone = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $isPublishedStart = null;
+    private ?DateTime $isPublishedStart = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $isPublishedEnd = null;
+    private ?DateTime $isPublishedEnd = null;
 
     #[ORM\Column(options: ['default' => 0])]
     private ?bool $onGamersXtv = null;
@@ -189,7 +189,7 @@ class HomeRow implements PartneredInterface
         return $this;
     }
 
-    public function getIsGlowStyling(): ?string
+    public function getIsGlowStyling(): ?bool
     {
         return $this->isGlowStyling;
     }
@@ -201,7 +201,7 @@ class HomeRow implements PartneredInterface
         return $this;
     }
 
-    public function getIsCornerCut(): ?string
+    public function getIsCornerCut(): ?bool
     {
         return $this->isCornerCut;
     }
@@ -224,24 +224,24 @@ class HomeRow implements PartneredInterface
 
         return $this;
     }
-    public function getIsPublishedStart(): ?string
+    public function getIsPublishedStart(): ?DateTime
     {
         return $this->isPublishedStart;
     }
 
-    public function setIsPublishedStart(?string $isPublishedStart): self
+    public function setIsPublishedStart(?DateTime $isPublishedStart): self
     {
         $this->isPublishedStart = $isPublishedStart;
 
         return $this;
     }
 
-    public function getIsPublishedEnd(): ?string
+    public function getIsPublishedEnd(): ?DateTime
     {
         return $this->isPublishedEnd;
     }
 
-    public function setIsPublishedEnd(?string $isPublishedEnd): self
+    public function setIsPublishedEnd(?DateTime $isPublishedEnd): self
     {
         $this->isPublishedEnd = $isPublishedEnd;
 
@@ -283,5 +283,4 @@ class HomeRow implements PartneredInterface
 
         return $this;
     }
-
 }

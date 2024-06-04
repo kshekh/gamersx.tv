@@ -9,9 +9,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
-use Sonata\AdminBundle\Exception\LockException;
-use Sonata\AdminBundle\Exception\ModelManagerException;
-use Sonata\AdminBundle\Exception\ModelManagerThrowable;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\{
@@ -23,14 +20,12 @@ use Symfony\Component\HttpFoundation\{
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Sonata\AdminBundle\Controller\CRUDController;
-use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
 use ZipArchive;
 use function assert;
 
 
-class HomeRowItemAdminController extends CRUDController
+class HomeRowItemAdminController
 {
     private SerializerInterface $serializer;
     private Filesystem $filesystem;

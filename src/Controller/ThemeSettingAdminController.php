@@ -11,21 +11,17 @@ use Exception;
 use Symfony\Component\HttpFoundation\{JsonResponse,
     Request,
     Response};
-use Sonata\AdminBundle\Controller\CRUDController;
-use Sonata\AdminBundle\Templating\TemplateRegistry;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class ThemeSettingAdminController extends CRUDController
+class ThemeSettingAdminController
 {
 
     public EntityManagerInterface $em;
-    private TemplateRegistry $templateRegistry;
     private ThemeSettingValidator $themeSettingValidator;
 
-    public function __construct(EntityManagerInterface $em, TemplateRegistry $templateRegistry, ThemeSettingValidator $themeSettingValidator)
+    public function __construct(EntityManagerInterface $em, ThemeSettingValidator $themeSettingValidator)
     {
         $this->em = $em;
-        $this->templateRegistry = $templateRegistry;
         $this->themeSettingValidator = $themeSettingValidator;
     }
 

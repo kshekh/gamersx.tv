@@ -79,7 +79,8 @@ class TwitchApiController extends AbstractController
     {
         if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
-                $this->generateUrl('sonata_user_admin_security_login')
+//                $this->generateUrl('sonata_user_admin_security_login')
+                $this->generateUrl('admin')
             );
         }
         $first = $request->get('first');
@@ -112,7 +113,8 @@ class TwitchApiController extends AbstractController
 
                 return new RedirectResponse($this->urlGenerator->generate('home'));
             } else {
-                return new RedirectResponse($this->urlGenerator->generate('sonata_user_admin_security_login'));
+//                return new RedirectResponse($this->urlGenerator->generate('sonata_user_admin_security_login'));
+                return new RedirectResponse($this->urlGenerator->generate('admin'));
             }
         }
         $twitchLoginUrl = $twitch->getLoginUrl($redirectUri,  $clientId);
@@ -133,7 +135,8 @@ class TwitchApiController extends AbstractController
 
         if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
-                $this->generateUrl('sonata_user_admin_security_login')
+                $this->generateUrl('admin')
+//                $this->generateUrl('sonata_user_admin_security_login')
             );
         }
         $first = $request->get('first');

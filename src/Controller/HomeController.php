@@ -37,7 +37,8 @@ class HomeController extends AbstractController
         }
 
         return new RedirectResponse(
-            $this->generateUrl('sonata_user_admin_security_login')
+//            $this->generateUrl('sonata_user_admin_security_login')
+            $this->generateUrl('admin')
         );
     }
 

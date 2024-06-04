@@ -21,31 +21,31 @@ security:
             context:            user
             form_login:
                 provider:       app_user_provider
-                login_path:     /admin/login
-                use_forward:    false
-                check_path:     /admin/login_check
-                failure_path:   null
+                login_path:     app_login
+                check_path:     app_login
+                default_target_path: /
             access_denied_url:  /access-denied
             logout:
-                path:           /admin/logout
-                target:         /admin/login
-            security:           false
+                path:           app_logout
+                target:         /login
 
         # -> end custom configuration
 
         # This firewall is used to handle the public login area
-        # This part is handled by the FOS User Bundle
         main:
             pattern:             .*
             context:             user
             form_login:
                 provider:       app_user_provider
-                login_path:     /admin/login
-                use_forward:    false
-                check_path:     /admin/login_check
+                login_path: app_login
+                check_path: app_login
                 failure_path:   null
+                enable_csrf: true
             access_denied_url:  /access-denied
-            logout:             true
+            logout:
+                path: app_logout
+                # where to redirect after logout
+                # target: app_any_route
 
         # activate different ways to authenticate
         # https://symfony.com/doc/current/security.html#firewalls-authentication
@@ -57,10 +57,10 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # Admin login page needs to be accessed without credential
-        - { path: ^/admin/login, role: PUBLIC_ACCESS }
-        - { path: ^/admin/logout, role: PUBLIC_ACCESS }
-        - { path: ^/admin/login_check, role: PUBLIC_ACCESS }
-        - { path: ^/admin/resetting, role: PUBLIC_ACCESS }
+#        - { path: ^/admin/login, role: PUBLIC_ACCESS }
+#        - { path: ^/admin/logout, role: PUBLIC_ACCESS }
+#        - { path: ^/admin/login_check, role: PUBLIC_ACCESS }
+#        - { path: ^/admin/resetting, role: PUBLIC_ACCESS }
 
         # Home page needs to be accessed without credential
         - { path: ^/$, role: PUBLIC_ACCESS }
@@ -69,7 +69,7 @@ security:
         # - { path: ^/.*, role: [ROLE_USER] }
 
         # This config requires being logged for the whole site and having the admin role for the admin part.
-        - { path: ^/admin/, role: ROLE_ADMIN_DASHBOARD_ACCESS }
+        - { path: ^/admin/, role: ROLE_ADMIN }
 
     # acl:
     #     connection: default

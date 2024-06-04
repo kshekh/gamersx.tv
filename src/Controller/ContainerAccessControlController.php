@@ -8,9 +8,9 @@ use Symfony\Component\HttpFoundation\{
     JsonResponse,
     Request};
 use Symfony\Component\Serializer\SerializerInterface;
-use Sonata\AdminBundle\Controller\CRUDController;
+//use Sonata\AdminBundle\Controller\CRUDController;
 
-class ContainerAccessControlController extends CRUDController
+class ContainerAccessControlController
 {
     private SerializerInterface $serializer;
     private Filesystem $filesystem;
