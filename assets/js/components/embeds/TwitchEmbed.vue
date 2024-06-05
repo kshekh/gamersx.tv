@@ -78,9 +78,9 @@ let element = document.getElementById(embedData.elementId)
 if (element.children.length === 0) {
   store.createEmbed(channel, elementId, height, parent, video, width);
 
-  embed.value.addEventListener(Twitch.Player.PLAY, this.setIsPlaying);
-  embed.value.addEventListener(Twitch.Player.PAUSE, this.setIsNotPlaying);
-  embed.value.addEventListener(Twitch.Player.ENDED, this.setIsNotPlaying);
+  embed.value.addEventListener(Twitch.Player.PLAY, store.setIsPlaying);
+  embed.value.addEventListener(Twitch.Player.PAUSE, store.setIsNotPlaying);
+  embed.value.addEventListener(Twitch.Player.ENDED, store.setIsNotPlaying);
   embed.value.addEventListener(Twitch.Player.WAITING, () => {
     isBuffering.value = true;
   });
