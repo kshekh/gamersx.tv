@@ -32,12 +32,14 @@ class CacheHomePageContainers extends Command
     private ContainerizerFactory $containerizer;
     private EntityManagerInterface $em;
     private HomeRowInfo $homeRowInfo;
+    private $redis_host;
 
-    public function __construct(EntityManagerInterface $em, ContainerizerFactory $containerizer, HomeRowInfo $homeRowInfo)
+    public function __construct(EntityManagerInterface $em, ContainerizerFactory $containerizer, HomeRowInfo $homeRowInfo, $redis_host)
     {
         $this->containerizer = $containerizer;
         $this->em = $em;
         $this->homeRowInfo = $homeRowInfo;
+        $this->redis_host = $redis_host;
         parent::__construct();
     }
 
@@ -62,7 +64,12 @@ class CacheHomePageContainers extends Command
 //                 $directory = '/Users/ahmed/Herd/gamersx.tv/filesystem_cache'
 //             );
 //            $marshaller = new DeflateMarshaller(new DefaultMarshaller());
-            $cache = new RedisAdapter(new \Predis\Client(), 'namespace', 0);
+            $cache = new RedisAdapter(new \Predis\Client(
+                [
+                    'scheme' => 'tcp',
+                    'host' => 'redis://' . $this->redis_host,
+                ]
+            ), 'namespace', 0);
 //            $cache = new FilesystemAdapter();
             // Deleting old cache
             //Previously `home` cache delete directly, now `home_item` item used to save temporary cache.

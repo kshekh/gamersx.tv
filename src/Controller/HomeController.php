@@ -14,18 +14,21 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\{RequestStack, Response, RedirectResponse};
+use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
 
 class HomeController extends AbstractController
 {
     private ManagerRegistry $doctrine;
     private HomeRowInfo $homeRowInfo;
     private RequestStack $requestStack;
+    private $redis_host;
 
-    public function __construct(HomeRowInfo $homeRowInfo, RequestStack $requestStack, ManagerRegistry $doctrine)
+    public function __construct(HomeRowInfo $homeRowInfo, RequestStack $requestStack, ManagerRegistry $doctrine, $redis_host)
     {
         $this->homeRowInfo = $homeRowInfo;
         $this->doctrine = $doctrine;
         $this->requestStack = $requestStack;
+        $this->redis_host = $redis_host;
     }
 
     #[Route('/', name: 'home')]
@@ -54,7 +57,12 @@ class HomeController extends AbstractController
 //             $defaultLifetime = 0,
 //             $directory = '/Users/ahmed/Herd/gamersx.tv/filesystem_cache'
 //         );
-        $cache = new RedisAdapter(new \Predis\Client(), 'namespace', 0);
+        $cache = new RedisAdapter(new \Predis\Client(
+            [
+                'scheme' => 'tcp',
+                'host' => 'redis://' . $this->redis_host,
+            ]
+        ), 'namespace', 0);
 
         $rowChannels = $cache->getItem('home');
         $home_container_refreshed_at = null;

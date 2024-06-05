@@ -337,6 +337,9 @@ import embedMixin from "../../../mixins/embedFrameMixin";
 
 import PlayButton from "../../helpers/PlayButton.vue";
 import CommonContainer from "../CommonContainer/CommonContainer.vue";
+import {useTwitchEmbedStore} from "../../stores/twitchEmbedStore";
+
+const { embed, startPlayer, stopPlayer } = useTwitchEmbedStore()
 
 export default {
   name: "EmbedContainerNumbered",
@@ -480,7 +483,7 @@ export default {
         }
       }, 0);
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
-      this.$refs.embed.startPlayer();
+      startPlayer();
       this.$emit("hide-controls");
     },
     scrollOut() {

@@ -53,6 +53,14 @@ services:
             - '@Vich\UploaderBundle\Templating\Helper\UploaderHelper'
             - '@logger'
 
+    App\Command\CacheHomePageContainers:
+        arguments:
+            $redis_host: '%env(REDIS_HOST)%)'
+
+    App\Controller\HomeController:
+        arguments:
+            $redis_host: '%env(REDIS_HOST)%)'
+
 #    admin.home_row:
 #        class: App\Admin\HomeRowAdmin
 #        tags:

@@ -27,6 +27,7 @@
         "@vitejs/plugin-vue": "^5.0.4",
         "axios": "^1.6.0",
         "js-cookie": "^3.0.5",
+        "pinia": "^2.1.7",
         "swiped-events": "^1.2.0",
         "vue-source": "^1.1.1"
     }

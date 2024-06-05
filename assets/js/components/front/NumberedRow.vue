@@ -56,7 +56,6 @@
           >
             {{ index + 1 }}
           </span>
-          {{channel.componentName}}
           <component
             :is="channel.componentName"
             v-bind="channel"

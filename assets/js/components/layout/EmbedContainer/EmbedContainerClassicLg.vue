@@ -241,6 +241,9 @@ import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 import embedMixin from "../../../mixins/embedFrameMixin";
 import CommonContainer from "../CommonContainer/CommonContainer.vue";
 import PlayButton from "../../helpers/PlayButton.vue";
+import {useTwitchEmbedStore} from "../../stores/twitchEmbedStore";
+
+const { embed, startPlayer, stopPlayer } = useTwitchEmbedStore()
 
 export default {
   name: "EmbedContainerClassicLg",
@@ -328,7 +331,7 @@ export default {
         }
       }, 0);
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
-      this.$refs.embed.startPlayer();
+      startPlayer();
 
       this.$emit("hide-controls");
     },
@@ -341,7 +344,7 @@ export default {
         this.isEmbedVisible = false;
       }
       // if (this.$refs.embed.isPlaying()) {
-      this.$refs.embed.stopPlayer();
+      stopPlayer();
       // }
       window.removeEventListener("scroll", this.checkIfBoxInViewPort);
       this.$emit("show-controls");
@@ -350,11 +353,7 @@ export default {
       const checkDeviceType = navigator.userAgent
         .toLowerCase()
         .match(/mobile/i);
-      if (checkDeviceType) {
-        this.isMobileDevice = true;
-      } else {
-        this.isMobileDevice = false;
-      }
+      this.isMobileDevice = !!checkDeviceType;
     },
   },
 };
