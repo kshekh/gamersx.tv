@@ -121,10 +121,4 @@ watch(showTwitchEmbed, (newVal) => {
     store.createEmbed(channel, elementId, height, parent, video, width);
   }
 });
-
-watch(isShowTwitchEmbed, (newVal) => {
-  if (newVal === true) {
-    store.createEmbed(channel, elementId, height, parent, video, width);
-  }
-});
 </script>
