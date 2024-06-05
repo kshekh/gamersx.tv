@@ -7,6 +7,11 @@ use App\Service\HomeRowInfo;
 use App\Service\TwitchApi;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class TwitchVideoContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
@@ -21,6 +26,14 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
         $this->entityManager = $entityManager;
     }
 
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws Exception
+     */
     public function getContainers(): array
     {
         $qb = $this->entityManager->createQueryBuilder();
@@ -36,10 +49,9 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
         $check_unique_item = $query->getQuery()->getResult();
 
         $is_unique_container =  $this->homeRowItem->getIsUniqueContainer();
-        if($is_unique_container == 0 && (isset($check_unique_item) && !empty($check_unique_item) && count($check_unique_item) > 1 && $check_unique_item[0]['id'] != $this->homeRowItem->getId())) {
+        if($is_unique_container == 0 && (!empty($check_unique_item) && count($check_unique_item) > 1 && array_key_exists(0, $check_unique_item) && $check_unique_item[0]['id'] != $this->homeRowItem->getId())) {
             return Array();
         }
-
 
         $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
@@ -67,7 +79,10 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
             return Array();
         }
 
-        $info = $info['data'][0];
+        $info = $info['data'] ?? $info['data'][0];
+        if (!empty($info)) {
+            dd($info);
+        }
         $broadcast = null;
         $description = $homeRowItem->getDescription();
         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));

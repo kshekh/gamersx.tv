@@ -82,7 +82,7 @@ import SliderArrow from "../helpers/SliderArrow.vue";
 
 import isBoxInViewport from "../../mixins/isBoxInViewport";
 
-require("swiped-events");
+// import * from 'swiped-events';
 
 export default {
   name: "FullWidthDescriptive",
@@ -223,6 +223,7 @@ export default {
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
     }
     this.displayChannels = this.settings.channels.filter(this.showChannel);
+    console.log(this.displayChannels);
     this.setIsMobileDevice();
   },
   updated: function () {

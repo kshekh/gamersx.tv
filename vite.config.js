@@ -26,7 +26,9 @@ export default defineConfig({
                 home: "./assets/js/home.js",
                 streamer: "./assets/js/streamer.js",
                 streamerSelector: "./assets/js/streamerSelector.js",
-                topicSelector: "./assets/js/topicSelector.js"
+                topicSelector: "./assets/js/topicSelector.js",
+
+                theme: './assets/styles/theme.css',
             },
         }
     },

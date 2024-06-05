@@ -8,6 +8,7 @@ use App\Containerizer\ContainerizerFactory;
 use App\Service\HomeRowInfo;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Cache\InvalidArgumentException;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -53,7 +54,7 @@ class HomeController extends AbstractController
 //             $defaultLifetime = 0,
 //             $directory = '/Users/ahmed/Herd/gamersx.tv/filesystem_cache'
 //         );
-        $cache = new FilesystemAdapter();
+        $cache = new RedisAdapter(new \Predis\Client(), 'namespace', 0);
 
         $rowChannels = $cache->getItem('home');
         $home_container_refreshed_at = null;
@@ -62,8 +63,8 @@ class HomeController extends AbstractController
         // home_container_refreshed_at managed to get time of last cache clear
         if ($rowChannels->isHit()) {
             $rowChannelsData = $rowChannels->get();
-            $rows = $rowChannelsData['rows_data']??null;
-            $home_container_refreshed_at = $rowChannelsData['home_container_refreshed_at']??null;
+            $rows = $rowChannelsData['rows_data'] ?? null;
+            $home_container_refreshed_at = $rowChannelsData['home_container_refreshed_at'] ?? null;
         }
 
         return $this->json([

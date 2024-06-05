@@ -18,6 +18,9 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
+use Symfony\Component\Cache\DefaultMarshaller;
+use Symfony\Component\Cache\DeflateMarshaller;
 
 
 #[AsCommand(
@@ -58,7 +61,9 @@ class CacheHomePageContainers extends Command
 //                 $defaultLifetime = 0,
 //                 $directory = '/Users/ahmed/Herd/gamersx.tv/filesystem_cache'
 //             );
-            $cache = new FilesystemAdapter();
+//            $marshaller = new DeflateMarshaller(new DefaultMarshaller());
+            $cache = new RedisAdapter(new \Predis\Client(), 'namespace', 0);
+//            $cache = new FilesystemAdapter();
             // Deleting old cache
             //Previously `home` cache delete directly, now `home_item` item used to save temporary cache.
             //If `home_item` contain cache then first delete it, generate new save into it and at the end assign `home_item` into `home`
@@ -74,7 +79,7 @@ class CacheHomePageContainers extends Command
                     $isPublishedStartTime = $this->homeRowInfo->convertHoursMinutesToSeconds($row->getIsPublishedStart());
                     $isPublishedEndTime = $this->homeRowInfo->convertHoursMinutesToSeconds($row->getIsPublishedEnd());
                     $timezone = $row->getTimezone();
-                    date_default_timezone_set($timezone ? $timezone : 'America/Los_Angeles');
+                    date_default_timezone_set($timezone ?: 'America/Los_Angeles');
                     $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
 
                     if ($row->getIsPublished() === FALSE) {
@@ -93,9 +98,9 @@ class CacheHomePageContainers extends Command
                         $thisRow['rowPaddingTop'] = ($row->getRowPaddingTop() != null)? $row->getRowPaddingTop(): 0;
                         $thisRow['rowPaddingBottom'] = ($row->getRowPaddingBottom() != null)? $row->getRowPaddingBottom(): 0;
 
-                        $containers = array();
+//                        $containers = array();
                         $containerized = $containerizer($row);
-                        // dd($containerized);
+//                         dd($containerized);
                         $channels = $containerized->getContainers();
 
                         foreach ($channels as $key => $channel) {
@@ -112,7 +117,7 @@ class CacheHomePageContainers extends Command
                     return $rowChannels;
                 }
             }, $beta);
-
+//            dd($rowChannels);
             $homeItemCache = $cache->getItem('home_item');
             $homeCache = $cache->getItem('home');
 
@@ -129,7 +134,7 @@ class CacheHomePageContainers extends Command
             $io->success($message);
             return 0;
         } catch (Exception $ex) {
-            $message = $ex->getMessage();
+            $message = $ex->getMessage() . '\n' . $ex->getFile() . '\n' . $ex->getLine();
         }
         $io->error($message);
         return -1;

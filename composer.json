@@ -24,6 +24,7 @@
         "oneup/flysystem-bundle": "^4.12",
         "pentatrion/vite-bundle": "*",
         "phpdocumentor/reflection-docblock": "^5.2",
+        "predis/predis": "^2.2",
         "symfony/apache-pack": "^1.0",
         "symfony/asset": "^6.4",
         "symfony/cache": "^6.4",

@@ -14,4 +14,11 @@ class AppFixtures extends Fixture
 
         $manager->flush();
     }
+
+    protected function homeRows(): void
+    {
+//        $homeRows = [
+//            ['title' => 'FullWidthDescriptive', 'sort_index' => 0, 'layout' => 'FullWidthDescriptive', 'options' => ]
+//        ];
+    }
 }
