@@ -6,5 +6,5 @@ use App\Entity\HomeRowItem;
 
 interface ContainerizerInterface
 {
-    public function getContainers(): Array;
+    public function getContainers(): array;
 }

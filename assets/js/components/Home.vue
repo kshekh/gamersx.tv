@@ -46,7 +46,7 @@
               onmouseout="changeNormalBtnColor(event)"
               class="flex items-center elementor-button text-xxs xs:text-xxs sm:text-xs md:text-sm lg:text-sm xl:text-xl xxl:text-lg mx-2 sm:py-0 h-7 sm:h-10 xxs:px-0 xs:-x-1 md:px-6">
               <span class="elementor-button-text">Login With Twitch</span>
-              <img src="/images/twitch-icon-white.png" class="ml-2 w-2.5 h-2.5 sm:w-5 sm:h-5 twitch-btn-icon">
+              <img :src="TwitchIconWhite" class="ml-2 w-2.5 h-2.5 sm:w-5 sm:h-5 twitch-btn-icon">
             </a>
           </div>
         </div>
@@ -57,7 +57,7 @@
 <script>
 import axios from "axios";
 import LazyLoadComponent from "./LazyLoad";
-import FullWidthDescriptiveSkeleton from "./skeletons/FullWidthDescriptiveSkeleton";
+import FullWidthDescriptiveSkeleton from "./skeletons/FullWidthDescriptiveSkeleton.vue";
 import ClassicSmSkeleton from "./skeletons/ClassicSmSkeleton.vue";
 import ClassicMdSkeleton from "./skeletons/ClassicMdSkeleton.vue";
 import ClassicLgSkeleton from "./skeletons/ClassicLgSkeleton.vue";
@@ -65,10 +65,13 @@ import ClassicVerticalSkeleton from "./skeletons/ClassicVerticalSkeleton.vue";
 import NumberedRowSkeleton from "./skeletons/NumberedRowSkeleton.vue";
 import ParallaxSkeleton from "./skeletons/ParallaxSkeleton.vue";
 import FullWidthImagerySkeleton from "./skeletons/FullWidthImagerySkeleton.vue";
-import Modal from "./Modal";
+import Modal from "./Modal.vue";
 import Cookies from "js-cookie";
+import TwitchIconWhite from "~/images/twitch-icon-white.png"
+
 export default {
   components: {
+    TwitchIconWhite: TwitchIconWhite,
     FullWidthDescriptiveSkeleton: FullWidthDescriptiveSkeleton,
     ClassicSmSkeleton: ClassicSmSkeleton,
     ClassicMdSkeleton: ClassicMdSkeleton,
@@ -112,107 +115,128 @@ export default {
       loading: ClassicLgSkeleton
     })
   },
-  data: function () {
-    return {
-      modal: false,
-      settings: {
-        rows: []
-      },
-      defaultSkeleton: "FullWidthDescriptiveSkeleton",
-      cachedSkeletonRows: [],
-      defaultSkeletonRows: [
-        "FullWidthDescriptiveSkeleton",
-        "ClassicSmSkeleton",
-        "NumberedRowSkeleton",
-        "ClassicMdSkeleton",
-        "ParallaxSkeleton",
-        "ClassicLgSkeleton",
-        "ClassicVerticalSkeleton",
-        "FullWidthImagerySkeleton"
-      ],
-      pollingApiData: null,
-      requestPollingDelay: 90000
-    };
-  },
-  methods: {
-    requestHomeCachedRowsApi() {
-      return axios
-        .get("/home/rows/api")
-        .catch(e => console.error(e))
-        .then(response => {
-          // this.settings.rows = [];
-          if (response.data.settings.rows.length)
-            this.cachedSkeletonRows = response.data.settings.rows;
-        });
-    },
-    requestHomeApi() {
-      axios
-        .get("/home/api")
-        .catch(e => console.error(e))
-        .then(response => {
-          this.settings = response.data.settings;
-        });
-    },
-    requestSessionsApi() {
-      return new Promise((resolve, reject) => {
-        if (!Cookies.get("twitch_")) {
-          axios.get("/home/sessions/api")
-            .then(response => {
-              if (response.data.isLoggedIn && !response.data.isRequiredToLoginTwitch) {
-                this.modal = false;
-              } else {
-                // Immediately after setting `modal` to `true`, request Vue to wait for next DOM update cycle
-                this.$nextTick(() => {
-                  this.modal = false; //false here will disable the modal entirely, helpful to disable when developing
-                });
-              }
-              resolve(response);
-            })
-            .catch(error => {
-              console.error(error);
-              reject(error);
-            })
-        } else {
-          resolve();
-        }
-      });
-    },
-    handleModalUpdate(val) {
-      // This condition avoids abruptly removing DOM in Modal when directly changing v-model value.
-      if (!val) {
-        setTimeout(() => {
-          this.modal = false;
-        }, 500);
-      } else {
-        this.modal = true;
-      }
-    },
-    handleCloseModal() {
-      // 24 hours
-      Cookies.set("twitch_", "demo", { expires: 1 });
-      this.modal = false;
-      this.handleModalUpdate(false);
-    },
-    handleTwitchLogin() {
-      // 24 hours
-      Cookies.set("twitch_", "demo", { expires: 1 });
-      this.modal = false;
-      this.handleModalUpdate(false);
-    },
-  },
-  mounted: function () {
-    this.requestSessionsApi();
-    this.requestHomeCachedRowsApi().then(() => {
-      this.requestHomeApi();
-    });
-    this.pollingApiData = window.setInterval(() => {
-      this.requestHomeApi();
-    }, this.requestPollingDelay);
-  },
-  destroyed: function () {
-    window.clearInterval(this.pollingApiData);
-  }
 };
+</script>
+
+<script setup>
+import axios from "axios";
+import LazyLoadComponent from "./LazyLoad";
+import FullWidthDescriptiveSkeleton from "./skeletons/FullWidthDescriptiveSkeleton.vue";
+import ClassicSmSkeleton from "./skeletons/ClassicSmSkeleton.vue";
+import ClassicMdSkeleton from "./skeletons/ClassicMdSkeleton.vue";
+import ClassicLgSkeleton from "./skeletons/ClassicLgSkeleton.vue";
+import ClassicVerticalSkeleton from "./skeletons/ClassicVerticalSkeleton.vue";
+import NumberedRowSkeleton from "./skeletons/NumberedRowSkeleton.vue";
+import ParallaxSkeleton from "./skeletons/ParallaxSkeleton.vue";
+import FullWidthImagerySkeleton from "./skeletons/FullWidthImagerySkeleton.vue";
+import Modal from "./Modal.vue";
+import Cookies from "js-cookie";
+import TwitchIconWhite from "~/images/twitch-icon-white.png"
+import { ref, onMounted, onUnmounted } from "@vue/compat";
+
+const cachedSkeletonRows = ref([]);
+const defaultSkeleton = "FullWidthDescriptiveSkeleton";
+const defaultSkeletonRows = [
+  "FullWidthDescriptiveSkeleton",
+  "ClassicSmSkeleton",
+  "NumberedRowSkeleton",
+  "ClassicMdSkeleton",
+  "ParallaxSkeleton",
+  "ClassicLgSkeleton",
+  "ClassicVerticalSkeleton",
+  "FullWidthImagerySkeleton"
+];
+const modal = ref(false);
+const pollingApiData = ref(null);
+const settings = ref({
+  rows: []
+});
+const requestPollingDelay = 90000;
+
+async function requestHomeCachedRowsApi() {
+  return axios
+    .get("/home/rows/api")
+    .catch(e => console.error(e))
+    .then(response => {
+      // this.settings.rows = [];
+      if (response.data.settings.rows.length)
+        cachedSkeletonRows.value = response.data.settings.rows;
+    });
+}
+function requestHomeApi() {
+  axios
+    .get("/home/api")
+    .catch(e => console.error(e))
+    .then(response => {
+      console.log(response.data.settings);
+      settings.value = response.data.settings;
+    });
+}
+
+function requestSessionsApi() {
+  return new Promise((resolve, reject) => {
+    if (!Cookies.get("twitch_")) {
+      axios.get("/home/sessions/api")
+        .then(response => {
+          if (response.data.isLoggedIn && !response.data.isRequiredToLoginTwitch) {
+            modal.value = false;
+          } else {
+            // Immediately after setting `modal` to `true`, request Vue to wait for next DOM update cycle
+            this.$nextTick(() => {
+              modal.value = false; //false here will disable the modal entirely, helpful to disable when developing
+            });
+          }
+          resolve(response);
+        })
+        .catch(error => {
+          console.error(error);
+          reject(error);
+        })
+    } else {
+      resolve();
+    }
+  });
+}
+
+/*
+* Handlers
+*/
+function handleCloseModal() {
+  // 24 hours
+  Cookies.set("twitch_", "demo", { expires: 1 });
+  modal.value = false;
+  handleModalUpdate(false);
+}
+function handleModalUpdate(val) {
+  // This condition avoids abruptly removing DOM in Modal when directly changing v-model value.
+  if (!val) {
+    setTimeout(() => {
+      modal.value = false;
+    }, 500);
+  } else {
+    modal.value = true;
+  }
+}
+function handleTwitchLogin() {
+  // 24 hours
+  Cookies.set("twitch_", "demo", { expires: 1 });
+  modal.value = false;
+  handleModalUpdate(false);
+}
+
+onMounted(() => {
+  requestSessionsApi();
+  requestHomeCachedRowsApi().then(() => {
+    requestHomeApi();
+  });
+  pollingApiData.value = window.setInterval(() => {
+    requestHomeApi();
+  }, requestPollingDelay);
+});
+onUnmounted(() => {
+  window.clearInterval(pollingApiData);
+});
+
 /** We use this a lot for scrolling because JS % is remainder, not modulo **/
 Number.prototype.mod = function (n) {
   return ((this % n) + n) % n;

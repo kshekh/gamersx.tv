@@ -8,8 +8,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ThemeInfo
 {
-    private $helper;
-    private $em;
+    private UploaderHelper $helper;
+    private EntityManagerInterface $em;
 
     public function __construct(UploaderHelper $helper, EntityManagerInterface $em)
     {
@@ -17,7 +17,8 @@ class ThemeInfo
         $this->em = $em;
     }
 
-    public function getThemeInfo($id, $itemType) {
+    public function getThemeInfo($id, $itemType): array
+    {
         $theme = $this->em->getRepository(Theme::class)
             ->findOneBy([
                 'itemType' => $itemType,
@@ -35,6 +36,6 @@ class ThemeInfo
             ];
         }
 
-        return $themeInfo;
+//        return $themeInfo;
     }
 }

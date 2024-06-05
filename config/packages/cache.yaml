@@ -19,3 +19,4 @@ framework:
             gamersx.cache:
                 adapter: cache.app
                 default_lifetime: 300
+

@@ -19,120 +19,71 @@
         type="video/mp4"
       />
     </video> -->
-   
+
     <div :id="embedDataCopy.elementId"></div>
   </div>
 </template>
 
-<script>
-export default {
-  name: "YouTubeEmbed",
-  props: {
-    embedData: Object,
-    isShowTwitchEmbed: Boolean,
-    height: [Number, String],
-    width: [Number, String],
-  },
-  data: function () {
-    return {
-      embed: {},
-      embedPlaying: false,
-      showTwitchEmbed: false,
-      image: "",
-      isFirstTimeLoad: true,
-    };
-  },
-  methods: {
-    embedYouTube: function () {
-      // let _this = this;
-      // window.YT.ready(function() {
-        console.log("embedYouTubeRollback")
-        this.embed = new YT.Player(this.embedDataCopy.elementId, {
-            width: this.width || 540,
-            height: this.height || 300,
-            videoId: this.embedDataCopy.video,
-            autoplay: false,
-            playerVars: {
-              modestbranding: true,
-              rel: 0,
-            },
-            events: {
-              onStateChange: this.playerStateChanged,
-            },
-          });
-          // Listen for other players, stop on their start
-          this.$root.$on("yt-embed-playing", this.stopPlayer);
-      // })
-    },
-    playerStateChanged: function (e) {
-      if (e.data == YT.PlayerState.PAUSED) {
-        this.embedPlaying = false;
-      } else if (e.data == YT.PlayerState.PLAYING) {
-        // Don't swap the order of these or you'll stop this embed, too
-        this.$root.$emit("yt-embed-playing", this.embedDataCopy.elementId);
-        this.embedPlaying = true;
-      }
-    },
-    startPlayer: function () {
-      console.log('startPlayer from YouTube embed');
-      if (this.isFirstTimeLoad) {
-        setTimeout(() => {
-          if (!this.embedPlaying && this.showTwitchEmbed) {
-            if (this.embed) {
-              console.log("if1",this.embed);
-              this.embed.playVideo();
-              this.embed.unMute();
-              this.embedPlaying = true;
-              this.isFirstTimeLoad = false;
-            }
-          }
-        }, 1000);
-      } else {
-        if (!this.embedPlaying) {
-          if (this.embed) {
-            this.embed.playVideo();
-            this.embed.unMute();
-            this.embedPlaying = true;
+<script setup>
+import { storeToRefs } from 'pinia'
+import { computed, defineProps, ref, watch, watchSyncEffect } from 'vue'
+
+import { useYoutubeEmbedStore } from "../stores/youtubeEmbedStore";
+
+const props = defineProps([
+  'embedData',
+  'isShowTwitchEmbed',
+  'height',
+  'width',
+]);
+
+const { embed, embedPlaying, isBuffering } = storeToRefs(useYoutubeEmbedStore());
+const image = ref("");
+const isFirstTimeLoad = ref(true);
+const showTwitchEmbed = ref(false);
+const embedDataCopy = computed(() => {
+  image.value = `https://img.youtube.com/vi/${this.embedData.video}/hqdefault.jpg`;
+  return { ...this.embedData };
+});
+// const loadingVideo = computed(() => {
+//   return loaders[Math.floor(Math.random() * loaders.length)];
+// });
+const store = useYoutubeEmbedStore();
+
+store.$onAction(({ name }) => {
+  if (name === 'startPlayer') {
+    if (isFirstTimeLoad.value) {
+      setTimeout(() => {
+        if (!embedPlaying.value && showTwitchEmbed.value) {
+          if (embed.value) {
+            embed.value.playVideo();
+            embed.value.unMute();
+            embedPlaying.value = true;
+            isFirstTimeLoad.value = false;
           }
         }
+      }, 1000);
+    } else {
+      if (!embedPlaying.value) {
+        if (embed.value) {
+          embed.value.playVideo();
+          embed.value.unMute();
+          embedPlaying.value = true;
+        }
       }
-    },
-    stopPlayer: function (elementId) {
-      if (
-        this.embedPlaying &&
-        !(elementId && this.embedDataCopy.elementId === elementId)
-      ) {
-        this.embed.pauseVideo();
-        this.embedPlaying = false;
-      }
-    },
-    isPlaying: function () {
-      return this.embedPlaying;
-    },
-  },
-  computed: {
-    embedDataCopy() {
-      this.image = `https://img.youtube.com/vi/${this.embedData.video}/hqdefault.jpg`;
-      return { ...this.embedData };
-    },
-    // loadingVideo(){
-    //   return this.loaders[Math.floor(Math.random()*this.loaders.length)]
-    // }
-  },
-  watch: {
-    showTwitchEmbed(newVal) {
-      if (newVal === true) {
-        this.embedYouTube();
-      }
-    },
-    isShowTwitchEmbed(newVal) {
-      if (newVal === true) {
-        this.showTwitchEmbed = true
-      }
-    },
-  },
-};
-</script>
+    }
+  }
+});
 
-<style scoped>
-</style>
+watch(showTwitchEmbed, (newVal) => {
+  if (newVal === true) {
+    store.createEmbed(embedDataCopy.value.video);
+  }
+});
+
+watch(props.isShowTwitchEmbed, (newVal) => {
+  if (newVal === true) {
+    showTwitchEmbed.value = true
+  }
+});
+</script>

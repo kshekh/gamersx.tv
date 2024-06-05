@@ -26,7 +26,7 @@
             v-show="isEmbedVisible"
             ref="embed"
             :is="embedName"
-            v-bind:embedData="embedData"
+            :embedData="embedData"
           ></component>
         </div>
       </div>
@@ -51,6 +51,9 @@
 <script>
 import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
+import {useTwitchEmbedStore} from "../../stores/twitchEmbedStore";
+
+const { embed, startPlayer, stopPlayer } = useTwitchEmbedStore()
 
 export default {
   name: "EmbedContainer",
@@ -87,7 +90,7 @@ export default {
         this.isOverlayVisible = false;
         this.isEmbedVisible = true;
       }
-      this.$refs.embed.startPlayer();
+      startPlayer();
     },
     mouseLeft: function(e) {
       if (this.showOverlay) {
@@ -95,7 +98,7 @@ export default {
         this.isEmbedVisible = false;
       }
       if (this.$refs.embed.isPlaying()) {
-        this.$refs.embed.stopPlayer();
+        stopPlayer();
       }
     }
   },

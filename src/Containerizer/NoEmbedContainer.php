@@ -7,14 +7,14 @@ use App\Service\HomeRowInfo;
 
 class NoEmbedContainer extends LiveContainerizer implements ContainerizerInterface
 {
-    private $homeRowItem;
+    private HomeRowItem $homeRowItem;
 
     public function __construct(HomeRowItem $homeRowItem)
     {
         $this->homeRowItem = $homeRowItem;
     }
 
-    public function getContainers(): Array
+    public function getContainers(): array
     {
         $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;

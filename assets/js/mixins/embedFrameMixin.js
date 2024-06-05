@@ -1,3 +1,7 @@
+import { useTwitchEmbedStore } from "../components/stores/twitchEmbedStore";
+
+const { embed, startPlayer, stopPlayer, isPlaying } = useTwitchEmbedStore();
+
 export default {
   data() {
     return {
@@ -33,7 +37,7 @@ export default {
 
           // this.isEmbedVisible = true;
 
-          if (this.$refs.embed) this.$refs.embed.startPlayer();
+          if (embed) startPlayer();
         }, 30);
       }
     },
@@ -57,7 +61,7 @@ export default {
 
           this.isEmbedVisible = true;
 
-          if (this.$refs.embed) this.$refs.embed.startPlayer();
+          if (embed) startPlayer();
         }, 30);
       }
 
@@ -77,7 +81,7 @@ export default {
 
           this.isEmbedVisible = true;
 
-          if (this.$refs.embed) this.$refs.embed.startPlayer();
+          if (embed) startPlayer();
         }, 30);
       }
     },
@@ -97,8 +101,8 @@ export default {
 
       this.isEmbedVisible = false;
 
-      if (this.$refs.embed && this.$refs.embed.isPlaying()) {
-        this.$refs.embed.stopPlayer();
+      if (embed && isPlaying()) {
+        stopPlayer();
       }
     },
 

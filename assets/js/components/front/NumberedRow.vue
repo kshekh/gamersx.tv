@@ -87,7 +87,7 @@ import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription
 import SliderArrow from "../helpers/SliderArrow.vue";
 import PlayButton from "../helpers/PlayButton.vue";
 
-require("swiped-events");
+// require("swiped-events");
 
 export default {
   name: "NumberedRow",
@@ -192,6 +192,7 @@ export default {
   mounted: function () {
     this.setIsMobileDevice();
     this.displayChannels = this.settings.channels.filter(this.showChannel);
+    console.log(this.displayChannels);
     this.$refs.channelBox.addEventListener("scroll", this.handleScroll);
     this.$refs.channelBox.scrollLeft = 0;
     this.setIsMobileDevice();
