@@ -1,5 +1,5 @@
 <template>
-  <div @mouseover="showTwitchEmbed = true">
+  <div @mouseover="handleShowEmbed">
     <img
       v-if="image && isBuffering"
       :src="image.url"
@@ -64,7 +64,6 @@ const loadingVideo = computed(() => {
 
 const { embed, embedPlaying, isBuffering } = storeToRefs(useTwitchEmbedStore());
 const channel = props.embedData.channel;
-const embedType = 'twitch';
 const elementId = props.embedData.elementId;
 const height = props.height;
 const parent = window.location.hostname;
@@ -112,6 +111,9 @@ function handlePlayerStateChanged(event) {
   }
 }
 
+function handleShowEmbed() {
+  showTwitchEmbed.value = true;
+}
 function handleIframeLoad(e) {
   isBuffering.value = false;
 }
