@@ -1,17 +1,14 @@
-import Vue from "vue";
-import Home from "./components/Home";
+import { createPinia } from "pinia";
+import { createApp } from "vue";
+import Home from "./components/Home.vue";
 
-/**
- * * Create a fresh Vue Application instance
- * */
-new Vue({
-  el: "#app-home",
-  components: { Home },
-  created: function () {
-    this.isVisibleVideoContainer = false;
-    this.containerId = '';
-    this.isPinnedContainer = false;
-    this.isMoveContainer = false;
-    this.embedRef = '';
-  },
-});
+const app = createApp(Home, {
+  isVisibleVideoContainer: false,
+  containerId: '',
+  isPinnedContainer: false,
+  isMoveContainer: false,
+  embedRef: '',
+})
+
+app.use(createPinia());
+app.mount('#app-home');

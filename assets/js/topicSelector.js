@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import TopicSelector from './components/TopicSelector'
+import TopicSelector from './components/TopicSelector.vue'
 window.EventBus = new Vue();
 /**
  * * Create a fresh Vue Application instance

@@ -2,44 +2,50 @@
 
 namespace App\Service;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\User;
+use Symfony\Contracts\HttpClient\ResponseInterface;
+
 class TwitchApi
 {
     const TWITCH_ID_DOMAIN = 'https://id.twitch.tv/';
     const TWITCH_API_DOMAIN = 'https://api.twitch.tv/helix/';
-    private $client;
-    private $session;
-    private $em;
+    private HttpClientInterface $client;
+    private RequestStack $requestStack;
+    private EntityManagerInterface $em;
 
     public function __construct(
         HttpClientInterface $twitch,
-        SessionInterface $session,
+        RequestStack $requestStack,
         EntityManagerInterface $em
     )
     {
         $this->client = $twitch;
-        $this->session = $session;
+        $this->requestStack = $requestStack;
         $this->em = $em;
     }
 
-    public function getLoginUrl($redirectUri, $clientId) {
+    public function getLoginUrl($redirectUri, $clientId): string
+    {
         $endpoint = self::TWITCH_ID_DOMAIN . 'oauth2/authorize';
-        $this->session->set('twitch_state', md5(microtime() . mt_rand()));
+        $session = $this->requestStack->getSession();
+        $session->set('twitch_state', md5(microtime() . mt_rand()));
         $params = array(
             'client_id' => $clientId,
             'redirect_uri' => $redirectUri,
             'response_type' => 'code',
             'scope' => 'user:read:email',
-            'state' => $this->session->get('twitch_state')
+            'state' => $session->get('twitch_state')
         );
 
         return $endpoint . '?' .http_build_query($params);
     }
 
-    public function tryAndLoginWithTwitch($code, $redirectUri, $clientId, $clientSecret) {
+    public function tryAndLoginWithTwitch($code, $redirectUri, $clientId, $clientSecret): array
+    {
         $accessToken = $this->getTwitchAccessToken($code, $redirectUri, $clientId, $clientSecret);
         $status = $accessToken['status'];
         $message = $accessToken['message'];
@@ -61,10 +67,12 @@ class TwitchApi
         );
     }
 
-    public function logUserInWithTwitch($apiUserInfo, $clientAccessToken, $refreshToken) {
-        $this->session->set('twitch_user_info', $apiUserInfo);
-        $this->session->set('twitch_user_info.access_token', $clientAccessToken);
-        $this->session->set('twitch_user_info.refresh_token', $refreshToken);
+    public function logUserInWithTwitch($apiUserInfo, $clientAccessToken, $refreshToken): void
+    {
+        $session = $this->requestStack->getSession();
+        $session->set('twitch_user_info', $apiUserInfo);
+        $session->set('twitch_user_info.access_token', $clientAccessToken);
+        $session->set('twitch_user_info.refresh_token', $refreshToken);
 
         $userInfoWithId = $this->em->getRepository(User::class)
             ->findOneBy([
@@ -85,27 +93,28 @@ class TwitchApi
             $userWithId->setTwitchAccessToken($clientAccessToken);
             $userWithId->setTwitchRefreshToken($refreshToken);
             $this->em->persist($userWithId);
-            $this->session->set('is_logged_in', true);
-            $this->session->set('user_info', $userWithId);
+            $session->set('is_logged_in', true);
+            $session->set('user_info', $userWithId);
         } elseif ($userInfoWithEmail && !$userInfoWithEmail->getTwitchUserId()) {
-            $this->session->set('login_required_to_connect_twitch', true);
+            $session->set('login_required_to_connect_twitch', true);
         } else {
             $user = new User();
             $user->setUsername($apiUserInfo['display_name']);
             $user->setEmail($apiUserInfo['email']);
             $user->setRoles(['ROLE_LOGIN_ALLOWED']);
             $user->setPassword('');
-            $user->setFirstname($apiUserInfo['display_name']);
+            $user->setUsername($apiUserInfo['display_name']);
             $user->setTwitchUserId($apiUserInfo['id']);
             $user->setTwitchAccessToken($clientAccessToken);
             $user->setTwitchRefreshToken($refreshToken);
             $this->em->persist($user);
-            $this->session->set('is_logged_in', true);
-            $this->session->set('user_info', $user);
+            $session->set('is_logged_in', true);
+            $session->set('user_info', $user);
         }
         $this->em->flush();
     }
-    public function getUserInfo($clientId, $accessToken) {
+    public function getUserInfo($clientId, $accessToken): array
+    {
         $endpoint = self::TWITCH_API_DOMAIN . 'users';
         $apiParams = array(
             'endpoint' => $endpoint,
@@ -117,13 +126,15 @@ class TwitchApi
         return $this->makeApiCall($apiParams);
     }
 
-    public function getAuthorizationHeaders($clientId, $accessToken) {
+    public function getAuthorizationHeaders($clientId, $accessToken): array
+    {
         return array(
             'Client-ID: ' . $clientId,
             'Authorization: Bearer ' . $accessToken
         );
     }
-    public function getTwitchAccessToken($code, $redirectUri, $clientId, $clientSecret) {
+    public function getTwitchAccessToken($code, $redirectUri, $clientId, $clientSecret): array
+    {
         $endpoint = self::TWITCH_ID_DOMAIN . 'oauth2/token';
         $apiParams = array(
             'endpoint' => $endpoint,
@@ -140,7 +151,8 @@ class TwitchApi
         return $this->makeApiCall($apiParams);
     }
 
-    public function makeApiCall($params) {
+    public function makeApiCall($params): array
+    {
         $curlOptions = array(
             CURLOPT_URL => $params['endpoint'],
             CURLOPT_RETURNTRANSFER => TRUE,
@@ -174,27 +186,37 @@ class TwitchApi
 
         return array(
             'status' => isset($apiResponse['status']) ? 'fail' : 'ok',
-            'message' => isset($apiResponse['message']) ? $apiResponse['message'] : '',
+            'message' => $apiResponse['message'] ?? '',
             'api_data' => $apiResponse,
             'endpoint' => $curlOptions[CURLOPT_URL],
             'url_params' => $params['url_params'],
         );
     }
-    public function searchChannels($query, $first=20, $before=null, $after=null)
+
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function searchChannels($query, $first=20, $before=null, $after=null): ResponseInterface
     {
         return $this->getPaginatedQuery('/helix/search/channels', [
             'query' => $query
         ], $first, $before, $after);
     }
 
-    public function searchGames($query, $first=20, $before=null, $after=null)
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function searchGames($query, $first=20, $before=null, $after=null): ResponseInterface
     {
         return $this->getPaginatedQuery('/helix/search/categories', [
             'query' => $query
         ], $first, $before, $after);
     }
 
-    public function getGameInfo($gameId)
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function getGameInfo($gameId): ResponseInterface
     {
         return $this->client->request('GET', '/helix/games', [
             'query' => [
@@ -204,7 +226,10 @@ class TwitchApi
         ]);
     }
 
-    public function getStreamerInfo($streamerId)
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function getStreamerInfo($streamerId): ResponseInterface
     {
         return $this->client->request('GET', '/helix/users', [
             'query' => [
@@ -213,7 +238,10 @@ class TwitchApi
         ]);
     }
 
-    public function getStreamForStreamer($streamerId)
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function getStreamForStreamer($streamerId): ResponseInterface
     {
         return $this->client->request('GET', '/helix/streams', [
             'query' => [
@@ -223,7 +251,10 @@ class TwitchApi
 
     }
 
-    public function getFollowersForStreamer($streamerId)
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function getFollowersForStreamer($streamerId): ResponseInterface
     {
         return $this->client->request('GET', '/helix/users/follows', [
             'query' => [
@@ -233,13 +264,19 @@ class TwitchApi
         ]);
     }
 
-    public function getPopularStreams($first=20, $before=null, $after=null)
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function getPopularStreams($first=20, $before=null, $after=null): ResponseInterface
     {
         return $this->getPaginatedQuery('/helix/streams', [],
             $first, $before, $after);
     }
 
-    public function getTopLiveBroadcastForGame($gameId, $first=1, $before=null, $after=null,$user_login=null)
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function getTopLiveBroadcastForGame($gameId, $first=1, $before=null, $after=null, $user_login=null): ResponseInterface
     {
         $params['game_id'] = $gameId;
         if(!empty($user_login)) {
@@ -248,26 +285,38 @@ class TwitchApi
         return $this->getPaginatedQuery('/helix/streams', $params, $first, $before, $after);
     }
 
-    public function getTopGames($first=1, $before=null, $after=null)
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function getTopGames($first=1, $before=null, $after=null): ResponseInterface
     {
         return $this->getPaginatedQuery('/helix/games/top',[], $first, $before, $after);
     }
 
-    public function getVideosForStreamer($streamerId, $first=8, $before=null, $after=null)
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function getVideosForStreamer($streamerId, $first=8, $before=null, $after=null): ResponseInterface
     {
         return $this->getPaginatedQuery('/helix/videos', [
             'user_id' => $streamerId,
         ], $first, $before, $after);
     }
 
-    public function getVideoInfo($videoId, $first=8, $before=null, $after=null)
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function getVideoInfo($videoId, $first=8, $before=null, $after=null): ResponseInterface
     {
         return $this->getPaginatedQuery('/helix/videos', [
             'id' => $videoId,
         ], $first, $before, $after);
     }
 
-    public function getClipInfo($videoId, $first=8, $before=null, $after=null)
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function getClipInfo($videoId, $first=8, $before=null, $after=null): ResponseInterface
     {
         return $this->getPaginatedQuery('/helix/clips', [
             'id' => $videoId,
@@ -275,8 +324,9 @@ class TwitchApi
     }
     /**
      * Helper method for API calls that use paginated queries
+     * @throws TransportExceptionInterface
      */
-    private function getPaginatedQuery($url, $queryParams, $first, $before, $after)
+    private function getPaginatedQuery($url, $queryParams, $first, $before, $after): ResponseInterface
     {
         $queryParams['first'] = $first;
 
@@ -291,7 +341,10 @@ class TwitchApi
         ]);
     }
 
-    public function getStreamerInfoByChannel($channelName)
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function getStreamerInfoByChannel($channelName): ResponseInterface
     {
         return $this->client->request('GET', '/helix/users', [
             'query' => [

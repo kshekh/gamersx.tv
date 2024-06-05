@@ -1,26 +1,18 @@
 {
     "devDependencies": {
-      "@babel/core": "^7.24.5",
-      "@babel/plugin-transform-class-properties": "^7.24.1",
-      "@babel/preset-env": "^7.24.5",
-      "@hotwired/stimulus": "^3.0",
-      "@symfony/stimulus-bridge": "^3.2.2",
-      "@symfony/webpack-encore": "^4.6.1",
-      "@vue/compat": "^3.4.27",
-      "autoprefixer": "^10.4.19",
-      "core-js": "^3.37.1",
-      "css-loader": "^7.1.1",
-      "postcss": "^8.4.38",
-      "postcss-loader": "^8.1.0",
-      "regenerator-runtime": "^0.14.1",
-      "stimulus": "^3.2.2",
-      "tailwindcss": "^3.2.7",
-      "vue": "^3.4.27",
-      "vue-loader": "^17.0.0",
-      "vue-template-compiler": "^2.7.16",
-      "webpack": "^5.91.0",
-      "webpack-cli": "^5.1.4",
-      "webpack-notifier": "^1.15.0"
+        "@hotwired/stimulus": "^3.0",
+        "@vue/compat": "^3.4.27",
+        "autoprefixer": "^10.4.19",
+        "css-loader": "^7.1.1",
+        "postcss": "^8.4.38",
+        "postcss-loader": "^8.1.0",
+        "regenerator-runtime": "^0.14.1",
+        "stimulus": "^3.2.2",
+        "tailwindcss": "^3.2.7",
+        "vite": "^5.0",
+        "vite-plugin-symfony": "^6.4",
+        "vue": "^3.4.27",
+        "vue-template-compiler": "^2.7.16"
     },
     "license": "UNLICENSED",
     "private": true,
@@ -28,15 +20,14 @@
         "defaults"
     ],
     "scripts": {
-        "dev-server": "encore dev-server",
-        "dev": "encore dev",
-        "watch": "encore dev --watch",
-        "build": "encore production --progress",
-        "build-noprogress": "encore production"
+        "dev": "vite",
+        "build": "vite build"
     },
     "dependencies": {
+        "@vitejs/plugin-vue": "^5.0.4",
         "axios": "^1.6.0",
         "js-cookie": "^3.0.5",
+        "pinia": "^2.1.7",
         "swiped-events": "^1.2.0",
         "vue-source": "^1.1.1"
     }

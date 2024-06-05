@@ -4,23 +4,26 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
+use App\Service\YouTubeApi;
+use Exception;
 
 class YouTubeQueryContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
-    private $homeRowItem;
-    private $youtube;
+    private HomeRowItem $homeRowItem;
+    private YouTubeApi $youtube;
 
-    public function __construct(HomeRowItem $homeRowItem, $youtube)
+    public function __construct(HomeRowItem $homeRowItem, YouTubeApi $youtube)
     {
         $this->homeRowItem = $homeRowItem;
         $this->youtube = $youtube;
     }
 
-    public function getContainers(): Array
+    public function getContainers(): array
     {
         $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
         $youtube = $this->youtube;
+        $max = 0;
 
         $this->options = $homeRowItem->getSortAndTrimOptions();
         if (array_key_exists('maxContainers', $this->options)) {
@@ -48,8 +51,8 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
            (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
         ) {
             try {
-                $broadcasts = $youtube->searchLiveChannels($query, $max, null, null)->getItems();
-            } catch (\Exception $e) {
+                $broadcasts = $youtube->searchLiveChannels($query, $max)->getItems();
+            } catch (Exception $e) {
                 $this->logger->error("Call to YouTube failed with the message \"".$e->getErrors()[0]['message']."\"");
                 return Array();
             }

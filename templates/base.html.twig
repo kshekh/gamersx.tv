@@ -7,6 +7,7 @@
             _iub.csConfiguration = {"applyGdprForCH":false,"askConsentAtCookiePolicyUpdate":true,"countryDetection":true,"enableFadp":true,"enableLgpd":true,"enableTcf":true,"enableUspr":true,"floatingPreferencesButtonDisplay":false,"gdprAppliesGlobally":false,"googleAdditionalConsentMode":true,"lang":"en","lgpdAppliesGlobally":false,"logLevel":"info","perPurposeConsent":true,"preferenceCookie":{"expireAfter":180},"siteId":3228129,"showBannerForUS":true,"tcfPurposes":{"2":"consent_only","3":"consent_only","4":"consent_only","5":"consent_only","6":"consent_only","7":"consent_only","8":"consent_only","9":"consent_only","10":"consent_only"},"usprPurposes":"s,sh,adv","whitelabel":false,"cookiePolicyId":49149225, "banner":{ "acceptButtonDisplay":true,"backgroundOverlay":true,"closeButtonDisplay":false,"customizeButtonDisplay":true,"explicitWithdrawal":true,"listPurposes":true,"position":"float-top-center","prependOnBody":true,"rejectButtonDisplay":true,"showPurposesToggles":true }};
         </script>
         <script type="text/javascript" src="https://cs.iubenda.com/autoblocking/3228129.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/swiped-events/1.2.0/swiped-events.min.js" integrity="sha512-9+LGfjYbkKUzUhs1qyz0d/T5g/v4c+bCuYz2YHOuiAE3LLFnDbRUsMviLEzLRRGM1MXBswzb7UWZiysgkyHMdA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script type="text/javascript" src="//cdn.iubenda.com/cs/tcf/stub-v2.js"></script>
         <script type="text/javascript" src="//cdn.iubenda.com/cs/tcf/safe-tcf-v2.js"></script>
         <script type="text/javascript" src="//cdn.iubenda.com/cs/gpp/stub.js"></script>
@@ -18,7 +19,7 @@
 			{% endblock %}
 		</title>
 		{% block stylesheets %}
-			{{ encore_entry_link_tags('app') }}
+            {{ vite_entry_link_tags('app') }}
 		{% endblock %}
 		<meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- Google tag (gtag.js) -->
@@ -32,11 +33,12 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.png') }}">
 		<!--<script src="https://cdn.tailwindcss.com"></script>-->
 		{% block javascripts %}
+            {{ vite_entry_script_tags('app') }}
 			<!-- Load the Twitch embed script -->
 			<script src="https://embed.twitch.tv/embed/v1.js"></script>
 			<script src="https://www.youtube.com/player_api"></script>
-			{{ encore_entry_script_tags('app') }}
-			{{ encore_entry_script_tags('main') }}
+			{{ vite_entry_script_tags('app') }}
+			{{ vite_entry_script_tags('main') }}
 		{% endblock %}
         {% set get_active_theme = master_theme.findOneBy({'status':1}) %}
         {% set get_theme_setting = [] %}
@@ -467,9 +469,10 @@
 						</div>
 					</div>
 				</footer>
+                </div>
 			{% endblock %}
 		</div>
-		</body>
+    </body>
     <script>
 		function closeToast() {
 			document.getElementById("toast-warning").style.display = "none";
@@ -525,4 +528,4 @@
             window.location.replace("{{ redirect_url }}");
         }
     </script>
-	</html>
+</html>

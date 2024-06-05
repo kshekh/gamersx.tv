@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 import VueSource from "vue-source";
-import Game from "./components/Game";
+import Game from "./components/Game.vue";
 
 /**
  * * Create a fresh Vue Application instance

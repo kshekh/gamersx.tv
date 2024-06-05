@@ -4,8 +4,8 @@ namespace App\Repository;
 
 use App\Entity\HomeRowItem;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Result;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -24,8 +24,6 @@ class HomeRowItemRepository extends ServiceEntityRepository
     }
 
     /**
-     * @throws ORMException
-     * @throws OptimisticLockException
      */
     public function add(HomeRowItem $entity, bool $flush = true): void
     {
@@ -36,8 +34,6 @@ class HomeRowItemRepository extends ServiceEntityRepository
     }
 
     /**
-     * @throws ORMException
-     * @throws OptimisticLockException
      */
     public function remove(HomeRowItem $entity, bool $flush = true): void
     {
@@ -47,7 +43,10 @@ class HomeRowItemRepository extends ServiceEntityRepository
         }
     }
 
-    public function findUniqueItem($key,$value,$how_row_item_id = '')
+    /**
+     * @throws Exception
+     */
+    public function findUniqueItem($key, $value, $how_row_item_id = ''): Result
     {
         $em = $this->getEntityManager();
         $connection = $em->getConnection();
@@ -59,9 +58,10 @@ class HomeRowItemRepository extends ServiceEntityRepository
         $statement = $connection->prepare($sql);
         $statement->bindValue('key', '$.' . $key);
         $statement->bindValue('value', $value);
-        $statement->execute();
 
-        return $statement->fetchAll();
+        return $statement->executeQuery();
+
+//        return $statement->fetchAll();
     }
 
     public function findStreamer()
@@ -78,8 +78,7 @@ class HomeRowItemRepository extends ServiceEntityRepository
             ->setParameter(':itemTypeStreamer', 'streamer')
             ;
 
-        $results = $qb->getQuery()->getResult();
-        return $results;
+        return $qb->getQuery()->getResult();
     }
 
     // /**

@@ -4,21 +4,24 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
+use App\Service\YouTubeApi;
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 
 class YouTubeVideoContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
-    private $homeRowItem;
-    private $youtube;
-    private $entityManager;
+    private HomeRowItem $homeRowItem;
+    private YouTubeApi $youtube;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(HomeRowItem $homeRowItem, $youtube,$entityManager)
+    public function __construct(HomeRowItem $homeRowItem, YouTubeApi $youtube, EntityManagerInterface $entityManager)
     {
         $this->homeRowItem = $homeRowItem;
         $this->youtube = $youtube;
         $this->entityManager = $entityManager;
     }
 
-    public function getContainers(): Array
+    public function getContainers(): array
     {
         $qb = $this->entityManager->createQueryBuilder();
         $query = $qb->select('hri')
@@ -46,7 +49,7 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
 
         try {
             $info = $youtube->getVideoInfo($videoId)->getItems();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error("Call to YouTube failed with the message \"".$e->getMessage()."\"");
             return Array();
         }
@@ -78,11 +81,11 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
             $channel_id = $info->getSnippet()->getChannelId();
             try {
                 $channel_info = $youtube->getChannelInfo($channel_id)->getItems();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
             }
 
             $channelThumbnails = $channel_info[0]->getSnippet()->getThumbnails();
-            $channelThumbnailInfo = $channelThumbnails->getMedium() ? $channelThumbnails->getMedium() : $channelThumbnails->getDefault();
+            $channelThumbnailInfo = $channelThumbnails->getMedium() ?: $channelThumbnails->getDefault();
 
             $title = $info->getSnippet()->getTitle();
             $link = 'https://www.youtube.com/watch?v='.$info->getId();
@@ -98,7 +101,7 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
                 $homeRowItem->getShowArt() === TRUE) {
                 // Get the sized art link
                 $imageInfo = $info->getSnippet()->getThumbnails();
-                $imageInfo = $imageInfo->getMedium() ? $imageInfo->getMedium() : $imageInfo->getStandard();
+                $imageInfo = $imageInfo->getMedium() ?: $imageInfo->getStandard();
 
                 $image = [
                     'url' => $imageInfo->getUrl(),

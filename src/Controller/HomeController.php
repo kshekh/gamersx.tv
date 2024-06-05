@@ -2,49 +2,54 @@
 
 namespace App\Controller;
 
-use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
 use App\Entity\SiteSettings;
 use App\Containerizer\ContainerizerFactory;
 use App\Service\HomeRowInfo;
-use Symfony\Contracts\Cache\ItemInterface;
+use Doctrine\Persistence\ManagerRegistry;
+use Psr\Cache\InvalidArgumentException;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\HttpFoundation\{Response, RedirectResponse};
+use Symfony\Component\HttpFoundation\{RequestStack, Response, RedirectResponse};
+use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
 
 class HomeController extends AbstractController
 {
-//    private $homeRowInfo;
-    private $session;
+    private ManagerRegistry $doctrine;
+    private HomeRowInfo $homeRowInfo;
+    private RequestStack $requestStack;
+    private $redis_host;
 
-    public function __construct(HomeRowInfo $homeRowInfo, SessionInterface $session)
+    public function __construct(HomeRowInfo $homeRowInfo, RequestStack $requestStack, ManagerRegistry $doctrine, $redis_host)
     {
         $this->homeRowInfo = $homeRowInfo;
-        $this->session = $session;
+        $this->doctrine = $doctrine;
+        $this->requestStack = $requestStack;
+        $this->redis_host = $redis_host;
     }
 
-    /**
-     * @Route("/", name="home")
-     */
+    #[Route('/', name: 'home')]
     public function index(): Response
     {
-        $row = $this->getDoctrine()->getRepository(SiteSettings::class)->findOneBy([]);
+        $row = $this->doctrine->getRepository(SiteSettings::class)->findOneBy([]);
 
-        if ($this->isGranted('ROLE_LOGIN_ALLOWED') || (isset($row) && (!$row->getDisableHomeAccess() || $row->getDisableHomeAccess() == false))) {
+        if ($this->isGranted('ROLE_LOGIN_ALLOWED') || (isset($row) && (!$row->getDisableHomeAccess()))) {
             return $this->render('home/index.html.twig');
         }
 
         return new RedirectResponse(
-            $this->generateUrl('sonata_user_admin_security_login')
+//            $this->generateUrl('sonata_user_admin_security_login')
+            $this->generateUrl('admin')
         );
     }
 
     /**
-     * @Route("/home/api", name="home_api")
+     * @throws InvalidArgumentException
      */
+    #[Route('/home/api', name: 'home_api')]
     public function apiHome(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
     {
 //         $cache = new FilesystemAdapter(
@@ -52,7 +57,12 @@ class HomeController extends AbstractController
 //             $defaultLifetime = 0,
 //             $directory = '/Users/ahmed/Herd/gamersx.tv/filesystem_cache'
 //         );
-        $cache = new FilesystemAdapter();
+        $cache = new RedisAdapter(new \Predis\Client(
+            [
+                'scheme' => 'tcp',
+                'host' => 'redis://' . $this->redis_host,
+            ]
+        ), 'namespace', 0);
 
         $rowChannels = $cache->getItem('home');
         $home_container_refreshed_at = null;
@@ -61,8 +71,8 @@ class HomeController extends AbstractController
         // home_container_refreshed_at managed to get time of last cache clear
         if ($rowChannels->isHit()) {
             $rowChannelsData = $rowChannels->get();
-            $rows = $rowChannelsData['rows_data']??null;
-            $home_container_refreshed_at = $rowChannelsData['home_container_refreshed_at']??null;
+            $rows = $rowChannelsData['rows_data'] ?? null;
+            $home_container_refreshed_at = $rowChannelsData['home_container_refreshed_at'] ?? null;
         }
 
         return $this->json([
@@ -74,8 +84,9 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @Route("/home/rows/api", name="home_cache_api")
+     * @throws InvalidArgumentException
      */
+    #[Route('/home/rows/api', name: 'home_cache_api')]
     public function apiHomeRows(): Response
     {
         $cache = new FilesystemAdapter();
@@ -93,25 +104,22 @@ class HomeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/home/sessions/api", name="home_session_api")
-     */
+    #[Route('/home/sessions/api', name: 'home_session_api')]
     public function apiSessions(): Response
     {
-        $isLoggedIn = $this->session->get('is_logged_in');
-        $isRequiredToLoginTwitch = $this->session->get('login_required_to_connect_twitch');
+        $session = $this->requestStack->getSession();
+        $isLoggedIn = $session->get('is_logged_in');
+        $isRequiredToLoginTwitch = $session->get('login_required_to_connect_twitch');
         return $this->json([
             'isLoggedIn' => $isLoggedIn,
             'isRequiredToLoginTwitch' => $isRequiredToLoginTwitch
         ]);
     }
 
-    /**
-     * @Route("/api/streamer-list", name="streamer_list_api")
-     */
+    #[Route('/api/streamer-list', name: 'streamer_list_api')]
     public function streamer_list(): Response
     {
-        $streamer_list = $this->getDoctrine()->getRepository(HomeRowItem::class)->findStreamer();
+        $streamer_list = $this->doctrine->getRepository(HomeRowItem::class)->findStreamer();
         $return_data = [];
         foreach ($streamer_list as $streamer) {
             $item_type = $streamer->getItemType();

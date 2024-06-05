@@ -81,6 +81,9 @@ import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 import PlayButton from "../../helpers/PlayButton.vue";
 import embedMixin from "../../../mixins/embedFrameMixin";
 import isBoxInViewport from "../../../mixins/isBoxInViewport";
+import {useTwitchEmbedStore} from "../../stores/twitchEmbedStore";
+
+const { embed, startPlayer, stopPlayer, isPlaying } = useTwitchEmbedStore()
 
 export default {
   name: "EmbedContainerFullWidthImagery",
@@ -139,7 +142,7 @@ export default {
       }, 0);
 
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
-      this.$refs.embed.startPlayer();
+      startPlayer();
       this.$emit("hide-controls");
     },
     scrollOut() {
@@ -147,8 +150,8 @@ export default {
         this.isOverlayVisible = true;
         this.isEmbedVisible = false;
       }
-      if (this.$refs?.embed?.isPlaying()) {
-        this.$refs.embed.stopPlayer();
+      if (isPlaying()) {
+        stopPlayer();
       }
       window.removeEventListener("scroll", this.checkIfBoxInViewPort);
       this.$emit("show-controls");

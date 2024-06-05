@@ -25,7 +25,7 @@
             :src="image.url"
             class="relative top-1/2 transform -translate-y-1/2 w-full"
             style="height: inherit"
-          />
+            alt="art"/>
           <img
             v-else-if="showOverlay"
             alt="Embed's Custom Overlay"
@@ -48,7 +48,6 @@
             <img
               :src="image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
-            />
           </a>
         </div>
 
@@ -177,7 +176,7 @@
           :src="overlay"
           class="relative top-1/2 transform -translate-y-1/2 w-full h-full object-cover"
         />
-        <play-button
+        <PlayButton
           v-if="showEmbed && embedData"
           class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 h-12 md:h-16 xl:h-32 w-12 md:w-16 xl:w-32"
           svgClass="w-3 md:w-7 xl:w-12"
@@ -213,6 +212,7 @@
           ref="embedWrapper"
           :class="{ 'relative w-full h-full main-parent': true }"
         >
+          {{ embedName }}
           <component
             v-if="embedData"
             ref="embed"
@@ -242,6 +242,9 @@ import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 import CommonContainer from "../CommonContainer/CommonContainer.vue";
 import embedMixin from "../../../mixins/embedFrameMixin";
 import PlayButton from "../../helpers/PlayButton.vue";
+import {useTwitchEmbedStore} from "../../stores/twitchEmbedStore";
+
+const { embed, startPlayer, stopPlayer } = useTwitchEmbedStore()
 
 export default {
   name: "EmbedContainerNumbered",
@@ -250,7 +253,7 @@ export default {
     CommonContainer: CommonContainer,
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
-    "play-button": PlayButton,
+    PlayButton: PlayButton,
   },
   props: [
     "title",
@@ -385,7 +388,7 @@ export default {
         }
       }, 0);
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
-      this.$refs.embed.startPlayer();
+      startPlayer();
       this.$emit("hide-controls");
     },
     scrollOut() {
@@ -397,7 +400,7 @@ export default {
         this.isEmbedVisible = false;
       }
       if (this.$refs?.embed?.isPlaying()) {
-        this.$refs.embed.stopPlayer();
+        stopPlayer();
       }
       window.removeEventListener("scroll", this.checkIfBoxInViewPort);
       this.$emit("show-controls");

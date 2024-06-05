@@ -7,19 +7,20 @@ use App\Entity\HomeRowItem;
 use App\Service\TwitchApi;
 use App\Service\YouTubeApi;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class ContainerizerFactory
 {
-    private $twitch;
-    private $youtube;
-    private $logger;
-    private $uploader;
-    private $containerizers;
+    private TwitchApi $twitch;
+    private YouTubeApi $youtube;
+    private LoggerInterface $logger;
+    private UploaderHelper $uploader;
+//    private $containerizers;
     private EntityManagerInterface $entityManager;
 
     public function __construct(TwitchApi $twitch, YouTubeApi $youtube, UploaderHelper $uploader,
-        \Psr\Log\LoggerInterface $logger, EntityManagerInterface $entityManager)
+        LoggerInterface $logger, EntityManagerInterface $entityManager)
     {
         $this->twitch = $twitch;
         $this->youtube = $youtube;
@@ -28,8 +29,10 @@ class ContainerizerFactory
         $this->entityManager = $entityManager;
     }
 
-    public function __invoke($toBeContainerized): ContainerizerInterface
+    public function __invoke($toBeContainerized): ContainerizerInterface | null
     {
+        $containerized = null;
+
         if ($toBeContainerized instanceof HomeRowItem) {
             switch($toBeContainerized->getItemType()) {
             case HomeRowItem::TYPE_GAME:
@@ -65,7 +68,7 @@ class ContainerizerFactory
         } elseif ($toBeContainerized instanceof HomeRow) {
             return new HomeRowContainerizer($toBeContainerized, $this);
         }
+
+        return null;
     }
-
-
 }

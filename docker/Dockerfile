@@ -30,7 +30,7 @@ RUN composer install \
 # gpg: command not found
 
 # Build a container to be used for development scripts
-FROM php:7.4-cli as worker
+FROM php:8.3-cli as worker
 
 ARG HOST_USER_UID
 ARG HOST_USER_GID
@@ -112,7 +112,7 @@ COPY ./docker/php/php.ini /usr/local/etc/php/
 # - Build the static Sonata bundles with Symfony for the web server
 # - Prepare the backend scripts for the upstream task.
 
-FROM php:7.4-cli as backend
+FROM php:8.3-cli as backend
 
 RUN docker-php-source extract \
     && docker-php-source delete
@@ -140,7 +140,7 @@ RUN php bin/console assets:install
 # - Fix the permissions.
 # - Serve PHP scripts upstream to nginx with Fpm.
 
-FROM php:7.4-fpm-alpine as app
+FROM php:8.3-fpm-alpine as app
 
 ARG HOST_USER_UID
 ARG HOST_USER_GID
@@ -203,13 +203,13 @@ CMD ["/usr/local/bin/docker-php-entrypoint","php-fpm","-F"]
 # - Install the node modules.
 # - Build the remaining static front end assets.
 
-FROM node:21-alpine as frontend
+FROM node:22-alpine as frontend
 
 ARG HOST_USER_UID
 ARG HOST_USER_GID
 
 WORKDIR /app
-COPY package.json postcss.config.js tailwind.config.js webpack.config.js yarn.lock /app/
+COPY package.json postcss.config.js tailwind.config.js vite.config.js yarn.lock /app/
 
 # Add the user that nginx will be expecting
 RUN addgroup --gid ${HOST_USER_GID} nginx

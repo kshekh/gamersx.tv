@@ -4,21 +4,37 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
+use App\Service\TwitchApi;
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class TwitchVideoContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
-    private $homeRowItem;
-    private $twitch;
-    private $entityManager;
+    private HomeRowItem $homeRowItem;
+    private TwitchApi $twitch;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(HomeRowItem $homeRowItem, $twitch,$entityManager)
+    public function __construct(HomeRowItem $homeRowItem, TwitchApi $twitch, EntityManagerInterface $entityManager)
     {
         $this->homeRowItem = $homeRowItem;
         $this->twitch = $twitch;
         $this->entityManager = $entityManager;
     }
 
-    public function getContainers(): Array
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws Exception
+     */
+    public function getContainers(): array
     {
         $qb = $this->entityManager->createQueryBuilder();
         $query = $qb->select('hri')
@@ -33,10 +49,9 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
         $check_unique_item = $query->getQuery()->getResult();
 
         $is_unique_container =  $this->homeRowItem->getIsUniqueContainer();
-        if($is_unique_container == 0 && (isset($check_unique_item) && !empty($check_unique_item) && count($check_unique_item) > 1 && $check_unique_item[0]['id'] != $this->homeRowItem->getId())) {
+        if($is_unique_container == 0 && (!empty($check_unique_item) && count($check_unique_item) > 1 && array_key_exists(0, $check_unique_item) && $check_unique_item[0]['id'] != $this->homeRowItem->getId())) {
             return Array();
         }
-
 
         $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
@@ -59,12 +74,15 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
             } else {
                 $info = $twitch->getClipInfo($videoId)->toArray();
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error("Call to twitch failed with the message \"".$e->getMessage()."\"");
             return Array();
         }
 
-        $info = $info['data'][0];
+        $info = $info['data'] ?? $info['data'][0];
+        if (!empty($info)) {
+            dd($info);
+        }
         $broadcast = null;
         $description = $homeRowItem->getDescription();
         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
@@ -101,7 +119,6 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
                 $homeRowItem->getShowArt() === TRUE) {
                 // Get the sized art link
                 $imageUrl = $info['thumbnail_url'];
-                $imageUrl = $imageUrl;
                 $imageWidth = '200';
                 $imageHeight = '200';
 

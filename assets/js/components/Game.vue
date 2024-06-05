@@ -36,7 +36,7 @@
           <div class="flex flex-row items-center justify-between">
             <div class="text-lg">{{ popular.title }}</div>
             <div class="text-lg ml-auto">{{ popular.viewer_count }}</div>
-            <div class="pl-4"><img class="inline" src="/images/red-eye.png" ></div>
+            <div class="pl-4"><img class="inline" :src="RedEye" ></div>
           </div>
         </div>
       </div>
@@ -70,13 +70,15 @@
 </template>
 <script>
 import axios from 'axios';
-import TwitchArt from './layout/TwitchArt';
-import TwitchEmbed from './embeds/TwitchEmbed';
+import TwitchArt from './layout/TwitchArt.vue';
+import TwitchEmbed from './embeds/TwitchEmbed.vue';
+import RedEye from '~/images/red-eye.png';
 
 export default {
   components: {
     'TwitchArt': TwitchArt,
-    'TwitchEmbed': TwitchEmbed
+    'TwitchEmbed': TwitchEmbed,
+    'RedEye': RedEye
   },
   data: function()  {
     return {

@@ -3,29 +3,31 @@
 namespace App\Containerizer;
 
 use App\Entity\HomeRow;
-use App\Entity\HomeRowItem;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 abstract class LiveContainerizer implements ContainerizerInterface, LoggerAwareInterface
 {
 
-    protected $logger;
+    protected LoggerInterface $logger;
     protected $items;
     protected $options;
-    protected $uploader;
+    protected UploaderHelper $uploader;
 
-    abstract public function getContainers(): Array;
+    abstract public function getContainers(): array;
 
-    public function setLogger(\Psr\Log\LoggerInterface $logger) {
+    public function setLogger(LoggerInterface $logger): void
+    {
         $this->logger = $logger;
     }
 
-    public function setUploader(UploaderHelper $uploader) {
+    public function setUploader(UploaderHelper $uploader): void
+    {
         $this->uploader = $uploader;
     }
 
-    protected function sort(): Array
+    protected function sort(): array
     {
         if (array_key_exists('itemSortType', $this->options)) {
             $sort = $this->options['itemSortType'];
@@ -42,7 +44,7 @@ abstract class LiveContainerizer implements ContainerizerInterface, LoggerAwareI
 
     }
 
-    protected function trim(): Array
+    protected function trim(): array
     {
         if (array_key_exists('maxContainers', $this->options)) {
             $this->items = array_slice($this->items, 0, $this->options['maxContainers']);

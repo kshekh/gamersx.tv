@@ -92,30 +92,25 @@
         </div>
       </div>
     </div>
-  </div>
-  <div
-    v-if="showEmbed && embedData"
-    class="cut-edge__wrapper absolute z-30 transition-opacity-transform ease-linear duration-500"
-    :class="[
-      getGlow,
-      {
-        invisible: !isEmbedVisible,
-      },
-    ]"
-    ref="embedWrapper"
-    :style="embedSize"
-  >
-    <CommonContainer
-      @on-pin="onPinHandler"
-      @close-container="closeContainer"
-      @on-mouse-down="onMouseDownHandler"
-      :isPinActive="isPinBtnActive"
-      :isMoveActive="isMoveBtnActive"
-      :innerWrapperClassNames="getOutline"
+    <div
+      v-if="showEmbed && embedData"
+      class="cut-edge__wrapper absolute z-30 transition-opacity-transform ease-linear duration-500"
+      :class="[
+        getGlow,
+        {
+          invisible: !isEmbedVisible,
+        },
+      ]"
+      ref="embedWrapper"
+      :style="embedSize"
     >
-      <div
-        class="w-full h-full flex flex-col relative cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
-        :class="getOutline"
+      <CommonContainer
+        @on-pin="onPinHandler"
+        @close-container="closeContainer"
+        @on-mouse-down="onMouseDownHandler"
+        :isPinActive="isPinBtnActive"
+        :isMoveActive="isMoveBtnActive"
+        :innerWrapperClassNames="getOutline"
       >
         <div class="flex-grow min-h-0 relative">
           <div class="absolute inset-0 bg-black overflow-hidden">
@@ -159,54 +154,29 @@
             ></component>
           </div>
         </div>
-        <div
-          class="relative w-full h-full transition-opacity ease-linear duration-500 delay-750 opacity-0 bg-black"
-          :class="{ 'opacity-100': isEmbedVisible }"
+        <a
+          :href="link"
+          class="flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
+          :title="offlineDisplay.title"
         >
-          <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
-            <h5 class="text-xxs text-white font-play truncate">
+          <div class="mr-2 overflow-hidden">
+            <h5
+              class="text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
+            >
               {{ offlineDisplay.title }}
             </h5>
-            <h6 class="text-8 text-white font-play truncate">
+            <h6
+              class="text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
+            >
               {{ embedData.channel }}
             </h6>
           </div>
-          <component
-            v-if="embedData"
-            ref="embed"
-            :is="embedName"
-            :embedData="embedData"
-            :overlay="overlay"
-            :image="image"
-            :isShowTwitchEmbed="isShowTwitchEmbed"
-            class="w-full h-full"
-            :width="'100%'"
-            :height="'100%'"
-          ></component>
-        </div>
-      </div>
-      <a
-        :href="link"
-        class="flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
-        :title="offlineDisplay.title"
-      >
-        <div class="mr-2 overflow-hidden">
-          <h5
-            class="text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
-          >
-            {{ offlineDisplay.title }}
-          </h5>
-          <h6
-            class="text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
-          >
-            {{ embedData.channel }}
+          <h6 class="text-8 text-grey font-play whitespace-nowrap">
+            {{ liveViewerCount }} viewers
           </h6>
-        </div>
-        <h6 class="text-8 text-grey font-play whitespace-nowrap">
-          {{ liveViewerCount }} viewers
-        </h6>
-      </a>
-    </CommonContainer>
+        </a>
+      </CommonContainer>
+    </div>
   </div>
 
   <div class="w-full h-full flex items-center" v-else>
@@ -337,6 +307,9 @@ import embedMixin from "../../../mixins/embedFrameMixin";
 
 import PlayButton from "../../helpers/PlayButton.vue";
 import CommonContainer from "../CommonContainer/CommonContainer.vue";
+import {useTwitchEmbedStore} from "../../stores/twitchEmbedStore";
+
+const { embed, startPlayer, stopPlayer } = useTwitchEmbedStore()
 
 export default {
   name: "EmbedContainerNumbered",
@@ -480,7 +453,7 @@ export default {
         }
       }, 0);
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
-      this.$refs.embed.startPlayer();
+      startPlayer();
       this.$emit("hide-controls");
     },
     scrollOut() {

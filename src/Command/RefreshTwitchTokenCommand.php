@@ -2,28 +2,29 @@
 
 namespace App\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Aws\Ssm\SsmClient;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
+#[AsCommand(
+    name: 'app:refresh-twitch-token',
+    description: 'Gets a new App Token from the Twitch ID service'
+)]
 class RefreshTwitchTokenCommand extends Command
 {
-    private $client;
-    private $params;
-    private $file;
-    private $logger;
-
-    protected static $defaultName = 'app:refresh-twitch-token';
-    protected static $defaultDescription = 'Gets a new App Token from the Twitch ID service';
+    private HttpClientInterface $client;
+    private ParameterBagInterface $params;
+    private Filesystem $file;
+    private LoggerInterface $logger;
 
     public function __construct(HttpClientInterface $client, ParameterBagInterface $params, Filesystem $file, LoggerInterface $logger)
     {
@@ -34,10 +35,9 @@ class RefreshTwitchTokenCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
             ->addOption('topicId', 'i', InputOption::VALUE_OPTIONAL, 'Your Client ID for your Twitch application')
             ->addOption('twitchSecret', 's', InputOption::VALUE_OPTIONAL, 'Your Client Secret for your Twitch application')
             ->addOption('envFile', 'f', InputOption::VALUE_OPTIONAL, 'The .env.local file to rewrite the TWITCH_APP_TOKEN variable');
@@ -55,10 +55,10 @@ class RefreshTwitchTokenCommand extends Command
             ];
             $this->logger->debug("CronJob Is running.");
 
-            $envirenment = $this->params->get('kernel.environment');
-            $env = $env_parameters[$envirenment];
+            $environment = $this->params->get('kernel.environment');
+            $env = $env_parameters[$environment];
 
-            $paramss = [];
+            $params = [];
             $credentials = [
                 'key'    => $this->params->get('app.aws_access_key_id'),
                 'secret' => $this->params->get('app.aws_secret_access_key')
@@ -79,9 +79,9 @@ class RefreshTwitchTokenCommand extends Command
             $parameters = $result['Parameters'];
 
             foreach ($parameters as $parameter) {
-                $paramss[$parameter['Name']] = $parameter['Value'];
+                $params[$parameter['Name']] = $parameter['Value'];
             }
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->logger->error($th->getMessage());
             return 1;
         }
@@ -90,8 +90,8 @@ class RefreshTwitchTokenCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $argFile = $input->getOption('envFile');
 
-        $topicId = !empty($paramss["/gamersx/$env/TWITCH_CLIENT_ID"]) ? $paramss["/gamersx/$env/TWITCH_CLIENT_ID"] : $this->params->get('app.twitch_id');
-        $twitchSecret = !empty($paramss["/gamersx/$env/TWITCH_CLIENT_SECRET"]) ? $paramss["/gamersx/$env/TWITCH_CLIENT_SECRET"] : $this->params->get('app.twitch_secret');
+        $topicId = !empty($params["/gamersx/$env/TWITCH_CLIENT_ID"]) ? $params["/gamersx/$env/TWITCH_CLIENT_ID"] : $this->params->get('app.twitch_id');
+        $twitchSecret = !empty($params["/gamersx/$env/TWITCH_CLIENT_SECRET"]) ? $params["/gamersx/$env/TWITCH_CLIENT_SECRET"] : $this->params->get('app.twitch_secret');
 
         $request = $this->client->request('POST', 'https://id.twitch.tv/oauth2/token', [
             'query' => [
@@ -108,7 +108,7 @@ class RefreshTwitchTokenCommand extends Command
                 $response = $request->toArray();
                 if (array_key_exists('access_token', $response)) {
                     $token = $response['access_token'];
-                    $io->success("The new token is ${token}.");
+                    $io->success("The new token is $token.");
 
                     $result = $client->putParameter([
                         'Name' => "/gamersx/$env/TWITCH_APP_TOKEN",
@@ -123,15 +123,15 @@ class RefreshTwitchTokenCommand extends Command
                             while (!feof($envFile)) {
                                 $line = fgets($envFile);
                                 if (str_starts_with($line, 'TWITCH_APP_TOKEN')) {
-                                    $line = "TWITCH_APP_TOKEN=${token}\n";
+                                    $line = "TWITCH_APP_TOKEN=$token\n";
                                 }
                                 $newFile .= $line;
                             }
                         } else {
-                            $newFile = "TWITCH_APP_TOKEN=${token}\n";
+                            $newFile = "TWITCH_APP_TOKEN=$token\n";
                         }
                         $this->file->dumpFile($argFile, $newFile);
-                        $io->success("Wrote the new token to ${argFile}");
+                        $io->success("Wrote the new token to $argFile");
                     }
 
                     return 0;
@@ -150,8 +150,8 @@ class RefreshTwitchTokenCommand extends Command
     }
 
     /* From Laravel */
-    private function str_starts_with($haystack, $needle)
-    {
-        return (string)$needle !== '' && strncmp($haystack, $needle, strlen($needle)) === 0;
-    }
+//    private function str_starts_with($haystack, $needle): bool
+//    {
+//        return (string)$needle !== '' && strncmp($haystack, $needle, strlen($needle)) === 0;
+//    }
 }

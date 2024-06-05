@@ -2,31 +2,37 @@
 
 namespace App\Service;
 
-use Google_Client;
+use Google\Client;
+use Google\Service\Exception;
+use Google\Service\YouTube;
+use Google_Service_YouTube;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class YouTubeApi
 {
-    private $service;
+    private Google_Service_YouTube $service;
 
-    public function __construct(Google_Client $client)
+    public function __construct(Client $client)
     {
         $cache = new FilesystemAdapter();
         $client->setCache($cache);
-        $this->service = new \Google_Service_YouTube($client);
+        $this->service = new Google_Service_YouTube($client);
     }
 
-    public function getPopularStreams($first=20, $before=null, $after=null)
-    {
-        $queryParams = [
-            'chart' => 'mostPopular',
-            'regionCode' => 'US',
-            'videoCategoryId' => '20'
-        ];
-        return $this->service->videos->listVideos('snippet', $queryParams);
-    }
+//    public function getPopularStreams($first=20, $before=null, $after=null): YouTube\VideoListResponse
+//    {
+//        $queryParams = [
+//            'chart' => 'mostPopular',
+//            'regionCode' => 'US',
+//            'videoCategoryId' => '20'
+//        ];
+//        return $this->service->videos->listVideos('snippet', $queryParams);
+//    }
 
-    public function getLiveChannel($channelId)
+    /**
+     * @throws Exception
+     */
+    public function getLiveChannel(string $channelId): YouTube\SearchListResponse
     {
         $queryParams = [
             'part' => 'snippet',
@@ -39,7 +45,10 @@ class YouTubeApi
         return $this->getPaginatedQuery($queryParams, 1, null, null);
     }
 
-    public function getPopularChannelVideos($channelId, $first=8, $before=null, $after=null)
+    /**
+     * @throws Exception
+     */
+    public function getPopularChannelVideos($channelId, $first=8, $before=null, $after=null): YouTube\SearchListResponse
     {
         $queryParams = [
             'part' => 'snippet',
@@ -52,7 +61,10 @@ class YouTubeApi
         return $this->getPaginatedQuery($queryParams, $first, $before, $after);
     }
 
-    public function getRecentChannelVideos($channelId, $first=8, $before=null, $after=null)
+    /**
+     * @throws Exception
+     */
+    public function getRecentChannelVideos($channelId, $first=8, $before=null, $after=null): YouTube\SearchListResponse
     {
         $queryParams = [
             'part' => 'snippet',
@@ -65,7 +77,10 @@ class YouTubeApi
         return $this->getPaginatedQuery($queryParams, $first, $before, $after);
     }
 
-    public function searchChannels($query, $first=25, $before=null, $after=null)
+    /**
+     * @throws Exception
+     */
+    public function searchChannels($query, $first=25, $before=null, $after=null): YouTube\SearchListResponse
     {
         $queryParams = [
             'q' => $query,
@@ -75,7 +90,10 @@ class YouTubeApi
         return $this->getPaginatedQuery($queryParams, $first, $before, $after);
     }
 
-    public function getChannelInfo($channelIds)
+    /**
+     * @throws Exception
+     */
+    public function getChannelInfo($channelIds): YouTube\ChannelListResponse
     {
         if (is_array($channelIds)) {
             $channelIds = implode(',', $channelIds);
@@ -88,7 +106,10 @@ class YouTubeApi
         return $this->service->channels->listChannels('snippet,statistics', $queryParams);
     }
 
-    public function searchLiveChannels($query, $first=25, $before=null, $after=null)
+    /**
+     * @throws Exception
+     */
+    public function searchLiveChannels($query, $first=25, $before=null, $after=null): YouTube\SearchListResponse
     {
         $queryParams = [
             'q' => $query,
@@ -100,7 +121,10 @@ class YouTubeApi
         return $this->getPaginatedQuery($queryParams, $first, $before, $after);
     }
 
-    public function getChannelVideosStats($videoIds)
+    /**
+     * @throws Exception
+     */
+    public function getChannelVideosStats($videoIds): YouTube\VideoListResponse
     {
         if (is_array($videoIds)) {
             $videoIds = implode(',', $videoIds);
@@ -115,7 +139,10 @@ class YouTubeApi
         return $this->service->videos->listVideos($part, $queryParams);
     }
 
-    public function searchPopularVideos($query, $first=25, $before=null, $after=null)
+    /**
+     * @throws Exception
+     */
+    public function searchPopularVideos($query, $first=25, $before=null, $after=null): YouTube\SearchListResponse
     {
         $queryParams = [
             'q' => $query,
@@ -126,7 +153,10 @@ class YouTubeApi
         return $this->getPaginatedQuery($queryParams, $first, $before, $after);
     }
 
-    public function getVideoInfo($videoIds)
+    /**
+     * @throws Exception
+     */
+    public function getVideoInfo($videoIds): YouTube\VideoListResponse
     {
         if (is_array($videoIds)) {
             $videoIds = implode(',', $videoIds);
@@ -137,21 +167,24 @@ class YouTubeApi
         return $this->service->videos->listVideos('snippet,statistics,liveStreamingDetails', $queryParams);
     }
 
-    public function getPlaylistInfo($playlistIds)
-    {
-        if (is_array($playlistIds)) {
-            $playlistIds = implode(',', $playlistIds);
-        }
+//    public function getPlaylistInfo($playlistIds): YouTube\PlaylistListResponse
+//    {
+//        if (is_array($playlistIds)) {
+//            $playlistIds = implode(',', $playlistIds);
+//        }
+//
+//        $queryParams = [
+//            'id' => $playlistIds
+//        ];
+//
+//        return $this->service->playlists->listPlaylists('snippet', $queryParams);
+//
+//    }
 
-        $queryParams = [
-            'id' => $playlistIds
-        ];
-
-        return $this->service->playlists->listPlaylists('snippet', $queryParams);
-
-    }
-
-    public function getPlaylistItemsInfo($playlistIds)
+    /**
+     * @throws Exception
+     */
+    public function getPlaylistItemsInfo($playlistIds): YouTube\PlaylistItemListResponse
     {
         if (is_array($playlistIds)) {
             $playlistIds = implode(',', $playlistIds);
@@ -166,8 +199,9 @@ class YouTubeApi
 
     /**
      * Helper method for API calls that use paginated queries
+     * @throws Exception
      */
-    private function getPaginatedQuery($queryParams, $first, $before, $after)
+    private function getPaginatedQuery($queryParams, $first, $before, $after): YouTube\SearchListResponse
     {
         $queryParams['maxResults'] = $first;
 

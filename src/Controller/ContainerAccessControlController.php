@@ -2,28 +2,18 @@
 
 namespace App\Controller;
 
-use App\Entity\HomeRowItem;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Form\FormRenderer;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\{HeaderUtils,
+use Symfony\Component\HttpFoundation\{
     JsonResponse,
-    Request,
-    Response,
-    ResponseHeaderBag,
-    RedirectResponse};
+    Request};
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Sonata\AdminBundle\Controller\CRUDController;
-use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
+//use Sonata\AdminBundle\Controller\CRUDController;
 
-class ContainerAccessControlController extends CRUDController
+class ContainerAccessControlController
 {
-    private $serializer;
-    private $filesystem;
+    private SerializerInterface $serializer;
+    private Filesystem $filesystem;
     private EntityManagerInterface $em;
 
     public function __construct(SerializerInterface $serializer, Filesystem $filesystem, EntityManagerInterface $em)
@@ -34,12 +24,13 @@ class ContainerAccessControlController extends CRUDController
     }
 
     /**
+     * @param Request $request
      * @param $id
+     * @return JsonResponse
      */
-    public function removeBlacklistedContainerAction(Request $request,$id): JsonResponse
+    public function removeBlacklistedContainer(Request $request,$id): JsonResponse
     {
-        $data = $request->request->all();
-        $return = [];
+        $request->request->all();
         $object = $this->admin->getSubject();
         if (!$object) {
             $return = ['status'=> 0,'msg' => sprintf('unable to find the object with id: %s', $id)];
@@ -56,12 +47,13 @@ class ContainerAccessControlController extends CRUDController
     }
 
     /**
+     * @param Request $request
      * @param $id
+     * @return JsonResponse
      */
-    public function fullSiteBlacklistedContainerAction(Request $request,$id): JsonResponse
+    public function fullSiteBlacklistedContainer(Request $request,$id): JsonResponse
     {
-        $data = $request->request->all();
-        $return = [];
+        $request->request->all();
         $object = $this->admin->getSubject();
         if (!$object) {
             $return = ['status'=> 0,'msg'=>sprintf('unable to find the object with id: %s', $id)];

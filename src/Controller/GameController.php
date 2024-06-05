@@ -5,10 +5,10 @@ namespace App\Controller;
 use App\Service\TwitchApi;
 use App\Service\ThemeInfo;
 use App\Entity\HomeRowItem;
-use Doctrine\Common\Collections\ArrayCollection;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -16,10 +16,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class GameController extends AbstractController
 {
-  
-    /**
-     * @Route("/game/{id}", name="game")
-     */
+
+    #[Route('/game/{id}', name: 'game')]
     public function index(TwitchApi $twitch, $id): Response
     {
 
@@ -37,18 +35,20 @@ class GameController extends AbstractController
     }
 
     /**
-     * @Route("/game/{id}/api", name="game_api")
+     * @throws InvalidArgumentException
      */
+    #[Route('/game/{id}/api', name: 'game_api')]
     public function apiGame(TwitchApi $twitch, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $id): Response
     {
         if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
-                $this->generateUrl('sonata_user_admin_security_login')
+//                $this->generateUrl('sonata_user_admin_security_login')
+                $this->generateUrl('admin')
              );
         }
 
-        $gameInfo = $gamersxCache->get("game-${id}",
+        $gameInfo = $gamersxCache->get("game-$id",
             function (ItemInterface $item) use ($id, $twitch, $themeInfoService) {
                 $game = $twitch->getGameInfo($id);
                 $themeInfo = $themeInfoService->getThemeInfo($id, HomeRowItem::TYPE_GAME);
