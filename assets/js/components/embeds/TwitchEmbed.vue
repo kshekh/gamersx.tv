@@ -29,7 +29,7 @@
       width="854"
       height="480"
       frameborder="0"
-      allowfullscreen="true"
+      :allowfullscreen="true"
       scrolling="no"
     ></iframe>
     <div
