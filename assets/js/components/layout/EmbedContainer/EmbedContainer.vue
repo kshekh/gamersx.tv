@@ -27,7 +27,7 @@
             v-show="isEmbedVisible"
             ref="embed"
             :is="embedName"
-            v-bind:embedData="embedData"
+            :embedData="embedData"
           ></component>
         </div>
       </div>

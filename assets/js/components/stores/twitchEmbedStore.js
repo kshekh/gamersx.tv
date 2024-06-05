@@ -8,7 +8,9 @@ export const useTwitchEmbedStore = defineStore('twitchEmbedStore', () => {
   const embedPlaying = ref(false);
   const isPlaying = computed(() => embedPlaying.value);
   const isBuffering = ref(true);
-  const isMobileDevice = ref(false);
+  const isMobileDevice = computed(() => {
+    return navigator.userAgent.toLowerCase().match(/mobile/i)
+  });
 
   function createEmbed(elementId, height, width, channel, vodId, parent) {
     embed.value = new Twitch.Embed(elementId, {
