@@ -2,8 +2,8 @@
   <!-- remove "text-white" later -->
   <div class="text-white">
     <template v-if="settings.rows && settings.rows.length">
-      <div v-for="(row, index) in settings.rows" :key="row.id" :style="{paddingTop:row.rowPaddingTop+'px',paddingBottom:row.rowPaddingBottom+'px'}">
-        <component :is="row.componentName" :settings="row" :rowPosition="index"></component>
+      <div v-for="(row, index) in settings.rows" :key="row['id']" :style="{paddingTop:row['rowPaddingTop']+'px',paddingBottom:row['rowPaddingBottom']+'px'}">
+        <component :is="row['componentName']" :settings="row" :rowPosition="index"></component>
       </div>
     </template>
     <div v-else>
@@ -24,7 +24,7 @@
       <!--      <component v-else :is="defaultSkeleton"></component>-->
     </div>
     <Modal v-model="modal" @update:modelValue="handleModalUpdate" no-close-on-backdrop ok-title="Continue anyway"
-      @ok="handleCloseModal">
+      @ok="handleCloseModal" value>
       <div class="flex flex-col md:flex-row items-center justify-start">
         <div class="w-full md:w-1/3 flex items-center justify-center md:justify-start">
           <video autoplay="autoplay" muted="muted" loop="loop" playsinline="" class="h-full md:w-full object-cover">
