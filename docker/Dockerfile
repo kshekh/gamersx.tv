@@ -112,7 +112,7 @@ COPY ./docker/php/php.ini /usr/local/etc/php/
 # - Build the static Sonata bundles with Symfony for the web server
 # - Prepare the backend scripts for the upstream task.
 
-FROM php:8.3-cli as backend
+FROM php:8.3-cli-alpine as backend
 
 RUN docker-php-source extract \
     && docker-php-source delete
@@ -203,7 +203,7 @@ CMD ["/usr/local/bin/docker-php-entrypoint","php-fpm","-F"]
 # - Install the node modules.
 # - Build the remaining static front end assets.
 
-FROM node:22-alpine as frontend
+FROM node:21.7.3-alpine as frontend
 
 ARG HOST_USER_UID
 ARG HOST_USER_GID

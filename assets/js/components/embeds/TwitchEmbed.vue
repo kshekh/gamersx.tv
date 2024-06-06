@@ -41,7 +41,7 @@
 
 <script setup>
 import { computed, defineProps, ref, watch } from 'vue';
-import { useTwitchEmbedStore } from '../stores/twitchEmbedStore';
+import { useEmbedStore } from '../stores/embedStore';
 import { storeToRefs } from 'pinia'
 
 const props = defineProps({
@@ -60,7 +60,7 @@ const loadingVideo = computed(() => {
   return loaders[Math.floor(Math.random() * loaders.length)];
 });
 
-const { embed, embedPlaying, isBuffering } = storeToRefs(useTwitchEmbedStore());
+const { embed, embedPlaying, isBuffering } = storeToRefs(useEmbedStore());
 const channel = props.embedData.channel;
 const elementId = props.embedData.elementId;
 const height = props.height;
@@ -68,12 +68,12 @@ const parent = window.location.hostname;
 const width = props.width;
 const video = props.embedData.video;
 const showTwitchEmbed = ref(false);
-const store = useTwitchEmbedStore();
+const store = useEmbedStore();
 const loaders = ['/images/Sequence_01_final.mp4'];
 
-let element = document.getElementById(embedData.elementId)
+let element = document.getElementById(props.embedData.elementId)
 if (element.children.length === 0) {
-  store.createEmbed(channel, elementId, height, parent, video, width);
+  store.createEmbed(channel, elementId, height, parent, video, width, 'twitch');
 
   embed.value.addEventListener(Twitch.Player.PLAY, store.setIsPlaying);
   embed.value.addEventListener(Twitch.Player.PAUSE, store.setIsNotPlaying);
@@ -95,7 +95,7 @@ if (element.children.length === 0) {
 
 function handlePlayerStateChanged(event) {
   const { video_id, play, play_reason } = event.detail;
-  if (video_id === this.embedDataCopy.elementId) {
+  if (video_id === props.embedData.elementId) {
     if (play && play_reason === "auto") {
       embedPlaying.value = true;
       isBuffering.value = false;
@@ -118,7 +118,7 @@ function handleIframeLoad(e) {
 
 watch(showTwitchEmbed, (newVal) => {
   if (newVal === true) {
-    store.createEmbed(channel, elementId, height, parent, video, width);
+    store.createEmbed(channel, elementId, height, parent, video, width, 'twitch');
   }
 });
 </script>

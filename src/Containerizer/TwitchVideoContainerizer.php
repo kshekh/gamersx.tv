@@ -78,11 +78,12 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
             $this->logger->error("Call to twitch failed with the message \"".$e->getMessage()."\"");
             return Array();
         }
-
-        $info = $info['data'] ?? $info['data'][0];
-        if (!empty($info)) {
-            dd($info);
+//        dd($info['data'][0]);
+        $info = $info['data'] ? $info['data'][0] : null;
+        if (!$info) {
+            return Array();
         }
+
         $broadcast = null;
         $description = $homeRowItem->getDescription();
         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));

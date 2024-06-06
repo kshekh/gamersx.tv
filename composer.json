@@ -12,6 +12,7 @@
         "aws/aws-sdk-php": "^3.234",
         "composer/package-versions-deprecated": "1.11.99.1",
         "doctrine/annotations": "^1.12",
+        "doctrine/dbal": "^3",
         "doctrine/doctrine-bundle": "^2.2",
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^2.8",
@@ -139,7 +140,8 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "^6.4"
+            "require": "^6.4",
+            "docker": true
         }
     }
 }

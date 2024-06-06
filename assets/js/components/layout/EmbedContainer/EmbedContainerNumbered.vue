@@ -49,6 +49,8 @@
             <img
               :src="image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
+              alt="Embed Art"
+            />
           </a>
         </div>
 
@@ -72,7 +74,7 @@
       :class="[
         getGlow,
         {
-          invisible: !isEmbedVisible,
+          invisible: !isEmbedVisible
         },
       ]"
       ref="embedWrapper"
@@ -92,6 +94,7 @@
               v-if="showArt && image"
               :src="image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
+              alt="Embed Art"
             />
             <img
               v-else-if="showOverlay"
@@ -124,7 +127,8 @@
               class="w-full h-full"
               :width="'100%'"
               :height="'100%'"
-            ></component>
+            >
+            </component>
           </div>
         </div>
         <a
@@ -171,8 +175,8 @@
           v-if="showArt && image"
           :src="image.url || 'https://placehold.co/600x400'"
           class="-translate-y-1/2 relative top-1/2 transform w-30p h-full object-cover"
+          alt="Embed Art"
         />
-
         <img
           v-else-if="showOverlay"
           alt="Embed's Custom Overlay"
@@ -261,7 +265,6 @@ export default {
   },
   props: [
     "title",
-    "info",
     "customArt",
     "channelName",
     "showOnline",
@@ -348,11 +351,7 @@ export default {
       const checkDeviceType = navigator.userAgent
         .toLowerCase()
         .match(/mobile/i);
-      if (checkDeviceType) {
-        this.isMobileDevice = true;
-      } else {
-        this.isMobileDevice = false;
-      }
+      this.isMobileDevice = !!checkDeviceType;
     },
     computeGlowStyling: function () {
       if (

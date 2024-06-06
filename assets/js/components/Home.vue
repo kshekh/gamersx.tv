@@ -120,7 +120,6 @@ export default {
 
 <script setup>
 import axios from "axios";
-import LazyLoadComponent from "./LazyLoad";
 import FullWidthDescriptiveSkeleton from "./skeletons/FullWidthDescriptiveSkeleton.vue";
 import ClassicSmSkeleton from "./skeletons/ClassicSmSkeleton.vue";
 import ClassicMdSkeleton from "./skeletons/ClassicMdSkeleton.vue";

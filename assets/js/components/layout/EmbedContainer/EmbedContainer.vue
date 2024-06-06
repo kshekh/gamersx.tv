@@ -59,7 +59,7 @@ import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 import {useTwitchEmbedStore} from "../../stores/twitchEmbedStore";
 
 const { embed, startPlayer, stopPlayer } = useTwitchEmbedStore()
-
+// console.log('Am i rendered?');
 export default {
   name: "EmbedContainer",
   components: {
