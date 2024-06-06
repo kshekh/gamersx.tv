@@ -131,7 +131,41 @@ import FullWidthImagerySkeleton from "./skeletons/FullWidthImagerySkeleton.vue";
 import Modal from "./Modal.vue";
 import Cookies from "js-cookie";
 import TwitchIconWhite from "~/images/twitch-icon-white.png"
-import { ref, onMounted, onUnmounted } from "@vue/compat";
+import {ref, onMounted, onUnmounted, defineAsyncComponent, nextTick} from "@vue/compat";
+
+// const FullWidthDescriptive = defineAsyncComponent({
+//   loader: () => import("./front/FullWidthDescriptive.vue"),
+//   loadingComponent: FullWidthDescriptiveSkeleton
+// });
+// const Parallax = defineAsyncComponent({
+//   loader: () => import("./front/Parallax.vue"),
+//   loadingComponent: ParallaxSkeleton
+// });
+// const NumberedRow = defineAsyncComponent({
+//   loader: () => import("./front/NumberedRow.vue"),
+//   loadingComponent: NumberedRowSkeleton
+// });
+// const ClassicSm = defineAsyncComponent({
+//   loader: () => import("./front/ClassicSm.vue"),
+//   loadingComponent: ClassicSmSkeleton,
+//   delay: 200
+// });
+// const ClassicMd = defineAsyncComponent({
+//   loader: () => import("./front/ClassicMd.vue"),
+//   loadingComponent: ClassicMdSkeleton
+// });
+// const ClassicLg = defineAsyncComponent({
+//   loader: () => import("./front/ClassicLg.vue"),
+//   loadingComponent: ClassicLgSkeleton
+// });
+// const FullWidthImagery = defineAsyncComponent({
+//   loader: () => import("./front/FullWidthImagery.vue"),
+//   loadingComponent: FullWidthImagerySkeleton
+// });
+// const ClassicVertical = defineAsyncComponent({
+//   loader: () => import("./front/ClassicVertical.vue"),
+//   loadingComponent: ClassicVerticalSkeleton
+// });
 
 const cachedSkeletonRows = ref([]);
 const defaultSkeleton = "FullWidthDescriptiveSkeleton";
@@ -181,7 +215,7 @@ function requestSessionsApi() {
             modal.value = false;
           } else {
             // Immediately after setting `modal` to `true`, request Vue to wait for next DOM update cycle
-            this.$nextTick(() => {
+            nextTick(() => {
               modal.value = false; //false here will disable the modal entirely, helpful to disable when developing
             });
           }
