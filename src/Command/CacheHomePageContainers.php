@@ -64,7 +64,7 @@ class CacheHomePageContainers extends Command
 //                 $directory = '/Users/ahmed/Herd/gamersx.tv/filesystem_cache'
 //             );
 //            $marshaller = new DeflateMarshaller(new DefaultMarshaller());
-            $cache = new RedisAdapter(new \Predis\Client(), 'namespace', 0);
+            $cache = new RedisAdapter(new \Predis\Client(['host' => 'redis']), 'namespace', 0);
 //            $cache = new FilesystemAdapter();
             // Deleting old cache
             //Previously `home` cache delete directly, now `home_item` item used to save temporary cache.
