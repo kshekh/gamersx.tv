@@ -1,0 +1,15 @@
+{% extends base_template %}
+
+{% block content %}
+    <section class="content">
+        <div class="box box-primary">
+            <div class="box-header"><h4 class="box-title">Import</h4></div>
+            <div class="box-body">
+                Please select an exported zip file from another GamersX instance
+                <form action="{{ admin.generateUrl('import') }}" method="post" enctype="multipart/form-data">
+                    <input type="file" id="import" name="import" accept="application/x-zip-compressed">
+                    <input type="submit" value="Import">
+                </form>
+            <div>
+    </section>
+{% endblock %}

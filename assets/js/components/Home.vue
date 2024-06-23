@@ -180,7 +180,7 @@ const defaultSkeletonRows = [
   "FullWidthImagerySkeleton"
 ];
 const modal = ref(false);
-const pollingApiData = ref(null);
+const pollingApiData = ref(0);
 const settings = ref({
   rows: []
 });
@@ -211,7 +211,7 @@ function requestSessionsApi() {
     if (!Cookies.get("twitch_")) {
       axios.get("/home/sessions/api")
         .then(response => {
-          if (response.data.isLoggedIn && !response.data.isRequiredToLoginTwitch) {
+          if (response.data['isLoggedIn'] && !response.data['isRequiredToLoginTwitch']) {
             modal.value = false;
           } else {
             // Immediately after setting `modal` to `true`, request Vue to wait for next DOM update cycle
@@ -267,7 +267,7 @@ onMounted(() => {
   }, requestPollingDelay);
 });
 onUnmounted(() => {
-  window.clearInterval(pollingApiData);
+  window.clearInterval(pollingApiData.value);
 });
 
 /** We use this a lot for scrolling because JS % is remainder, not modulo **/
