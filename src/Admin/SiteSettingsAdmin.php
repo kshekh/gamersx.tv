@@ -11,6 +11,13 @@ use Sonata\AdminBundle\Route\RouteCollectionInterface;
 
 class SiteSettingsAdmin extends AbstractAdmin
 {
+//    private EntityManagerInterface $entityManager;
+//
+//    public function __construct(EntityManagerInterface $entityManager)
+//    {
+//        $this->entityManager = $entityManager;
+//    }
+
     /**
      * @throws \JsonException
      */

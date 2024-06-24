@@ -94,7 +94,7 @@ services:
     admin.container_access_control:
         class: App\Admin\ContainerAccessControlAdmin
         tags:
-            - { name: sonata.admin, model_class: App\Entity\HomeRowItemOperation, controller: App\Controller\ContainerAccessControlController , manager_type: orm, label: Container access control }
+            - { name: sonata.admin, model_class: App\Entity\HomeRowItemOperation, controller: App\Controller\ContainerAccessControlController, manager_type: orm, label: Container access control }
 
     Aws\S3\S3Client:
         arguments:
