@@ -89,7 +89,7 @@ WORKDIR /app
 
 COPY . /app/
 
-COPY --from=vendor --chown=root:root /app/vendor/. /app/vendor
+COPY --from=vendor --chown=root:root /app/vendor /app/
 
 RUN pecl install -o -f redis \
 &&  rm -rf /tmp/pear \
@@ -125,7 +125,7 @@ COPY . /app/
 WORKDIR /app
 
 # Copy php dependencies from Stage 1
-COPY --from=vendor /app/vendor/. /app/vendor
+COPY --from=vendor /app/vendor /app/
 
 # Build the bundles
 RUN php bin/console assets:install
