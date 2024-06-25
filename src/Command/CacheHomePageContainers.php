@@ -30,14 +30,14 @@ use Symfony\Component\Cache\DeflateMarshaller;
 class CacheHomePageContainers extends Command
 {
     private ContainerizerFactory $containerizer;
-    private EntityManagerInterface $em;
+    private EntityManagerInterface $entityManager;
     private HomeRowInfo $homeRowInfo;
     private $redis_host;
 
     public function __construct(EntityManagerInterface $em, ContainerizerFactory $containerizer, HomeRowInfo $homeRowInfo, $redis_host)
     {
         $this->containerizer = $containerizer;
-        $this->em = $em;
+        $this->entityManager = $em;
         $this->homeRowInfo = $homeRowInfo;
         $this->redis_host = $redis_host;
         parent::__construct();
@@ -45,8 +45,7 @@ class CacheHomePageContainers extends Command
 
     protected function configure(): void
     {
-        $this
-            ->setDescription('This command will cache the containers for home/api to save load time');
+        $this->setDescription('This command will cache the containers for home/api to save load time');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -58,14 +57,7 @@ class CacheHomePageContainers extends Command
         $containerizer = $this->containerizer;
 
         try {
-//             $cache = new FilesystemAdapter(
-//                 $namespace = '',
-//                 $defaultLifetime = 0,
-//                 $directory = '/Users/ahmed/Herd/gamersx.tv/filesystem_cache'
-//             );
-//            $marshaller = new DeflateMarshaller(new DefaultMarshaller());
             $cache = new RedisAdapter(new \Predis\Client(['host' => 'redis']), 'namespace', 0);
-//            $cache = new FilesystemAdapter();
             // Deleting old cache
             //Previously `home` cache delete directly, now `home_item` item used to save temporary cache.
             //If `home_item` contain cache then first delete it, generate new save into it and at the end assign `home_item` into `home`
@@ -73,7 +65,7 @@ class CacheHomePageContainers extends Command
 
             $beta = 1.0;
             $rowChannels = $cache->get('home_item', function (ItemInterface $item) use ($containerizer) {
-                $rows = $this->em->getRepository(HomeRow::class)
+                $rows = $this->entityManager->getRepository(HomeRow::class)
                     ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
 
 //                $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
@@ -81,10 +73,10 @@ class CacheHomePageContainers extends Command
                     $isPublishedStartTime = $this->homeRowInfo->convertHoursMinutesToSeconds($row->getIsPublishedStart());
                     $isPublishedEndTime = $this->homeRowInfo->convertHoursMinutesToSeconds($row->getIsPublishedEnd());
                     $timezone = $row->getTimezone();
-                    date_default_timezone_set($timezone ?: 'America/Los_Angeles');
+                    date_default_timezone_set(timezoneId: $timezone ?: 'America/Los_Angeles');
                     $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
 
-                    if ($row->getIsPublished() === FALSE) {
+                    if (! $row->getIsPublished()) {
                         continue;
                     }
 
@@ -102,7 +94,6 @@ class CacheHomePageContainers extends Command
 
 //                        $containers = array();
                         $containerized = $containerizer($row);
-//                         dd($containerized);
                         $channels = $containerized->getContainers();
 
                         foreach ($channels as $key => $channel) {
@@ -119,7 +110,7 @@ class CacheHomePageContainers extends Command
                     return $rowChannels;
                 }
             }, $beta);
-//            dd($rowChannels);
+
             $homeItemCache = $cache->getItem('home_item');
             $homeCache = $cache->getItem('home');
 
@@ -136,7 +127,7 @@ class CacheHomePageContainers extends Command
             $io->success($message);
             return 0;
         } catch (Exception $ex) {
-            $message = $ex->getMessage() . '\n' . $ex->getFile() . '\n' . $ex->getLine();
+            $message = 'message2: ' . $ex->getMessage() . '\n' . 'file: ' . $ex->getFile() . '\n' . 'line: ' . $ex->getLine() . '\n' . 'code: ' . $ex->getCode();
         }
         $io->error($message);
         return -1;

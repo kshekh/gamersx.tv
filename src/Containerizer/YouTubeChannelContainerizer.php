@@ -23,6 +23,7 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
     public function getContainers(): array
     {
         try {
+            return Array();
             $topic_id = $this->homeRowItem->getTopic()['topicId'];
             $check_unique_item =  $this->entityManager->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
             $uniqueIds = $check_unique_item->fetchFirstColumn();
@@ -165,8 +166,8 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
             }
 
             return Array();
-        } catch (\Exception $e) {
-            dd($e->getMessage() . "\n" . $e->getLine());
+        } catch (\Exception $ex) {
+            dd('message: ' . $ex->getMessage() . '\n' . 'file: ' . $ex->getFile() . '\n' . 'line: ' . $ex->getLine() . '\n' . 'code: ' . $ex->getCode());
         }
     }
 }

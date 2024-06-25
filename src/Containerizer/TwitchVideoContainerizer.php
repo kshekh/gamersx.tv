@@ -37,19 +37,20 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
     public function getContainers(): array
     {
         $qb = $this->entityManager->createQueryBuilder();
-        $query = $qb->select('hri')
-            ->from('App:HomeRowItem', 'hri')
-            ->where('hri.id != :id')
-            ->setParameter('id', $this->homeRowItem->getId())
-            ->andWhere('hri.is_unique_container = 0')
-            ->andWhere('hri.isPublished = 1')
-            ->andWhere('hri.videoId = :videoId')
-            ->setParameter('videoId', $this->homeRowItem->getVideoId());
+//        $query = $qb->select('hri')
+//            ->from(HomeRowItem::class, 'hri')
+//            ->where('hri.id != :id')
+//            ->setParameter('id', $this->homeRowItem->getId())
+//            ->andWhere('hri.is_unique_container = 0')
+//            ->andWhere('hri.isPublished = 1')
+//            ->andWhere('hri.videoId = :videoId')
+//            ->setParameter('videoId', $this->homeRowItem->getVideoId());
 
-        $check_unique_item = $query->getQuery()->getResult();
-
+//        $check_unique_item = $query->getQuery()->execute();
+        dd($qb->select('hri')->from(HomeRowItem::class, 'hri')->where('hri.itemType = :itemType')->setParameter('itemType', 'twitch_video')->getQuery()->execute());
         $is_unique_container =  $this->homeRowItem->getIsUniqueContainer();
         if($is_unique_container == 0 && (!empty($check_unique_item) && count($check_unique_item) > 1 && array_key_exists(0, $check_unique_item) && $check_unique_item[0]['id'] != $this->homeRowItem->getId())) {
+
             return Array();
         }
 
@@ -59,6 +60,10 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
 
         $separatedUrl = explode('/', parse_url($homeRowItem->getVideoId(), PHP_URL_PATH));
 
+        if (! array_key_exists(0, $separatedUrl)) {
+            return Array();
+        }
+
         $parent = 'gamersx.tv';
         if ($separatedUrl[1] == 'videos') {
             $videoId = $separatedUrl[2];
@@ -67,7 +72,9 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
             $videoId = $separatedUrl[3];
             $embedUrl = 'https://clips.twitch.tv/embed?clip='.$videoId.'&parent='.$parent;
         }
-
+        if ($videoId !== '1886732468') {
+            dd($separatedUrl);
+        }
         try {
             if ($separatedUrl[1] == 'videos') {
                 $info = $twitch->getVideoInfo($videoId)->toArray();
@@ -78,7 +85,7 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
             $this->logger->error("Call to twitch failed with the message \"".$e->getMessage()."\"");
             return Array();
         }
-//        dd($info['data'][0]);
+        dd($info);
         $info = $info['data'] ? $info['data'][0] : null;
         if (!$info) {
             return Array();

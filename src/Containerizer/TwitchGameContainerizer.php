@@ -2,6 +2,7 @@
 
 namespace App\Containerizer;
 
+use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
 use App\Service\TwitchApi;
@@ -14,16 +15,11 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class TwitchGameContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
-    private HomeRowItem $homeRowItem;
-    private TwitchApi $twitch;
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(HomeRowItem $homeRowItem, TwitchApi $twitch, EntityManagerInterface $entityManager)
-    {
-        $this->homeRowItem = $homeRowItem;
-        $this->twitch = $twitch;
-        $this->entityManager = $entityManager;
-    }
+    public function __construct(
+        private readonly HomeRowItem            $homeRowItem,
+        private readonly TwitchApi              $twitch,
+        private readonly EntityManagerInterface $entityManager
+    ){}
 
     /**
      * @throws DecodingExceptionInterface
@@ -35,9 +31,14 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
     public function getContainers(): array
     {
         try {
+            return Array();
             $topic_id = $this->homeRowItem->getTopic()['topicId'];
-            $check_unique_item =  $this->entityManager->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
-            $uniqueIds = $check_unique_item->fetchFirstColumn();
+            $repository = $this->entityManager->getRepository(HomeRowItem::class);
+            $uniqueIds = $repository->findUniqueItem(
+                key: 'topicId',
+                value: $topic_id
+            );
+
             $is_unique_container =  $this->homeRowItem->getIsUniqueContainer();
 
             if($is_unique_container == 0 && count($uniqueIds) && $uniqueIds[0] != $this->homeRowItem->getId()) {
@@ -50,8 +51,8 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
             $gameIds = $homeRowItem->getTopic()['topicId'];
 
             $infos = $twitch->getGameInfo($gameIds);
-            if (200 !== $infos->getStatusCode()) {
-                $this->logger->error("Call to Twitch failed with ".$infos->getStatusCode());
+            if ($infos->getStatusCode() !== 200) {
+                $this->logger->error("Call to Twitch failed with " . $infos->getStatusCode());
                 unset($infos);
                 return Array();
             }
@@ -66,13 +67,14 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
 
             $info = $info[0];
             $options = $homeRowItem->getSortAndTrimOptions();
-            $maxContainers = (isset($options['maxContainers']))?$options['maxContainers']:0;
+            $maxContainers = $options['maxContainers'] ?? 0;
             // Get every broadcast
             $broadcasts = [];
             // getting selected game streamers
             $getSelectedRowItemOperation =  $homeRowItem->getHomeRowItemOperations();
             $selectedStreamerArr = [];
             $blacklistedUserIds = [];
+
             if(!empty($getSelectedRowItemOperation)) {
                 foreach ($getSelectedRowItemOperation as $getSelectedOprData) {
                     if($getSelectedOprData->getIsBlacklisted() == 0 && $getSelectedOprData->getIsFullSiteBlacklisted() == 0) {
@@ -221,8 +223,8 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
             }
 
             return Array();
-        } catch (\Exception $e) {
-            dd($e->getMessage() . "\n" . $e->getLine());
+        } catch (\Exception $ex) {
+            dd(sprintf('message1: ' . $ex->getMessage() . '\n' . 'file: ' . $ex->getFile() . '\n' . 'line: ' . $ex->getLine() . '\n' . 'code: ' . $ex->getCode()));
         }
     }
 }

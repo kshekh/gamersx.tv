@@ -335,7 +335,7 @@ class TwitchApi
         } elseif ($after) {
             $queryParams['after'] = $after;
         }
-
+//        dd($queryParams, $url);
         return $this->client->request('GET', $url, [
             'query' => $queryParams
         ]);

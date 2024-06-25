@@ -20,6 +20,7 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
 
     public function getContainers(): array
     {
+        return Array();
         $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
         $youtube = $this->youtube;

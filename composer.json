@@ -25,6 +25,7 @@
         "pentatrion/vite-bundle": "*",
         "phpdocumentor/reflection-docblock": "^5.2",
         "predis/predis": "^2.2",
+        "scienta/doctrine-json-functions": "^6.1",
         "sonata-project/admin-bundle": "*",
         "sonata-project/doctrine-orm-admin-bundle": "*",
         "sonata-project/exporter": "^3.3",
