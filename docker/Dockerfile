@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 ARG HOST_USER_UID=1001
 ARG HOST_USER_GID=1001
 
