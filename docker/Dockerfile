@@ -91,7 +91,7 @@ WORKDIR /app
 
 COPY . /app/
 
-COPY --from=vendor --chown=root:root /app/vendor /app/
+COPY --from=vendor --chown=root:root /app/vendor /app/vendor
 
 RUN pecl install -o -f redis \
 &&  rm -rf /tmp/pear \
