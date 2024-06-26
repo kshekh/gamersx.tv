@@ -15,11 +15,11 @@
           <div
             v-if="showEmbed && embedData"
             class="w-full h-full relative overflow-hidden"
-            @click="clickContainer(embedData.elementId)"
+            @mouseenter="mouseEntered"
+            @mouseleave="mouseLeave"
           >
             <img
               v-if="showArt && image"
-              alt="Embed's Art"
               :src="image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               style="height: inherit"
@@ -28,8 +28,8 @@
               v-else-if="showOverlay"
               alt="Embed's Custom Overlay"
               :src="overlay"
+              onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
-              onerror="this.onerror=null; this.src='https://placehold.co/400x800'"
               style="height: inherit"
             />
             <!--            <img-->
@@ -46,8 +46,6 @@
                 :src="image.url"
                 class="relative top-1/2 transform -translate-y-1/2 w-full"
                 style="height: inherit"
-                onerror="this.onerror=null; this.src='https://placehold.co/1000x800'"
-                alt="Embed's Art"
               />
             </a>
           </div>
@@ -59,32 +57,7 @@
                 class="relative top-1/2 transform -translate-y-1/2 w-full"
                 alt="Embed's Custom Overlay"
                 :src="overlay"
-                onerror="this.onerror=null; this.src='https://placehold.co/400x600'"
-                style="height: inherit"
-              />
-            </a>
-          </div>
-
-          <!-- If there's no embed, show that instead with a link first -->
-          <div v-else-if="showArt && image" class="w-full h-full">
-            <a :href="link" class="block w-full h-full overflow-hidden">
-              <img
-                :src="image.url"
-                class="relative top-1/2 transform -translate-y-1/2 w-full"
-                style="height: inherit"
-                onerror="this.onerror=null; this.src='https://placehold.co/1000x800'"
-              />
-            </a>
-          </div>
-
-          <!-- If there's only an overlay and isn't art, show that instead with a link -->
-          <div v-else-if="showOverlay" class="w-full h-full">
-            <a :href="link" class="block w-full h-full overflow-hidden">
-              <img
-                class="relative top-1/2 transform -translate-y-1/2 w-full"
-                alt="Embed's Custom Overlay"
-                :src="overlay"
-                onerror="this.onerror=null; this.src='https://placehold.co/400x600'"
+                onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
                 style="height: inherit"
               />
             </a>
@@ -92,26 +65,17 @@
         </div>
       </div>
     </div>
-  </div>
-  <div
-    v-if="showEmbed && embedData"
-    class="cut-edge__wrapper absolute z-30 transition-opacity-transform ease-linear duration-500"
-    :class="[
-      getGlow,
-      {
-        invisible: !isEmbedVisible,
-      },
-    ]"
-    ref="embedWrapper"
-    :style="embedSize"
-  >
-    <CommonContainer
-      @on-pin="onPinHandler"
-      @close-container="closeContainer"
-      @on-mouse-down="onMouseDownHandler"
-      :isPinActive="isPinBtnActive"
-      :isMoveActive="isMoveBtnActive"
-      :innerWrapperClassNames="getOutline"
+    <div
+      v-if="showEmbed && embedData"
+      class="cut-edge__wrapper absolute z-30 transition-opacity-transform ease-linear duration-500"
+      :class="[
+        getGlow,
+        {
+          invisible: !isEmbedVisible,
+        },
+      ]"
+      ref="embedWrapper"
+      :style="embedSize"
     >
       <div
         class="w-full h-full flex flex-col relative cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
@@ -123,13 +87,12 @@
               v-if="showArt && image"
               :src="image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
-              alt="Embed's Art"
             />
             <img
               v-else-if="showOverlay"
               alt="Embed's Custom Overlay"
               :src="overlay"
-              onerror="this.onerror=null; this.src='https://placehold.co/400x600'"
+              onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
             />
           </div>
@@ -159,54 +122,29 @@
             ></component>
           </div>
         </div>
-        <div
-          class="relative w-full h-full transition-opacity ease-linear duration-500 delay-750 opacity-0 bg-black"
-          :class="{ 'opacity-100': isEmbedVisible }"
+        <a
+          :href="link"
+          class="flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
+          :title="offlineDisplay.title"
         >
-          <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
-            <h5 class="text-xxs text-white font-play truncate">
+          <div class="mr-2 overflow-hidden">
+            <h5
+              class="text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
+            >
               {{ offlineDisplay.title }}
             </h5>
-            <h6 class="text-8 text-white font-play truncate">
+            <h6
+              class="text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
+            >
               {{ embedData.channel }}
             </h6>
           </div>
-          <component
-            v-if="embedData"
-            ref="embed"
-            :is="embedName"
-            :embedData="embedData"
-            :overlay="overlay"
-            :image="image"
-            :isShowTwitchEmbed="isShowTwitchEmbed"
-            class="w-full h-full"
-            :width="'100%'"
-            :height="'100%'"
-          ></component>
-        </div>
-      </div>
-      <a
-        :href="link"
-        class="flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
-        :title="offlineDisplay.title"
-      >
-        <div class="mr-2 overflow-hidden">
-          <h5
-            class="text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
-          >
-            {{ offlineDisplay.title }}
-          </h5>
-          <h6
-            class="text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
-          >
-            {{ embedData.channel }}
+          <h6 class="text-8 text-grey font-play whitespace-nowrap">
+            {{ liveViewerCount }} viewers
           </h6>
-        </div>
-        <h6 class="text-8 text-grey font-play whitespace-nowrap">
-          {{ liveViewerCount }} viewers
-        </h6>
-      </a>
-    </CommonContainer>
+        </a>
+      </div>
+    </div>
   </div>
 
   <div class="w-full h-full flex items-center" v-else>
@@ -226,15 +164,14 @@
           <div
             v-if="showEmbed && embedData"
             class="w-full h-full overflow-hidden"
-            @click="clickContainer(elementId)"
+            @mouseenter="mouseEntered"
+            @mouseleave="mouseLeave"
           >
             <img
               v-if="showArt && image"
               :src="image.url"
-              alt="Embed's Art"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               style="height: inherit"
-              onerror="this.onerror=null; this.src='https://placehold.co/400x600'"
             />
             <img
               v-else-if="showOverlay"
@@ -242,7 +179,6 @@
               :src="overlay"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               style="height: inherit"
-              onerror="this.onerror=null; this.src='https://placehold.co/400x600'"
             />
           </div>
 
@@ -251,7 +187,7 @@
             <a :href="link" class="block w-full h-full overflow-hidden">
               <img
                 :src="image.url"
-                class="relative w-full"
+                class="relative  w-full"
                 style="height: inherit"
               />
             </a>
@@ -264,7 +200,7 @@
                 class="relative w-full"
                 alt="Embed's Custom Overlay"
                 :src="overlay"
-                onerror="this.onerror=null; this.src='https://placehold.co/400x600'"
+                onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
                 style="height: inherit"
               />
             </a>
@@ -279,33 +215,25 @@
             @click.native="playVideo"
           />
         </div>
+
       </div>
+
+
     </div>
     <!-- Show the embed with overlay if there's an embed, section moved to make it absolute of parent relative -->
     <div v-if="showEmbed && embedData">
       <div
         class="cut-edge__wrapper flex-grow min-h-0 absolute inset-0 z-20 py-5 md:py-8 xl:py-12 px-4 md:px-18 xl:px-32 opacity-0 transition-opacity duration-300 ease-linear custom-embed-m"
         :class="[
-          getOutlineBorder,
-          {
-            'opacity-100': isEmbedVisible,
-            'pointer-events-none z-negative': !isEmbedVisible,
-          },
-        ]"
-        style="
-          top: 50%;
-          left: 0;
-          transform: translateY(-50%);
-          z-index: 99;
-          display: flex;
-          align-items: center;
-          width: auto !important;
-        "
+            getOutlineBorder,
+            {
+              'opacity-100': isEmbedVisible,
+              'pointer-events-none z-negative': !isEmbedVisible,
+            },
+          ]"
+        style="top: 50%;left: 0;transform: translateY(-50%);z-index: 99;display: flex;align-items: center; width: auto !important;"
       >
-        <div
-          ref="embedWrapper"
-          :class="{ 'relative w-full h-full main-parent': true }"
-        >
+        <div ref="embedWrapper" :class="{'relative w-full h-full main-parent':true}">
           <component
             v-if="embedData"
             ref="embed"
@@ -317,9 +245,9 @@
             :isMobileDevice="isMobileDevice"
             class="h-full w-full border overflow-hidden bg-black"
             :class="{
-              'border-purple': embedName === 'TwitchEmbed',
-              'border-red': embedName === 'YouTubeEmbed',
-            }"
+                'border-purple': embedName === 'TwitchEmbed',
+                'border-red': embedName === 'YouTubeEmbed',
+              }"
             :width="'100%'"
             :height="'100%'"
           ></component>
@@ -336,16 +264,12 @@ import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 import embedMixin from "../../../mixins/embedFrameMixin";
 
 import PlayButton from "../../helpers/PlayButton.vue";
-import CommonContainer from "../CommonContainer/CommonContainer.vue";
-import {useTwitchEmbedStore} from "../../stores/twitchEmbedStore";
-
-const { embed, startPlayer, stopPlayer } = useTwitchEmbedStore()
+import isBoxInViewport from "../../../mixins/isBoxInViewport";
 
 export default {
   name: "EmbedContainerNumbered",
   mixins: [embedMixin],
   components: {
-    CommonContainer: CommonContainer,
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
     "play-button": PlayButton,
@@ -373,7 +297,7 @@ export default {
   ],
   data: function () {
     return {
-      isOverlayVisible: false,
+      isOverlayVisible: true,
       isEmbedVisible: false,
       isTitleVisible: false,
       glowStyling: {
@@ -436,10 +360,8 @@ export default {
   },
   methods: {
     setIsMobileDevice() {
-      const checkDeviceType = navigator.userAgent
-        .toLowerCase()
-        .match(/mobile/i);
-      if (checkDeviceType) {
+      const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
+      if(checkDeviceType) {
         this.isMobileDevice = true;
       } else {
         this.isMobileDevice = false;
@@ -453,12 +375,10 @@ export default {
       ) {
         if (this.embedName === "TwitchEmbed") {
           this.glowStyling.glow = "cut-edge__wrapper--twitch";
-          this.cornerCutStyling.outlineBorder =
-            "cut-edge__clipped--twitch border-purple";
+          this.cornerCutStyling.outlineBorder = "cut-edge__clipped--twitch border-purple";
         } else if (this.embedName === "YouTubeEmbed") {
           this.glowStyling.glow = "cut-edge__wrapper--youtube";
-          this.cornerCutStyling.outlineBorder =
-            "cut-edge__clipped--youtube border-red";
+          this.cornerCutStyling.outlineBorder = "cut-edge__clipped--youtube border-red";
         }
       }
 
@@ -483,23 +403,25 @@ export default {
         }
       }, 0);
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
-      startPlayer();
+      this.$refs.embed.startPlayer();
       this.$emit("hide-controls");
     },
     scrollOut() {
-      // if (this.$root.isVisibleVideoContainer) {
-      //   return;
-      // }
-      // if (this.showOverlay || this.showArt) {
-      //   this.isOverlayVisible = true;
-      //   this.isEmbedVisible = false;
-      // }
-      // if (this.$refs.embed.isPlaying()) {
-      //   this.$refs.embed.stopPlayer();
-      // }
-      // window.removeEventListener("scroll", this.checkIfBoxInViewPort);
-      // this.$emit("show-controls");
+      if (this.showOverlay || this.showArt) {
+        this.isOverlayVisible = true;
+        this.isEmbedVisible = false;
+      }
+      if (this.$refs.embed.isPlaying()) {
+        this.$refs.embed.stopPlayer();
+      }
+      window.removeEventListener("scroll", this.checkIfBoxInViewPort);
+      this.$emit("show-controls");
     },
   },
+  // created() {
+  //   if(!this.showOnline && this.embedData){
+  //     this.mouseEntered();
+  //   }
+  // }
 };
 </script>

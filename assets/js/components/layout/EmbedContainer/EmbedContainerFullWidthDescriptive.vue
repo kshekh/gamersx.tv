@@ -169,7 +169,6 @@
 <script>
 import TwitchEmbed from "../../embeds/TwitchEmbedFullWidth.vue";
 import YouTubeEmbed from "../../embeds/YouTubeFullWidth.vue";
-import embedFrameMixin from "../../../mixins/embedFrameMixin";
 
 export default {
   name: "EmbedContainerFullWidthDescriptive",
@@ -177,7 +176,6 @@ export default {
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
   },
-  mixins: [embedFrameMixin],
   props: [
     "title",
     "info",
@@ -250,9 +248,7 @@ export default {
       this.playVideo();
     },
     playVideo() {
-      this.$root.$emit("close-other-layouts", this.$root.containerId);
-      this.closeContainer();
-
+      this.$root.$emit("close-other-layouts", this.embedData.elementId);
       if (this.$refs.embed) this.$refs.embed.startPlayer();
     },
     videoBuffered() {

@@ -10,7 +10,8 @@
         <div
           v-if="showEmbed && embedData"
           class="w-full h-full relative overflow-hidden"
-          @click="clickContainer(embedData.elementId)"
+          @mouseenter="mouseEntered"
+          @mouseleave="mouseLeave"
         >
           <img
             v-if="showArt && image"
@@ -61,28 +62,19 @@
 
     <div
       v-if="showEmbed && embedData"
-      ref="embedWrapper"
-      :style="embedSize"
+      class="cut-edge__wrapper absolute z-30 transition-opacity-transform ease-linear duration-500"
       :class="[
-        'cut-edge__wrapper',
-        'absolute',
-        'z-30',
-        'transition-opacity-transform',
-        'ease-linear',
-        'duration-500',
         getGlow,
         {
           invisible: !isEmbedVisible,
         },
       ]"
+      ref="embedWrapper"
+      :style="embedSize"
     >
-      <CommonContainer
-        @on-pin="onPinHandler"
-        @close-container="closeContainer"
-        @on-mouse-down="onMouseDownHandler"
-        :isPinActive="isPinBtnActive"
-        :isMoveActive="isMoveBtnActive"
-        :innerWrapperClassNames="getOutline"
+      <div
+        class="w-full h-full flex flex-col relative cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
+        :class="getOutline"
       >
         <div class="flex-grow min-h-0 relative">
           <div class="absolute inset-0 bg-black overflow-hidden">
@@ -146,7 +138,7 @@
             {{ liveViewerCount }} viewers
           </h6>
         </a>
-      </CommonContainer>
+      </div>
     </div>
   </div>
 
@@ -197,20 +189,9 @@
             'pointer-events-none z-negative': !isEmbedVisible,
           },
         ]"
-        style="
-          top: 50%;
-          left: 0;
-          transform: translateY(-50%);
-          z-index: 99;
-          display: flex;
-          align-items: center;
-          width: auto !important;
-        "
+        style="top: 50%;left: 0;transform: translateY(-50%);z-index: 99;display: flex;align-items: center; width: auto !important;"
       >
-        <div
-          ref="embedWrapper"
-          :class="{ 'relative w-full h-full main-parent': true }"
-        >
+        <div ref="embedWrapper" :class="{'relative w-full h-full main-parent':true}">
           <component
             v-if="embedData"
             ref="embed"
@@ -239,17 +220,13 @@ import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 
 import embedMixin from "../../../mixins/embedFrameMixin";
-import CommonContainer from "../CommonContainer/CommonContainer.vue";
-import PlayButton from "../../helpers/PlayButton.vue";
-import {useTwitchEmbedStore} from "../../stores/twitchEmbedStore";
 
-const { embed, startPlayer, stopPlayer } = useTwitchEmbedStore()
+import PlayButton from "../../helpers/PlayButton.vue";
 
 export default {
   name: "EmbedContainerClassicLg",
   mixins: [embedMixin],
   components: {
-    CommonContainer: CommonContainer,
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
     "play-button": PlayButton,
@@ -331,30 +308,34 @@ export default {
         }
       }, 0);
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
-      startPlayer();
+      this.$refs.embed.startPlayer();
 
       this.$emit("hide-controls");
     },
     scrollOut() {
-      if (this.$root.isVisibleVideoContainer) {
-        return;
-      }
       if (this.showOverlay || this.showArt) {
         this.isOverlayVisible = true;
         this.isEmbedVisible = false;
       }
       // if (this.$refs.embed.isPlaying()) {
-      stopPlayer();
+      this.$refs.embed.stopPlayer();
       // }
       window.removeEventListener("scroll", this.checkIfBoxInViewPort);
       this.$emit("show-controls");
     },
     setIsMobileDevice() {
-      const checkDeviceType = navigator.userAgent
-        .toLowerCase()
-        .match(/mobile/i);
-      this.isMobileDevice = !!checkDeviceType;
-    },
+      const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
+      if(checkDeviceType) {
+        this.isMobileDevice = true;
+      } else {
+        this.isMobileDevice = false;
+      }
+    }
   },
+  // created() {
+  //   if(!this.showOnline && this.embedData){
+  //     this.mouseEntered();
+  //   }
+  // }
 };
 </script>
