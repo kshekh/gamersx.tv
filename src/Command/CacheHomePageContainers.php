@@ -93,9 +93,11 @@ class CacheHomePageContainers extends Command
                         $thisRow['rowPaddingBottom'] = ($row->getRowPaddingBottom() != null)? $row->getRowPaddingBottom(): 0;
 
 //                        $containers = array();
-                        $containerized = $containerizer($row);
+                        $containerized = $containerizer(toBeContainerized: $row);
+//                        if ($row->getTitle() === 'NumberedRow') {
+//                            dd($containerized);
+//                        }
                         $channels = $containerized->getContainers();
-
                         foreach ($channels as $key => $channel) {
                             $channels[$key]['isGlowStyling'] = $row->getIsGlowStyling();
                         }

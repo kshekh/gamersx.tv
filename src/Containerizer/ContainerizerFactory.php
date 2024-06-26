@@ -28,11 +28,18 @@ class ContainerizerFactory
         $this->entityManager = $entityManager;
     }
 
+    /*
+     * The __invoke() method is called when a script tries to call an object as a function.
+     * This is called when we have a method like $containerizer($row)
+     */
     public function __invoke($toBeContainerized): ContainerizerInterface | null
     {
         $containerized = null;
 
         if ($toBeContainerized instanceof HomeRowItem) {
+//            if ($toBeContainerized->getItemType() !== 'streamer' && $toBeContainerized->getItemType() !== 'game') {
+//                dd($toBeContainerized->getItemType());
+//            }
             switch($toBeContainerized->getItemType()) {
                 case HomeRowItem::TYPE_GAME:
                     $containerized = new TwitchGameContainerizer(
@@ -80,6 +87,7 @@ class ContainerizerFactory
                     );
                     break;
                 case HomeRowItem::TYPE_TWITCH_VIDEO:
+                    dd(debug_backtrace()[1]['function'], $toBeContainerized);
                     $containerized = new TwitchVideoContainerizer(
                         homeRowItem: $toBeContainerized,
                         twitch: $this->twitch,

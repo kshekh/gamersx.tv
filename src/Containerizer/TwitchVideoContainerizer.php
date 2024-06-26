@@ -36,18 +36,22 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
      */
     public function getContainers(): array
     {
+        dd('okay');
         $qb = $this->entityManager->createQueryBuilder();
-//        $query = $qb->select('hri')
-//            ->from(HomeRowItem::class, 'hri')
-//            ->where('hri.id != :id')
-//            ->setParameter('id', $this->homeRowItem->getId())
-//            ->andWhere('hri.is_unique_container = 0')
-//            ->andWhere('hri.isPublished = 1')
-//            ->andWhere('hri.videoId = :videoId')
-//            ->setParameter('videoId', $this->homeRowItem->getVideoId());
+        $query = $qb->select('hri')
+            ->from(HomeRowItem::class, 'hri')
+            ->where('hri.id != :id')
+            ->setParameter('id', $this->homeRowItem->getId())
+            ->andWhere('hri.is_unique_container = 0')
+            ->andWhere('hri.isPublished = 1')
+            ->andWhere('hri.videoId = :videoId')
+            ->setParameter('videoId', $this->homeRowItem->getVideoId());
 
 //        $check_unique_item = $query->getQuery()->execute();
-        dd($qb->select('hri')->from(HomeRowItem::class, 'hri')->where('hri.itemType = :itemType')->setParameter('itemType', 'twitch_video')->getQuery()->execute());
+        if ($this->homeRowItem->getVideoId() !== 'https://www.twitch.tv/videos/1886732468') {
+            dd($query->getQuery()->execute(), $this->homeRowItem->getId(), $this->homeRowItem->getVideoId());
+        }
+//        dd($qb->select('hri')->from(HomeRowItem::class, 'hri')->where('hri.itemType = :itemType')->setParameter('itemType', 'twitch_video')->getQuery()->execute());
         $is_unique_container =  $this->homeRowItem->getIsUniqueContainer();
         if($is_unique_container == 0 && (!empty($check_unique_item) && count($check_unique_item) > 1 && array_key_exists(0, $check_unique_item) && $check_unique_item[0]['id'] != $this->homeRowItem->getId())) {
 
