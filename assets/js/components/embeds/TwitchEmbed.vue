@@ -1,8 +1,8 @@
 <template>
-  <div @mouseover="showTwitchEmbed = true" @mouseenter="console.log('in')" @mouseleave="console.log('out')">
+  <div @mouseover="showTwitchEmbed = true" @mouseenter="startPlayer" @mouseleave="stopPlayer">
     <img
       v-if="image && isBuffering"
-      :src="image.url"
+      :src="image['url']"
       class="relative top-1/2 transform -translate-y-1/2 w-full"
     />
     <video
@@ -28,10 +28,9 @@
       @load="handleIframeLoad"
       width="854"
       height="480"
-      frameborder="0"
-      allowfullscreen="true"
-      scrolling="no"
-    ></iframe>
+      allowfullscreen="allowfullscreen"
+    >
+    </iframe>
     <div
       v-else
       :id="embedDataCopy.elementId"

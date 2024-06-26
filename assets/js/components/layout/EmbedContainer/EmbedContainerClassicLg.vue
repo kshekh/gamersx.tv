@@ -3,6 +3,8 @@
     <div class="cut-edge__wrapper w-full h-full" :class="getGlow">
       <div
         @click="isShowTwitchEmbed = true"
+        @mouseenter="console.log('mouse has entered')"
+        @mouseleave="console.log('mouse has left')"
         class="w-full h-full cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
         :class="getOutline"
       >
@@ -15,8 +17,10 @@
         >
           <img
             v-if="showArt && image"
+            alt="Embed with custom art"
             :src="image.url"
             class="relative top-1/2 transform -translate-y-1/2 w-full object-fit"
+            onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
           />
           <img
             v-else-if="showOverlay"
@@ -30,7 +34,7 @@
           <!--            src="/images/live-icon.gif"-->
           <!--            class="" style="position: absolute;top: 10px;width: 75px;right: 0;"-->
           <!--          />-->
-          <play-button
+          <PlayButton
             class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none"
             :videoType="playBtnColor"
           />
@@ -40,8 +44,10 @@
         <div v-else-if="showArt && image" class="w-full h-full">
           <a :href="link" class="block w-full h-full overflow-hidden">
             <img
-              :src="image.url"
+              :src="image['url']"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
+              alt="No embed"
+              onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
             />
           </a>
         </div>
@@ -229,7 +235,7 @@ export default {
   components: {
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
-    "play-button": PlayButton,
+    PlayButton: PlayButton,
   },
   props: [
     "title",
@@ -325,11 +331,7 @@ export default {
     },
     setIsMobileDevice() {
       const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
-      if(checkDeviceType) {
-        this.isMobileDevice = true;
-      } else {
-        this.isMobileDevice = false;
-      }
+      this.isMobileDevice = !!checkDeviceType;
     }
   },
   // created() {

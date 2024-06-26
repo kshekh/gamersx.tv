@@ -23,7 +23,6 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
 
     public function getContainers(): array
     {
-        return Array();
         $qb = $this->entityManager->createQueryBuilder();
         $query = $qb->select('hri')
             ->from('App:HomeRowItem', 'hri')

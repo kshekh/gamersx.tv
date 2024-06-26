@@ -31,7 +31,6 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
     public function getContainers(): array
     {
         try {
-            return Array();
             $topic_id = $this->homeRowItem->getTopic()['topicId'];
             $repository = $this->entityManager->getRepository(HomeRowItem::class);
             $uniqueIds = $repository->findUniqueItem(

@@ -84,7 +84,7 @@ export default {
       if (this.$refs.itemWrapper) {
         const rootWidth = this.$refs.itemWrapper.offsetWidth;
         const scaleSize = rootWidth / this.embedWidth;
-        if (this.$refs.embedWrapper != undefined) {
+        if (this.$refs.embedWrapper !== undefined) {
           this.$refs.embedWrapper.style.transformOrigin = "left center";
           this.$refs.embedWrapper.style.transform = `translateY(-50%) scale(${scaleSize})`;
           this.$refs.embedWrapper.style.opacity = "0";
