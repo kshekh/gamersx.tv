@@ -14,6 +14,9 @@ class NoEmbedContainer extends LiveContainerizer implements ContainerizerInterfa
         $this->homeRowItem = $homeRowItem;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function getContainers(): array
     {
         $homeRowInfo = new HomeRowInfo();

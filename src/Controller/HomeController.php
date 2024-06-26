@@ -57,12 +57,7 @@ class HomeController extends AbstractController
 //             $defaultLifetime = 0,
 //             $directory = '/Users/ahmed/Herd/gamersx.tv/filesystem_cache'
 //         );
-        $cache = new RedisAdapter(new \Predis\Client(
-            [
-                'scheme' => 'tcp',
-                'host' => 'redis://' . $this->redis_host,
-            ]
-        ), 'namespace', 0);
+        $cache = new RedisAdapter(new \Predis\Client(['host' => 'redis']), 'namespace', 0);
 
         $rowChannels = $cache->getItem('home');
         $home_container_refreshed_at = null;

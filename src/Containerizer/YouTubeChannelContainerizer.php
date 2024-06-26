@@ -24,8 +24,11 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
     {
         try {
             $topic_id = $this->homeRowItem->getTopic()['topicId'];
-            $check_unique_item =  $this->entityManager->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
-            $uniqueIds = $check_unique_item->fetchFirstColumn();
+            $repository = $this->entityManager->getRepository(HomeRowItem::class);
+            $uniqueIds = $repository->findUniqueItem(
+                key: 'topicId',
+                value: $topic_id
+            );
             $is_unique_container =  $this->homeRowItem->getIsUniqueContainer();
 
             if($is_unique_container == 0 && count($uniqueIds) && $uniqueIds[0] != $this->homeRowItem->getId()) {
@@ -165,8 +168,8 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
             }
 
             return Array();
-        } catch (\Exception $e) {
-            dd($e->getMessage() . "\n" . $e->getLine());
+        } catch (\Exception $ex) {
+            dd('message: ' . $ex->getMessage() . '\n' . 'file: ' . $ex->getFile() . '\n' . 'line: ' . $ex->getLine() . '\n' . 'code: ' . $ex->getCode());
         }
     }
 }

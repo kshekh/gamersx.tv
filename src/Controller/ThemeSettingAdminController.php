@@ -11,9 +11,10 @@ use Exception;
 use Symfony\Component\HttpFoundation\{JsonResponse,
     Request,
     Response};
+use Sonata\AdminBundle\Controller\CRUDController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class ThemeSettingAdminController
+class ThemeSettingAdminController extends CRUDController
 {
 
     public EntityManagerInterface $em;
@@ -53,7 +54,7 @@ class ThemeSettingAdminController
         // set the theme for the current Admin Form
         $this->setFormTheme($formView, $this->admin->getFilterTheme());
 
-        $template = $this->templateRegistry->getTemplate('list');
+        $template = $this->admin->getTemplateRegistry()->getTemplate('list');
 
         $getMasterTheme = $this->em->getRepository(MasterTheme::class)->findAll();
         if(empty($getMasterTheme)) {

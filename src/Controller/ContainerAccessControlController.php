@@ -3,24 +3,24 @@
 namespace App\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Sonata\AdminBundle\Controller\CRUDController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\{
     JsonResponse,
     Request};
 use Symfony\Component\Serializer\SerializerInterface;
-//use Sonata\AdminBundle\Controller\CRUDController;
 
-class ContainerAccessControlController
+class ContainerAccessControlController extends CrudController
 {
     private SerializerInterface $serializer;
     private Filesystem $filesystem;
-    private EntityManagerInterface $em;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(SerializerInterface $serializer, Filesystem $filesystem, EntityManagerInterface $em)
+    public function __construct(SerializerInterface $serializer, Filesystem $filesystem, EntityManagerInterface $entityManager)
     {
         $this->serializer = $serializer;
         $this->filesystem = $filesystem;
-        $this->em = $em;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -36,7 +36,7 @@ class ContainerAccessControlController
             $return = ['status'=> 0,'msg' => sprintf('unable to find the object with id: %s', $id)];
         } else {
             $object->setIsBlacklisted(0);
-            $this->em->flush();
+            $this->entityManager->flush();
 
             $msg = 'Container removed from blacklist.';
             $this->addFlash('sonata_flash_success', $msg);
@@ -66,7 +66,7 @@ class ContainerAccessControlController
                 $object->setIsFullSiteBlacklisted(1);
                 $msg = 'Container added to full site blacklist.';
             }
-            $this->em->flush();
+            $this->entityManager->flush();
             $this->addFlash('sonata_flash_success', $msg);
             $return = ['status'=> 1,'msg'=> $msg];
 

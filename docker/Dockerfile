@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 ARG HOST_USER_UID=1001
 ARG HOST_USER_GID=1001
 
@@ -16,8 +18,8 @@ COPY composer.json composer.lock /app/
 
 RUN composer install \
     --ignore-platform-reqs \
+    --optimize-autoloader \
     --no-interaction \
-    --no-plugins \
     --no-scripts \
     --prefer-dist \
     --quiet
@@ -89,7 +91,7 @@ WORKDIR /app
 
 COPY . /app/
 
-COPY --from=vendor --chown=root:root /app/vendor/. /app/vendor
+COPY --from=vendor --chown=root:root /app/vendor /app/vendor
 
 RUN pecl install -o -f redis \
 &&  rm -rf /tmp/pear \
@@ -112,20 +114,25 @@ COPY ./docker/php/php.ini /usr/local/etc/php/
 # - Build the static Sonata bundles with Symfony for the web server
 # - Prepare the backend scripts for the upstream task.
 
-FROM php:8.3-cli as backend
+FROM php:8.3-cli-alpine as backend
 
 RUN docker-php-source extract \
     && docker-php-source delete
 
-RUN mkdir /app
+WORKDIR /app
 
 # Copy the site files
 COPY . /app/
 
-WORKDIR /app
-
 # Copy php dependencies from Stage 1
-COPY --from=vendor /app/vendor/. /app/vendor
+COPY --from=vendor --chown=root:root /app/vendor /app/vendor
+
+# Verify that the vendor directory was copied successfully
+RUN if [ ! -d "/app/vendor" ]; then \
+        echo "Error: Vendor directory not found!"; \
+        ls -la /app; \
+        exit 1; \
+    fi
 
 # Build the bundles
 RUN php bin/console assets:install
@@ -203,7 +210,7 @@ CMD ["/usr/local/bin/docker-php-entrypoint","php-fpm","-F"]
 # - Install the node modules.
 # - Build the remaining static front end assets.
 
-FROM node:22-alpine as frontend
+FROM node:21.7.3-alpine as frontend
 
 ARG HOST_USER_UID
 ARG HOST_USER_GID

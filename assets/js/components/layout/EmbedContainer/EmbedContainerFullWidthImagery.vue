@@ -79,15 +79,12 @@ import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 
 import PlayButton from "../../helpers/PlayButton.vue";
-import embedMixin from "../../../mixins/embedFrameMixin";
-import isBoxInViewport from "../../../mixins/isBoxInViewport";
-import {useTwitchEmbedStore} from "../../stores/twitchEmbedStore";
 
-const { embed, startPlayer, stopPlayer, isPlaying } = useTwitchEmbedStore()
+import isBoxInViewport from "../../../mixins/isBoxInViewport";
 
 export default {
   name: "EmbedContainerFullWidthImagery",
-  mixins: [isBoxInViewport, embedMixin],
+  mixins: [isBoxInViewport],
   components: {
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
@@ -129,11 +126,7 @@ export default {
   },
   methods: {
     playVideo() {
-      this.isCursorHere = false;
-      this.closeContainer();
-
-      this.$root.$emit("close-other-layouts", this.embedData.elementId);
-
+      this.$root.$emit("close-other-layouts");
       setTimeout(() => {
         if (this.showOverlay || this.showArt) {
           this.isOverlayVisible = false;
@@ -142,7 +135,7 @@ export default {
       }, 0);
 
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
-      startPlayer();
+      this.$refs.embed.startPlayer();
       this.$emit("hide-controls");
     },
     scrollOut() {
@@ -150,9 +143,9 @@ export default {
         this.isOverlayVisible = true;
         this.isEmbedVisible = false;
       }
-      if (isPlaying()) {
-        stopPlayer();
-      }
+      // if (this.$refs.embed.isPlaying()) {
+      this.$refs.embed.stopPlayer();
+      // }
       window.removeEventListener("scroll", this.checkIfBoxInViewPort);
       this.$emit("show-controls");
     },

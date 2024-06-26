@@ -1,0 +1,28 @@
+sonata_admin:
+    title: 'GamersX Admin'
+    title_logo: '/images/controller.png'
+    templates:
+        layout: 'admin/standard_layout.html.twig'
+
+    dashboard:
+        groups:
+            app.admin.group.home:
+                label: Admin
+                items:
+                    - admin.home_row
+                    - admin.home_row_item
+                    - admin.theme
+                    - admin.site_settings
+                    - admin.container_access_control
+            sonata_user:
+                label: Users and Partners
+                items:
+                    - admin.partner
+                    - admin.partner_role
+        blocks:
+            - { type: sonata.admin.block.admin_list, position: left }
+
+sonata_block:
+    blocks:
+        sonata.admin.block.admin_list:
+            contexts: [admin]

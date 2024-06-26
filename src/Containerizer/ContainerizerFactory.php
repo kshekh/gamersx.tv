@@ -16,7 +16,6 @@ class ContainerizerFactory
     private YouTubeApi $youtube;
     private LoggerInterface $logger;
     private UploaderHelper $uploader;
-//    private $containerizers;
     private EntityManagerInterface $entityManager;
 
     public function __construct(TwitchApi $twitch, YouTubeApi $youtube, UploaderHelper $uploader,
@@ -29,44 +28,82 @@ class ContainerizerFactory
         $this->entityManager = $entityManager;
     }
 
+    /*
+     * The __invoke() method is called when a script tries to call an object as a function.
+     * This is called when we have a method like $containerizer($row)
+     */
     public function __invoke($toBeContainerized): ContainerizerInterface | null
     {
         $containerized = null;
 
         if ($toBeContainerized instanceof HomeRowItem) {
+//            if ($toBeContainerized->getItemType() !== 'streamer' && $toBeContainerized->getItemType() !== 'game') {
+//                dd($toBeContainerized->getItemType());
+//            }
             switch($toBeContainerized->getItemType()) {
-            case HomeRowItem::TYPE_GAME:
-                $containerized = new TwitchGameContainerizer($toBeContainerized, $this->twitch,$this->entityManager);
-                break;
-            case HomeRowItem::TYPE_STREAMER:
-                $containerized = new TwitchStreamerContainerizer($toBeContainerized, $this->twitch,$this->entityManager);
-                break;
-            case HomeRowItem::TYPE_CHANNEL:
-                $containerized = new YouTubeChannelContainerizer($toBeContainerized, $this->youtube,$this->entityManager);
-                break;
-            case HomeRowItem::TYPE_YOUTUBE:
-                $containerized = new YouTubeQueryContainerizer($toBeContainerized, $this->youtube);
-                break;
-            case HomeRowItem::TYPE_LINK:
-                $containerized = new NoEmbedContainer($toBeContainerized);
-                break;
-            case HomeRowItem::TYPE_YOUTUBE_VIDEO:
-                $containerized = new YouTubeVideoContainerizer($toBeContainerized, $this->youtube,$this->entityManager);
-                break;
-            case HomeRowItem::TYPE_YOUTUBE_PLAYLIST:
-                $containerized = new YouTubePlayListContainerizer($toBeContainerized, $this->youtube);
-                break;
-            case HomeRowItem::TYPE_TWITCH_VIDEO:
-                $containerized = new TwitchVideoContainerizer($toBeContainerized, $this->twitch,$this->entityManager);
-                break;
-            default:
-                break;
+                case HomeRowItem::TYPE_GAME:
+                    $containerized = new TwitchGameContainerizer(
+                        homeRowItem: $toBeContainerized,
+                        twitch: $this->twitch,
+                        entityManager: $this->entityManager
+                    );
+                    break;
+                case HomeRowItem::TYPE_STREAMER:
+                    $containerized = new TwitchStreamerContainerizer(
+                        homeRowItem: $toBeContainerized,
+                        twitch: $this->twitch,
+                        entityManager: $this->entityManager
+                    );
+                    break;
+                case HomeRowItem::TYPE_CHANNEL:
+                    $containerized = new YouTubeChannelContainerizer(
+                        homeRowItem: $toBeContainerized,
+                        youtube: $this->youtube,
+                        entityManager: $this->entityManager
+                    );
+                    break;
+                case HomeRowItem::TYPE_YOUTUBE:
+                    $containerized = new YouTubeQueryContainerizer(
+                        homeRowItem: $toBeContainerized,
+                        youtube: $this->youtube
+                    );
+                    break;
+                case HomeRowItem::TYPE_LINK:
+                    $containerized = new NoEmbedContainer(
+                        homeRowItem: $toBeContainerized
+                    );
+                    break;
+                case HomeRowItem::TYPE_YOUTUBE_VIDEO:
+                    $containerized = new YouTubeVideoContainerizer(
+                        homeRowItem: $toBeContainerized,
+                        youtube: $this->youtube,
+                        entityManager: $this->entityManager
+                    );
+                    break;
+                case HomeRowItem::TYPE_YOUTUBE_PLAYLIST:
+                    $containerized = new YouTubePlayListContainerizer(
+                        homeRowItem: $toBeContainerized,
+                        youtube: $this->youtube
+                    );
+                    break;
+                case HomeRowItem::TYPE_TWITCH_VIDEO:
+                    $containerized = new TwitchVideoContainerizer(
+                        homeRowItem: $toBeContainerized,
+                        twitch: $this->twitch,
+                        entityManager: $this->entityManager
+                    );
+                    break;
+                default:
+                    break;
             }
-            $containerized->setLogger($this->logger);
-            $containerized->setUploader($this->uploader);
+            $containerized->setLogger(logger: $this->logger);
+            $containerized->setUploader(uploader: $this->uploader);
             return $containerized;
         } elseif ($toBeContainerized instanceof HomeRow) {
-            return new HomeRowContainerizer($toBeContainerized, $this);
+            return new HomeRowContainerizer(
+                homeRow: $toBeContainerized,
+                containerizer: $this
+            );
         }
 
         return null;
