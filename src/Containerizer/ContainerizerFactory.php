@@ -87,7 +87,6 @@ class ContainerizerFactory
                     );
                     break;
                 case HomeRowItem::TYPE_TWITCH_VIDEO:
-                    dd(debug_backtrace()[1]['function'], $toBeContainerized);
                     $containerized = new TwitchVideoContainerizer(
                         homeRowItem: $toBeContainerized,
                         twitch: $this->twitch,

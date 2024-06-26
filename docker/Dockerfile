@@ -18,8 +18,8 @@ COPY composer.json composer.lock /app/
 
 RUN composer install \
     --ignore-platform-reqs \
+    --optimize-autoloader \
     --no-interaction \
-    --no-plugins \
     --no-scripts \
     --prefer-dist \
     --quiet
@@ -119,15 +119,20 @@ FROM php:8.3-cli-alpine as backend
 RUN docker-php-source extract \
     && docker-php-source delete
 
-RUN mkdir /app
+WORKDIR /app
 
 # Copy the site files
 COPY . /app/
 
-WORKDIR /app
-
 # Copy php dependencies from Stage 1
-COPY --from=vendor /app/vendor /app/
+COPY --from=vendor --chown=root:root /app/vendor /app/vendor
+
+# Verify that the vendor directory was copied successfully
+RUN if [ ! -d "/app/vendor" ]; then \
+        echo "Error: Vendor directory not found!"; \
+        ls -la /app; \
+        exit 1; \
+    fi
 
 # Build the bundles
 RUN php bin/console assets:install

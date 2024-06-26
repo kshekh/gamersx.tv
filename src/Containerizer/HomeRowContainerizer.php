@@ -6,19 +6,26 @@ use App\Entity\HomeRow;
 
 class HomeRowContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
-    private ContainerizerFactory $containerizer;
-    private HomeRow $homeRow;
 
-    public function __construct(HomeRow $homeRow, ContainerizerFactory $containerizer) {
-        $this->homeRow = $homeRow;
-        $this->containerizer = $containerizer;
-    }
+    public function __construct(
+        private readonly ContainerizerFactory $containerizer,
+        private readonly HomeRow              $homeRow
+    ) {}
 
     public function getContainers(): array {
         $containers = Array();
         $containerizer = $this->containerizer;
+
+        /*
+         * The getItems method calls all HomeRowItems related to the current homeRow instance
+         */
         foreach ($this->homeRow->getItems() as $item) {
+            /*
+             * Calling the $containerizer object triggers the invoke function
+             * which takes $item as an argument
+             */
             $containerized = $containerizer($item);
+            // Merge the retrieved containers into the empty $containers array
             $containers = array_merge($containers, $containerized->getContainers());
         }
 

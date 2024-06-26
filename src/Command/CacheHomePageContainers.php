@@ -69,6 +69,10 @@ class CacheHomePageContainers extends Command
                     ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
 
 //                $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+                /*
+                 * Cycle through all the rows of the home_rows table
+                 * Examples: FullWidthDescription, NumberedRow, etc.
+                 */
                 foreach ($rows as $row) {
                     $isPublishedStartTime = $this->homeRowInfo->convertHoursMinutesToSeconds($row->getIsPublishedStart());
                     $isPublishedEndTime = $this->homeRowInfo->convertHoursMinutesToSeconds($row->getIsPublishedEnd());
@@ -92,11 +96,10 @@ class CacheHomePageContainers extends Command
                         $thisRow['rowPaddingTop'] = ($row->getRowPaddingTop() != null)? $row->getRowPaddingTop(): 0;
                         $thisRow['rowPaddingBottom'] = ($row->getRowPaddingBottom() != null)? $row->getRowPaddingBottom(): 0;
 
-//                        $containers = array();
+                        // Returns an item of type HomeRowContainerizer
                         $containerized = $containerizer(toBeContainerized: $row);
-//                        if ($row->getTitle() === 'NumberedRow') {
-//                            dd($containerized);
-//                        }
+
+                        // Calls the getContainers() method in HomeRowContainerizer
                         $channels = $containerized->getContainers();
                         foreach ($channels as $key => $channel) {
                             $channels[$key]['isGlowStyling'] = $row->getIsGlowStyling();

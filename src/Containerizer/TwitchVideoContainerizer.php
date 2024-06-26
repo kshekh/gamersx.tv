@@ -5,6 +5,8 @@ namespace App\Containerizer;
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
 use App\Service\TwitchApi;
+use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
@@ -36,7 +38,13 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
      */
     public function getContainers(): array
     {
-        dd('okay');
+        /*
+         * The following query looks for an item or items from home_row_items that match the following conditions:
+         * - The ID does not match the ID of the current homeRowItem instance
+         * - The field is_unique_container is set to false
+         * - The field isPublished is set to true
+         * - The videoId matches the videoId of the current HomeRowItem instance
+         */
         $qb = $this->entityManager->createQueryBuilder();
         $query = $qb->select('hri')
             ->from(HomeRowItem::class, 'hri')
@@ -47,14 +55,12 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
             ->andWhere('hri.videoId = :videoId')
             ->setParameter('videoId', $this->homeRowItem->getVideoId());
 
-//        $check_unique_item = $query->getQuery()->execute();
-        if ($this->homeRowItem->getVideoId() !== 'https://www.twitch.tv/videos/1886732468') {
-            dd($query->getQuery()->execute(), $this->homeRowItem->getId(), $this->homeRowItem->getVideoId());
-        }
+//        if ($this->homeRowItem->getVideoId() !== 'https://www.twitch.tv/videos/1886732468') {
+//            dd($query->getQuery()->execute(), $this->homeRowItem->getId(), $this->homeRowItem->getVideoId());
+//        }
 //        dd($qb->select('hri')->from(HomeRowItem::class, 'hri')->where('hri.itemType = :itemType')->setParameter('itemType', 'twitch_video')->getQuery()->execute());
         $is_unique_container =  $this->homeRowItem->getIsUniqueContainer();
         if($is_unique_container == 0 && (!empty($check_unique_item) && count($check_unique_item) > 1 && array_key_exists(0, $check_unique_item) && $check_unique_item[0]['id'] != $this->homeRowItem->getId())) {
-
             return Array();
         }
 
@@ -62,6 +68,10 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
         $homeRowItem = $this->homeRowItem;
         $twitch = $this->twitch;
 
+        /*
+         * Contrary to its name videoId contains a full URL instead of just an ID
+         * PHP_URL_PATH: Outputs the path of the URL parsed. https://www.php.net/manual/en/url.constants.php#constant.php-url-path
+         */
         $separatedUrl = explode('/', parse_url($homeRowItem->getVideoId(), PHP_URL_PATH));
 
         if (! array_key_exists(0, $separatedUrl)) {
@@ -76,9 +86,7 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
             $videoId = $separatedUrl[3];
             $embedUrl = 'https://clips.twitch.tv/embed?clip='.$videoId.'&parent='.$parent;
         }
-        if ($videoId !== '1886732468') {
-            dd($separatedUrl);
-        }
+
         try {
             if ($separatedUrl[1] == 'videos') {
                 $info = $twitch->getVideoInfo($videoId)->toArray();
@@ -89,15 +97,16 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
             $this->logger->error("Call to twitch failed with the message \"".$e->getMessage()."\"");
             return Array();
         }
-        dd($info);
+
         $info = $info['data'] ? $info['data'][0] : null;
-        if (!$info) {
+        if (is_null($info)) {
             return Array();
         }
-
+//        dd($this->homeRowItem->getTimezone());
         $broadcast = null;
         $description = $homeRowItem->getDescription();
-        $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+//        $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+        $currentTime = new DateTime('now', new DateTimeZone($this->homeRowItem->getTimezone()));
 
         $isPublished = $homeRowItem->getIsPublished();
 
@@ -105,13 +114,24 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
             return Array();
         }
 
-        $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
-        $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
-
-        if (
-            !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
-            (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
-        ) {
+        $isPublishedStartTime = new DateTime($this->homeRowItem->getIsPublishedStart(), new DateTimeZone($this->homeRowItem->getTimezone()));
+        $isPublishedEndTime = new DateTime($this->homeRowItem->getIsPublishedEnd(), new DateTimeZone($this->homeRowItem->getTimezone()));
+//        dd($currentTime, $isPublishedStartTime, $isPublishedEndTime);
+//        $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds(dateTime: $homeRowItem->getIsPublishedStart());
+//        $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds(dateTime: $homeRowItem->getIsPublishedEnd());
+//        dd($currentTime, $isPublishedStartTime, $isPublishedEndTime);
+        /*
+         * The following condition checks if:
+         * - isPublishedStartTime is not null
+         * - isPublishedEndTime is not null
+         * - currentTime is greater than or equal to isPublishedStartTime
+         * - currentTime is less than or equal to isPublishedEndTime
+         */
+        if ($currentTime >= $isPublishedStartTime && $currentTime <= $isPublishedEndTime) {
+//        if (
+//            !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
+//            (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
+//        ) {
             // No need for a container if we're not displaying and not online
             if (($homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_NONE) &&
                 $broadcast === NULL) {
@@ -149,12 +169,10 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
                 'type' => $separatedUrl[1] != 'videos' ? 'twitch_clip' : 'twitch_video'
             ];
 
-            if ($info !== NULL) {
-                if ($info['view_count'] !== NULL) {
-                    $info['statistics_view_count'] = $info['view_count'];
-                }
+            if ($info['view_count'] !== NULL) {
+                $info['statistics_view_count'] = $info['view_count'];
             }
-
+//            dd('This far');
             $channels = [
                 [
                     'info' => $info,
