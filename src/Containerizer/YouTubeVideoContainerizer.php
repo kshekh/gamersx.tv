@@ -5,6 +5,8 @@ namespace App\Containerizer;
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
 use App\Service\YouTubeApi;
+use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 
@@ -57,7 +59,9 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
         $info = $info[0];
         $broadcast = null;
         $description = $homeRowItem->getDescription();
-        $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+        $timezone = $this->homeRowItem->getTimezone() ?? 'America/Los_Angeles';
+        $currentTime = new DateTime('now', new DateTimeZone($timezone));
+//         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
 
         $isPublished = $homeRowItem->getIsPublished();
 
@@ -65,13 +69,12 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
             return Array();
         }
 
-        $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
-        $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
+//         $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
+//         $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
+        $isPublishedStartTime = new DateTime($this->homeRowItem->getIsPublishedStart(), new DateTimeZone($timezone));
+        $isPublishedEndTime = new DateTime($this->homeRowItem->getIsPublishedEnd(), new DateTimeZone($timezone));
 
-        if (
-            !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
-            (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
-        ) {
+        if ($currentTime >= $isPublishedStartTime && $currentTime <= $isPublishedEndTime) {
             // No need for a container if we're not displaying and not online
             if (($homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_NONE) &&
                 $broadcast === NULL) {

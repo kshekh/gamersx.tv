@@ -145,7 +145,7 @@ import PlayButton from "../helpers/PlayButton.vue";
 import embedMixin from "../../mixins/embedFrameMixin";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
-// require("swiped-events");
+import 'swiped-events';
 
 export default {
   name: "ClassicSm",

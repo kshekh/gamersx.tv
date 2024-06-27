@@ -6,6 +6,8 @@ use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
 use App\Service\TwitchApi;
+use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -125,7 +127,9 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
 
             $rowName = $homeRowItem->getHomeRow()->getTitle();
             $description = $homeRowItem->getDescription();
-            $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+            $timezone = $this->homeRowItem->getTimezone() ?? 'America/Los_Angeles';
+            $currentTime = new DateTime('now', new DateTimeZone($timezone));
+//             $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
 
             $isPublished = $homeRowItem->getIsPublished();
 
@@ -134,13 +138,12 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
             }
 //            if($homeRowItem->getId() === 280) dd('I am 280');
 //            if($homeRowItem->getId() === 333) dd('I am 333');
-            $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
-            $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
+//             $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
+//             $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
+            $isPublishedStartTime = new DateTime($this->homeRowItem->getIsPublishedStart(), new DateTimeZone($timezone));
+            $isPublishedEndTime = new DateTime($this->homeRowItem->getIsPublishedEnd(), new DateTimeZone($timezone));
 
-            if (
-                !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
-                (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
-            ) {
+            if ($currentTime >= $isPublishedStartTime && $currentTime <= $isPublishedEndTime) {
                 $link = match ($homeRowItem->getLinkType()) {
                     HomeRowItem::LINK_TYPE_GAMERSX => '/game/' . $info['id'],
                     HomeRowItem::LINK_TYPE_EXTERNAL => 'https://www.twitch.tv/directory/game/' . $info['name'],

@@ -5,6 +5,8 @@ namespace App\Containerizer;
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
 use App\Service\YouTubeApi;
+use DateTime;
+use DateTimeZone;
 use Exception;
 
 class YouTubeQueryContainerizer extends LiveContainerizer implements ContainerizerInterface
@@ -35,7 +37,9 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
 
         $query = $homeRowItem->getTopic()['topicId'];
         $description = $homeRowItem->getDescription();
-        $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+        $timezone = $this->homeRowItem->getTimezone() ?? 'America/Los_Angeles';
+        $currentTime = new DateTime('now', new DateTimeZone($timezone));
+//         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
 
         $isPublished = $homeRowItem->getIsPublished();
 
@@ -43,13 +47,12 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
             return Array();
         }
 
-        $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
-        $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
+        $isPublishedStartTime = new DateTime($this->homeRowItem->getIsPublishedStart(), new DateTimeZone($timezone));
+        $isPublishedEndTime = new DateTime($this->homeRowItem->getIsPublishedEnd(), new DateTimeZone($timezone));
+//         $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
+//         $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
 
-        if (
-            !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
-           (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
-        ) {
+        if ($currentTime >= $isPublishedStartTime && $currentTime <= $isPublishedEndTime) {
             try {
                 $broadcasts = $youtube->searchLiveChannels($query, $max)->getItems();
             } catch (Exception $e) {
