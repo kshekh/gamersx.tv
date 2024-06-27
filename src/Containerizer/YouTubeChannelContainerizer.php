@@ -5,6 +5,8 @@ namespace App\Containerizer;
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
 use App\Service\YouTubeApi;
+use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 
 class YouTubeChannelContainerizer extends LiveContainerizer implements ContainerizerInterface
@@ -52,7 +54,9 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
             $info = $info[0];
             $broadcast = !empty($broadcast) ? $broadcast[0] : NULL;
             $description = $homeRowItem->getDescription();
-            $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+            $timezone = $this->homeRowItem->getTimezone() ?? 'America/Los_Angeles';
+            $currentTime = new DateTime('now', new DateTimeZone($timezone));
+//             $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
             $liveViewers = 0;
             if ($broadcast) {
                 $videoDetails = $youtube->getVideoInfo($broadcast->getId()->getVideoId())->getItems();
@@ -64,13 +68,12 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
                 return Array();
             }
 
-            $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
-            $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
+            $isPublishedStartTime = new DateTime($this->homeRowItem->getIsPublishedStart(), new DateTimeZone($timezone));
+            $isPublishedEndTime = new DateTime($this->homeRowItem->getIsPublishedEnd(), new DateTimeZone($timezone));
+//             $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
+//             $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
 
-            if (
-                !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
-                (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
-            ) {
+            if ($currentTime >= $isPublishedStartTime && $currentTime <= $isPublishedEndTime) {
                 // No need for a container if we're not displaying and not online
                 if (($homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_NONE) &&
                     $broadcast === NULL) {

@@ -109,7 +109,7 @@ import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerImagery
 import SliderDot from "../helpers/SliderDot.vue";
 import SliderArrowBig from "../helpers/SliderArrowBig.vue";
 
-// require("swiped-events");
+import 'swiped-events';
 
 export default {
   name: "FullWidthImagery",

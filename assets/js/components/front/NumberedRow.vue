@@ -101,7 +101,7 @@ import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription
 import SliderArrow from "../helpers/SliderArrow.vue";
 import PlayButton from "../helpers/PlayButton.vue";
 
-// require("swiped-events");
+import 'swiped-events';
 
 export default {
   name: "NumberedRow",
@@ -196,11 +196,7 @@ export default {
     clickNext() {},
     setIsMobileDevice() {
       const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
-      if(checkDeviceType) {
-        this.isMobileDevice = true;
-      } else {
-        this.isMobileDevice = false;
-      }
+      this.isMobileDevice = !!checkDeviceType;
     },
   },
   mounted: function () {
