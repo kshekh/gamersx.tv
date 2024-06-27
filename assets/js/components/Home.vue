@@ -2,8 +2,8 @@
   <!-- remove "text-white" later -->
   <div class="text-white">
     <template v-if="settings.rows && settings.rows.length">
-      <div v-for="(row, index) in settings.rows" :key="row.id" :style="{paddingTop:row.rowPaddingTop+'px',paddingBottom:row.rowPaddingBottom+'px'}">
-        <component :is="row.componentName" :settings="row" :rowPosition="index"></component>
+      <div v-for="(row, index) in settings.rows" :key="row['id']" :style="{paddingTop:row['rowPaddingTop']+'px',paddingBottom:row['rowPaddingBottom']+'px'}">
+        <component :is="row['componentName']" :settings="row" :rowPosition="index"></component>
       </div>
     </template>
     <div v-else>
@@ -24,7 +24,7 @@
       <!--      <component v-else :is="defaultSkeleton"></component>-->
     </div>
     <Modal v-model="modal" @update:modelValue="handleModalUpdate" no-close-on-backdrop ok-title="Continue anyway"
-      @ok="handleCloseModal">
+      @ok="handleCloseModal" value>
       <div class="flex flex-col md:flex-row items-center justify-start">
         <div class="w-full md:w-1/3 flex items-center justify-center md:justify-start">
           <video autoplay="autoplay" muted="muted" loop="loop" playsinline="" class="h-full md:w-full object-cover">
@@ -120,7 +120,6 @@ export default {
 
 <script setup>
 import axios from "axios";
-import LazyLoadComponent from "./LazyLoad";
 import FullWidthDescriptiveSkeleton from "./skeletons/FullWidthDescriptiveSkeleton.vue";
 import ClassicSmSkeleton from "./skeletons/ClassicSmSkeleton.vue";
 import ClassicMdSkeleton from "./skeletons/ClassicMdSkeleton.vue";
@@ -132,7 +131,41 @@ import FullWidthImagerySkeleton from "./skeletons/FullWidthImagerySkeleton.vue";
 import Modal from "./Modal.vue";
 import Cookies from "js-cookie";
 import TwitchIconWhite from "~/images/twitch-icon-white.png"
-import { ref, onMounted, onUnmounted } from "@vue/compat";
+import {ref, onMounted, onUnmounted, defineAsyncComponent, nextTick} from "@vue/compat";
+
+// const FullWidthDescriptive = defineAsyncComponent({
+//   loader: () => import("./front/FullWidthDescriptive.vue"),
+//   loadingComponent: FullWidthDescriptiveSkeleton
+// });
+// const Parallax = defineAsyncComponent({
+//   loader: () => import("./front/Parallax.vue"),
+//   loadingComponent: ParallaxSkeleton
+// });
+// const NumberedRow = defineAsyncComponent({
+//   loader: () => import("./front/NumberedRow.vue"),
+//   loadingComponent: NumberedRowSkeleton
+// });
+// const ClassicSm = defineAsyncComponent({
+//   loader: () => import("./front/ClassicSm.vue"),
+//   loadingComponent: ClassicSmSkeleton,
+//   delay: 200
+// });
+// const ClassicMd = defineAsyncComponent({
+//   loader: () => import("./front/ClassicMd.vue"),
+//   loadingComponent: ClassicMdSkeleton
+// });
+// const ClassicLg = defineAsyncComponent({
+//   loader: () => import("./front/ClassicLg.vue"),
+//   loadingComponent: ClassicLgSkeleton
+// });
+// const FullWidthImagery = defineAsyncComponent({
+//   loader: () => import("./front/FullWidthImagery.vue"),
+//   loadingComponent: FullWidthImagerySkeleton
+// });
+// const ClassicVertical = defineAsyncComponent({
+//   loader: () => import("./front/ClassicVertical.vue"),
+//   loadingComponent: ClassicVerticalSkeleton
+// });
 
 const cachedSkeletonRows = ref([]);
 const defaultSkeleton = "FullWidthDescriptiveSkeleton";
@@ -147,7 +180,7 @@ const defaultSkeletonRows = [
   "FullWidthImagerySkeleton"
 ];
 const modal = ref(false);
-const pollingApiData = ref(null);
+const pollingApiData = ref(0);
 const settings = ref({
   rows: []
 });
@@ -178,11 +211,11 @@ function requestSessionsApi() {
     if (!Cookies.get("twitch_")) {
       axios.get("/home/sessions/api")
         .then(response => {
-          if (response.data.isLoggedIn && !response.data.isRequiredToLoginTwitch) {
+          if (response.data['isLoggedIn'] && !response.data['isRequiredToLoginTwitch']) {
             modal.value = false;
           } else {
             // Immediately after setting `modal` to `true`, request Vue to wait for next DOM update cycle
-            this.$nextTick(() => {
+            nextTick(() => {
               modal.value = false; //false here will disable the modal entirely, helpful to disable when developing
             });
           }
@@ -234,7 +267,7 @@ onMounted(() => {
   }, requestPollingDelay);
 });
 onUnmounted(() => {
-  window.clearInterval(pollingApiData);
+  window.clearInterval(pollingApiData.value);
 });
 
 /** We use this a lot for scrolling because JS % is remainder, not modulo **/

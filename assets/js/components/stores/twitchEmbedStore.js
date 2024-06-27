@@ -13,7 +13,7 @@ export const useTwitchEmbedStore = defineStore('twitchEmbedStore', () => {
   });
 
   function createEmbed(elementId, height, width, channel, vodId, parent) {
-    embed.value = new Twitch.Embed(elementId, {
+    const embed = new Twitch.Embed(elementId, {
       width: width || 540,
       height: height || 300,
       channel: channel,
@@ -48,13 +48,13 @@ export const useTwitchEmbedStore = defineStore('twitchEmbedStore', () => {
 
   function startPlayer() {
     if (!isPlaying) {
-      embed.value.play();
+      embed.play();
       setIsNotPlaying();
     }
   }
   function stopPlayer() {
     if (isPlaying) {
-      embed.value.pause();
+      embed.pause();
       setIsPlaying();
     }
   }

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Exception;
+use Sonata\AdminBundle\Controller\CRUDController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -12,7 +13,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use ZipArchive;
 
-class HomeRowAdminController
+class HomeRowAdminController extends CRUDController
 {
     private SerializerInterface $serializer;
     private Filesystem $filesystem;

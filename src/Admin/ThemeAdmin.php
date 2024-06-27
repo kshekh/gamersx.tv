@@ -1,58 +1,22 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Admin;
 
-use App\Form\TopicType;
 use App\Entity\HomeRowItem;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use App\Form\TopicType;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
-final class ThemeAdmin extends AbstractAdmin
+class ThemeAdmin extends AbstractAdmin
 {
-    protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
+    protected function configureFormFields(FormMapper $form): void
     {
-        $datagridMapper
-            ->add('topicId')
-            ->add('label')
-            ->add('itemType')
-            ->add('bannerImage')
-            ->add('embedBackground')
-            ->add('customArt')
-            ->add('artBackground')
-            ;
-    }
-
-    protected function configureListFields(ListMapper $listMapper): void
-    {
-        $listMapper
-            ->add('topicId')
-            ->add('label')
-            ->add('itemType')
-            ->add('bannerImage')
-            ->add('embedBackground')
-            ->add('customArt')
-            ->add('artBackground')
-            ->add(ListMapper::NAME_ACTIONS, null, [
-                'actions' => [
-                    'show' => [],
-                    'edit' => [],
-                    'delete' => [],
-                ],
-            ]);
-    }
-
-    protected function configureFormFields(FormMapper $formMapper): void
-    {
-        $formMapper
+        $form
             ->add('itemType', ChoiceType::class, [
                 'choices' => [
                     'Games' => HomeRowItem::TYPE_GAME,
@@ -78,14 +42,24 @@ final class ThemeAdmin extends AbstractAdmin
             ->add('topic', TopicType::class, [
                 'searchType' => 'game',
                 'inherit_data' => true
-            ])
-            ;
+            ]);
     }
 
-    protected function configureShowFields(ShowMapper $showMapper): void
+    protected function configureDatagridFilters(DatagridMapper $filter): void
     {
-        $showMapper
-            ->add('id')
+        $filter
+            ->add('topicId')
+            ->add('label')
+            ->add('itemType')
+            ->add('bannerImage')
+            ->add('embedBackground')
+            ->add('customArt')
+            ->add('artBackground');
+    }
+
+    protected function configureListFields(ListMapper $list): void
+    {
+        $list
             ->add('topicId')
             ->add('label')
             ->add('itemType')
@@ -93,6 +67,25 @@ final class ThemeAdmin extends AbstractAdmin
             ->add('embedBackground')
             ->add('customArt')
             ->add('artBackground')
-            ;
+            ->add(ListMapper::NAME_ACTIONS, null, [
+                'actions' => [
+                    'show' => [],
+                    'edit' => [],
+                    'delete' => [],
+                ],
+            ]);
+    }
+
+    protected function configureShowFields(ShowMapper $show): void
+    {
+        $show
+            ->add('id')
+            ->add('topicId')
+            ->add('label')
+            ->add('itemType')
+            ->add('bannerImage')
+            ->add('embedBackground')
+            ->add('customArt')
+            ->add('artBackground');
     }
 }

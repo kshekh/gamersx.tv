@@ -135,8 +135,8 @@ export default {
     currentChannelEmbedName() {
       let selected = this.displayChannels[this.rowIndex];
 
-      if (selected && selected.embedName) {
-        return selected.embedName;
+      if (selected && selected['embedName']) {
+        return selected['embedName'];
       } else {
         // Default for now
         return "TwitchEmbed";
@@ -146,14 +146,14 @@ export default {
   methods: {
     showChannel: function (channel) {
       return (
-        (channel.showOnline &&
-          (channel.onlineDisplay.showArt ||
-            channel.onlineDisplay.showEmbed ||
-            channel.onlineDisplay.showOverlay)) ||
-        (!channel.showOnline &&
-          (channel.offlineDisplay.showArt ||
-            channel.offlineDisplay.showEmbed ||
-            channel.offlineDisplay.showOverlay))
+        (channel['showOnline'] &&
+          (channel['onlineDisplay'].showArt ||
+            channel['onlineDisplay'].showEmbed ||
+            channel['onlineDisplay'].showOverlay)) ||
+        (!channel['showOnline'] &&
+          (channel['offlineDisplay'].showArt ||
+            channel['offlineDisplay'].showEmbed ||
+            channel['offlineDisplay'].showOverlay))
       );
     },
     first: function () {
@@ -180,6 +180,7 @@ export default {
       this.rowIndex = channelIndex;
     },
     mouseEntered() {
+      console.log('ok')
       this.isAllowPlaying = true;
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
     },
@@ -217,6 +218,7 @@ export default {
     },
   },
   mounted() {
+    console.log('The root is ' + this.$root.isVisibleVideoContainer);
     if (!this.isRowFirst) {
       this.isAllowPlaying = false;
     } else {

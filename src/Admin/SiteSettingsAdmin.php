@@ -1,42 +1,44 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Admin;
 
 use App\Entity\SiteSettings;
+use Doctrine\ORM\EntityManagerInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
-use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
-use Vich\UploaderBundle\Form\Type\VichImageType;
 
-final class SiteSettingsAdmin extends AbstractAdmin
+class SiteSettingsAdmin extends AbstractAdmin
 {
-    /**
-     * @param RouteCollectionInterface $collection
-     */
-    protected function configureRoutes(RouteCollectionInterface $collection): void
-    {
-        $row = $this->getConfigurationPool()->getContainer()->get('doctrine')->getManager()->getRepository(SiteSettings::class)->findOneBy([]);
-        $collection->add('save_theme_setting','save_theme_setting');
-        $collection->add('save_theme','save_theme');
-        $collection->add('get_theme_setting','get_theme_setting');
-        $collection->remove('export');
+//    private EntityManagerInterface $entityManager;
+//
+//    public function __construct(EntityManagerInterface $entityManager)
+//    {
+//        $this->entityManager = $entityManager;
+//    }
 
-        if (isset($row) && $row->getId() == true) {
-            $collection->remove('create');
+    /**
+     * @throws \JsonException
+     */
+    protected function configureFormFields(FormMapper $form): void
+    {
+        if ($this->isGranted('ROLE_LOGIN_ALLOWED')) {
+            $form
+                ->add('disableHomeAccess', null, [
+                    'label' => 'Disable HomePage Access'
+                ])
+            ;
         }
     }
 
     /**
-     * @param ListMapper $listMapper
+     * @throws \JsonException
      */
-    protected function configureListFields(ListMapper $listMapper): void
+    protected function configureListFields(ListMapper $list): void
     {
         if ($this->isGranted('ROLE_LOGIN_ALLOWED')) {
-            $listMapper
+            $list
                 ->add('disableHomeAccess', null, [
                     'editable' => true,
                     'label' => 'Disable HomePage Access'
@@ -45,32 +47,16 @@ final class SiteSettingsAdmin extends AbstractAdmin
         }
     }
 
-    protected function configureFormFields(FormMapper $formMapper): void
-    {
-        if ($this->isGranted('ROLE_LOGIN_ALLOWED')) {
-            $formMapper
-                ->add('disableHomeAccess', null, [
-                    'label' => 'Disable HomePage Access'
-                ])
-            ;
-        }
-    }
-
-    protected function configureBatchActions($actions)
-    {
-        unset($actions['export']);
-        unset($actions['delete']);
-
-        return $actions;
-    }
-
-    public function configureActionButtons($action, $object = null)
-    {
-        $buttons = parent::configureActionButtons($action, $object);
-        if (in_array($action, array('list'))) {
-            unset($buttons['create']);
-        }
-
-        return $buttons;
-    }
+//    protected function configureRoutes(RouteCollectionInterface $collection): void
+//    {
+//        $row = $this->entityManager->getRepository(SiteSettings::class)->findOneBy([]);
+//        $collection->add('save_theme_setting','save_theme_setting');
+//        $collection->add('save_theme','save_theme');
+//        $collection->add('get_theme_setting','get_theme_setting');
+//        $collection->remove('export');
+//
+//        if (isset($row) && $row->getId() == true) {
+//            $collection->remove('create');
+//        }
+//    }
 }

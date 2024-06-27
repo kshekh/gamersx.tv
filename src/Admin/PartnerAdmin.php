@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Admin;
 
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -10,21 +8,24 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 
-final class PartnerAdmin extends AbstractAdmin
+class PartnerAdmin extends AbstractAdmin
 {
-
-    protected function configureDatagridFilters(DatagridMapper $filter): void
+    protected function configureFormFields(FormMapper $form): void
     {
-        $filter
+        $form->add('name');
+    }
+
+    protected function configureDatagridFilters(DatagridMapper $datagrid): void
+    {
+        $datagrid
             ->add('id')
-            ->add('name')
-            ;
+            ->add('name');
     }
 
     protected function configureListFields(ListMapper $list): void
     {
         $list
-            ->add('id')
+            ->addIdentifier('id')
             ->add('name')
             ->add(ListMapper::NAME_ACTIONS, null, [
                 'actions' => [
@@ -35,18 +36,10 @@ final class PartnerAdmin extends AbstractAdmin
             ]);
     }
 
-    protected function configureFormFields(FormMapper $form): void
-    {
-        $form
-            ->add('name')
-            ;
-    }
-
     protected function configureShowFields(ShowMapper $show): void
     {
         $show
             ->add('id')
-            ->add('name')
-            ;
+            ->add('name');
     }
 }

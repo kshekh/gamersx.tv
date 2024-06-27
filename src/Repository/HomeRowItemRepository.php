@@ -6,6 +6,7 @@ use App\Entity\HomeRowItem;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Result;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -45,23 +46,37 @@ class HomeRowItemRepository extends ServiceEntityRepository
 
     /**
      * @throws Exception
+     * @throws NonUniqueResultException
      */
-    public function findUniqueItem($key, $value, $how_row_item_id = ''): Result
+    public function findUniqueItem($key, $value, $how_row_item_id = ''): string|array|int|float
     {
-        $em = $this->getEntityManager();
-        $connection = $em->getConnection();
+//        $entityManager = $this->getEntityManager();
+        $connection = $this->getEntityManager()->getConnection();
 
-        $sql = "SELECT * FROM home_row_item WHERE JSON_EXTRACT(topic, :key) = :value AND is_unique_container = 0 AND is_published = 1";
+//        $qb = $this->getEntityManager()->createQueryBuilder()
+//            ->select('hri.id')
+//            ->from(HomeRowItem::class, 'hri')
+//            ->where("JSON_EXTRACT('hri.topic', '$." . $key . "') = :value")
+//            ->andWhere('hri.is_unique_container = 0')
+//            ->setParameter('value', $value);
+//        dd($qb->getQuery()->getResult());
+//        return $qb->getQuery()->getSingleColumnResult();
+
+        $sql = '
+                SELECT * FROM home_row_item
+                WHERE JSON_EXTRACT(topic, :key) = :value
+                AND is_unique_container = 0 AND is_published = 1
+               ';
+
         if($how_row_item_id != '') {
             $sql .= " AND id != $how_row_item_id ";
         }
-        $statement = $connection->prepare($sql);
-        $statement->bindValue('key', '$.' . $key);
-        $statement->bindValue('value', $value);
+        $statement = $connection->executeQuery($sql, [
+            'key' => '$.' . $key,
+            'value' => $value
+        ]);
 
-        return $statement->executeQuery();
-
-//        return $statement->fetchAll();
+        return $statement->fetchFirstColumn();
     }
 
     public function findStreamer()

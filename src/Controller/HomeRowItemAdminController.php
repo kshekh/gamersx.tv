@@ -9,6 +9,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
+use Sonata\AdminBundle\Controller\CRUDController;
+use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
+use Sonata\AdminBundle\Exception\LockException;
+use Sonata\AdminBundle\Exception\ModelManagerException;
+use Sonata\AdminBundle\Exception\ModelManagerThrowable;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\{
@@ -25,21 +30,21 @@ use ZipArchive;
 use function assert;
 
 
-class HomeRowItemAdminController
+class HomeRowItemAdminController extends CRUDController
 {
     private SerializerInterface $serializer;
     private Filesystem $filesystem;
     private StorageInterface $storage;
     private YouTubeApi $youtube;
-    private EntityManagerInterface $em;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(SerializerInterface $serializer, Filesystem $filesystem, StorageInterface $storage,YouTubeApi $youtube, EntityManagerInterface $em)
+    public function __construct(SerializerInterface $serializer, Filesystem $filesystem, StorageInterface $storage, YouTubeApi $youtube, EntityManagerInterface $entityManager)
     {
         $this->serializer = $serializer;
         $this->filesystem = $filesystem;
         $this->storage = $storage;
         $this->youtube = $youtube;
-        $this->em = $em;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -59,7 +64,7 @@ class HomeRowItemAdminController
         $class = new ReflectionClass($this->admin->hasActiveSubClass() ? $this->admin->getActiveSubClass() : $this->admin->getClass());
 
         if ($class->isAbstract()) {
-            return $this->renderWithExtraParams(
+            return $this->render(
                 '@SonataAdmin/CRUD/select_subclass.html.twig',
                 [
                     'base_template' => $this->getBaseTemplate(),
@@ -117,7 +122,7 @@ class HomeRowItemAdminController
                     $check_unique_item = $qb->getQuery()->getResult();
                 } else {
                     $topic_id = $submittedObject->getTopic()['topicId'];
-                    $check_unique_item =  $this->em->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
+                    $check_unique_item =  $this->entityManager->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
                 }
 
                 if(!empty($check_unique_item)) {
@@ -129,9 +134,9 @@ class HomeRowItemAdminController
                     // set the theme for the current Admin Form
                     $this->setFormTheme($formView, $this->admin->getFormTheme());
                     // NEXT_MAJOR: Remove this line and use commented line below it instead
-                    $template = $this->admin->getTemplate($templateKey);
+                    $template = $this->admin->getTemplateRegistry()->getTemplate($templateKey);
 
-                    return $this->renderWithExtraParams($template, [
+                    return $this->render($template, [
                         'action' => 'create',
                         'form' => $formView,
                         'object' => $newObject,
@@ -207,8 +212,8 @@ class HomeRowItemAdminController
                                 $homeRowItemOperation->setStreamerName($streamer_name);
                                 $homeRowItemOperation->setViewer($viewer);
                                 $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
-                                $this->em->persist($homeRowItemOperation);
-                                $this->em->flush();
+                                $this->entityManager->persist($homeRowItemOperation);
+                                $this->entityManager->flush();
                             }
                         }
 
@@ -244,8 +249,8 @@ class HomeRowItemAdminController
                                 $homeRowItemOperation->setGameName($streamer_name);
                                 $homeRowItemOperation->setIsWhitelisted($is_whitelisted);
                                 $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
-                                $this->em->persist($homeRowItemOperation);
-                                $this->em->flush();
+                                $this->entityManager->persist($homeRowItemOperation);
+                                $this->entityManager->flush();
                             }
                         }
                     }
@@ -321,8 +326,8 @@ class HomeRowItemAdminController
                             $submittedObjectVideo->setPlaylistId($newObject->getId());
                             $submittedObjectVideo->setUpdatedAt($submittedObject->getUpdatedAt());
 
-                            $this->em->persist($submittedObjectVideo);
-                            $this->em->flush();
+                            $this->entityManager->persist($submittedObjectVideo);
+                            $this->entityManager->flush();
                         }
                     }
 
@@ -340,14 +345,10 @@ class HomeRowItemAdminController
                     );
 
                     // redirect to edit mode
-                    return $this->redirectTo($newObject);
+                    return $this->redirectTo($request, $newObject);
                 } catch (ModelManagerException $e) {
                     // NEXT_MAJOR: Remove this catch.
                     $this->handleModelManagerException($e);
-
-                    $isFormValid = false;
-                } catch (ModelManagerThrowable $e) {
-                    $this->handleModelManagerThrowable($e);
 
                     $isFormValid = false;
                 }
@@ -379,10 +380,10 @@ class HomeRowItemAdminController
         $this->setFormTheme($formView, $this->admin->getFormTheme());
 
         // NEXT_MAJOR: Remove this line and use commented line below it instead
-        $template = $this->admin->getTemplate($templateKey);
-        // $template = $this->templateRegistry->getTemplate($templateKey);
+//        $template = $this->admin->getTemplate($templateKey);
+         $template = $this->admin->getTemplateRegistry()->getTemplate($templateKey);
 
-        return $this->renderWithExtraParams($template, [
+        return $this->render($template, [
             'action' => 'create',
             'form' => $formView,
             'object' => $newObject,
@@ -463,7 +464,7 @@ class HomeRowItemAdminController
                     $check_unique_item = $qb->getQuery()->getResult();
                 } else {
                     $topic_id = $submittedObject->getTopic()['topicId'];
-                    $check_unique_item =  $this->em->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id,$id);
+                    $check_unique_item =  $this->entityManager->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id,$id);
                 }
 
                 if(!empty($check_unique_item)) {
@@ -475,11 +476,10 @@ class HomeRowItemAdminController
                     $formView = $form->createView();
                     // set the theme for the current Admin Form
                     $this->setFormTheme($formView, $this->admin->getFormTheme());
-                    // NEXT_MAJOR: Remove this line and use commented line below it instead
-                    $template = $this->admin->getTemplate($templateKey);
-                    // $template = $this->templateRegistry->getTemplate($templateKey);
 
-                    return $this->renderWithExtraParams($template, [
+                     $template = $this->admin->getTemplateRegistry()->getTemplate($templateKey);
+
+                    return $this->render($template, [
                         'action' => 'edit',
                         'form' => $formView,
                         'object' => $existingObject,
@@ -512,7 +512,7 @@ class HomeRowItemAdminController
 
 
                     if($existingObject->getItemType() == HomeRowItem::TYPE_GAME) {
-                        $delete_home_row_item =  $this->em->getRepository(HomeRowItemOperation::class)->deleteByHomeRowItem($existingObject->getId());
+                        $delete_home_row_item =  $this->entityManager->getRepository(HomeRowItemOperation::class)->deleteByHomeRowItem($existingObject->getId());
                         $game_name = $submittedObject->getTopic()['label']??'';
                         $game_id = $submittedObject->getTopic()['topicId']??'';
                         $streamerIndexArr = $requestData['streamer_index']??[];
@@ -558,14 +558,14 @@ class HomeRowItemAdminController
                                 $homeRowItemOperation->setStreamerName($streamer_name);
                                 $homeRowItemOperation->setViewer($viewer);
                                 $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
-                                $this->em->persist($homeRowItemOperation);
-                                $this->em->flush();
+                                $this->entityManager->persist($homeRowItemOperation);
+                                $this->entityManager->flush();
                             }
                         }
 
                     } else if($submittedObject->getItemType() == HomeRowItem::TYPE_STREAMER) {
 
-                        $delete_home_row_item =  $this->em->getRepository(HomeRowItemOperation::class)->deleteByHomeRowItem($existingObject->getId());
+                        $delete_home_row_item =  $this->entityManager->getRepository(HomeRowItemOperation::class)->deleteByHomeRowItem($existingObject->getId());
                         $gameIndexArr = $requestData['game_index'] ?? [];
                         if (!empty($gameIndexArr)) {
                             foreach ($gameIndexArr as $gameIndex => $gameId) {
@@ -596,8 +596,8 @@ class HomeRowItemAdminController
                                 $homeRowItemOperation->setGameName($streamer_name);
                                 $homeRowItemOperation->setIsWhitelisted($is_whitelisted);
                                 $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
-                                $this->em->persist($homeRowItemOperation);
-                                $this->em->flush();
+                                $this->entityManager->persist($homeRowItemOperation);
+                                $this->entityManager->flush();
                             }
                         }
                     }
@@ -607,10 +607,10 @@ class HomeRowItemAdminController
                         parse_str(parse_url($submittedObject->getPlaylistId(), PHP_URL_QUERY), $parameters);
                         $playlistId = $parameters['list'];
 
-                        $get_playlist_videos =  $this->em->getRepository(HomeRowItem::class)->findBy(['itemType'=>'youtube_video','playlistId'=>$submittedObject->getId()]);
+                        $get_playlist_videos =  $this->entityManager->getRepository(HomeRowItem::class)->findBy(['itemType'=>'youtube_video','playlistId'=>$submittedObject->getId()]);
                         foreach ($get_playlist_videos as $get_playlist_video_data){
-                            $this->em->remove($get_playlist_video_data);
-                            $this->em->flush();
+                            $this->entityManager->remove($get_playlist_video_data);
+                            $this->entityManager->flush();
                         }
                         $play_list_items = $youtube->getPlaylistItemsInfo($playlistId)->getItems();
 
@@ -677,8 +677,8 @@ class HomeRowItemAdminController
                             $submittedObjectVideo->setPlaylistId($submittedObject->getId());
                             $submittedObjectVideo->setUpdatedAt($submittedObject->getUpdatedAt());
 
-                            $this->em->persist($submittedObjectVideo);
-                            $this->em->flush();
+                            $this->entityManager->persist($submittedObjectVideo);
+                            $this->entityManager->flush();
                         }
                     }
 
@@ -692,7 +692,7 @@ class HomeRowItemAdminController
                     );
 
                     // redirect to edit mode
-                    return $this->redirectTo($existingObject);
+                    return $this->redirectTo($request, $existingObject);
                 } catch (ModelManagerException $e) {
                     // NEXT_MAJOR: Remove this catch.
                     $this->handleModelManagerException($e);
@@ -737,10 +737,10 @@ class HomeRowItemAdminController
         $this->setFormTheme($formView, $this->admin->getFormTheme());
 
         // NEXT_MAJOR: Remove this line and use commented line below it instead
-        $template = $this->admin->getTemplate($templateKey);
+        $template = $this->admin->getTemplateRegistry()->getTemplate($templateKey);
         // $template = $this->templateRegistry->getTemplate($templateKey);
 
-        return $this->renderWithExtraParams($template, [
+        return $this->render($template, [
             'action' => 'edit',
             'form' => $formView,
             'object' => $existingObject,
@@ -768,7 +768,7 @@ class HomeRowItemAdminController
 
         if (Request::METHOD_DELETE === $request->getMethod()) {
             // check the csrf token
-            $this->validateCsrfToken('sonata.delete');
+            $this->validateCsrfToken($request, 'sonata.delete');
 
             $objectName = $this->admin->toString($object);
 
@@ -781,10 +781,10 @@ class HomeRowItemAdminController
                 }
 
                 if($object->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
-                    $get_playlist_videos = $this->em->getRepository(HomeRowItem::class)->findBy(['itemType' => 'youtube_video', 'playlistId' => $playlist_id ]);
+                    $get_playlist_videos = $this->entityManager->getRepository(HomeRowItem::class)->findBy(['itemType' => 'youtube_video', 'playlistId' => $playlist_id ]);
                     foreach ($get_playlist_videos as $get_playlist_video_data) {
-                        $this->em->remove($get_playlist_video_data);
-                        $this->em->flush();
+                        $this->entityManager->remove($get_playlist_video_data);
+                        $this->entityManager->flush();
                     }
                 }
 
@@ -815,7 +815,7 @@ class HomeRowItemAdminController
             } catch (ModelManagerThrowable $e) {
                 $this->handleModelManagerThrowable($e);
 
-                if ($this->isXmlHttpRequest()) {
+                if ($this->isXmlHttpRequest($request)) {
                     return $this->renderJson(['result' => 'error'], Response::HTTP_OK, []);
                 }
 
@@ -829,14 +829,14 @@ class HomeRowItemAdminController
                 );
             }
 
-            return $this->redirectTo($object);
+            return $this->redirectTo($request, $object);
         }
 
         // NEXT_MAJOR: Remove this line and use commented line below it instead
-        $template = $this->admin->getTemplate('delete');
+        $template = $this->admin->getTemplateRegistry()->getTemplate('delete');
         // $template = $this->templateRegistry->getTemplate('delete');
 
-        return $this->renderWithExtraParams($template, [
+        return $this->render($template, [
             'object' => $object,
             'action' => 'delete',
             'csrf_token' => $this->getCsrfToken('sonata.delete'),

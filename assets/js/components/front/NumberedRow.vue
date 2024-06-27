@@ -7,7 +7,7 @@
         class="text-white font-calibri font-bold text-sm md:text-2xl xl:text-4xl mr-2"
       >
         {{ settings.title }}
-        <title-addinional-description v-show="settings.onGamersXtv" />
+        <TitleAdditionalDescription v-show="settings.onGamersXtv" />
       </h2>
       <!--      <div class="flex items-center space-x-5">-->
       <!--        <slider-arrow-->
@@ -24,7 +24,7 @@
     </div>
     <div :class="{'relative':isMobileDevice,'flex':true}" style="align-items: center">
       <div class="w5-center" ref="backArrow">
-        <slider-arrow
+        <SliderArrow
           :isNext="false"
           :videoType="'twitch'"
           @arrow-clicked="back()"
@@ -59,7 +59,21 @@
           <component
             :is="channel.componentName"
             v-bind="channel"
-            class=""
+            :channelName="channel['user_name']"
+            :componentName="channel['componentName']"
+            :customArt="channel['customArt']"
+            :embedData="channel['embedData']"
+            :embedName="channel['embedName']"
+            :image="channel['image']"
+            :isGlowStyling="channel['isGlowStyling']"
+            :link="channel['link']"
+            :liveViewerCount="channel['liveViewerCount']"
+            :offlineDisplay="channel['offlineDisplay']"
+            :onlineDisplay="channel['onlineDisplay']"
+            :overlay="channel['overlay']"
+            :rowName="channel['rowName']"
+            :showOnline="channel['showOnline']"
+            :title="channel['title']"
           ></component>
         </div>
       </div>
@@ -69,7 +83,7 @@
         style="right: 0"
         :class="{ sliderArrowHide: !(this.displayChannels.length > 1) }"
       >
-        <slider-arrow
+        <SliderArrow
           :isNext="true"
           :videoType="'twitch'"
           @arrow-clicked="forward()"
@@ -95,9 +109,9 @@ export default {
   components: {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
-    "title-addinional-description": TitleAdditionalDescription,
-    "slider-arrow": SliderArrow,
-    "play-button": PlayButton,
+    TitleAdditionalDescription: TitleAdditionalDescription,
+    SliderArrow: SliderArrow,
+    PlayButton: PlayButton,
   },
   props: {
     settings: {
@@ -198,14 +212,14 @@ export default {
     this.setIsMobileDevice();
   },
   updated: function () {
-    if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels.filter(this.showChannel))){
+    if(JSON.stringify(this.displayChannels) !== JSON.stringify(this.settings.channels.filter(this.showChannel))){
       this.displayChannels = this.settings.channels.filter(this.showChannel);
     }
     this.allowScrolling =
       this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
     this.max_scroll_left =
       this.$refs.channelBox.scrollWidth - this.$refs.channelBox.clientWidth;
-    if (this.max_scroll_left == 0) {
+    if (this.max_scroll_left === 0) {
       this.hideArrows();
     }
     this.hideArrows(true, false);

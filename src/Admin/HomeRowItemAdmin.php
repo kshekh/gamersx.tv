@@ -1,179 +1,30 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Admin;
 
 use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
-use App\Form\TopicType;
 use App\Form\SortAndTrimOptionsType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, TimeType, TimezoneType};
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\CallbackTransformer;
+use App\Form\TopicType;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
-use Sonata\AdminBundle\Form\Type\ModelType;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\AdminBundle\Show\ShowMapper;
-use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
+use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
-final class HomeRowItemAdmin extends AbstractAdmin
+class HomeRowItemAdmin extends AbstractAdmin
 {
-
-    public function createQuery($context = 'list'): ProxyQuery
+    protected function configureFormFields(FormMapper $form): void
     {
-        /** @var ProxyQuery $query */
-        $query = parent::createQuery($context);
-        $rootAlias = $query->getRootAliases()[0];
-
-        $query
-            ->setSortOrder('ASC')
-            ->setSortBy([], ['fieldName' => 'sortIndex']);
-
-        $query->where($query->expr()->andX(
-            $query->expr()->eq($rootAlias.'.itemType', ':itemType'),
-            $query->expr()->isNull($rootAlias.'.playlistId')
-        ));
-        $query->orWhere($rootAlias.'.itemType != :itemType');
-        $query->setParameter(':itemType', 'youtube_video');
-
-        return $query;
-    }
-
-    protected $datagridValues = array(
-        '_page' => 1,
-        '_sort_order' => 'ASC',
-        '_sort_by' => 'sortIndex'
-    );
-
-    public function configureActionButtons($action, $object = null)
-    {
-        $list = parent::configureActionButtons($action, $object);
-        $list['importForm']['template'] = 'CRUD/import_button.html.twig';
-        return $list;
-    }
-
-    public function getDashboardActions()
-    {
-        $actions = parent::getDashboardActions();
-
-        $actions['importForm'] = [
-            'label' => 'Import',
-            'url' => $this->generateUrl('importForm'),
-            'icon' => 'level-up',
-        ];
-
-        return $actions;
-    }
-
-    protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
-    {
-        $datagridMapper
-            ->add('label')
-            ->add('itemType')
-            ->add('videoId')
-            ->add('playlistId')
-            ->add('partner')
-            ->add('homeRow')
-            ->add('isPublished')
-            ->add('isPartner')
-            ->add('is_unique_container', null, [
-                'field_options' => ['expanded' => false,'choices'=>['no'=>1,'yes'=>0]],
-            ]);
-    }
-
-    protected function configureListFields(ListMapper $listMapper): void
-    {
-        $homeRows = $this->getModelManager()->findBy(HomeRow::class);
-        $homeRowsObjects = [];
-        $homeRowsTitles = [];
-        $homeRowsIds = [];
-
-        foreach ($homeRows as $homeRow) {
-            $homeRowsObjects[$homeRow->getId()] = $homeRow;
-            $homeRowsTitles[$homeRow->getId()] = $homeRow->getTitle();
-            $homeRowsIds[$homeRow->getId()] = $homeRow->getId();
-        }
-
-
-        $listMapper
-            ->add('homeRow', 'choice', [
-                'editable' => true,
-                'class' => HomeRow::class,
-                'choices' => $homeRowsTitles,
-                'sortable' => false,
-            ])
-            ->add('label', null, [
-                'sortable' => false,
-            ])
-            ->add('itemType', null, [
-                'sortable' => false
-            ])
-            ->add('videoId', null, [
-                'sortable' => false
-            ])
-            ->add('playlistId', null, [
-                'sortable' => false
-            ])
-            ->add('topic', null, [
-                'sortable' => false,
-            ])
-            ->add('sortAndTrimOptions', null, [
-                'sortable' => false,
-            ])
-            ->add('sortIndex', null, [
-                'editable' => true,
-                'sortable' => false
-            ])
-            ->add('partner')
-            ->add('isPublished', null, [
-                'editable' => true,
-                'sortable' => false
-            ])
-            ->add('isPartner', null, [
-                'sortable' => false
-            ])
-            ->add('timezone', null, [
-                'sortable' => false
-            ])
-            ->add('isPublishedStart', null, [
-                'editable' => true,
-                'sortable' => false
-            ])
-            ->add('isPublishedEnd', null, [
-                'editable' => true,
-                'sortable' => false
-            ])
-            ->add('is_unique_container', ChoiceType::class, [
-                'editable' => true,
-                'sortable' => false,
-                'template'=> 'homerowitem/column_is_unique_container.html.twig'
-            ])
-            ->add('_action', null, [
-                'actions' => [
-                    'show' => [],
-                    'edit' => [],
-                    'delete' => [],
-                    'moveUp' => [
-                        'template' => 'CRUD/list__action_reorder.html.twig',
-                        'direction' => 'up'
-                    ],
-                    'moveDown' => [
-                        'template' => 'CRUD/list__action_reorder.html.twig',
-                        'direction' => 'down'
-                    ],
-                ],
-            ]);
-    }
-
-    protected function configureFormFields(FormMapper $formMapper): void
-    {
-        $formMapper
+        $form
             ->add('sortIndex')
             ->add('showArt', null, [
                 'label' => 'Show API Thumbnail'
@@ -294,7 +145,7 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPartner')
 
             ->getFormBuilder()->addModelTransformer(new CallbackTransformer(
-                // Use the array in the form
+            // Use the array in the form
                 function ($valuesAsArray) {
                     return $valuesAsArray;
                 },
@@ -310,9 +161,114 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ));
     }
 
-    protected function configureShowFields(ShowMapper $showMapper): void
+    protected function configureDatagridFilters(DatagridMapper $datagrid): void
     {
-        $showMapper
+        $datagrid
+            ->add('label')
+            ->add('itemType')
+            ->add('videoId')
+            ->add('playlistId')
+            ->add('partner')
+            ->add('homeRow')
+            ->add('isPublished')
+            ->add('isPartner')
+            ->add('is_unique_container', null, [
+                'field_options' => [
+                    'expanded' => false,
+                    'choices' => [
+                        'no' => 1,
+                        'yes' => 0
+                    ]
+                ],
+            ]);
+    }
+
+    protected function configureListFields(ListMapper $list): void
+    {
+        $homeRows = $this->getModelManager()->findBy(HomeRow::class);
+        $homeRowsObjects = [];
+        $homeRowsTitles = [];
+        $homeRowsIds = [];
+
+        foreach ($homeRows as $homeRow) {
+            $homeRowsObjects[$homeRow->getId()] = $homeRow;
+            $homeRowsTitles[$homeRow->getId()] = $homeRow->getTitle();
+            $homeRowsIds[$homeRow->getId()] = $homeRow->getId();
+        }
+
+        $list
+            ->add('homeRow', 'choice', [
+                'editable' => true,
+                'class' => HomeRow::class,
+                'choices' => $homeRowsTitles,
+                'sortable' => false,
+            ])
+            ->add('label', null, [
+                'sortable' => false,
+            ])
+            ->add('itemType', null, [
+                'sortable' => false
+            ])
+            ->add('videoId', null, [
+                'sortable' => false
+            ])
+            ->add('playlistId', null, [
+                'sortable' => false
+            ])
+            ->add('topic', null, [
+                'sortable' => false,
+            ])
+            ->add('sortAndTrimOptions', null, [
+                'sortable' => false,
+            ])
+            ->add('sortIndex', null, [
+                'editable' => true,
+                'sortable' => false
+            ])
+            ->add('partner')
+            ->add('isPublished', null, [
+                'editable' => true,
+                'sortable' => false
+            ])
+            ->add('isPartner', null, [
+                'sortable' => false
+            ])
+            ->add('timezone', null, [
+                'sortable' => false
+            ])
+            ->add('isPublishedStart', null, [
+                'editable' => true,
+                'sortable' => false
+            ])
+            ->add('isPublishedEnd', null, [
+                'editable' => true,
+                'sortable' => false
+            ])
+            ->add('is_unique_container', ChoiceType::class, [
+                'editable' => true,
+                'sortable' => false,
+                'template'=> 'homerowitem/column_is_unique_container.html.twig'
+            ])
+            ->add('_action', null, [
+                'actions' => [
+                    'show' => [],
+                    'edit' => [],
+                    'delete' => [],
+                    'moveUp' => [
+                        'template' => 'CRUD/list__action_reorder.html.twig',
+                        'direction' => 'up'
+                    ],
+                    'moveDown' => [
+                        'template' => 'CRUD/list__action_reorder.html.twig',
+                        'direction' => 'down'
+                    ],
+                ],
+            ]);
+    }
+
+    protected function configureShowFields(ShowMapper $show): void
+    {
+        $show
             ->add('id')
             ->add('sortAndTrimOptions')
             ->add('topic')
@@ -332,38 +288,11 @@ final class HomeRowItemAdmin extends AbstractAdmin
             ->add('isPartner');
     }
 
-    protected function configureBatchActions($actions)
-    {
-
-        if ($this->hasRoute('list') && $this->hasAccess('list')) {
-            $actions['export'] = [
-                'label' => 'Download Export Zip',
-                'ask_confirmation' => FALSE,
-            ];
-        }
-
-        return $actions;
-    }
-
     protected function configureRoutes(RouteCollectionInterface $collection): void
     {
         $collection
             ->add('reorder', $this->getRouterIdParameter() . '/reorder')
             ->add('importForm')
             ->add('import');
-    }
-
-    public function alterNewInstance(object $instance): void
-    {
-        $user = $this->getConfigurationPool()->getContainer()->get('security.token_storage')->getToken()->getUser();
-        $roles = $user->getPartnerRoles();
-
-        if (!$roles->isEmpty()) {
-            $partner = $roles->first()->getPartner();
-
-            if ($partner !== null) {
-                $instance->setPartner($partner);
-            }
-        }
     }
 }

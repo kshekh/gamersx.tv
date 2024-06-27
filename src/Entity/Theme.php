@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @Vich\Uploadable
  */
 #[ORM\Entity(repositoryClass: ThemeRepository::class)]
+#[Vich\Uploadable()]
 class Theme
 {
     #[ORM\Id]
