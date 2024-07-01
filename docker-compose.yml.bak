@@ -1,7 +1,9 @@
+version: "3.5"
 services:
+
   mysql:
     container_name: gamersx-mysql
-    image: mariadb:11.4.2
+    image: mariadb:10.5.8
     env_file:
       - .env.local
     environment:
@@ -10,7 +12,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
-      - "3309:3306"
+      - "3306:3306"
     networks:
       - gamersx
     volumes:
@@ -18,9 +20,9 @@ services:
 
   redis:
     container_name: gamersx-redis
-    image: redis:7.0.15-alpine3.20
+    image: redis:5.0
     ports:
-      - "6380:6379"
+      - "6379:6379"
     networks:
       - gamersx
 
@@ -33,7 +35,7 @@ services:
       target: frontend
     # user: '1000'
     working_dir: /var/www
-    command: ["yarn", "watch"]
+    command: ['yarn', 'watch']
     volumes:
       - ./:/var/www
       - ./node_modules:/var/www/node_modules
@@ -81,7 +83,7 @@ services:
       dockerfile: ./docker/Dockerfile
       target: web
     ports:
-      - 8000:80
+      - 80:80
     volumes:
       - ./public/images/:/var/www/html/public/images/
       - ./public/build/:/var/www/html/public/build/
