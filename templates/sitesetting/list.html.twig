@@ -39,8 +39,8 @@
                                                 {% if field_description.option('sortable', false) %}
                                                     {% set sortable             = true %}
                                                     {# NEXT_MAJOR: Remove next line and uncomment the other one #}
-                                                    {% set sort_parameters      = sonata_sort_parameters(field_description, admin) %}
-                                                    {# {% set sort_parameters      = admin.datagrid.sortparameters(field_description) %} #}
+                                                    {# {% set sort_parameters      = sonata_sort_parameters(field_description, admin) %} #}
+                                                    {% set sort_parameters      = admin.datagrid.sortparameters(field_description) %}
                                                     {% set current              = admin.datagrid.values[constant('Sonata\\AdminBundle\\Datagrid\\DatagridInterface::SORT_BY')] is defined
                                                         and (admin.datagrid.values[constant('Sonata\\AdminBundle\\Datagrid\\DatagridInterface::SORT_BY')] == field_description
                                                         or admin.datagrid.values[constant('Sonata\\AdminBundle\\Datagrid\\DatagridInterface::SORT_BY')].name == sort_parameters.filter[constant('Sonata\\AdminBundle\\Datagrid\\DatagridInterface::SORT_BY')]) %}
@@ -193,16 +193,16 @@
                                                     {% for format in export_formats %}
                                                         <li>
                                                             {# NEXT_MAJOR: Remove completely next "<a>" element and uncomment the other one #}
-                                                            <a href="{{ admin.generateUrl('export', sonata_pagination_parameters(admin, 0) + {'format' : format}) }}">
+                                                            {# <a href="{{ admin.generateUrl('export', sonata_pagination_parameters(admin, 0) + {'format' : format}) }}">
                                                                 <i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>
                                                                 {{ ("export_format_" ~ format)|trans({}, 'SonataAdminBundle') }}
-                                                            </a>
-                                                            {#
+                                                            </a> #}
+
                                                             <a href="{{ admin.generateUrl('export', admin.datagrid.paginationparameters(0) + {'format' : format}) }}">
                                                                 <i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>
                                                                 {{ ("export_format_" ~ format)|trans({}, 'SonataAdminBundle') }}
                                                             </a>
-                                                            #}
+
                                                         </li>
                                                     {% endfor %}
                                                 </ul>

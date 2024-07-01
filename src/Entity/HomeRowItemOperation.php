@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\HomeRowItemOperationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: HomeRowItemOperationRepository::class)]
 
@@ -49,6 +50,7 @@ class HomeRowItemOperation
     private ?string $user_id = null;
 
     #[ORM\ManyToOne(inversedBy: 'homeRowItemOperations')]
+    #[MaxDepth(1)]
     private ?HomeRowItem $homeRowItem = null;
 
     public function getId(): ?int
