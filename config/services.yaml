@@ -127,6 +127,9 @@ services:
                     key: '%env(resolve:AWS_ACCESS_KEY_ID)%'
                     secret: '%env(resolve:AWS_SECRET_ACCESS_KEY)%'
 
+    admin.site_settings.template_registry:
+        class: Sonata\AdminBundle\Templating\MutableTemplateRegistry
+        public: true
 
     App\Controller\ThemeSettingAdminController:
         arguments:
@@ -135,8 +138,12 @@ services:
         tags:
             - { name: controller.service_arguments }
 
+    admin.home_row_item.template_registry:
+        class: Sonata\AdminBundle\Templating\MutableTemplateRegistry
+        public: true
+
     App\Controller\HomeRowItemAdminController:
         arguments:
-            $templateRegistry: '@admin.site_settings.template_registry'
+            $templateRegistry: '@admin.home_row_item.template_registry'
         tags:
             - { name: controller.service_arguments }
