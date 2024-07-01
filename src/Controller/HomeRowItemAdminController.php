@@ -124,7 +124,7 @@ class HomeRowItemAdminController extends CRUDController
                 } else {
                     $topic_id = $submittedObject->getTopic()['topicId'];
                     $check_unique_item =  $this->em->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
-                    $check_unique_item = $check_unique_item->fetchAllAssociative(); // Fetch the results as an associative array
+                    // $check_unique_item = $check_unique_item->fetchAllAssociative(); // Fetch the results as an associative array
                 }
 
                 if(!empty($check_unique_item)) {
@@ -473,7 +473,7 @@ class HomeRowItemAdminController extends CRUDController
                 } else {
                     $topic_id = $submittedObject->getTopic()['topicId'];
                     $check_unique_item =  $this->em->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id,$id);
-                    $check_unique_item = $check_unique_item->fetchAllAssociative();
+                    // $check_unique_item = $check_unique_item->fetchAllAssociative();
                 }
 
                 if(!empty($check_unique_item)) {
