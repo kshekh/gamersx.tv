@@ -42,7 +42,7 @@ class RefreshTwitchTokenCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
+            // ->setDescription(self::$defaultDescription)
             ->addArgument('environment_type', InputArgument::REQUIRED, 'Environment type.')
             ->addOption('topicId', 'i', InputOption::VALUE_OPTIONAL, 'Your Client ID for your Twitch application')
             ->addOption('twitchSecret', 's', InputOption::VALUE_OPTIONAL, 'Your Client Secret for your Twitch application')
