@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Service\YouTubeApi;
 use App\Service\ThemeInfo;
 use App\Entity\HomeRowItem;
+use App\Traits\ErrorLogTrait;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -17,9 +19,12 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class PageController extends AbstractController
 {
+    use ErrorLogTrait;
+
     #[Route('/channel/{id}', name: 'channel')]
     public function channel(YouTubeApi $youtube, $id): Response
     {
+
 
        if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
@@ -38,6 +43,7 @@ class PageController extends AbstractController
     #[Route('/query/{query}', name: 'query')]
     public function query(YouTubeApi $youtube, $query): Response
     {
+
 
         if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
@@ -60,6 +66,7 @@ class PageController extends AbstractController
     public function apiChannel(YouTubeApi $youtube, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $id): Response
     {
+        try{
         $channelInfo = $gamersxCache->get("channel-$id",
             function (ItemInterface $item) use ($id, $youtube, $themeInfoService) {
                 $channel = $youtube->getChannelInfo($id)->getItems()[0];
@@ -100,6 +107,13 @@ class PageController extends AbstractController
             });
 
         return $this->json($channelInfo);
+        } catch (ClientException $th) {
+            $this->log_error($th->getMessage(). " " . $th->getFile() . " " . $th->getLine(), $th->getCode(), "page_controller_api_channel", null);
+            throw $th;
+        } catch (\Exception $ex) {
+            $this->log_error($ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine(), $ex->getCode(), "page_controller_api_channel", null);
+            throw $ex;
+        }
     }
 
     /**
@@ -109,6 +123,7 @@ class PageController extends AbstractController
     public function apiQuery(YouTubeApi $youtube, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $query): Response
     {
+        try {
         $queryInfo = $gamersxCache->get("query-$query",
             function (ItemInterface $item) use ($query, $youtube, $themeInfoService) {
                 $themeInfo = $themeInfoService->getThemeInfo($query, HomeRowItem::TYPE_YOUTUBE);
@@ -170,6 +185,13 @@ class PageController extends AbstractController
             });
 
         return $this->json($queryInfo);
+        } catch (ClientException $th) {
+            $this->log_error($th->getMessage(). " " . $th->getFile() . " " . $th->getLine(), $th->getCode(), "page_controller_api_query", null);
+            throw $th;
+        } catch (\Exception $ex) {
+            $this->log_error($ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine(), $ex->getCode(), "page_controller_api_query", null);
+            throw $ex;
+        }
     }
 
     private function youtubeResultToEmbedContainer($embed): array

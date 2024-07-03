@@ -1,5 +1,5 @@
 <template>
-  <div class="transform transition-transform hover:scale-110 py-8 px-5" >
+  <div class="cursor-default transform transition-transform hover:scale-110 py-8 px-5" >
     <div class="flex flex-row">
 
       <div>
@@ -19,7 +19,7 @@
     </div>
     <div v-show="isTitleVisible" class="fixed inset-x-2">
       <a :href="link">
-        <div class="truncate text-left">{{ showOnline ? onlineDisplay.title : offlineDisplay.title }}</div>
+        <div class="cursor-default truncate text-left">{{ showOnline ? onlineDisplay.title : offlineDisplay.title }}</div>
       </a>
     </div>
   </div>

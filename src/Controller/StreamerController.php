@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Service\TwitchApi;
 use App\Service\ThemeInfo;
 use App\Entity\HomeRowItem;
+use App\Traits\ErrorLogTrait;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -18,9 +20,12 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class StreamerController extends AbstractController
 {
+    use ErrorLogTrait;
+
     #[Route('/streamer/{id}', name: 'streamer')]
     public function index(TwitchApi $twitch, $id): Response
     {
+
 
         if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
@@ -43,6 +48,8 @@ class StreamerController extends AbstractController
     public function apiStreamer(TwitchApi $twitch, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $id): Response
     {
+
+        try{
 
         if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
@@ -70,6 +77,13 @@ class StreamerController extends AbstractController
         });
 
         return $this->json($streamerInfo);
+        } catch (ClientException $th) {
+            $this->log_error($th->getMessage(). " " . $th->getFile() . " " . $th->getLine(), $th->getCode(), "streamer_api", null);
+            throw $th;
+        } catch (\Exception $ex) {
+            $this->log_error($ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine(), $ex->getCode(), "streamer_api", null);
+            throw $ex;
+        }
     }
 
     /**

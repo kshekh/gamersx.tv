@@ -1,6 +1,7 @@
 <template>
   <div
     class="
+      cursor-default
       absolute
       left-1/3
       md:left-1/5
@@ -28,6 +29,7 @@
       <a
         :href="link"
         class="
+          cursor-default
           block
           w-full
           h-full

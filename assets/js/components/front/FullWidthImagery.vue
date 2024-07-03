@@ -3,6 +3,7 @@
     @swiped-left="forward()"
     @swiped-right="back()"
     class="
+      cursor-default
       mb-7
       md:mb-9
       xl:mb-14

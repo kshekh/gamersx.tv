@@ -2,6 +2,7 @@
   <div>
     <div
       class="
+        cursor-default
         relative
         z-10
         flex flex-col
@@ -46,6 +47,7 @@
 
       <p
         class="
+          cursor-default
           text-white
           transition-all
           duration-300

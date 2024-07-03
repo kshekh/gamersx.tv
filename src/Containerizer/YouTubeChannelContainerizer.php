@@ -8,12 +8,16 @@ use App\Service\YouTubeApi;
 use DateTime;
 use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Traits\ErrorLogTrait;
+use Symfony\Component\HttpClient\Exception\ClientException;
 
 class YouTubeChannelContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
+    use ErrorLogTrait;
+
     private HomeRowItem $homeRowItem;
     private YouTubeApi $youtube;
-    private EntityManagerInterface $entityManager;
+    private $entityManager;
 
     public function __construct(HomeRowItem $homeRowItem, YouTubeApi $youtube, EntityManagerInterface $entityManager)
     {
@@ -167,12 +171,20 @@ class YouTubeChannelContainerizer extends LiveContainerizer implements Container
                 $this->sort();
                 $this->trim();
 
-                return $this->items;
-            }
-
-            return Array();
-        } catch (\Exception $ex) {
-            dd('message: ' . $ex->getMessage() . '\n' . 'file: ' . $ex->getFile() . '\n' . 'line: ' . $ex->getLine() . '\n' . 'code: ' . $ex->getCode());
+            return $this->items;
         }
+
+        } catch (ClientException $th) {
+            $msg = $th->getMessage(). " " . $th->getFile() . " " . $th->getLine();
+            $this->logger->error("Call to YouTube failed with the message \"".$msg."\"");
+            $this->log_error($msg, $th->getCode(), "youtube_channel_containerizer", $this->homeRowItem ? $this->homeRowItem->getId() : null);
+        } catch (\Exception $ex) {
+            $msg = $ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine();
+            $this->logger->error("Call to YouTube failed with the message \"".$msg."\"");
+            $this->log_error($msg, $ex->getCode(), "youtube_channel_containerizer", $this->homeRowItem ? $this->homeRowItem->getId() : null);
+        }
+
+        return Array();
+
     }
 }

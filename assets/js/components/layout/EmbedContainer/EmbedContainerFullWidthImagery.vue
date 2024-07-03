@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full flex flex-col">
+  <div class="cursor-default w-full h-full flex flex-col">
     <div
       @click="isShowTwitchEmbed = true"
       v-show="!isEmbedVisible"
