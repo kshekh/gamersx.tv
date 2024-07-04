@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\HomeRow;
 use Exception;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,7 +25,7 @@ class HomeRowAdminController extends CRUDController
         $this->filesystem = $filesystem;
     }
 
-    public function reorder(Request $request, $id): Response
+    public function reorderAction(Request $request, $id): Response
     {
         $object = $this->admin->getSubject();
         $direction = $request->get('direction');
@@ -33,7 +34,7 @@ class HomeRowAdminController extends CRUDController
             throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
         }
 
-        $qb = $this->admin->getModelManager()->getEntityManager('App:HomeRow')
+        $qb = $this->admin->getModelManager()->getEntityManager(HomeRow::class)
             ->createQueryBuilder()
             ->addSelect('hr')
             ->from('App:HomeRow', 'hr');
@@ -74,12 +75,12 @@ class HomeRowAdminController extends CRUDController
         );
     }
 
-    public function importForm(): Response
+    public function importFormAction(): Response
     {
         return $this->render('admin/import_form.html.twig');
     }
 
-    public function import(Request $request): RedirectResponse
+    public function importAction(Request $request): RedirectResponse
     {
         $this->admin->checkAccess('create');
         $file = $request->files->get('import');

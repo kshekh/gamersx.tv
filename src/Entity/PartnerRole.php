@@ -24,7 +24,7 @@ class PartnerRole
     #[ORM\Column(length: 255)]
     private ?string $role = null;
 
-    #[ORM\ManyToOne(inversedBy: 'partnerRoles')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'partnerRoles')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 

@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
+use App\Model\GroupInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\User as BaseUser;
 use App\Repository\UserRepository;
+use Sonata\UserBundle\Model\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "fos_user__user")]
@@ -35,7 +37,74 @@ class User extends BaseUser
     #[ORM\Column(type: "datetime")]
     private $updatedAt;
 
-    private array $realRoles = [];
+//    #[ORM\Column(type: "string", length: 255)]
+//    protected $gender = UserInterface::GENDER_UNKNOWN; // set the default to unknown
+
+     const GENDER_UNKNOWN = 'unknown';
+     const GENDER_FEMALE = 'female';
+     const GENDER_MALE = 'male';
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    protected $gender =  self::GENDER_UNKNOWN;
+
+    #[ORM\Column(type: "string", length: 255)]
+    protected $firstname;
+
+    #[ORM\Column(type: "string", length: 255)]
+    protected $lastname;
+
+    #[ORM\Column(type: "string", length: 255)]
+    protected $website;
+
+    #[ORM\Column(type: "string", length: 255)]
+    protected $biography;
+
+    #[ORM\Column(type: "string", length: 255)]
+    protected $locale;
+
+    #[ORM\Column(type: "string", length: 255)]
+    protected $timezone;
+
+    #[ORM\Column(type: "string", length: 255)]
+    protected $phone;
+
+    #[ORM\Column(type: "string", length: 255)]
+    protected $facebookUid;
+
+    #[ORM\Column(type: "string", length: 255)]
+    protected $facebookName;
+
+    #[ORM\Column(type: "string", length: 255)]
+    protected $facebookData;
+
+    #[ORM\Column(type: "string", length: 255)]
+    protected $twitterUid;
+
+    #[ORM\Column(type: "string", length: 255)]
+    protected $twitterName;
+
+    #[ORM\Column(type: "string", length: 255)]
+    protected $twitterData;
+
+    #[ORM\Column(type: "string", length: 255)]
+    protected $gplusUid;
+
+    #[ORM\Column(type: "string", length: 255)]
+    protected $gplusName;
+
+    #[ORM\Column(type: "string", length: 255)]
+    protected $token;
+
+    #[ORM\Column(type: "string", length: 255)]
+    protected $twoStepCode;
+
+    #[ORM\Column(type: "datetime", length: 255)]
+    protected $dateOfBirth;
+
+    /**
+     * @var Collection<GroupInterface>
+     */
+    protected $groups;
 
     public function __construct()
     {
@@ -43,6 +112,7 @@ class User extends BaseUser
         $this->partnerRoles = new ArrayCollection();
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
+        $this->groups = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -130,23 +200,6 @@ class User extends BaseUser
     }
 
     /**
-     * @param array $realRoles
-     */
-    public function setRealRoles($realRoles)
-    {
-        $this->realRoles = $realRoles;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRealRoles()
-    {
-        return $this->realRoles;
-    }
-
-
-    /**
      * @return mixed
      */
     public function getUpdatedAt(): \DateTimeInterface
@@ -161,4 +214,280 @@ class User extends BaseUser
     {
         $this->updatedAt = $updatedAt;
     }
+
+    // Add a public getter method for the 'gender' property
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): self
+    {
+        $this->gender = $gender;
+        return $this;
+    }
+
+    public static function getGenderList()
+    {
+        return [
+            self::GENDER_UNKNOWN => "u",
+            self::GENDER_FEMALE => "f",
+            self::GENDER_MALE => "m",
+        ];
+    }
+
+    public function setFirstname($firstname)
+    {
+        $this->firstname = $firstname;
+
+        return $this;
+    }
+
+    public function getFirstname()
+    {
+        return $this->firstname;
+    }
+
+    public function setLastname($lastname)
+    {
+        $this->lastname = $lastname;
+
+        return $this;
+    }
+
+    public function getLastname()
+    {
+        return $this->lastname;
+    }
+
+    public function setWebsite($website)
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
+    public function getWebsite()
+    {
+        return $this->website;
+    }
+
+    public function setBiography($biography)
+    {
+        $this->biography = $biography;
+
+        return $this;
+    }
+
+    public function getBiography()
+    {
+        return $this->biography;
+    }
+
+
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
+
+        return $this;
+    }
+
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+    public function setTimezone($timezone)
+    {
+        $this->timezone = $timezone;
+
+        return $this;
+    }
+
+    public function getTimezone()
+    {
+        return $this->timezone;
+    }
+
+    public function setPhone($phone)
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getPhone()
+    {
+        return $this->phone;
+    }
+
+    public function setTwitterData($twitterData)
+    {
+        $this->twitterData = $twitterData;
+
+        return $this;
+    }
+
+    public function getTwitterData()
+    {
+        return $this->twitterData;
+    }
+
+    public function setTwitterName($twitterName)
+    {
+        $this->twitterName = $twitterName;
+
+        return $this;
+    }
+
+    public function getTwitterName()
+    {
+        return $this->twitterName;
+    }
+
+    public function setTwitterUid($twitterUid)
+    {
+        $this->twitterUid = $twitterUid;
+
+        return $this;
+    }
+
+    public function getTwitterUid()
+    {
+        return $this->twitterUid;
+    }
+
+    public function getFacebookName()
+    {
+        return $this->facebookName;
+    }
+
+    public function setFacebookName($facebookName)
+    {
+        $this->facebookName = $facebookName;
+
+        return $this;
+    }
+
+    public function getFacebookUid()
+    {
+        return $this->facebookUid;
+    }
+
+    public function setFacebookUid($facebookUid)
+    {
+        $this->facebookUid = $facebookUid;
+
+        return $this;
+    }
+
+    public function setFacebookData($facebookData)
+    {
+        $this->facebookData = $facebookData;
+
+        return $this;
+    }
+
+    public function getFacebookData()
+    {
+        return $this->facebookData;
+    }
+
+    public function setGplusUid($gplusUid)
+    {
+        $this->gplusUid = $gplusUid;
+
+        return $this;
+    }
+
+    public function getGplusUid()
+    {
+        return $this->gplusUid;
+    }
+
+    public function setGplusName($gplusName)
+    {
+        $this->gplusName = $gplusName;
+
+        return $this;
+    }
+
+    public function getGplusName()
+    {
+        return $this->gplusName;
+    }
+
+    public function setToken($token)
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    public function getToken()
+    {
+        return $this->token;
+    }
+    public function setTwoStepCode($twoStepCode)
+    {
+        $this->twoStepCode = $twoStepCode;
+
+        return $this;
+    }
+
+    public function getTwoStepCode()
+    {
+        return $this->twoStepCode;
+    }
+
+    public function setDateOfBirth($dateOfBirth)
+    {
+        $this->dateOfBirth = $dateOfBirth;
+
+        return $this;
+    }
+
+    public function getDateOfBirth()
+    {
+        return $this->dateOfBirth;
+    }
+
+    public function setGroups($groups)
+    {
+        foreach ($groups as $group) {
+            $this->addGroup($group);
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGroups()
+    {
+        return $this->groups;
+    }
+    /**
+     * {@inheritdoc}
+     */
+    public function addGroup(GroupInterface $group)
+    {
+        if (!$this->groups->contains($group)) {
+            $this->groups[] = $group;
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeGroup(GroupInterface $group)
+    {
+        $this->groups->removeElement($group);
+
+        return $this;
+    }
+
 }

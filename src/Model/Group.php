@@ -1,14 +1,12 @@
 <?php
-namespace App\Entity;
+
+namespace App\Model;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Model\Group;
 
-#[ORM\Entity]
-#[ORM\Table(name: "fos_user__group")]
-class UserGroup extends Group
+#[ORM\MappedSuperclass]
+abstract class Group implements GroupInterface
 {
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
@@ -76,6 +74,4 @@ class UserGroup extends Group
     {
         return in_array($role, $this->roles, true);
     }
-
-
 }
