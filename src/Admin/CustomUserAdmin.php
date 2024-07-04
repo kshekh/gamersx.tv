@@ -46,8 +46,10 @@ class CustomUserAdmin extends AbstractAdmin
     protected function configureListFields(ListMapper $list): void
     {
         $list
-            ->addIdentifier('username')
-            ->add('email')
+            ->addIdentifier('username', null, [
+                'route' => ['name' => 'edit'],
+            ])
+            ->add('email', null, ['label' => 'E-mail Address'])
             ->add('groups')
             ->add('enabled', null, ['editable' => true])
             ->add('createdAt');
@@ -59,13 +61,6 @@ class CustomUserAdmin extends AbstractAdmin
                     'template' => '@SonataUser/Admin/Field/impersonating.html.twig',
                 ]);
         }
-
-        $list->add(ListMapper::NAME_ACTIONS, ListMapper::TYPE_ACTIONS, [
-            'translation_domain' => 'SonataAdminBundle',
-            'actions' => [
-                'edit' => [],
-            ],
-        ]);
     }
 
     protected function configureDatagridFilters(DatagridMapper $filter): void
@@ -113,13 +108,14 @@ class CustomUserAdmin extends AbstractAdmin
             ->with('General')
             ->add('username')
 //            ->add('email')
-            ->add('email', null, ['label' => 'Email Address'])
+            ->add('email', null, ['label' => 'E-Mail-Address'])
             ->add('plainPassword', TextType::class, [
                 'required' => (!$this->getSubject() || null === $this->getSubject()->getId()),
             ])
             ->end()
             ->with('Profile')
             ->add('dateOfBirth', DateType::class, [
+                'label' => 'Date of birth',
                 'years' => range(1900, $now->format('Y')),
 //                'datepicker_use_button' => true, // Ensure date picker uses buttons
                 'html5' => false,

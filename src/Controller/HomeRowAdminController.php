@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\HomeRow;
 use Exception;
 use Sonata\AdminBundle\Controller\CRUDController;
+use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -85,35 +86,41 @@ class HomeRowAdminController extends CRUDController
         $this->admin->checkAccess('create');
         $file = $request->files->get('import');
 
+        if ($file === null) {
+            $this->addFlash('sonata_flash_error', 'No file was uploaded.');
+            return $this->redirectToRoute('admin_app_homerow_list');
+        }
+
         $archive = new ZipArchive();
-        $archive->open($file);
+        $result = $archive->open($file->getRealPath());
+
+        if ($result !== true) {
+            $this->addFlash('sonata_flash_error', "Couldn't import Home Row file.");
+            return $this->redirectToRoute('admin_app_homerow_list');
+        }
 
         try {
-            for ( $i = 0; $i < $archive->numFiles; $i++ ) {
+            for ($i = 0; $i < $archive->numFiles; $i++) {
                 $json = $archive->getFromIndex($i);
-                $row = $this->serializer->deserialize($json, $this->admin->getClass(), 'json');
-                $row->setIsPublished(FALSE);
-                $row->setPartner(NULL);
+                if ($json === false) {
+                    throw new Exception('Failed to extract file from the archive.');
+                }
+                $row = $this->serializer->deserialize($json, HomeRow::class, 'json');
+                $row->setIsPublished(false);
+                $row->setPartner(null);
                 $this->admin->getModelManager()->create($row);
             }
 
             $archive->close();
-//            $this->addFlash('sonata_flash_success', "Successfully imported $i home rows.");
+            $this->addFlash('sonata_flash_success', "Successfully imported $i home rows.");
         } catch (Exception $e) {
-//            $this->addFlash('sonata_flash_error', 'Couldn\'t import Home Row file');
+            $archive->close();
+            $this->addFlash('sonata_flash_error', 'Could not import Home Row file: ' . $e->getMessage());
 
-            return new RedirectResponse(
-                $this->admin->generateUrl('list', [
-                    'filter' => $this->admin->getFilterParameters()
-                ])
-            );
+            return $this->redirectToRoute('admin_app_homerow_list');
         }
 
-        return new RedirectResponse(
-            $this->admin->generateUrl('list', [
-                'filter' => $this->admin->getFilterParameters()
-            ])
-        );
+        return $this->redirectToRoute('admin_app_homerow_list');
     }
 
     public function batchActionExport(ProxyQueryInterface $selectedModelQuery): Response

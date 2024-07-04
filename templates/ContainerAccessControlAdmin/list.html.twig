@@ -26,25 +26,27 @@
             });
         });
 
-        $(document).on("change",".chk_full_site_blacklist",function () {
-            var _this = $(this);
-            var url = _this.data('url');
+        $(document).ready(function () {
+            $(".iCheck-helper").click(function () {
+                var _this = $(this).closest('.icheckbox_square-blue').find('.chk_full_site_blacklist');
+                var url = _this.data('url');
 
-            $.ajax({
-                type: 'GET',
-                url: url,
-                dataType:'JSON',
-                beforeSend:function () {
-                },
-                success:function (response) {
-                    if(response.status == 1 ) {
-                        location.reload();
-                    }
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    dataType: 'JSON',
+                    beforeSend: function () {
+                    },
+                    success: function (response) {
+                        if (response.status == 1) {
+                            location.reload();
+                        }
 
-                    if(response.status == 0 ) {
-                        toastr.error(response.msg)
-                    }
-                },
+                        if (response.status == 0) {
+                            toastr.error(response.msg)
+                        }
+                    },
+                });
             });
         });
     </script>

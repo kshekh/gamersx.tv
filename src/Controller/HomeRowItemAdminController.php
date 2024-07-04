@@ -976,52 +976,77 @@ class HomeRowItemAdminController extends CRUDController
         $this->admin->checkAccess('create');
         $file = $request->files->get('import');
 
+        // Validate if a file is uploaded
+        if (!$file) {
+            $this->addFlash('sonata_flash_error', 'No file uploaded.');
+            return new RedirectResponse(
+                $this->admin->generateUrl('list', [
+                    'filter' => $this->admin->getFilterParameters()
+                ])
+            );
+        }
+
+        // Validate if the uploaded file is a valid zip file
+        if ($file->getClientOriginalExtension() !== 'zip') {
+            $this->addFlash('sonata_flash_error', 'Invalid file format. Please upload a ZIP file.');
+            return new RedirectResponse(
+                $this->admin->generateUrl('list', [
+                    'filter' => $this->admin->getFilterParameters()
+                ])
+            );
+        }
+
         $archive = new \ZipArchive();
-        $archive->open($file);
+        if ($archive->open($file->getPathname()) !== true) {
+            $this->addFlash('sonata_flash_error', 'Cannot open the ZIP file.');
+            return new RedirectResponse(
+                $this->admin->generateUrl('list', [
+                    'filter' => $this->admin->getFilterParameters()
+                ])
+            );
+        }
 
-        if ($archive) {
-            try {
-                $success = 0;
-                for ( $i = 0; $i < $archive->numFiles; $i++ ) {
-                    $stats = $archive->statIndex($i);
-                    // Import the JSON files
-                    if (($j = strpos($stats['name'], '.json')) > 0) {
-                        $hashedName = substr($stats['name'], 0, $j);
+        try {
+            $success = 0;
+            for ($i = 0; $i < $archive->numFiles; $i++) {
+                $stats = $archive->statIndex($i);
+                // Import the JSON files
+                if (($j = strpos($stats['name'], '.json')) > 0) {
+                    $hashedName = substr($stats['name'], 0, $j);
 
-                        $json = $archive->getFromIndex($i);
-                        $row = $this->serializer->deserialize($json, $this->admin->getClass(), 'json');
-                        $row->setIsPublished(FALSE);
-                        $row->setPartner(NULL);
+                    $json = $archive->getFromIndex($i);
+                    $row = $this->serializer->deserialize($json, $this->admin->getClass(), 'json');
+                    $row->setIsPublished(FALSE);
+                    $row->setPartner(NULL);
 
-                        if ($row->getCustomArt() !== null) {
-                            $tmp = sys_get_temp_dir();
-                            $archiveCustomImageName = $hashedName.'-custom.img';
-                            $archive->extractTo($tmp, $archiveCustomImageName);
-                            $row->setCustomArtFile(new UploadedFile("$tmp/$archiveCustomImageName",$row->getCustomArt()));
-                        }
+                    $tmp = sys_get_temp_dir();
 
-                        if ($row->getOverlayArt() !== null) {
-                            $tmp = sys_get_temp_dir();
-                            $archiveOverlayImageName = $hashedName.'-overlay.img';
-                            $archive->extractTo($tmp, $archiveOverlayImageName);
-                            $row->setOverlayArtFile(new UploadedFile("$tmp/$archiveOverlayImageName", $row->getOverlayArt()));
-                        }
-
-                        $this->admin->getModelManager()->create($row);
-                        $success += 1;
+                    if ($row->getCustomArt() !== null) {
+                        $archiveCustomImageName = $hashedName . '-custom.img';
+                        $archive->extractTo($tmp, $archiveCustomImageName);
+                        $row->setCustomArtFile(new UploadedFile("$tmp/$archiveCustomImageName", $archiveCustomImageName));
                     }
-                }
-                $archive->close();
-                $this->addFlash('sonata_flash_success', "Successfully imported $success home rows.");
-            } catch (\Exception $e) {
-                $this->addFlash('sonata_flash_error', $e->getMessage());
 
-                return new RedirectResponse(
-                    $this->admin->generateUrl('list', [
-                        'filter' => $this->admin->getFilterParameters()
-                    ])
-                );
+                    if ($row->getOverlayArt() !== null) {
+                        $archiveOverlayImageName = $hashedName . '-overlay.img';
+                        $archive->extractTo($tmp, $archiveOverlayImageName);
+                        $row->setOverlayArtFile(new UploadedFile("$tmp/$archiveOverlayImageName", $archiveOverlayImageName));
+                    }
+
+                    $this->admin->getModelManager()->create($row);
+                    $success += 1;
+                }
             }
+            $archive->close();
+            $this->addFlash('sonata_flash_success', "Successfully imported $success home rows.");
+        } catch (\Exception $e) {
+            $this->addFlash('sonata_flash_error', $e->getMessage());
+
+            return new RedirectResponse(
+                $this->admin->generateUrl('list', [
+                    'filter' => $this->admin->getFilterParameters()
+                ])
+            );
         }
 
         return new RedirectResponse(

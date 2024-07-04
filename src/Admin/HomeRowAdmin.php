@@ -119,17 +119,17 @@ final class HomeRowAdmin extends AbstractAdmin
             ])
             ->add('layout', 'choice', [
                 'editable' => true,
-                'choices' => [
-                    'Classic Small' => 'ClassicSm',
-                    'Classic Medium' => 'ClassicMd',
-                    'Classic Large' => 'ClassicLg',
-                    'Classic Vertical' => 'ClassicVertical',
-                    'Full Width - Descriptive' => 'FullWidthDescriptive',
-                    'Full Width - Imagery' => 'FullWidthImagery',
-                    'Parallax' => 'Parallax',
-                    'Numbered' => 'NumberedRow',
-                ],
                 'sortable' => false,
+                'choices' => [
+                    ['text' => 'Classic Small', 'value' => 'ClassicSm'],
+                    ['text' => 'Classic Medium', 'value' => 'ClassicMd'],
+                    ['text' => 'Classic Large', 'value' => 'ClassicLg'],
+                    ['text' => 'Classic Vertical', 'value' => 'ClassicVertical'],
+                    ['text' => 'Full Width - Descriptive', 'value' => 'FullWidthDescriptive'],
+                    ['text' => 'Full Width - Imagery', 'value' => 'FullWidthImagery'],
+                    ['text' => 'Parallax', 'value' => 'Parallax'],
+                    ['text' => 'Numbered', 'value' => 'NumberedRow']
+                ],
             ])
             ->add('partner')
             ->add('options', null, [
@@ -195,7 +195,7 @@ final class HomeRowAdmin extends AbstractAdmin
                     'Full Width - Imagery' => 'FullWidthImagery',
                     'Parallax' => 'Parallax',
                     'Numbered' => 'NumberedRow',
-                ]
+                ],
             ])
             ->add('partner')
             ->add('options', SortAndTrimOptionsType::class, [
