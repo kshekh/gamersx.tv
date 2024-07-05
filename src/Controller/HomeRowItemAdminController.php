@@ -29,7 +29,7 @@ use Sonata\AdminBundle\Controller\CRUDController;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
 use Sonata\AdminBundle\Templating\TemplateRegistryInterface;
-
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class HomeRowItemAdminController extends CRUDController
 {
@@ -111,7 +111,7 @@ class HomeRowItemAdminController extends CRUDController
                         ->addSelect('hri')
                         ->from(HomeRowItem::class, 'hri')
                         ->andWhere('hri.is_unique_container = 0')
-                        ->andWhere('hri.is_published = 1');
+                        ->andWhere('hri.isPublished = 1');
 
                     if($submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO) {
                         $qb->andWhere('hri.videoId = :videoId');
@@ -453,10 +453,10 @@ class HomeRowItemAdminController extends CRUDController
                     $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST
                 ) {
 
-                    $qb = $this->admin->getModelManager()->getEntityManager('App:HomeRowItem')
+                    $qb = $this->admin->getModelManager()->getEntityManager(HomeRowItem::class)
                         ->createQueryBuilder()
                         ->addSelect('hri')
-                        ->from('App:HomeRowItem', 'hri')
+                        ->from(HomeRowItem::class, 'hri')
                         ->where('hri.id != :id')
                         ->setParameter('id', $id)
                         ->andWhere('hri.is_unique_container = 0')
@@ -789,7 +789,7 @@ class HomeRowItemAdminController extends CRUDController
                 $playlist_id = $object->getId();
                 $this->admin->delete($object);
 
-                if ($this->isXmlHttpRequest()) {
+                if ($this->isXmlHttpRequest($request)) {
                     return $this->renderJson(['result' => 'ok'], Response::HTTP_OK, []);
                 }
 
@@ -924,7 +924,7 @@ class HomeRowItemAdminController extends CRUDController
         $qb = $this->admin->getModelManager()->getEntityManager(HomeRowItem::class)
             ->createQueryBuilder()
             ->addSelect('hri')
-            ->from('App:HomeRowItem', 'hri')
+            ->from(HomeRowItem::class, 'hri')
             ->where('hri.homeRow = :rowId')
             ->setParameter('rowId', $object->getHomeRow())
         ;
