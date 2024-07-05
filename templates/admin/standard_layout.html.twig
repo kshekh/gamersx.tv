@@ -113,6 +113,14 @@
             gap: 5px;
             display: flex;
         }
+        .search-btn{
+            display:flex;
+            gap:3px;
+        }
+        .main-header .sidebar-toggle:before {
+            content: "\f0c9";
+            font-family: Font Awesome\ 5 Free !important;
+        }
     </style>
 {% endblock %}
 
@@ -122,12 +130,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         toastr.options.timeOut = 5000;
+        setTimeout(function(){
+            $(".fas").removeClass("fas").addClass("fa");
+        },500);
+
     </script>
 {% endblock %}
 
 {% block sonata_nav %}
     <nav class="navbar navbar-static-top">
-        <a href="#" class="sidebar-toggle" data-toggle="offcanvas"
+        <a href="#" class="sidebar-toggle fa fa-home toggle-icon" data-toggle="offcanvas"
            role="button" title="{{ 'toggle_navigation'|trans({}, 'SonataAdminBundle') }}">
             <span class="sr-only">{{ 'toggle_navigation'|trans({}, 'SonataAdminBundle') }}</span>
         </a>

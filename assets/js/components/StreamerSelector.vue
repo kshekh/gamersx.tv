@@ -22,7 +22,7 @@
                     <div class="form-group">
                       <input name="live-topic-search" class="form-control" v-model="searchValue" type="search"
                              placeholder="Enter a search term"></input>
-                      <div class="well well-small">
+                      <div class="well well-small search-btn">
                         <button @click="search()" type="button" class="btn btn-small btn-primary">Search</button>
                         <button @click="moreResults('before')" type="button" class="btn btn-small btn-primary">Previous Results</button>
                         <button @click="moreResults('after')" type="button" class="btn btn-small btn-primary">Next Results</button>

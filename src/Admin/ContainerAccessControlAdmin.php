@@ -70,8 +70,8 @@ final class ContainerAccessControlAdmin extends AbstractAdmin
         $datagridMapper
             ->add('streamer_name')
             ->add('priority')
-            ->add('is_blacklist')
-            ->add('whitelist')
+            ->add('is_blacklisted')
+            ->add('is_whitelisted')
         ;
     }
 
