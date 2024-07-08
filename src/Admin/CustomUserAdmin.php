@@ -157,12 +157,10 @@ class CustomUserAdmin extends AbstractAdmin
             ->with('Groups')
             ->add('groups', ModelType::class, [
                 'class' => UserGroup::class,
+                'property' => 'name',
                 'required' => false,
                 'expanded' => true,
                 'multiple' => true,
-                'btn_add' => 'Create New Group',
-                'btn_catalogue' => 'SonataAdminBundle', // Translation catalogue
-                'btn_list' => false, // Hide "List" button if necessary
             ])
             ->end()
             ->with('Roles')

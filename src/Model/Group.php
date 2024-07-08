@@ -12,13 +12,13 @@ abstract class Group implements GroupInterface
     #[ORM\Column(type: "integer")]
     protected ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected string $name;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    protected ?string $name = null;
 
-    #[ORM\Column(type: "array")]
+    #[ORM\Column(type: "json")]
     protected array $roles = [];
 
-    public function __construct(string $name = null, array $roles = [])
+    public function __construct(?string $name = null, array $roles = [])
     {
         $this->name = $name;
         $this->roles = $roles;

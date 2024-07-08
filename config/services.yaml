@@ -138,6 +138,14 @@ services:
             - { name: sonata.admin, manager_type: orm, label: Users }
         arguments: [~, App\Entity\User, ~]
 
+
+    sonata.admin.group:
+        class: App\Admin\GroupAdmin
+        arguments: [~, App\Entity\Group, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Groups, group: admin }
+        public: true
+
     App\Model\SecurityRolesType:
         arguments:
             $rolesBuilder: '@sonata.user.editable_roles_builder'

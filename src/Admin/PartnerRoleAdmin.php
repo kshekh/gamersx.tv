@@ -23,9 +23,11 @@ class PartnerRoleAdmin extends AbstractAdmin
                 'class' => User::class,
                 'choice_label' => 'username',
             ])
-            ->add('partner', ModelType::class, [
+            ->add('partner', EntityType::class, [
                 'class' => Partner::class,
-                'property' => 'name',
+                'choice_label' => 'name',
+                'multiple' => false,
+                'expanded' => false,
             ])
             ->add('role', ChoiceType::class, [
                 'choices' => [

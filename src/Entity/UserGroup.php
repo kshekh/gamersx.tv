@@ -14,13 +14,13 @@ class UserGroup extends Group
     #[ORM\Column(type: "integer")]
     protected ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected string $name;
+    #[ORM\Column(type: "string", length: 180, nullable: true)] // Adjusted to nullable string
+    protected ?string $name = null;
 
-    #[ORM\Column(type: "array")]
+    #[ORM\Column(type: "json")]
     protected array $roles = [];
 
-    public function __construct(string $name = null, array $roles = [])
+    public function __construct(?string $name = null, array $roles = [])
     {
         $this->name = $name;
         $this->roles = $roles;

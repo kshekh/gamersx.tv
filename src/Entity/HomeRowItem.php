@@ -106,10 +106,10 @@ class HomeRowItem implements PartneredInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $timezone = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $isPublishedStart = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $isPublishedEnd = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
