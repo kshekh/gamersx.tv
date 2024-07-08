@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\HomeRow;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Psr\Log\LoggerInterface;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,17 +15,24 @@ use Symfony\Component\HttpFoundation\{ HeaderUtils, Request, Response, ResponseH
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use ZipArchive;
 
 class HomeRowAdminController extends CRUDController
 {
     private SerializerInterface $serializer;
     private Filesystem $filesystem;
+    private $logger;
+    private $validator;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(SerializerInterface $serializer, Filesystem $filesystem)
+    public function __construct(SerializerInterface $serializer, Filesystem $filesystem,  LoggerInterface $logger,ValidatorInterface $validator, EntityManagerInterface $entityManager)
     {
         $this->serializer = $serializer;
         $this->filesystem = $filesystem;
+        $this->logger = $logger;
+        $this->validator = $validator;
+        $this->entityManager = $entityManager;
     }
 
     public function reorderAction(Request $request, $id): Response
@@ -81,21 +90,20 @@ class HomeRowAdminController extends CRUDController
         return $this->render('admin/import_form.html.twig');
     }
 
-    public function importAction(Request $request): RedirectResponse
+    public function importAction(Request $request, SerializerInterface $serializer, LoggerInterface $logger, ValidatorInterface $validator, EntityManagerInterface $entityManager): Response
     {
-        $this->admin->checkAccess('create');
         $file = $request->files->get('import');
 
         if ($file === null) {
-            $this->addFlash('sonata_flash_error', 'No file was uploaded.');
+            $this->addFlash('error', 'No file was uploaded.');
             return $this->redirectToRoute('admin_app_homerow_list');
         }
 
-        $archive = new ZipArchive();
+        $archive = new \ZipArchive();
         $result = $archive->open($file->getRealPath());
 
         if ($result !== true) {
-            $this->addFlash('sonata_flash_error', "Couldn't import Home Row file.");
+            $this->addFlash('error', "Couldn't import Home Row file.");
             return $this->redirectToRoute('admin_app_homerow_list');
         }
 
@@ -103,25 +111,50 @@ class HomeRowAdminController extends CRUDController
             for ($i = 0; $i < $archive->numFiles; $i++) {
                 $json = $archive->getFromIndex($i);
                 if ($json === false) {
-                    throw new Exception('Failed to extract file from the archive.');
+                    throw new \Exception('Failed to extract file from the archive.');
                 }
-                $row = $this->serializer->deserialize($json, HomeRow::class, 'json');
-                $row->setIsPublished(false);
-                $row->setPartner(null);
-                $this->admin->getModelManager()->create($row);
+
+                try {
+                    // Deserialize JSON data into HomeRow entity
+                    $homeRowData = json_decode($json, true); // Decode JSON to associative array
+                    foreach ($homeRowData as $rowData) {
+                        $homeRow = new HomeRow();
+                        $homeRow->setTitle($rowData['Title']);
+                        $homeRow->setSortIndex($rowData['Sort Index']);
+                        $homeRow->setLayout($rowData['Layout']);
+                        $homeRow->setOptions(json_decode($rowData['Options'], true)); // If 'Options' is a JSON string, decode it
+                        $homeRow->setIsPublished($rowData['Is Published']);
+                        $homeRow->setIsGlowStyling($rowData['Is Glow Styling']);
+                        $homeRow->setIsCornerCut($rowData['Is Corner Cut']);
+                        $homeRow->setTimezone($rowData['Timezone']);
+                        $homeRow->setIsPublishedStart($rowData['Is Published Start']);
+                        $homeRow->setIsPublishedEnd($rowData['Is Published End']);
+                        $homeRow->setOnGamersXtv($rowData['On Gamers Xtv']);
+                        $homeRow->setRowPaddingTop($rowData['Row Padding Top']);
+                        $homeRow->setRowPaddingBottom($rowData['Row Padding Bottom']);
+
+                        // Persist each HomeRow entity
+                        $entityManager->persist($homeRow);
+                    }
+
+                    $entityManager->flush();
+                } catch (\Exception $e) {
+                    // Log the error and continue with the next row
+                    $logger->error('Failed to import HomeRow: ' . $e->getMessage());
+                    continue;
+                }
             }
 
             $archive->close();
-            $this->addFlash('sonata_flash_success', "Successfully imported $i home rows.");
-        } catch (Exception $e) {
+            $this->addFlash('success', "Successfully imported home rows.");
+        } catch (\Exception $e) {
             $archive->close();
-            $this->addFlash('sonata_flash_error', 'Could not import Home Row file: ' . $e->getMessage());
-
-            return $this->redirectToRoute('admin_app_homerow_list');
+            $this->addFlash('error', 'Could not import Home Row file: ' . $e->getMessage());
         }
 
         return $this->redirectToRoute('admin_app_homerow_list');
     }
+
 
     public function batchActionExport(ProxyQueryInterface $selectedModelQuery): Response
     {
