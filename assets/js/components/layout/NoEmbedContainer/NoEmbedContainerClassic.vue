@@ -1,6 +1,7 @@
 <template>
   <div
     class="
+      cursor-default
       cut-edge__wrapper
       w-full
       h-full

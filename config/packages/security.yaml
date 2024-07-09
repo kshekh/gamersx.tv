@@ -1,14 +1,9 @@
 security:
-    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
-    password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
-    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
-
+    # enable_authenticator_manager: true
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        app_user_provider:
-            entity:
-                class: App\Entity\User
-                property: username
+        fos_userbundle:
+            id: fos_user.user_provider.username
 
     firewalls:
         dev:
@@ -17,35 +12,43 @@ security:
 
         # -> custom firewall for the admin area of the URL
         admin:
-            pattern:            /admin(.*)
-            context:            user
+            pattern: ^/admin
+            context: user
+            lazy: true
+            # anonymous: lazy
             form_login:
-                provider:       app_user_provider
-                login_path:     app_login
-                check_path:     app_login
-                default_target_path: /
-            access_denied_url:  /access-denied
+                provider: fos_userbundle
+                login_path: /admin/login
+                check_path: /admin/login_check
+                use_forward: false
+                # failure_path: null
+                always_use_default_target_path: true
+                default_target_path: /admin/dashboard  # Example target path after login
+            access_denied_url: /access-denied
             logout:
-                path:           app_logout
-                target:         /login
+                path: /admin/logout
+                target: /admin/login
+            # entry_point: Symfony\Component\Security\Http\EntryPoint\LoginEntryPoint
+
 
         # -> end custom configuration
 
         # This firewall is used to handle the public login area
+        # This part is handled by the FOS User Bundle
         main:
             pattern:             .*
             context:             user
             form_login:
-                provider:       app_user_provider
-                login_path: app_login
-                check_path: app_login
+                provider:       fos_userbundle
+                login_path:     /admin/login
+                use_forward:    false
+                check_path:     /admin/login_check
                 failure_path:   null
-                enable_csrf: true
+                default_target_path: /dashboard
             access_denied_url:  /access-denied
-            logout:
-                path: app_logout
-                # where to redirect after logout
-                # target: app_any_route
+            logout:             true
+            lazy: true
+            # anonymous: lazy
 
         # activate different ways to authenticate
         # https://symfony.com/doc/current/security.html#firewalls-authentication
@@ -56,11 +59,13 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+
         # Admin login page needs to be accessed without credential
-#        - { path: ^/admin/login, role: PUBLIC_ACCESS }
-#        - { path: ^/admin/logout, role: PUBLIC_ACCESS }
-#        - { path: ^/admin/login_check, role: PUBLIC_ACCESS }
-#        - { path: ^/admin/resetting, role: PUBLIC_ACCESS }
+        # changed role from: IS_AUTHENTICATED_ANONYMOUSLY to PUBLIC_ACCESS (because in updated security package version, it changed to PUBLIC_ACCESS)
+        - { path: ^/admin/login$, role: PUBLIC_ACCESS }
+        - { path: ^/admin/logout$, role: PUBLIC_ACCESS }
+        - { path: ^/admin/login_check$, role: PUBLIC_ACCESS }
+        - { path: ^/admin/resetting, role: PUBLIC_ACCESS }
 
         # Home page needs to be accessed without credential
         - { path: ^/$, role: PUBLIC_ACCESS }
@@ -69,7 +74,7 @@ security:
         # - { path: ^/.*, role: [ROLE_USER] }
 
         # This config requires being logged for the whole site and having the admin role for the admin part.
-        - { path: ^/admin/, role: ROLE_ADMIN }
+        - { path: ^/admin/, role: ROLE_ADMIN_DASHBOARD_ACCESS }
 
     # acl:
     #     connection: default
@@ -81,17 +86,8 @@ security:
         SONATA:
             - ROLE_SONATA_PAGE_ADMIN_PAGE_EDIT  # if you are using acl then this line must be commented
         ROLE_HOME_PAGE_LOGIN: [ROLE_LOGIN_ALLOWED]
-#
-#when@test:
-#    security:
-#        password_hashers:
-#            # By default, password hashers are resource intensive and take time. This is
-#            # important to generate secure password hashes. In tests however, secure hashes
-#            # are not important, waste resources and increase test times. The following
-#            # reduces the work factor to the lowest possible values.
-#            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
-#                algorithm: auto
-#                cost: 4 # Lowest possible value for bcrypt
-#                time_cost: 3 # Lowest possible value for argon
-#                memory_cost: 10 # Lowest possible value for argon
-#>>>>>>> theirs
+
+    password_hashers:
+        App\Entity\User:
+            algorithm: bcrypt
+            cost: 12  # Optional, adjust according to your needs

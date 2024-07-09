@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full shrink-0" ref="itemWrapper" v-if="!isMobileDevice">
+  <div class="cursor-default w-full h-full shrink-0" ref="itemWrapper" v-if="!isMobileDevice">
     <div class="cut-edge__wrapper w-full h-full" :class="getGlow">
       <div
         @click="isShowTwitchEmbed = true"
@@ -142,7 +142,7 @@
           class="flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
           :title="offlineDisplay.title"
         >
-          <div class="mr-2 overflow-hidden">
+          <div class="cursor-default mr-2 overflow-hidden">
             <h5
               class="text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
             >

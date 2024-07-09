@@ -7,6 +7,7 @@ use App\Entity\HomeRow;
 use App\Service\HomeRowInfo;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use App\Traits\ErrorLogTrait;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -29,9 +30,13 @@ use Symfony\Component\Cache\DeflateMarshaller;
 )]
 class CacheHomePageContainers extends Command
 {
-    private ContainerizerFactory $containerizer;
-    private EntityManagerInterface $entityManager;
-    private HomeRowInfo $homeRowInfo;
+    use ErrorLogTrait;
+
+    private $containerizer;
+    private $container;
+    private $homeRowInfo;
+    protected static $defaultName = 'app:cache-home-page-containers';
+    protected static $defaultDescription = 'This command will cache the containers for home/api to save load time';
     private $redis_host;
 
     public function __construct(EntityManagerInterface $em, ContainerizerFactory $containerizer, HomeRowInfo $homeRowInfo, $redis_host)
@@ -131,8 +136,9 @@ class CacheHomePageContainers extends Command
             $message = "Containers Cached successfully";
             $io->success($message);
             return 0;
-        } catch (Exception $ex) {
-            $message = 'message2: ' . $ex->getMessage() . '\n' . 'file: ' . $ex->getFile() . '\n' . 'line: ' . $ex->getLine() . '\n' . 'code: ' . $ex->getCode();
+        } catch (\Exception $ex) {
+            $message = $ex->getMessage() . " ".$ex->getFile() ." ". $ex->getLine();
+            $this->log_error($message, "500", "home_cache_clear");
         }
         $io->error($message);
         return -1;

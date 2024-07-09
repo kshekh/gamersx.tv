@@ -15,6 +15,7 @@
     >
       <h2
         class="
+          cursor-default
           text-white
           font-calibri font-bold
           text-sm

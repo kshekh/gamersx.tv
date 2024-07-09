@@ -44,20 +44,20 @@ class HomeRow implements PartneredInterface
     #[ORM\Column]
     private bool $isPublished;
 
-    #[ORM\Column(length: 50, options: ['default' => 0])]
-    private ?bool $isGlowStyling = null;
+    #[ORM\Column(length: 50)]
+    private ?string $isGlowStyling = null;
 
-    #[ORM\Column(length: 50, options: ['default' => 0])]
-    private ?bool $isCornerCut = null;
+    #[ORM\Column(length: 50)]
+    private ?string $isCornerCut = null;
 
     #[ORM\Column(length: 255)]
     private ?string $timezone = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?DateTime $isPublishedStart = null;
+    private ?string $isPublishedStart = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?DateTime $isPublishedEnd = null;
+    private ?string $isPublishedEnd = null;
 
     #[ORM\Column(options: ['default' => 0])]
     private ?bool $onGamersXtv = null;
@@ -189,7 +189,7 @@ class HomeRow implements PartneredInterface
         return $this;
     }
 
-    public function getIsGlowStyling(): ?bool
+    public function getIsGlowStyling(): ?string
     {
         return $this->isGlowStyling;
     }
@@ -201,7 +201,7 @@ class HomeRow implements PartneredInterface
         return $this;
     }
 
-    public function getIsCornerCut(): ?bool
+    public function getIsCornerCut(): ?string
     {
         return $this->isCornerCut;
     }
@@ -224,24 +224,24 @@ class HomeRow implements PartneredInterface
 
         return $this;
     }
-    public function getIsPublishedStart(): ?DateTime
+    public function getIsPublishedStart(): ?string
     {
         return $this->isPublishedStart;
     }
 
-    public function setIsPublishedStart(?DateTime $isPublishedStart): self
+    public function setIsPublishedStart(?string $isPublishedStart): self
     {
         $this->isPublishedStart = $isPublishedStart;
 
         return $this;
     }
 
-    public function getIsPublishedEnd(): ?DateTime
+    public function getIsPublishedEnd(): ?string
     {
         return $this->isPublishedEnd;
     }
 
-    public function setIsPublishedEnd(?DateTime $isPublishedEnd): self
+    public function setIsPublishedEnd(?string $isPublishedEnd): self
     {
         $this->isPublishedEnd = $isPublishedEnd;
 

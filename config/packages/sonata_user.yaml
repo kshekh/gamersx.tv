@@ -1,0 +1,16 @@
+sonata_user:
+    security_acl: false
+    manager_type: orm # or 'mongodb' or 'custom'
+    class:
+        user: App\Entity\User
+    resetting:
+        token_ttl: 7200
+        email:
+            address: 'noreply@example.com'
+            sender_name: 'Example Application'
+            template: 'email/resetting.html.twig'  # Customize the template path if needed
+    profile:
+        default_avatar: 'bundles/sonatauser/default_avatar.png'
+    admin:
+        user:
+            class: Sonata\UserBundle\Admin\Entity\UserAdmin

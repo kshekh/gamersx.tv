@@ -6,65 +6,66 @@ use App\Entity\HomeRowItem;
 use App\Entity\HomeRowItemOperation;
 use App\Service\YouTubeApi;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
-use ReflectionClass;
-use ReflectionException;
-use Sonata\AdminBundle\Controller\CRUDController;
-use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Sonata\AdminBundle\Exception\LockException;
 use Sonata\AdminBundle\Exception\ModelManagerException;
 use Sonata\AdminBundle\Exception\ModelManagerThrowable;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Form\FormRenderer;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\{
     File\UploadedFile,
     HeaderUtils,
     Request,
     Response,
+    ResponseHeaderBag,
     RedirectResponse};
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Sonata\AdminBundle\Controller\CRUDController;
+use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
-use ZipArchive;
-use function assert;
-
+use Sonata\AdminBundle\Templating\TemplateRegistryInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class HomeRowItemAdminController extends CRUDController
 {
-    private SerializerInterface $serializer;
-    private Filesystem $filesystem;
-    private StorageInterface $storage;
-    private YouTubeApi $youtube;
-    private EntityManagerInterface $entityManager;
+    private $serializer;
+    private $filesystem;
+    private $storage;
+    private $youtube;
+    private $em;
+    private $templateRegistry;
+    private $adminExporter;
 
-    public function __construct(SerializerInterface $serializer, Filesystem $filesystem, StorageInterface $storage, YouTubeApi $youtube, EntityManagerInterface $entityManager)
+    public function __construct(SerializerInterface $serializer, Filesystem $filesystem, StorageInterface $storage,YouTubeApi $youtube, EntityManagerInterface $em, TemplateRegistryInterface $templateRegistry)
     {
         $this->serializer = $serializer;
         $this->filesystem = $filesystem;
         $this->storage = $storage;
         $this->youtube = $youtube;
-        $this->entityManager = $entityManager;
+        $this->em = $em;
+        $this->templateRegistry = $templateRegistry;
     }
 
-    /**
-     * @throws ReflectionException
-     * @throws ModelManagerThrowable
-     * @throws \Google\Service\Exception
-     */
-    public function create(Request $request): Response
+    public function createAction(Request $request): Response
     {
+        // $request = $this->getRequest();
+
         $this->assertObjectExists($request);
 
         $this->admin->checkAccess('create');
 
-        // the key used to look up the template
+        // the key used to lookup the template
         $templateKey = 'edit';
 
-        $class = new ReflectionClass($this->admin->hasActiveSubClass() ? $this->admin->getActiveSubClass() : $this->admin->getClass());
+        $class = new \ReflectionClass($this->admin->hasActiveSubClass() ? $this->admin->getActiveSubClass() : $this->admin->getClass());
 
         if ($class->isAbstract()) {
-            return $this->render(
+            return $this->renderWithExtraParams(
                 '@SonataAdmin/CRUD/select_subclass.html.twig',
                 [
                     'base_template' => $this->getBaseTemplate(),
@@ -105,12 +106,12 @@ class HomeRowItemAdminController extends CRUDController
                     $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_PLAYLIST ||
                     $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST
                 ) {
-                    $qb = $this->admin->getModelManager()->getEntityManager('App:HomeRowItem')
+                    $qb = $this->admin->getModelManager()->getEntityManager(HomeRowItem::class)
                         ->createQueryBuilder()
                         ->addSelect('hri')
-                        ->from('App:HomeRowItem', 'hri')
+                        ->from(HomeRowItem::class, 'hri')
                         ->andWhere('hri.is_unique_container = 0')
-                        ->andWhere('hri.is_published = 1');
+                        ->andWhere('hri.isPublished = 1');
 
                     if($submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO) {
                         $qb->andWhere('hri.videoId = :videoId');
@@ -122,7 +123,8 @@ class HomeRowItemAdminController extends CRUDController
                     $check_unique_item = $qb->getQuery()->getResult();
                 } else {
                     $topic_id = $submittedObject->getTopic()['topicId'];
-                    $check_unique_item =  $this->entityManager->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
+                    $check_unique_item =  $this->em->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
+                    // $check_unique_item = $check_unique_item->fetchAllAssociative(); // Fetch the results as an associative array
                 }
 
                 if(!empty($check_unique_item)) {
@@ -134,9 +136,9 @@ class HomeRowItemAdminController extends CRUDController
                     // set the theme for the current Admin Form
                     $this->setFormTheme($formView, $this->admin->getFormTheme());
                     // NEXT_MAJOR: Remove this line and use commented line below it instead
-                    $template = $this->admin->getTemplateRegistry()->getTemplate($templateKey);
+                    $template = $this->templateRegistry->getTemplate($templateKey);
 
-                    return $this->render($template, [
+                    return $this->renderWithExtraParams($template, [
                         'action' => 'create',
                         'form' => $formView,
                         'object' => $newObject,
@@ -149,7 +151,7 @@ class HomeRowItemAdminController extends CRUDController
                 if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
                     $submittedObject->setIsPublished(false);
                 }
-                /*This condition added to initialize default value of YouTube video and playlist*/
+                /*This condition added to initialize default value of youtube video and playlist*/
                 if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO  || $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO  || $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_PLAYLIST) {
                     if($submittedObject->getIsPublishedStart() == '') {
                         $submittedObject->setIsPublishedStart('00:00:00');
@@ -160,8 +162,8 @@ class HomeRowItemAdminController extends CRUDController
                 }
                 $submittedObject->setUpdatedAt(new \DateTime());
 
-                $maxContainers = (int)$submittedObject->getSortAndTrimOptions()['maxContainers'];
-                $maxLive = (int)$submittedObject->getSortAndTrimOptions()['maxLive'];
+                $maxContainers = isset($submittedObject->getSortAndTrimOptions()['maxContainers']) ? (int)$submittedObject->getSortAndTrimOptions()['maxContainers'] : null;
+                $maxLive = isset($submittedObject->getSortAndTrimOptions()['maxLive']) ? (int)$submittedObject->getSortAndTrimOptions()['maxLive'] : null;
 
                 try {
                     $newObject = $this->admin->create($submittedObject);
@@ -212,8 +214,8 @@ class HomeRowItemAdminController extends CRUDController
                                 $homeRowItemOperation->setStreamerName($streamer_name);
                                 $homeRowItemOperation->setViewer($viewer);
                                 $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
-                                $this->entityManager->persist($homeRowItemOperation);
-                                $this->entityManager->flush();
+                                $this->em->persist($homeRowItemOperation);
+                                $this->em->flush();
                             }
                         }
 
@@ -249,8 +251,8 @@ class HomeRowItemAdminController extends CRUDController
                                 $homeRowItemOperation->setGameName($streamer_name);
                                 $homeRowItemOperation->setIsWhitelisted($is_whitelisted);
                                 $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
-                                $this->entityManager->persist($homeRowItemOperation);
-                                $this->entityManager->flush();
+                                $this->em->persist($homeRowItemOperation);
+                                $this->em->flush();
                             }
                         }
                     }
@@ -326,8 +328,8 @@ class HomeRowItemAdminController extends CRUDController
                             $submittedObjectVideo->setPlaylistId($newObject->getId());
                             $submittedObjectVideo->setUpdatedAt($submittedObject->getUpdatedAt());
 
-                            $this->entityManager->persist($submittedObjectVideo);
-                            $this->entityManager->flush();
+                            $this->em->persist($submittedObjectVideo);
+                            $this->em->flush();
                         }
                     }
 
@@ -349,6 +351,10 @@ class HomeRowItemAdminController extends CRUDController
                 } catch (ModelManagerException $e) {
                     // NEXT_MAJOR: Remove this catch.
                     $this->handleModelManagerException($e);
+
+                    $isFormValid = false;
+                } catch (ModelManagerThrowable $e) {
+                    $this->handleModelManagerThrowable($e);
 
                     $isFormValid = false;
                 }
@@ -380,10 +386,10 @@ class HomeRowItemAdminController extends CRUDController
         $this->setFormTheme($formView, $this->admin->getFormTheme());
 
         // NEXT_MAJOR: Remove this line and use commented line below it instead
-//        $template = $this->admin->getTemplate($templateKey);
-         $template = $this->admin->getTemplateRegistry()->getTemplate($templateKey);
+        // $template = $this->admin->getTemplate($templateKey);
+        $template = $this->templateRegistry->getTemplate($templateKey);
 
-        return $this->render($template, [
+        return $this->renderWithExtraParams($template, [
             'action' => 'create',
             'form' => $formView,
             'object' => $newObject,
@@ -391,7 +397,7 @@ class HomeRowItemAdminController extends CRUDController
         ]);
     }
 
-    public function edit(Request $request): Response
+    public function editAction(Request $request, $deprecatedId = null): Response
     {
         if (isset(\func_get_args()[0])) {
             @trigger_error(sprintf(
@@ -402,15 +408,16 @@ class HomeRowItemAdminController extends CRUDController
             ), \E_USER_DEPRECATED);
         }
 
-        // the key used to look up the template
+        // the key used to lookup the template
         $templateKey = 'edit';
 
+        // $request = $this->getRequest();
         $this->assertObjectExists($request, true);
 
         $id = $request->get($this->admin->getIdParameter());
-        assert(null !== $id);
+        \assert(null !== $id);
         $existingObject = $this->admin->getObject($id);
-        assert(null !== $existingObject);
+        \assert(null !== $existingObject);
 
         $this->checkParentChildAssociation($request, $existingObject);
 
@@ -426,6 +433,7 @@ class HomeRowItemAdminController extends CRUDController
 
         $form = $this->admin->getForm();
 
+        // dd($existingObject);
         $form->setData($existingObject);
         $form->handleRequest($request);
 
@@ -445,10 +453,10 @@ class HomeRowItemAdminController extends CRUDController
                     $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST
                 ) {
 
-                    $qb = $this->admin->getModelManager()->getEntityManager('App:HomeRowItem')
+                    $qb = $this->admin->getModelManager()->getEntityManager(HomeRowItem::class)
                         ->createQueryBuilder()
                         ->addSelect('hri')
-                        ->from('App:HomeRowItem', 'hri')
+                        ->from(HomeRowItem::class, 'hri')
                         ->where('hri.id != :id')
                         ->setParameter('id', $id)
                         ->andWhere('hri.is_unique_container = 0')
@@ -464,7 +472,8 @@ class HomeRowItemAdminController extends CRUDController
                     $check_unique_item = $qb->getQuery()->getResult();
                 } else {
                     $topic_id = $submittedObject->getTopic()['topicId'];
-                    $check_unique_item =  $this->entityManager->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id,$id);
+                    $check_unique_item =  $this->em->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id,$id);
+                    // $check_unique_item = $check_unique_item->fetchAllAssociative();
                 }
 
                 if(!empty($check_unique_item)) {
@@ -476,10 +485,11 @@ class HomeRowItemAdminController extends CRUDController
                     $formView = $form->createView();
                     // set the theme for the current Admin Form
                     $this->setFormTheme($formView, $this->admin->getFormTheme());
+                    // NEXT_MAJOR: Remove this line and use commented line below it instead
+                    // $template = $this->admin->getTemplate($templateKey);
+                    $template = $this->templateRegistry->getTemplate($templateKey);
 
-                     $template = $this->admin->getTemplateRegistry()->getTemplate($templateKey);
-
-                    return $this->render($template, [
+                    return $this->renderWithExtraParams($template, [
                         'action' => 'edit',
                         'form' => $formView,
                         'object' => $existingObject,
@@ -491,7 +501,7 @@ class HomeRowItemAdminController extends CRUDController
                 if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
                     $submittedObject->setIsPublished(false);
                 }
-                /*This condition added to initialize default value of YouTube video and playlist*/
+                /*This condition added to initialize default value of youtube video and playlist*/
                 if($submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST || $submittedObject->getItemType() == HomeRowItem::TYPE_YOUTUBE_VIDEO  || $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_VIDEO  || $submittedObject->getItemType() == HomeRowItem::TYPE_TWITCH_PLAYLIST) {
                     if($submittedObject->getIsPublishedStart() == '') {
                         $submittedObject->setIsPublishedStart('00:00:00');
@@ -500,8 +510,8 @@ class HomeRowItemAdminController extends CRUDController
                         $submittedObject->setIsPublishedEnd('23:59:59');
                     }
                 }
-                $maxContainers = (int)$submittedObject->getSortAndTrimOptions()['maxContainers'];
-                $maxLive = (int)$submittedObject->getSortAndTrimOptions()['maxLive'];
+                $maxContainers = isset($submittedObject->getSortAndTrimOptions()['maxContainers']) ? (int)$submittedObject->getSortAndTrimOptions()['maxContainers'] : null;
+                $maxLive = isset($submittedObject->getSortAndTrimOptions()['maxLive']) ? (int)$submittedObject->getSortAndTrimOptions()['maxLive'] : null;
 
                 try {
                     $existingObject = $this->admin->update($submittedObject);
@@ -512,12 +522,13 @@ class HomeRowItemAdminController extends CRUDController
 
 
                     if($existingObject->getItemType() == HomeRowItem::TYPE_GAME) {
-                        $delete_home_row_item =  $this->entityManager->getRepository(HomeRowItemOperation::class)->deleteByHomeRowItem($existingObject->getId());
+                        $delete_home_row_item =  $this->em->getRepository(HomeRowItemOperation::class)->deleteByHomeRowItem($existingObject->getId());
                         $game_name = $submittedObject->getTopic()['label']??'';
                         $game_id = $submittedObject->getTopic()['topicId']??'';
                         $streamerIndexArr = $requestData['streamer_index']??[];
                         if (!empty($streamerIndexArr)) {
                             $priority = 0;
+                            $demoArray = [];
                             foreach ($streamerIndexArr as $streamerIndex =>  $streamerId) {
                                 if(empty($streamerId)) {
                                     continue;
@@ -525,6 +536,7 @@ class HomeRowItemAdminController extends CRUDController
                                 $priority++;
                                 $is_blacklisted = 0;
                                 if (isset($requestData['is_blacklisted_' . $streamerId])) {
+                                    $demoArray[] = $streamerId;
                                     $is_blacklisted = 1;
                                 }
 
@@ -558,14 +570,14 @@ class HomeRowItemAdminController extends CRUDController
                                 $homeRowItemOperation->setStreamerName($streamer_name);
                                 $homeRowItemOperation->setViewer($viewer);
                                 $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
-                                $this->entityManager->persist($homeRowItemOperation);
-                                $this->entityManager->flush();
+                                $this->em->persist($homeRowItemOperation);
+                                $this->em->flush();
                             }
                         }
 
                     } else if($submittedObject->getItemType() == HomeRowItem::TYPE_STREAMER) {
 
-                        $delete_home_row_item =  $this->entityManager->getRepository(HomeRowItemOperation::class)->deleteByHomeRowItem($existingObject->getId());
+                        $delete_home_row_item =  $this->em->getRepository(HomeRowItemOperation::class)->deleteByHomeRowItem($existingObject->getId());
                         $gameIndexArr = $requestData['game_index'] ?? [];
                         if (!empty($gameIndexArr)) {
                             foreach ($gameIndexArr as $gameIndex => $gameId) {
@@ -596,8 +608,8 @@ class HomeRowItemAdminController extends CRUDController
                                 $homeRowItemOperation->setGameName($streamer_name);
                                 $homeRowItemOperation->setIsWhitelisted($is_whitelisted);
                                 $homeRowItemOperation->setIsBlacklisted($is_blacklisted);
-                                $this->entityManager->persist($homeRowItemOperation);
-                                $this->entityManager->flush();
+                                $this->em->persist($homeRowItemOperation);
+                                $this->em->flush();
                             }
                         }
                     }
@@ -607,10 +619,10 @@ class HomeRowItemAdminController extends CRUDController
                         parse_str(parse_url($submittedObject->getPlaylistId(), PHP_URL_QUERY), $parameters);
                         $playlistId = $parameters['list'];
 
-                        $get_playlist_videos =  $this->entityManager->getRepository(HomeRowItem::class)->findBy(['itemType'=>'youtube_video','playlistId'=>$submittedObject->getId()]);
+                        $get_playlist_videos =  $this->em->getRepository(HomeRowItem::class)->findBy(['itemType'=>'youtube_video','playlistId'=>$submittedObject->getId()]);
                         foreach ($get_playlist_videos as $get_playlist_video_data){
-                            $this->entityManager->remove($get_playlist_video_data);
-                            $this->entityManager->flush();
+                            $this->em->remove($get_playlist_video_data);
+                            $this->em->flush();
                         }
                         $play_list_items = $youtube->getPlaylistItemsInfo($playlistId)->getItems();
 
@@ -677,8 +689,8 @@ class HomeRowItemAdminController extends CRUDController
                             $submittedObjectVideo->setPlaylistId($submittedObject->getId());
                             $submittedObjectVideo->setUpdatedAt($submittedObject->getUpdatedAt());
 
-                            $this->entityManager->persist($submittedObjectVideo);
-                            $this->entityManager->flush();
+                            $this->em->persist($submittedObjectVideo);
+                            $this->em->flush();
                         }
                     }
 
@@ -737,10 +749,10 @@ class HomeRowItemAdminController extends CRUDController
         $this->setFormTheme($formView, $this->admin->getFormTheme());
 
         // NEXT_MAJOR: Remove this line and use commented line below it instead
-        $template = $this->admin->getTemplateRegistry()->getTemplate($templateKey);
-        // $template = $this->templateRegistry->getTemplate($templateKey);
+        // $template = $this->admin->getTemplate($templateKey);
+        $template = $this->templateRegistry->getTemplate($templateKey);
 
-        return $this->render($template, [
+        return $this->renderWithExtraParams($template, [
             'action' => 'edit',
             'form' => $formView,
             'object' => $existingObject,
@@ -748,14 +760,15 @@ class HomeRowItemAdminController extends CRUDController
         ]);
     }
 
-    public function delete(Request $request): Response // NEXT_MAJOR: Remove the unused $id parameter
+    public function deleteAction($id): Response
     {
+        $request = $this->getRequest();
         $this->assertObjectExists($request, true);
 
         $id = $request->get($this->admin->getIdParameter());
-        assert(null !== $id);
+        \assert(null !== $id);
         $object = $this->admin->getObject($id);
-        assert(null !== $object);
+        \assert(null !== $object);
 
         $this->checkParentChildAssociation($request, $object);
 
@@ -781,10 +794,10 @@ class HomeRowItemAdminController extends CRUDController
                 }
 
                 if($object->getItemType() == HomeRowItem::TYPE_YOUTUBE_PLAYLIST) {
-                    $get_playlist_videos = $this->entityManager->getRepository(HomeRowItem::class)->findBy(['itemType' => 'youtube_video', 'playlistId' => $playlist_id ]);
+                    $get_playlist_videos = $this->em->getRepository(HomeRowItem::class)->findBy(['itemType' => 'youtube_video', 'playlistId' => $playlist_id ]);
                     foreach ($get_playlist_videos as $get_playlist_video_data) {
-                        $this->entityManager->remove($get_playlist_video_data);
-                        $this->entityManager->flush();
+                        $this->em->remove($get_playlist_video_data);
+                        $this->em->flush();
                     }
                 }
 
@@ -833,54 +846,54 @@ class HomeRowItemAdminController extends CRUDController
         }
 
         // NEXT_MAJOR: Remove this line and use commented line below it instead
-        $template = $this->admin->getTemplateRegistry()->getTemplate('delete');
-        // $template = $this->templateRegistry->getTemplate('delete');
+        // $template = $this->admin->getTemplate('delete');
+        $template = $this->templateRegistry->getTemplate('delete');
 
-        return $this->render($template, [
+        return $this->renderWithExtraParams($template, [
             'object' => $object,
             'action' => 'delete',
             'csrf_token' => $this->getCsrfToken('sonata.delete'),
         ]);
     }
 
-//    protected function setFormTheme(FormView $formView, ?array $theme = null): void
-//    {
-//        $twig = $this->get('twig');
-//
-//        $twig->getRuntime(FormRenderer::class)->setTheme($formView, $theme);
-//    }
+    // private function setFormTheme(FormView $formView, ?array $theme = null): void
+    // {
+    //     $twig = $this->get('twig');
 
-//    protected function checkParentChildAssociation(Request $request, object $object): void
-//    {
-//        if (!$this->admin->isChild()) {
-//            return;
-//        }
-//
-//        // NEXT_MAJOR: remove this check
-//        if (!$this->admin->getParentAssociationMapping()) {
-//            return;
-//        }
-//
-//        $parentAdmin = $this->admin->getParent();
-//        $parentId = $request->get($parentAdmin->getIdParameter());
-//
-//        $propertyAccessor = PropertyAccess::createPropertyAccessor();
-//        $propertyPath = new PropertyPath($this->admin->getParentAssociationMapping());
-//
-//        $parentAdminObject = $parentAdmin->getObject($parentId);
-//        $objectParent = $propertyAccessor->getValue($object, $propertyPath);
-//
-//        // $objectParent may be an array or a Collection when the parent association is many to many.
-//        $parentObjectMatches = $this->equalsOrContains($objectParent, $parentAdminObject);
-//
-//        if (!$parentObjectMatches) {
-//            // NEXT_MAJOR: make this exception
-//            @trigger_error(
-//                'Accessing a child that isn\'t connected to a given parent is deprecated since sonata-project/admin-bundle 3.34 and won\'t be allowed in 4.0.',
-//                \E_USER_DEPRECATED
-//            );
-//        }
-//    }
+    //     $twig->getRuntime(FormRenderer::class)->setTheme($formView, $theme);
+    // }
+
+    // private function checkParentChildAssociation(Request $request, object $object): void
+    // {
+    //     if (!$this->admin->isChild()) {
+    //         return;
+    //     }
+
+    //     // NEXT_MAJOR: remove this check
+    //     if (!$this->admin->getParentAssociationMapping()) {
+    //         return;
+    //     }
+
+    //     $parentAdmin = $this->admin->getParent();
+    //     $parentId = $request->get($parentAdmin->getIdParameter());
+
+    //     $propertyAccessor = PropertyAccess::createPropertyAccessor();
+    //     $propertyPath = new PropertyPath($this->admin->getParentAssociationMapping());
+
+    //     $parentAdminObject = $parentAdmin->getObject($parentId);
+    //     $objectParent = $propertyAccessor->getValue($object, $propertyPath);
+
+    //     // $objectParent may be an array or a Collection when the parent association is many to many.
+    //     $parentObjectMatches = $this->equalsOrContains($objectParent, $parentAdminObject);
+
+    //     if (!$parentObjectMatches) {
+    //         // NEXT_MAJOR: make this exception
+    //         @trigger_error(
+    //             'Accessing a child that isn\'t connected to a given parent is deprecated since sonata-project/admin-bundle 3.34 and won\'t be allowed in 4.0.',
+    //             \E_USER_DEPRECATED
+    //         );
+    //     }
+    // }
 
     private function equalsOrContains($haystack, object $needle): bool
     {
@@ -899,10 +912,7 @@ class HomeRowItemAdminController extends CRUDController
         return false;
     }
 
-    /**
-     * @throws ModelManagerThrowable
-     */
-    public function reorder(Request $request, $id, $childId=null): Response
+    public function reorderAction(Request $request, $id, $childId=null): Response
     {
         $object = $this->admin->getSubject();
         $direction = $request->get('direction');
@@ -911,10 +921,10 @@ class HomeRowItemAdminController extends CRUDController
             throw new NotFoundHttpException(sprintf('unable to find the object with id: %s', $id));
         }
 
-        $qb = $this->admin->getModelManager()->getEntityManager('App:HomeRowItem')
+        $qb = $this->admin->getModelManager()->getEntityManager(HomeRowItem::class)
             ->createQueryBuilder()
             ->addSelect('hri')
-            ->from('App:HomeRowItem', 'hri')
+            ->from(HomeRowItem::class, 'hri')
             ->where('hri.homeRow = :rowId')
             ->setParameter('rowId', $object->getHomeRow())
         ;
@@ -956,17 +966,17 @@ class HomeRowItemAdminController extends CRUDController
         );
     }
 
-    public function importForm(): Response
+    public function importFormAction(Request $request)
     {
         return $this->render('admin/import_form.html.twig');
     }
 
-    public function import(Request $request): RedirectResponse
+    public function importAction(Request $request)
     {
         $this->admin->checkAccess('create');
         $file = $request->files->get('import');
 
-        $archive = new ZipArchive();
+        $archive = new \ZipArchive();
         $archive->open($file);
 
         if ($archive) {
@@ -1003,7 +1013,7 @@ class HomeRowItemAdminController extends CRUDController
                 }
                 $archive->close();
                 $this->addFlash('sonata_flash_success', "Successfully imported $success home rows.");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->addFlash('sonata_flash_error', $e->getMessage());
 
                 return new RedirectResponse(
@@ -1021,15 +1031,15 @@ class HomeRowItemAdminController extends CRUDController
         );
     }
 
-    public function batchActionExport(ProxyQueryInterface $selectedModelQuery): Response
+    public function batchActionExport(ProxyQueryInterface $selectedModelQuery, Request $request): Response
     {
         $this->admin->checkAccess('list');
         $selectedModels = $selectedModelQuery->execute();
 
-        $archive = new ZipArchive();
+        $archive = new \ZipArchive();
         $filename = $this->filesystem->tempnam(sys_get_temp_dir(), 'export_');
         try {
-            $archive->open($filename, ZipArchive::CREATE);
+            $archive->open($filename, \ZipArchive::CREATE);
 
             foreach ($selectedModels as $selectedModel) {
                 if (!file_exists($selectedModel->getCustomArtFile())){
@@ -1059,7 +1069,7 @@ class HomeRowItemAdminController extends CRUDController
             }
 
             $archive->close();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->addFlash('sonata_flash_error', $e->getMessage());
             return new RedirectResponse(
                 $this->admin->generateUrl('list', [

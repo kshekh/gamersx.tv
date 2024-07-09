@@ -2,6 +2,12 @@
 
 
 {% block list_table %}
+    <style>
+        ins.iCheck-helper {
+            pointer-events: none;
+            cursor: pointer;
+        }
+    </style>
     <div class="col-xs-12 col-md-12">
         {% set batchactions = admin.batchactions %}
         {% if admin.hasRoute('batch') and batchactions|length %}
@@ -39,8 +45,8 @@
                                                 {% if field_description.option('sortable', false) %}
                                                     {% set sortable             = true %}
                                                     {# NEXT_MAJOR: Remove next line and uncomment the other one #}
-                                                    {% set sort_parameters      = sonata_sort_parameters(field_description, admin) %}
-                                                    {# {% set sort_parameters      = admin.datagrid.sortparameters(field_description) %} #}
+                                                    {# {% set sort_parameters      = sonata_sort_parameters(field_description, admin) %} #}
+                                                    {% set sort_parameters      = admin.datagrid.sortparameters(field_description) %}
                                                     {% set current              = admin.datagrid.values[constant('Sonata\\AdminBundle\\Datagrid\\DatagridInterface::SORT_BY')] is defined
                                                         and (admin.datagrid.values[constant('Sonata\\AdminBundle\\Datagrid\\DatagridInterface::SORT_BY')] == field_description
                                                         or admin.datagrid.values[constant('Sonata\\AdminBundle\\Datagrid\\DatagridInterface::SORT_BY')].name == sort_parameters.filter[constant('Sonata\\AdminBundle\\Datagrid\\DatagridInterface::SORT_BY')]) %}
@@ -193,16 +199,16 @@
                                                     {% for format in export_formats %}
                                                         <li>
                                                             {# NEXT_MAJOR: Remove completely next "<a>" element and uncomment the other one #}
-                                                            <a href="{{ admin.generateUrl('export', sonata_pagination_parameters(admin, 0) + {'format' : format}) }}">
+                                                            {# <a href="{{ admin.generateUrl('export', sonata_pagination_parameters(admin, 0) + {'format' : format}) }}">
                                                                 <i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>
                                                                 {{ ("export_format_" ~ format)|trans({}, 'SonataAdminBundle') }}
-                                                            </a>
-                                                            {#
+                                                            </a> #}
+
                                                             <a href="{{ admin.generateUrl('export', admin.datagrid.paginationparameters(0) + {'format' : format}) }}">
                                                                 <i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>
                                                                 {{ ("export_format_" ~ format)|trans({}, 'SonataAdminBundle') }}
                                                             </a>
-                                                            #}
+
                                                         </li>
                                                     {% endfor %}
                                                 </ul>
@@ -618,26 +624,35 @@
 
     <script>
         $(document).ready(function () {
-            changeThemeSettingType('header_background');
-            changeThemeSettingType('body_background');
-            changeThemeSettingType('footer_background');
-            changeThemeSettingType('font_type');
+            changeThemeSettingType('header_background', $("input[name='form[header_background_type]']:checked").val(), 500);
+            changeThemeSettingType('body_background', $("input[name='form[body_background_type]']:checked").val(), 500);
+            changeThemeSettingType('footer_background', $("input[name='form[footer_background_type]']:checked").val(), 500);
+            changeThemeSettingType('font_type', $("input[name='form[font_type]']:checked").val(), 500);
             getThemeSetting();
         });
 
-        function changeThemeSettingType(setting_type = ''){
+        function changeThemeSettingType(setting_type = '', property_type = '', timeout = 10){
 
             if(setting_type == 'header_background') {
-                let header_background_type = $("input[name='form[header_background_type]']:checked").val();
-                if(header_background_type == 'color') {
-                    $(".header_bg_type_color").removeClass('hide');
-                    $(".header_bg_type_image").addClass('hide');
-                } else if(header_background_type == 'image') {
-                    $(".header_bg_type_image").removeClass('hide');
-                    $(".header_bg_type_color").addClass('hide');
-                }
+                setTimeout(function(){
+                    let header_bg_type_from_tag = $("input[name='form[header_background_type]']:checked").val();
+                    let header_background_type = property_type ? property_type : header_bg_type_from_tag;
+                    //console.log(property_type, header_bg_type_from_tag);
+
+                    if(header_background_type == 'color') {
+                        $(".header_bg_type_color").removeClass('hide');
+                        $(".header_bg_type_image").addClass('hide');
+                    } else if(header_background_type == 'image') {
+                        console.log("Inside Image.........");
+                        $(".header_bg_type_image").removeClass('hide');
+                        $(".header_bg_type_color").addClass('hide');
+                    }
+                }, timeout);
+
             } else if(setting_type == 'body_background') {
-                let body_background_type = $("input[name='form[body_background_type]']:checked").val();
+                setTimeout(function(){
+                let body_background_type_from_tag = $("input[name='form[body_background_type]']:checked").val();
+                let body_background_type = property_type ? property_type : body_background_type_from_tag;
                 if(body_background_type == 'color') {
                     $(".body_bg_type_color").removeClass('hide');
                     $(".body_bg_type_image").addClass('hide');
@@ -645,8 +660,11 @@
                     $(".body_bg_type_image").removeClass('hide');
                     $(".body_bg_type_color").addClass('hide');
                 }
+                }, timeout);
             } else if(setting_type == 'footer_background') {
-                let footer_background_type = $("input[name='form[footer_background_type]']:checked").val();
+                setTimeout(function(){
+                let footer_background_type_from_tag = $("input[name='form[footer_background_type]']:checked").val();
+                let footer_background_type = property_type ? property_type : footer_background_type_from_tag;
                 if(footer_background_type == 'color') {
                     $(".footer_bg_type_color").removeClass('hide');
                     $(".footer_bg_type_image").addClass('hide');
@@ -654,8 +672,11 @@
                     $(".footer_bg_type_image").removeClass('hide');
                     $(".footer_bg_type_color").addClass('hide');
                 }
+                }, timeout);
             } else if(setting_type == 'font_type') {
-                let font_type = $("input[name='form[font_type]']:checked").val();
+                setTimeout(function(){
+                let font_type_from_tag = $("input[name='form[font_type]']:checked").val();
+                let font_type = property_type ? property_type : font_type_from_tag;
                 if(font_type == 'local') {
                     $(".font_type_local").removeClass('hide');
                     $(".font_type_remote").addClass('hide');
@@ -663,23 +684,40 @@
                     $(".font_type_remote").removeClass('hide');
                     $(".font_type_local").addClass('hide');
                 }
+                }, timeout);
             }
         }
 
-        $("input[name='form[header_background_type]']").change(function(){
-            changeThemeSettingType('header_background');
+        $("input[name='form[header_background_type]']").click(function(){
+            $(this).parent().parent().find(".iradio_square-blue").each(function(i, el){
+                $(el).removeClass("checked");
+            });
+            $(this).parent().addClass("checked");
+            changeThemeSettingType('header_background',$(this).val());
         });
 
-        $("input[name='form[body_background_type]']").change(function(){
-            changeThemeSettingType('body_background');
+        $("input[name='form[body_background_type]']").click(function(){
+            $(this).parent().parent().find(".iradio_square-blue").each(function(i, el){
+                $(el).removeClass("checked");
+            });
+            $(this).parent().addClass("checked");
+            changeThemeSettingType('body_background',$(this).val());
         });
 
-        $("input[name='form[footer_background_type]']").change(function(){
-            changeThemeSettingType('footer_background');
+        $("input[name='form[footer_background_type]']").click(function(){
+            $(this).parent().parent().find(".iradio_square-blue").each(function(i, el){
+                $(el).removeClass("checked");
+            });
+            $(this).parent().addClass("checked");
+            changeThemeSettingType('footer_background', $(this).val());
         });
 
-        $("input[name='form[font_type]']").change(function(){
-            changeThemeSettingType('font_type');
+        $("input[name='form[font_type]']").click(function(){
+            $(this).parent().parent().find(".iradio_square-blue").each(function(i, el){
+                $(el).removeClass("checked");
+            });
+            $(this).parent().addClass("checked");
+            changeThemeSettingType('font_type', $(this).val());
         });
 
         $(".btn_preview_image ").click(function(e){

@@ -13,12 +13,15 @@ use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use App\Traits\ErrorLogTrait;
+use Symfony\Component\HttpClient\Exception\ClientException;
 
 class TwitchStreamerContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
+    use ErrorLogTrait;
     private HomeRowItem $homeRowItem;
     private TwitchApi $twitch;
-    private EntityManagerInterface $entityManager;
+    private $entityManager;
 
     public function __construct(HomeRowItem $homeRowItem, TwitchApi $twitch, EntityManagerInterface $entityManager)
     {
@@ -56,6 +59,14 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
             if($is_unique_container == 0 && count($uniqueIds) && $uniqueIds[0] != $this->homeRowItem->getId()) {
                 return Array();
             }
+        try {
+        $topic_id = $this->homeRowItem->getTopic()['topicId'];
+        $check_unique_item =  $this->entityManager->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
+
+        $is_unique_container =  $this->homeRowItem->getIsUniqueContainer();
+        if($is_unique_container == 0 && (isset($check_unique_item) && !empty($check_unique_item) && count($check_unique_item) > 1 && $check_unique_item[0]['id'] != $this->homeRowItem->getId())) {
+            return Array();
+        }
 
             $homeRowInfo = new HomeRowInfo();
             $homeRowItem = $this->homeRowItem;
@@ -66,6 +77,7 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
             $infos = $twitch->getStreamerInfo($streamerId);
             if (200 !== $infos->getStatusCode()) {
                 $this->logger->error("Call to Twitch failed with ".$infos->getStatusCode());
+            $this->log_error($infos->getContent(false), $infos->getStatusCode(), "twitch_streaming_container_info", $this->homeRowItem->getId());
                 unset($infos);
                 return Array();
             }
@@ -73,7 +85,8 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
             $broadcast = $twitch->getStreamForStreamer($streamerId);
             if (200 !== $broadcast->getStatusCode()) {
                 $this->logger->error("Call to Twitch failed with ".$broadcast->getStatusCode());
-                unset($broadcast);
+                $this->log_error($broadcast->getContent(false), $broadcast->getStatusCode(), "twitch_streaming_container_broadcast", $this->homeRowItem->getId());
+            unset($broadcast);
                 return Array();
             }
 
@@ -212,6 +225,11 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
 
                 return $this->items;
             }
+        } catch (ClientException $th) {
+            $this->log_error($th->getMessage(). " " . $th->getFile() . " " . $th->getLine(), $th->getCode(), "twitch_streamer_containerizer", $this->homeRowItem ? $this->homeRowItem->getId() : null);
+        } catch (\Exception $ex) {
+            $this->log_error($ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine(), $ex->getCode(), "twitch_streamer_containerizer", $this->homeRowItem ? $this->homeRowItem->getId() : null);
+        }
 
             return Array();
         } catch (\Exception $ex) {

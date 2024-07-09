@@ -1,6 +1,6 @@
 <template>
   <div
-    class="transform transition-transform hover:scale-110 py-8 px-5"
+    class="cursor-default transform transition-transform hover:scale-110 py-8 px-5"
     v-on:mouseenter="isTitleVisible = true"
     v-on:mouseleave="isTitleVisible = false"
   >
@@ -45,7 +45,7 @@
     </div>
     <div v-show="isTitleVisible" class="fixed inset-x-2">
       <a :href="link">
-        <div class="truncate text-left">
+        <div class=" cursor-default truncate text-left">
           {{ showOnline ? onlineDisplay.title : offlineDisplay.title }}
         </div>
       </a>

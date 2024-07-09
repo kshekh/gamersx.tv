@@ -45,7 +45,7 @@ class HomeRowItemOperationRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('e')
             ->delete()
-            ->where('e.home_row_item = :item_id')
+            ->where('e.homeRowItem = :item_id')
             ->setParameter('item_id', $item_id);
 
         $query = $queryBuilder->getQuery();

@@ -4,6 +4,7 @@ namespace App\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,6 +15,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Aws\Ssm\SsmClient;
 use Psr\Log\LoggerInterface;
 use Throwable;
+use App\Traits\ErrorLogTrait;
 
 #[AsCommand(
     name: 'app:refresh-twitch-token',
@@ -21,6 +23,8 @@ use Throwable;
 )]
 class RefreshTwitchTokenCommand extends Command
 {
+    use ErrorLogTrait;
+
     private HttpClientInterface $client;
     private ParameterBagInterface $params;
     private Filesystem $file;
@@ -38,6 +42,8 @@ class RefreshTwitchTokenCommand extends Command
     protected function configure(): void
     {
         $this
+            // ->setDescription(self::$defaultDescription)
+            ->addArgument('environment_type', InputArgument::REQUIRED, 'Environment type.')
             ->addOption('topicId', 'i', InputOption::VALUE_OPTIONAL, 'Your Client ID for your Twitch application')
             ->addOption('twitchSecret', 's', InputOption::VALUE_OPTIONAL, 'Your Client Secret for your Twitch application')
             ->addOption('envFile', 'f', InputOption::VALUE_OPTIONAL, 'The .env.local file to rewrite the TWITCH_APP_TOKEN variable');
@@ -55,8 +61,8 @@ class RefreshTwitchTokenCommand extends Command
             ];
             $this->logger->debug("CronJob Is running.");
 
-            $environment = $this->params->get('kernel.environment');
-            $env = $env_parameters[$environment];
+            $envirenment = $input->getArgument('environment_type');
+            $env = $env_parameters[$envirenment];
 
             $params = [];
             $credentials = [
@@ -83,6 +89,7 @@ class RefreshTwitchTokenCommand extends Command
             }
         } catch (Throwable $th) {
             $this->logger->error($th->getMessage());
+            $this->log_error($th->getMessage(), 500, 'aws_paraameter');
             return 1;
         }
 
@@ -141,8 +148,11 @@ class RefreshTwitchTokenCommand extends Command
             }
 
             $message = "Twitch returned status code " . $request->getStatusCode();
+            $this->log_error($request->getContent(false), $request->getStatusCode(), "twitch_token_generation");
         } catch (\Exception $ex) {
-            $message = $ex->getMessage();
+            $msg = $ex->getMessage()." ".$ex->getFile() . " " .$ex->getLine();
+            $this->logger->error($msg);
+            $this->log_error($msg, 500, "twitch_token");
         }
         $io->error($message);
         $this->logger->debug($message);

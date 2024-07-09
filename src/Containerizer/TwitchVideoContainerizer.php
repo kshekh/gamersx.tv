@@ -14,12 +14,16 @@ use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use App\Traits\ErrorLogTrait;
+use Symfony\Component\HttpClient\Exception\ClientException;
 
 class TwitchVideoContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
+    use ErrorLogTrait;
+
     private HomeRowItem $homeRowItem;
     private TwitchApi $twitch;
-    private EntityManagerInterface $entityManager;
+    private $entityManager;
 
     public function __construct(HomeRowItem $homeRowItem, TwitchApi $twitch, EntityManagerInterface $entityManager)
     {
@@ -45,6 +49,7 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
          * - The field isPublished is set to true
          * - The videoId matches the videoId of the current HomeRowItem instance
          */
+        try {
         $qb = $this->entityManager->createQueryBuilder();
         $query = $qb->select('hri')
             ->from(HomeRowItem::class, 'hri')
@@ -93,8 +98,10 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
             } else {
                 $info = $twitch->getClipInfo($videoId)->toArray();
             }
-        } catch (Exception $e) {
-            $this->logger->error("Call to twitch failed with the message \"".$e->getMessage()."\"");
+        } catch (\Exception $e) {
+            $msg = $e->getMessage()." ".$e->getFile() . " " .$e->getLine();
+            $this->logger->error($msg);
+            $this->log_error($msg, 500, "twitch_video_containerizer", $this->homeRowItem->getId());
             return Array();
         }
 
@@ -215,6 +222,16 @@ class TwitchVideoContainerizer extends LiveContainerizer implements Containerize
             return $this->items;
         }
 
+        return Array();
+        } catch (ClientException $th) {
+            $msg = $th->getMessage()." ".$th->getFile() . " " .$th->getLine();
+            $this->logger->error($msg);
+            $this->log_error($msg, $th->getCode(), "twitch_video_containerizer", $this->homeRowItem ? $this->homeRowItem->getId() : null);
+        } catch (\Exception $ex) {
+            $msg = $ex->getMessage()." ".$ex->getFile() . " " .$ex->getLine();
+            $this->logger->error($msg);
+            $this->log_error($msg, $ex->getCode(), "twitch_video_containerizer", $this->homeRowItem ? $this->homeRowItem->getId() : null);
+        }
         return Array();
     }
 }
