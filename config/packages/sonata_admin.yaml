@@ -27,7 +27,7 @@ sonata_admin:
                     - sonata.user.admin.user
                     - admin.partner
                     - admin.partner_role
-                    - sonata.admin.group
+#                    - sonata.admin.group
 
     options:
         # legacy_twig_text_extension: false

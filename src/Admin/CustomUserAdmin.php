@@ -26,7 +26,7 @@ use App\Model\SecurityRolesType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\LocaleType;
 use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
-use App\Model\Group;
+use App\Entity\Group;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\LessThanOrEqual;
 
@@ -90,7 +90,7 @@ class CustomUserAdmin extends AbstractAdmin
             ->end()
             ->tab('Security')
             ->with('Status', ['class' => 'col-md-4'])->end()
-            ->with('Groups', ['class' => 'col-md-4'])->end()
+            ->with('Group', ['class' => 'col-md-4'])->end()
             ->with('Keys', ['class' => 'col-md-4'])->end()
             ->with('Roles', ['class' => 'col-md-12'])->end()
             ->end();
@@ -154,11 +154,10 @@ class CustomUserAdmin extends AbstractAdmin
             ->with('Status')
             ->add('enabled', null, ['required' => false])
             ->end()
-            ->with('Groups')
+            ->with('Group')
             ->add('groups', ModelType::class, [
-                'class' => UserGroup::class,
+                'class' => Group::class,
                 'property' => 'name',
-                'required' => false,
                 'expanded' => true,
                 'multiple' => true,
             ])
