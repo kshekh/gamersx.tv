@@ -1252,7 +1252,7 @@ class HomeRowItemAdminController extends CRUDController
 //    }
 
 
-    public function importAction(Request $request): Response
+    public function importAction(Request $request)
     {
         $this->admin->checkAccess('create');
         $file = $request->files->get('import');
@@ -1260,91 +1260,81 @@ class HomeRowItemAdminController extends CRUDController
         // Validate if a file is uploaded
         if (!$file) {
             $this->addFlash('sonata_flash_error', 'No file uploaded.');
-            return $this->createRedirectResponseWithError();
+            return new RedirectResponse(
+                $this->admin->generateUrl('list', [
+                    'filter' => $this->admin->getFilterParameters()
+                ])
+            );
         }
 
         // Validate if the uploaded file is a valid zip file
         if ($file->getClientOriginalExtension() !== 'zip') {
             $this->addFlash('sonata_flash_error', 'Invalid file format. Please upload a ZIP file.');
-            return $this->createRedirectResponseWithError();
+            return new RedirectResponse(
+                $this->admin->generateUrl('list', [
+                    'filter' => $this->admin->getFilterParameters()
+                ])
+            );
         }
 
         $archive = new \ZipArchive();
         if ($archive->open($file->getPathname()) !== true) {
             $this->addFlash('sonata_flash_error', 'Cannot open the ZIP file.');
-            return $this->createRedirectResponseWithError();
+            return new RedirectResponse(
+                $this->admin->generateUrl('list', [
+                    'filter' => $this->admin->getFilterParameters()
+                ])
+            );
         }
 
         try {
-
-            $this->em->beginTransaction();
-
             $success = 0;
-
             for ($i = 0; $i < $archive->numFiles; $i++) {
                 $stats = $archive->statIndex($i);
-
                 // Import the JSON files
-                if (strpos($stats['name'], '.json') !== false) {
+                if (($j = strpos($stats['name'], '.json')) > 0) {
+                    $hashedName = substr($stats['name'], 0, $j);
+
                     $json = $archive->getFromIndex($i);
+                    $row = $this->serializer->deserialize($json, $this->admin->getClass(), 'json');
+                    $row->setIsPublished(FALSE);
+                    $row->setPartner(NULL);
 
-                    try {
-                        $homeRowData = json_decode($json, true);
+                    $tmp = sys_get_temp_dir();
 
-                        foreach ($homeRowData as $rowData) {
-                            // Create a new HomeRowItem for each set of data
-                            $homeRowItem = new HomeRowItem();
-                            $homeRowItem->setLabel($rowData['Label']);
-                            $homeRowItem->setSortIndex($rowData['Sort Index']);
-                            $homeRowItem->setItemType($rowData['Item Type']);
-                            $homeRowItem->setVideoId($rowData['Video Id']);
-                            $homeRowItem->setPlaylistId($rowData['Playlist Id']);
-                            $homeRowItem->setTopic(json_decode($rowData['Topic'], true));
-                            $homeRowItem->setSortAndTrimOptions(json_decode($rowData['Sort And Trim Options'], true));
-                            $homeRowItem->setShowArt((bool) $rowData['Show Art']);
-                            $homeRowItem->setCustomArt($rowData['Custom Art']);
-                            $homeRowItem->setOverlayArt($rowData['Overlay Art']);
-                            $homeRowItem->setOfflineDisplayType($rowData['Offline Display Type']);
-                            $homeRowItem->setLinkType($rowData['Link Type']);
-                            $homeRowItem->setCustomLink($rowData['Custom Link']);
-                            $homeRowItem->setDescription($rowData['Description']);
-                            $homeRowItem->setIsPublished($rowData['Is Published']);
-                            $homeRowItem->setTimezone($rowData['Timezone']);
-                            $homeRowItem->setIsPublishedStart($rowData['Is Published Start']);
-                            $homeRowItem->setIsPublishedEnd($rowData['Is Published End']);
-                            $homeRowItem->setUpdatedAt(new \DateTime($rowData['Updated At']));
-                            $homeRowItem->setIsPartner($rowData['Is Partner']);
-                            $homeRowItem->setIsUniqueContainer($rowData['Is Unique Container']);
-
-                            // Handle file uploads for each HomeRowItem
-                            $this->handleFileUploads($archive, $stats, $homeRowItem);
-
-                            // Persist each HomeRowItem entity
-                            $this->em->persist($homeRowItem);
-                            $this->em->flush();
-                            $success++;
-                        }
-                    } catch (\Exception $e) {
-                        // Log error and continue with the next item
-                        $this->logger->error('Failed to import HomeRowItem: ' . $e->getMessage());
-                        continue;
+                    if ($row->getCustomArt() !== null) {
+                        $archiveCustomImageName = $hashedName . '-custom.img';
+                        $archive->extractTo($tmp, $archiveCustomImageName);
+                        $row->setCustomArtFile(new UploadedFile("$tmp/$archiveCustomImageName", $archiveCustomImageName));
                     }
+
+                    if ($row->getOverlayArt() !== null) {
+                        $archiveOverlayImageName = $hashedName . '-overlay.img';
+                        $archive->extractTo($tmp, $archiveOverlayImageName);
+                        $row->setOverlayArtFile(new UploadedFile("$tmp/$archiveOverlayImageName", $archiveOverlayImageName));
+                    }
+
+                    $this->admin->getModelManager()->create($row);
+                    $success += 1;
                 }
             }
-
-
-            $this->em->commit();
-
             $archive->close();
-            $this->addFlash('sonata_flash_success', "Successfully imported $success home row items.");
+            $this->addFlash('sonata_flash_success', "Successfully imported $success home rows.");
         } catch (\Exception $e) {
-            // Rollback transaction on error
-            $this->em->rollback();
+            $this->addFlash('sonata_flash_error', $e->getMessage());
 
-            $this->addFlash('sonata_flash_error', 'Could not import Home Row Items: ' . $e->getMessage());
+            return new RedirectResponse(
+                $this->admin->generateUrl('list', [
+                    'filter' => $this->admin->getFilterParameters()
+                ])
+            );
         }
 
-        return $this->createRedirectResponse();
+        return new RedirectResponse(
+            $this->admin->generateUrl('list', [
+                'filter' => $this->admin->getFilterParameters()
+            ])
+        );
     }
 
     private function deserializeJsonToEntity(string $json): HomeRowItem
