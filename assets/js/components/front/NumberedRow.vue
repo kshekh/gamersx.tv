@@ -59,21 +59,7 @@
           <component
             :is="channel.componentName"
             v-bind="channel"
-            :channelName="channel['user_name']"
-            :componentName="channel['componentName']"
-            :customArt="channel['customArt']"
-            :embedData="channel['embedData']"
-            :embedName="channel['embedName']"
-            :image="channel['image']"
-            :isGlowStyling="channel['isGlowStyling']"
-            :link="channel['link']"
-            :liveViewerCount="channel['liveViewerCount']"
-            :offlineDisplay="channel['offlineDisplay']"
-            :onlineDisplay="channel['onlineDisplay']"
-            :overlay="channel['overlay']"
-            :rowName="channel['rowName']"
-            :showOnline="channel['showOnline']"
-            :title="channel['title']"
+            class=""
           ></component>
         </div>
       </div>
@@ -202,7 +188,6 @@ export default {
   mounted: function () {
     this.setIsMobileDevice();
     this.displayChannels = this.settings.channels.filter(this.showChannel);
-    console.log(this.displayChannels);
     this.$refs.channelBox.addEventListener("scroll", this.handleScroll);
     this.$refs.channelBox.scrollLeft = 0;
     this.setIsMobileDevice();

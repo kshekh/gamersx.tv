@@ -7,7 +7,7 @@
         class="cursor-default text-white font-calibri font-bold text-sm md:text-2xl xl:text-4xl mr-2"
       >
         {{ settings.title }}
-        <title-addinional-description v-show="settings.onGamersXtv" />
+        <TitleAdditionalDescription v-show="settings.onGamersXtv" />
       </h2>
       <!--      <div class="flex items-center space-x-5">-->
       <!--        <slider-arrow-->
@@ -28,7 +28,7 @@
       style="align-items: center"
     >
       <div class="w5-center sliderArrowHide" ref="backArrow">
-        <slider-arrow
+        <SliderArrow
           :isNext="false"
           :videoType="'twitch'"
           @arrow-clicked="back()"
@@ -63,7 +63,7 @@
         style="right: 0"
         :class="{ sliderArrowHide: !(this.displayChannels.length > 1) }"
       >
-        <slider-arrow
+        <SliderArrow
           :isNext="true"
           :videoType="'twitch'"
           @arrow-clicked="forward()"
@@ -80,7 +80,7 @@ import SliderArrow from "../helpers/SliderArrow.vue";
 import embedMixin from "../../mixins/embedFrameMixin";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
-import 'swiped-events';
+import "swiped-events";
 
 export default {
   name: "ClassicLg",
@@ -88,8 +88,8 @@ export default {
   components: {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
-    "title-addinional-description": TitleAdditionalDescription,
-    "slider-arrow": SliderArrow,
+    TitleAdditionalDescription: TitleAdditionalDescription,
+    SliderArrow: SliderArrow,
   },
   props: {
     settings: {
@@ -173,7 +173,11 @@ export default {
       const checkDeviceType = navigator.userAgent
         .toLowerCase()
         .match(/mobile/i);
-      this.isMobileDevice = !!checkDeviceType;
+      if (checkDeviceType) {
+        this.isMobileDevice = true;
+      } else {
+        this.isMobileDevice = false;
+      }
     },
   },
   mounted() {
@@ -181,7 +185,6 @@ export default {
     this.$refs.channelBox.addEventListener("scroll", this.handleScroll);
     this.$refs.channelBox.scrollLeft = 0;
     this.setIsMobileDevice();
-    console.log(this.isMobileDevice);
   },
   updated: function () {
     if (

@@ -6,7 +6,11 @@
  */
 
 // any CSS you import will output into a single css file (theme.css in this case)
-import './styles/theme.css';
+import './styles/app.css';
 
 // start the Stimulus application
 import './bootstrap';
+
+import.meta.glob([
+  './images/**'
+]);

@@ -86,3 +86,5 @@ phpstan.neon
 /node_modules/
 /public/build/
 ###< pentatrion/vite-bundle ###
+
+gamersx_local_090724.sql

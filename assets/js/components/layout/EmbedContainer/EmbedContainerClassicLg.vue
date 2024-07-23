@@ -3,8 +3,6 @@
     <div class="cut-edge__wrapper w-full h-full" :class="getGlow">
       <div
         @click="isShowTwitchEmbed = true"
-        @mouseenter="console.log('mouse has entered')"
-        @mouseleave="console.log('mouse has left')"
         class="w-full h-full cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
         :class="getOutline"
       >
@@ -12,21 +10,17 @@
         <div
           v-if="showEmbed && embedData"
           class="w-full h-full relative overflow-hidden"
-          @mouseenter="mouseEntered"
-          @mouseleave="mouseLeave"
+          @click="clickContainer(embedData.elementId)"
         >
           <img
             v-if="showArt && image"
-            alt="Embed with custom art"
             :src="image.url"
             class="relative top-1/2 transform -translate-y-1/2 w-full object-fit"
-            onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
           />
           <img
             v-else-if="showOverlay"
             alt="Embed's Custom Overlay"
             :src="overlay"
-            onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
             class="relative top-1/2 transform -translate-y-1/2 w-full object-cover"
           />
           <!--          <img-->
@@ -34,7 +28,7 @@
           <!--            src="/images/live-icon.gif"-->
           <!--            class="" style="position: Layout-sc-1xcs6mc-0 top-bar--pointer-enabledLayout-sc-1xcs6mc-0 top-bar--pointer-enabled;top: 10px;width: 75px;right: 0;"-->
           <!--          />-->
-          <PlayButton
+          <play-button
             class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none"
             :videoType="playBtnColor"
           />
@@ -44,10 +38,8 @@
         <div v-else-if="showArt && image" class="w-full h-full">
           <a :href="link" class="block w-full h-full overflow-hidden">
             <img
-              :src="image['url']"
+              :src="image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
-              alt="No embed"
-              onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
             />
           </a>
         </div>
@@ -59,7 +51,6 @@
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               alt="Embed's Custom Overlay"
               :src="overlay"
-              onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
             />
           </a>
         </div>
@@ -68,19 +59,28 @@
 
     <div
       v-if="showEmbed && embedData"
-      class="cut-edge__wrapper absolute z-30 transition-opacity-transform ease-linear duration-500"
+      ref="embedWrapper"
+      :style="embedSize"
       :class="[
+        'cut-edge__wrapper',
+        'absolute',
+        'z-30',
+        'transition-opacity-transform',
+        'ease-linear',
+        'duration-500',
         getGlow,
         {
           invisible: !isEmbedVisible,
         },
       ]"
-      ref="embedWrapper"
-      :style="embedSize"
     >
-      <div
-        class="w-full h-full flex flex-col relative cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
-        :class="getOutline"
+      <CommonContainer
+        @on-pin="onPinHandler"
+        @close-container="closeContainer"
+        @on-mouse-down="onMouseDownHandler"
+        :isPinActive="isPinBtnActive"
+        :isMoveActive="isMoveBtnActive"
+        :innerWrapperClassNames="getOutline"
       >
         <div class="flex-grow min-h-0 relative">
           <div class="absolute inset-0 bg-black overflow-hidden">
@@ -93,7 +93,6 @@
               v-else-if="showOverlay"
               alt="Embed's Custom Overlay"
               :src="overlay"
-              onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
             />
           </div>
@@ -144,7 +143,7 @@
             {{ liveViewerCount }} viewers
           </h6>
         </a>
-      </div>
+      </CommonContainer>
     </div>
   </div>
 
@@ -170,7 +169,6 @@
           v-else-if="showOverlay"
           alt="Embed's Custom Overlay"
           :src="overlay"
-          onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
           class="relative top-1/2 transform -translate-y-1/2 w-full h-full object-cover"
         />
         <play-button
@@ -195,9 +193,20 @@
             'pointer-events-none z-negative': !isEmbedVisible,
           },
         ]"
-        style="top: 50%;left: 0;transform: translateY(-50%);z-index: 99;display: flex;align-items: center; width: auto !important;"
+        style="
+          top: 50%;
+          left: 0;
+          transform: translateY(-50%);
+          z-index: 99;
+          display: flex;
+          align-items: center;
+          width: auto !important;
+        "
       >
-        <div ref="embedWrapper" :class="{'relative w-full h-full main-parent':true}">
+        <div
+          ref="embedWrapper"
+          :class="{ 'relative w-full h-full main-parent': true }"
+        >
           <component
             v-if="embedData"
             ref="embed"
@@ -226,16 +235,17 @@ import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 
 import embedMixin from "../../../mixins/embedFrameMixin";
-
+import CommonContainer from "../CommonContainer/CommonContainer.vue";
 import PlayButton from "../../helpers/PlayButton.vue";
 
 export default {
   name: "EmbedContainerClassicLg",
   mixins: [embedMixin],
   components: {
+    CommonContainer: CommonContainer,
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
-    PlayButton: PlayButton,
+    "play-button": PlayButton,
   },
   props: [
     "title",
@@ -319,6 +329,9 @@ export default {
       this.$emit("hide-controls");
     },
     scrollOut() {
+      if (this.$root.isVisibleVideoContainer) {
+        return;
+      }
       if (this.showOverlay || this.showArt) {
         this.isOverlayVisible = true;
         this.isEmbedVisible = false;
@@ -330,14 +343,15 @@ export default {
       this.$emit("show-controls");
     },
     setIsMobileDevice() {
-      const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
-      this.isMobileDevice = !!checkDeviceType;
-    }
+      const checkDeviceType = navigator.userAgent
+        .toLowerCase()
+        .match(/mobile/i);
+      if (checkDeviceType) {
+        this.isMobileDevice = true;
+      } else {
+        this.isMobileDevice = false;
+      }
+    },
   },
-  // created() {
-  //   if(!this.showOnline && this.embedData){
-  //     this.mouseEntered();
-  //   }
-  // }
 };
 </script>

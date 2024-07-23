@@ -10,11 +10,11 @@
   z-index: 30;
   background-color: #352f44;
   clip-path: polygon(
-    15px 0px,
-    /* top left */ 100% 0px,
-    /* right top */ 100% 100%,
-    0% 100%,
-    /* bottom left */ 1px 39px
+          15px 0px,
+            /* top left */ 100% 0px,
+            /* right top */ 100% 100%,
+          0% 100%,
+            /* bottom left */ 1px 39px
   );
 }
 

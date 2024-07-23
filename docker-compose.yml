@@ -81,7 +81,7 @@ services:
       dockerfile: ./docker/Dockerfile
       target: web
     ports:
-      - 8000:80
+      - "8000:80"
     volumes:
       - ./public/images/:/var/www/html/public/images/
       - ./public/build/:/var/www/html/public/build/

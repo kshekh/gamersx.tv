@@ -1,5 +1,6 @@
 <template>
   <div
+    :class="computedClassNames"
     :style="{ zIndex: '1000', ...customStyles }"
     class="w-full h-full"
   >
@@ -33,32 +34,54 @@
 
 <script>
 import CommonContainerIcon from "./CommonContainerIcon/CommonContainerIcon.vue";
+
 export default {
   name: "CommonContainer",
   components: {
-    CommonContainerIcon: CommonContainerIcon,
+    CommonContainerIcon,
   },
   emits: ["close-container", "on-pin", "on-mouse-down"],
-  props: [
-    "innerWrapperClassNames",
-    "customStyles",
-    "isPinActive",
-    "isMoveActive",
-  ],
+  props: {
+    classNames: {
+      type: [Array, String],
+      default: () => [],
+    },
+    innerWrapperClassNames: {
+      type: [Array, String],
+      default: () => [],
+    },
+    customStyles: {
+      type: Object,
+      default: () => ({}),
+    },
+    isPinActive: {
+      type: Boolean,
+      default: false,
+    },
+    isMoveActive: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    computedClassNames() {
+      return Array.isArray(this.classNames) ? this.classNames : [this.classNames];
+    },
+  },
   methods: {
     disableContextMenu(event) {
       event.preventDefault();
-    }
+    },
   },
   mounted() {
     document.addEventListener("contextmenu", this.disableContextMenu);
   },
   beforeDestroy() {
     document.removeEventListener("contextmenu", this.disableContextMenu);
-  }
+  },
 };
 </script>
 
-<style lang="css" scoped>
+<style lang="css">
 @import "./CommonContainer.css";
 </style>

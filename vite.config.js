@@ -28,7 +28,7 @@ export default defineConfig({
                 streamerSelector: "./assets/js/streamerSelector.js",
                 topicSelector: "./assets/js/topicSelector.js",
 
-                theme: './assets/styles/theme.css',
+                theme: './assets/styles/app.css',
             },
         }
     },

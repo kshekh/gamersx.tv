@@ -4,7 +4,7 @@ import { computed, ref } from 'vue'
 export const useYoutubeEmbedStore = defineStore("youtubeEmbedStore", () => {
   const embed = ref({});
   const embedData = ref({});
-  const loaders = ref(["/images/Sequence_01_final.mp4"]);
+  const loaders = ref(["/assets/images/Sequence_01_final.mp4"]);
   const embedPlaying = ref(false);
   const isBuffering = ref(true);
   const isMobileDevice = computed(() => {

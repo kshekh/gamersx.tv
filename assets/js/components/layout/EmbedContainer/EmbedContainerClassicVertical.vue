@@ -14,8 +14,7 @@
         <div
           v-if="showEmbed && embedData"
           class="w-full h-full relative overflow-hidden"
-          @mouseenter="mouseEntered"
-          @mouseleave="mouseLeave"
+          @click="clickContainer(embedData.elementId)"
         >
           <img
             v-if="showArt && image"
@@ -27,7 +26,6 @@
             v-else-if="showOverlay"
             alt="Embed's Custom Overlay"
             :src="overlay"
-            onerror="this.onerror=null; this.src='https://placehold.co/400x600'"
             class="relative top-1/2 transform -translate-y-1/2 w-full"
             style="height: inherit"
           />
@@ -43,7 +41,6 @@
           <a :href="link" class="block w-full h-full overflow-hidden">
             <img
               :src="image.url"
-              onerror="this.onerror=null; this.src='https://placehold.co/400x600'"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               style="height: inherit"
             />
@@ -57,7 +54,6 @@
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               alt="Embed's Custom Overlay"
               :src="overlay"
-              onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
               style="height: inherit"
             />
           </a>
@@ -76,9 +72,13 @@
       ref="embedWrapper"
       :style="embedSize"
     >
-      <div
-        class="w-full h-full flex flex-col relative cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
-        :class="getOutline"
+      <CommonContainer
+        @on-pin="onPinHandler"
+        @close-container="closeContainer"
+        @on-mouse-down="onMouseDownHandler"
+        :isPinActive="isPinBtnActive"
+        :isMoveActive="isMoveBtnActive"
+        :innerWrapperClassNames="getOutline"
       >
         <div class="flex-grow min-h-0 relative">
           <div class="absolute inset-0 bg-black overflow-hidden">
@@ -92,7 +92,6 @@
               v-else-if="showOverlay"
               alt="Embed's Custom Overlay"
               :src="overlay"
-              onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               style="height: inherit"
             />
@@ -144,7 +143,7 @@
             {{ liveViewerCount }} viewers
           </h6>
         </a>
-      </div>
+      </CommonContainer>
     </div>
   </div>
 </template>
@@ -152,13 +151,14 @@
 <script>
 import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
-
+import CommonContainer from "../CommonContainer/CommonContainer.vue";
 import embedMixin from "../../../mixins/embedFrameMixin";
 
 export default {
   name: "EmbedContainerClassicVertical",
   mixins: [embedMixin],
   components: {
+    CommonContainer: CommonContainer,
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
   },

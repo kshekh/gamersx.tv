@@ -30,14 +30,12 @@
           v-else-if="showOverlay"
           alt="Embed's Custom Overlay"
           :src="overlay"
-          onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
           class="max-h-20 md:max-h-28 xl:max-h-52"
         />
         <img
           v-else-if="overlay && offlineDisplay.showEmbed"
           alt="Embed's Custom Overlay"
           :src="overlay"
-          onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
           class="max-h-20 md:max-h-28 xl:max-h-52"
         />
       </div>
@@ -101,9 +99,9 @@
             gradientUnits="userSpaceOnUse"
             gradientTransform="matrix(1, 0, 0, 0.999982, -2, -8.000276)"
           >
-            <stop offset="0" stop-color="#f44f5a" />
-            <stop offset="0.443" stop-color="#ee3d4a" />
-            <stop offset="1" stop-color="#e52030" />
+            <stop offset="0" stop-color="#f44f5a"/>
+            <stop offset="0.443" stop-color="#ee3d4a"/>
+            <stop offset="1" stop-color="#e52030"/>
           </linearGradient>
           <path
             fill="#FF0000"
@@ -169,6 +167,7 @@
 <script>
 import TwitchEmbed from "../../embeds/TwitchEmbedFullWidth.vue";
 import YouTubeEmbed from "../../embeds/YouTubeFullWidth.vue";
+import embedFrameMixin from "../../../mixins/embedFrameMixin";
 
 export default {
   name: "EmbedContainerFullWidthDescriptive",
@@ -176,6 +175,7 @@ export default {
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
   },
+  mixins: [embedFrameMixin],
   props: [
     "title",
     "info",
@@ -248,7 +248,9 @@ export default {
       this.playVideo();
     },
     playVideo() {
-      this.$root.$emit("close-other-layouts", this.embedData.elementId);
+      this.$root.$emit("close-other-layouts", this.$root.containerId);
+      this.closeContainer();
+
       if (this.$refs.embed) this.$refs.embed.startPlayer();
     },
     videoBuffered() {

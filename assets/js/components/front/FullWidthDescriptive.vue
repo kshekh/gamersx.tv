@@ -180,7 +180,6 @@ export default {
       this.rowIndex = channelIndex;
     },
     mouseEntered() {
-      console.log('ok')
       this.isAllowPlaying = true;
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
     },
@@ -218,14 +217,12 @@ export default {
     },
   },
   mounted() {
-    console.log('The root is ' + this.$root.isVisibleVideoContainer);
     if (!this.isRowFirst) {
       this.isAllowPlaying = false;
     } else {
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
     }
     this.displayChannels = this.settings.channels.filter(this.showChannel);
-    console.log(this.displayChannels);
     this.setIsMobileDevice();
   },
   updated: function () {

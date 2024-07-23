@@ -13,7 +13,7 @@
             </div>
             <twitch-art v-else-if="info.box_art_url"
               :imageType="'boxArt'"
-              :src="info.box_art_url || 'https://placehold.co/600x400'"
+              :src="info.box_art_url"
             ></twitch-art>
             <div>
               <span v-if="popular" class="text-gray-800 bg-red-400 p-1 rounded-sm">
@@ -36,7 +36,7 @@
           <div class="flex flex-row items-center justify-between">
             <div class="text-lg">{{ popular.title }}</div>
             <div class="text-lg ml-auto">{{ popular.viewer_count }}</div>
-            <div class="pl-4"><img class="inline" :src="RedEye" ></div>
+            <div class="pl-4"><img class="inline" src="/assets/images/red-eye.png" ></div>
           </div>
         </div>
       </div>
@@ -72,13 +72,11 @@
 import axios from 'axios';
 import TwitchArt from './layout/TwitchArt.vue';
 import TwitchEmbed from './embeds/TwitchEmbed.vue';
-import RedEye from '~/images/red-eye.png';
 
 export default {
   components: {
     'TwitchArt': TwitchArt,
-    'TwitchEmbed': TwitchEmbed,
-    'RedEye': RedEye
+    'TwitchEmbed': TwitchEmbed
   },
   data: function()  {
     return {

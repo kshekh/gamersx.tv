@@ -5,8 +5,6 @@
 </template>
 
 <script>
-import emitter from 'tiny-emitter/instance'
-
 export default {
   name: "YouTubeFullWidth",
   props: {
@@ -55,11 +53,11 @@ export default {
       return this.embedPlaying;
     },
     setIsPlaying() {
-      emitter.emit("set-is-playing", true);
+      this.$emit("set-is-playing", true);
       this.embedPlaying = true;
     },
     setIsNotPlaying() {
-      emitter.emit("set-is-playing", false);
+      this.$emit("set-is-playing", false);
       this.embedPlaying = false;
     },
   },
@@ -80,7 +78,10 @@ export default {
     });
 
     // Listen for other players, stop on their start
-    emitter.on("yt-embed-playing", this.stopPlayer);
+    this.$root.$on("yt-embed-playing", this.stopPlayer);
   },
 };
 </script>
+
+<style scoped>
+</style>

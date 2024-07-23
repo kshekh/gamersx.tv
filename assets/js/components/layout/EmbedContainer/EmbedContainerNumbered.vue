@@ -18,8 +18,7 @@
         <div
           v-if="showEmbed && embedData"
           class="w-full h-full overflow-hidden"
-          v-on:mouseenter="mouseEntered"
-          v-on:mouseleave="mouseLeave"
+          @click="clickContainer(embedData.elementId)"
         >
           <img
             v-if="showArt && image"
@@ -31,7 +30,6 @@
             v-else-if="showOverlay"
             alt="Embed's Custom Overlay"
             :src="overlay"
-            onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
             class="relative top-1/2 transform -translate-y-1/2 w-full h-full object-cover"
           />
           <!--          <img-->
@@ -61,7 +59,6 @@
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               alt="Embed's Custom Overlay"
               :src="overlay"
-              onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
             />
           </a>
         </div>
@@ -80,9 +77,13 @@
       ref="embedWrapper"
       :style="embedSize"
     >
-      <div
-        class="w-full h-full flex flex-col relative cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
-        :class="getOutline"
+      <CommonContainer
+        @on-pin="onPinHandler"
+        @close-container="closeContainer"
+        @on-mouse-down="onMouseDownHandler"
+        :isPinActive="isPinBtnActive"
+        :isMoveActive="isMoveBtnActive"
+        :innerWrapperClassNames="getOutline"
       >
         <div class="flex-grow min-h-0 relative">
           <div class="absolute inset-0 bg-black overflow-hidden">
@@ -95,7 +96,6 @@
               v-else-if="showOverlay"
               alt="Embed's Custom Overlay"
               :src="overlay"
-              onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
             />
           </div>
@@ -146,11 +146,14 @@
             {{ liveViewerCount }} viewers
           </h6>
         </a>
-      </div>
+      </CommonContainer>
     </div>
   </div>
 
-  <div class="flex items-center w-18 h-24 md:w-24 md:h-32 xl:w-30 xl:h-40 shrink-0" v-else>
+  <div
+    class="flex items-center w-18 h-24 md:w-24 md:h-32 xl:w-30 xl:h-40 shrink-0"
+    v-else
+  >
     <div
       @click="isShowTwitchEmbed = true"
       v-show="!isEmbedVisible"
@@ -160,11 +163,11 @@
     >
       <div
         class="cut-edge__clipped cut-edge__clipped-top-right-md h-full bg-black overflow-hidden"
-        :class="{'getOutline':true, 'numbered-mobile':isMobileDevice}"
+        :class="{ getOutline: true, 'numbered-mobile': isMobileDevice }"
       >
         <img
           v-if="showArt && image"
-          :src="image.url || 'https://placehold.co/600x400'"
+          :src="image.url"
           class="-translate-y-1/2 relative top-1/2 transform w-30p h-full object-cover"
         />
 
@@ -172,7 +175,6 @@
           v-else-if="showOverlay"
           alt="Embed's Custom Overlay"
           :src="overlay"
-          onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
           class="relative top-1/2 transform -translate-y-1/2 w-full h-full object-cover"
         />
         <play-button
@@ -197,9 +199,20 @@
             'pointer-events-none z-negative': !isEmbedVisible,
           },
         ]"
-        style="top: 50%;left: 0;transform: translateY(-50%);z-index: 99;display: flex;align-items: center; width: auto !important;"
+        style="
+          top: 50%;
+          left: 0;
+          transform: translateY(-50%);
+          z-index: 99;
+          display: flex;
+          align-items: center;
+          width: auto !important;
+        "
       >
-        <div ref="embedWrapper" :class="{'relative w-full h-full main-parent':true}">
+        <div
+          ref="embedWrapper"
+          :class="{ 'relative w-full h-full main-parent': true }"
+        >
           <component
             v-if="embedData"
             ref="embed"
@@ -226,16 +239,15 @@
 <script>
 import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
-
+import CommonContainer from "../CommonContainer/CommonContainer.vue";
 import embedMixin from "../../../mixins/embedFrameMixin";
-
 import PlayButton from "../../helpers/PlayButton.vue";
-import isBoxInViewport from "../../../mixins/isBoxInViewport";
 
 export default {
   name: "EmbedContainerNumbered",
   mixins: [embedMixin],
   components: {
+    CommonContainer: CommonContainer,
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
     "play-button": PlayButton,
@@ -326,8 +338,10 @@ export default {
   },
   methods: {
     setIsMobileDevice() {
-      const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
-      if(checkDeviceType) {
+      const checkDeviceType = navigator.userAgent
+        .toLowerCase()
+        .match(/mobile/i);
+      if (checkDeviceType) {
         this.isMobileDevice = true;
       } else {
         this.isMobileDevice = false;
@@ -341,10 +355,12 @@ export default {
       ) {
         if (this.embedName === "TwitchEmbed") {
           this.glowStyling.glow = "cut-edge__wrapper--twitch";
-          this.cornerCutStyling.outlineBorder = "cut-edge__clipped--twitch border-purple";
+          this.cornerCutStyling.outlineBorder =
+            "cut-edge__clipped--twitch border-purple";
         } else if (this.embedName === "YouTubeEmbed") {
           this.glowStyling.glow = "cut-edge__wrapper--youtube";
-          this.cornerCutStyling.outlineBorder = "cut-edge__clipped--youtube border-red";
+          this.cornerCutStyling.outlineBorder =
+            "cut-edge__clipped--youtube border-red";
         }
       }
 
@@ -373,21 +389,19 @@ export default {
       this.$emit("hide-controls");
     },
     scrollOut() {
+      if (this.$root.isVisibleVideoContainer) {
+        return;
+      }
       if (this.showOverlay || this.showArt) {
         this.isOverlayVisible = true;
         this.isEmbedVisible = false;
       }
-      // if (this.$refs.embed.isPlaying()) {
-      this.$refs.embed.stopPlayer();
-      // }
+      if (this.$refs?.embed?.isPlaying()) {
+        this.$refs.embed.stopPlayer();
+      }
       window.removeEventListener("scroll", this.checkIfBoxInViewPort);
       this.$emit("show-controls");
     },
   },
-  // created() {
-  //   if(!this.showOnline && this.embedData){
-  //     this.mouseEntered();
-  //   }
-  // }
 };
 </script>

@@ -4,7 +4,7 @@ import { computed, ref } from "@vue/compat";
 export const useTwitchEmbedStore = defineStore('twitchEmbedStore', () => {
   const embed = ref({});
   const embedData = ref({});
-  const loaders = ref(["/images/Sequence_01_final.mp4"]);
+  const loaders = ref(["/assets/images/Sequence_01_final.mp4"]);
   const embedPlaying = ref(false);
   const isPlaying = computed(() => embedPlaying.value);
   const isBuffering = ref(true);
