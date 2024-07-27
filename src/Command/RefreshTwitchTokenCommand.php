@@ -14,9 +14,12 @@ use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Aws\Ssm\SsmClient;
 use Psr\Log\LoggerInterface;
+use App\Traits\ErrorLogTrait;
 
 class RefreshTwitchTokenCommand extends Command
 {
+    use ErrorLogTrait;
+
     private $client;
     private $params;
     private $file;
@@ -38,6 +41,7 @@ class RefreshTwitchTokenCommand extends Command
     {
         $this
             ->setDescription(self::$defaultDescription)
+            ->addArgument('environment_type', InputArgument::REQUIRED, 'Environment type.')
             ->addOption('topicId', 'i', InputOption::VALUE_OPTIONAL, 'Your Client ID for your Twitch application')
             ->addOption('twitchSecret', 's', InputOption::VALUE_OPTIONAL, 'Your Client Secret for your Twitch application')
             ->addOption('envFile', 'f', InputOption::VALUE_OPTIONAL, 'The .env.local file to rewrite the TWITCH_APP_TOKEN variable');
@@ -55,7 +59,7 @@ class RefreshTwitchTokenCommand extends Command
             ];
             $this->logger->debug("CronJob Is running.");
 
-            $envirenment = $this->params->get('kernel.environment');
+            $envirenment = $input->getArgument('environment_type');
             $env = $env_parameters[$envirenment];
 
             $paramss = [];
@@ -83,6 +87,7 @@ class RefreshTwitchTokenCommand extends Command
             }
         } catch (\Throwable $th) {
             $this->logger->error($th->getMessage());
+            $this->log_error($th->getMessage(), 500, 'aws_paraameter');
             return 1;
         }
 
@@ -141,8 +146,11 @@ class RefreshTwitchTokenCommand extends Command
             }
 
             $message = "Twitch returned status code " . $request->getStatusCode();
+            $this->log_error($request->getContent(false), $request->getStatusCode(), "twitch_token_generation");
         } catch (\Exception $ex) {
-            $message = $ex->getMessage();
+            $msg = $ex->getMessage()." ".$ex->getFile() . " " .$ex->getLine();
+            $this->logger->error($msg);
+            $this->log_error($msg, 500, "twitch_token");
         }
         $io->error($message);
         $this->logger->debug($message);

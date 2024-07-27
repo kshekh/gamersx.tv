@@ -7,7 +7,7 @@
         class="cursor-default text-white font-calibri font-bold text-sm md:text-2xl xl:text-4xl mr-2"
       >
         {{ settings.title }}
-        <title-addinional-description v-show="settings.onGamersXtv"/>
+        <title-addinional-description v-show="settings.onGamersXtv" />
       </h2>
       <!--      <div class="flex items-center space-x-5">-->
       <!--        <slider-arrow-->
@@ -192,7 +192,6 @@ export default {
     this.$refs.channelBox.addEventListener("scroll", this.handleScroll);
     this.$refs.channelBox.scrollLeft = 0;
     this.setIsMobileDevice();
-
   },
   updated: function () {
     if (

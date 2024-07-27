@@ -30,6 +30,7 @@ export default {
         setTimeout(() => {
           this.setEmbedPosition();
           this.$root.$emit("close-other-layouts", this.embedData.elementId);
+
           if (this.$refs.embed) this.$refs.embed.startPlayer();
         }, 30);
       }
@@ -46,7 +47,9 @@ export default {
           prevVideoContainer.getBoundingClientRect();
 
         this.position = {
-          top: isFullWidth ? videoContainerPosition.top + window.scrollY : videoContainerPosition.top + window.scrollY,
+          top: isFullWidth
+            ? videoContainerPosition.top + window.scrollY
+            : videoContainerPosition.top + window.scrollY,
           left: videoContainerPosition.left,
         };
       }
@@ -107,28 +110,26 @@ export default {
 
     async hideVideo(elementId) {
       // use the condition below for the Offline embed containers to auto-play and dont get closed
-      
-        if (
-          !(elementId && this.embedData && this.embedData.elementId === elementId)
-        ) {
-          if (!this.$root.isPinnedContainer) {
-            this.resetEmbedStyles();
-          }
-          this.isEmbedVisible = false;
-          this.$root.isVisibleVideoContainer = false;
-          // this.$root.isPinnedContainer = false;
-          this.$root.isMoveContainer = false;
-          this.$root.containerId = "";
-          this.isPinBtnActive = false;
-  
-          if (this.$refs.embed) {
-            if (this.$refs.embed.isPlaying()) {
-              this.$refs.embed.stopPlayer();
-            }
+
+      if (
+        !(elementId && this.embedData && this.embedData.elementId === elementId)
+      ) {
+        if (!this.$root.isPinnedContainer) {
+          this.resetEmbedStyles();
+        }
+        this.isEmbedVisible = false;
+        this.$root.isVisibleVideoContainer = false;
+        // this.$root.isPinnedContainer = false;
+        this.$root.isMoveContainer = false;
+        this.$root.containerId = "";
+        this.isPinBtnActive = false;
+
+        if (this.$refs.embed) {
+          if (this.$refs.embed.isPlaying()) {
+            this.$refs.embed.stopPlayer();
           }
         }
-      
-      
+      }
     },
 
     setEmbedPosition(isFullWidth) {
@@ -165,7 +166,7 @@ export default {
       videoContainer.style.opacity = "1";
     },
 
-    onPinHandler(ev,isFullWidth) {
+    onPinHandler(ev, isFullWidth) {
       const container = this.$refs.embedWrapper;
       const top = Math.abs(container.getBoundingClientRect().top);
       const left = container.getBoundingClientRect().left;
@@ -175,7 +176,9 @@ export default {
         container.style.transition = "none";
         container.style.position = "absolute";
 
-        container.style.top = isFullWidth ? top  + window.scrollY + "px" : top + window.scrollY + "px";
+        container.style.top = isFullWidth
+          ? top + window.scrollY + "px"
+          : top + window.scrollY + "px";
         container.style.left = left + "px";
 
         this.isPined = false;
@@ -213,7 +216,9 @@ export default {
       const moveAt = (pageX, pageY) => {
         this.$refs.embedWrapper.style.transform = "none";
         this.$refs.embedWrapper.style.left = pageX - shiftX + "px";
-        this.$refs.embedWrapper.style.top = isFullWidth ? pageY - 115 + "px" : pageY - 15 + "px";
+        this.$refs.embedWrapper.style.top = isFullWidth
+          ? pageY - 115 + "px"
+          : pageY - 15 + "px";
       };
 
       moveAt(ev.pageX, ev.pageY);
