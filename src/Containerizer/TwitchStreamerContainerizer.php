@@ -4,9 +4,12 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
+use App\Traits\ErrorLogTrait;
+use Symfony\Component\HttpClient\Exception\ClientException;
 
 class TwitchStreamerContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
+    use ErrorLogTrait;
     private $homeRowItem;
     private $twitch;
     private $entityManager;
@@ -20,6 +23,7 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
 
     public function getContainers(): Array
     {
+        try {
         $topic_id = $this->homeRowItem->getTopic()['topicId'];
         $check_unique_item =  $this->entityManager->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
 
@@ -37,6 +41,7 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
         $infos = $twitch->getStreamerInfo($streamerId);
         if (200 !== $infos->getStatusCode()) {
             $this->logger->error("Call to Twitch failed with ".$infos->getStatusCode());
+            $this->log_error($infos->getContent(false), $infos->getStatusCode(), "twitch_streaming_container_info", $this->homeRowItem->getId());
             unset($infos);
             return Array();
         }
@@ -44,6 +49,7 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
         $broadcast = $twitch->getStreamForStreamer($streamerId);
         if (200 !== $broadcast->getStatusCode()) {
             $this->logger->error("Call to Twitch failed with ".$broadcast->getStatusCode());
+            $this->log_error($broadcast->getContent(false), $broadcast->getStatusCode(), "twitch_streaming_container_broadcast", $this->homeRowItem->getId());
             unset($broadcast);
             return Array();
         }
@@ -188,6 +194,11 @@ class TwitchStreamerContainerizer extends LiveContainerizer implements Container
             $this->trim();
 
             return $this->items;
+        }
+        } catch (ClientException $th) {
+            $this->log_error($th->getMessage(). " " . $th->getFile() . " " . $th->getLine(), $th->getCode(), "twitch_streamer_containerizer", $this->homeRowItem ? $this->homeRowItem->getId() : null);
+        } catch (\Exception $ex) {
+            $this->log_error($ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine(), $ex->getCode(), "twitch_streamer_containerizer", $this->homeRowItem ? $this->homeRowItem->getId() : null);
         }
 
         return Array();

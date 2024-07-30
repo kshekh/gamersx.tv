@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Containerizer\ContainerizerFactory;
 use App\Entity\HomeRow;
 use App\Service\HomeRowInfo;
+use App\Traits\ErrorLogTrait;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,6 +18,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class CacheHomePageContainers extends Command
 {
+    use ErrorLogTrait;
+
     private $containerizer;
     private $container;
     private $homeRowInfo;
@@ -46,11 +49,8 @@ class CacheHomePageContainers extends Command
         $containerizer = $this->containerizer;
 
         try {
-            $cache = new FilesystemAdapter(
-                $namespace = '',
-                $defaultLifetime = 0,
-                $directory = '/Users/ahmed/Herd/gamersx.tv/filesystem_cache'
-            );
+            $cache = new FilesystemAdapter('', 0, '/tmp/cache');
+
             // Deleting old cache
             //Previously `home` cache delete directly, now `home_item` item used to save temporary cache.
             //If `home_item` contain cache then first delete it, generate new save into it and at the end assign `home_item` into `home`
@@ -63,13 +63,14 @@ class CacheHomePageContainers extends Command
                     ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
 
 //                $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+
                 foreach ($rows as $row) {
+
                     $isPublishedStartTime = $this->homeRowInfo->convertHoursMinutesToSeconds($row->getIsPublishedStart());
                     $isPublishedEndTime = $this->homeRowInfo->convertHoursMinutesToSeconds($row->getIsPublishedEnd());
                     $timezone = $row->getTimezone();
                     date_default_timezone_set($timezone ? $timezone : 'America/Los_Angeles');
                     $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
-
                     if ($row->getIsPublished() === FALSE) {
                         continue;
                     }
@@ -121,7 +122,8 @@ class CacheHomePageContainers extends Command
             $io->success($message);
             return 0;
         } catch (\Exception $ex) {
-            $message = $ex->getMessage();
+            $message = $ex->getMessage() . " ".$ex->getFile() ." ". $ex->getLine();
+            $this->log_error($message, "500", "home_cache_clear");
         }
         $io->error($message);
         return -1;

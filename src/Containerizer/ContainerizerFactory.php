@@ -61,6 +61,7 @@ class ContainerizerFactory
             }
             $containerized->setLogger($this->logger);
             $containerized->setUploader($this->uploader);
+
             return $containerized;
         } elseif ($toBeContainerized instanceof HomeRow) {
             return new HomeRowContainerizer($toBeContainerized, $this);

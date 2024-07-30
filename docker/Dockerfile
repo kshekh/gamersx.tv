@@ -203,7 +203,7 @@ CMD ["/usr/local/bin/docker-php-entrypoint","php-fpm","-F"]
 # - Install the node modules.
 # - Build the remaining static front end assets.
 
-FROM node:18-alpine as frontend
+FROM node:16-alpine as frontend
 
 ARG HOST_USER_UID
 ARG HOST_USER_GID

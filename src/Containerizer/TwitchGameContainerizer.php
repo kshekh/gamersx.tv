@@ -6,9 +6,12 @@ use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
 use App\Entity\HomeRowItemOperation;
 use App\Service\HomeRowInfo;
+use App\Traits\ErrorLogTrait;
+use Symfony\Component\HttpClient\Exception\ClientException;
 
 class TwitchGameContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
+    use ErrorLogTrait;
     private $homeRowItem;
     private $twitch;
     private $entityManager;
@@ -22,11 +25,13 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
 
     public function getContainers(): Array
     {
+        try {
 
         $topic_id = $this->homeRowItem->getTopic()['topicId'];
         $check_unique_item =  $this->entityManager->getRepository(HomeRowItem::class)->findUniqueItem('topicId',$topic_id);
 
         $is_unique_container =  $this->homeRowItem->getIsUniqueContainer();
+
         if($is_unique_container == 0 && (isset($check_unique_item) && !empty($check_unique_item) && count($check_unique_item) > 1 && $check_unique_item[0]['id'] != $this->homeRowItem->getId())) {
             return Array();
         }
@@ -39,6 +44,7 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
         $infos = $twitch->getGameInfo($gameIds);
         if (200 !== $infos->getStatusCode()) {
             $this->logger->error("Call to Twitch failed with ".$infos->getStatusCode());
+            $this->log_error($infos->getContent(false), $infos->getStatusCode(), "twitch_game_container_info", $this->homeRowItem ? $this->homeRowItem->getId() : null);
             unset($infos);
             return Array();
         }
@@ -102,6 +108,7 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
             $broadcasts = $twitch->getTopLiveBroadcastForGame($gameIds, 20);
             if (200 !== $broadcasts->getStatusCode()) {
                 $this->logger->error("Call to Twitch failed with ".$broadcasts->getStatusCode());
+                $this->log_error($broadcasts->getContent(false), $broadcasts->getStatusCode(), "twitch_game_container_broadcast");
                 unset($broadcasts);
                 return Array();
             }
@@ -211,6 +218,11 @@ class TwitchGameContainerizer extends LiveContainerizer implements Containerizer
             $this->trim();
 
             return $this->items;
+        }
+        } catch (ClientException $th) {
+            $this->log_error($th->getMessage(). " " . $th->getFile() . " " . $th->getLine(), $th->getCode(), "twitch_game_containerizer", $this->homeRowItem ? $this->homeRowItem->getId() : null);
+        } catch (\Exception $ex) {
+            $this->log_error($ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine(), $ex->getCode(), "twitch_game_containerizer", $this->homeRowItem ? $this->homeRowItem->getId() : null);
         }
 
         return Array();

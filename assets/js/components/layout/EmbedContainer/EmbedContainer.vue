@@ -1,6 +1,6 @@
 <template>
   <div
-    class="transform transition-transform hover:scale-110 py-8 px-5"
+    class="cursor-default transform transition-transform hover:scale-110 py-8 px-5"
     v-on:mouseenter="isTitleVisible = true"
     v-on:mouseleave="isTitleVisible = false"
   >
@@ -21,7 +21,6 @@
             v-show="isOverlayVisible"
             alt="Embed's Custom Overlay"
             :src="overlay"
-            onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
           />
           <component
             v-show="isEmbedVisible"
@@ -35,17 +34,13 @@
       <!-- If there's only an overlay, show that instead with a link -->
       <div class="embed-frame" v-else-if="showOverlay">
         <a :href="link">
-          <img
-            alt="Embed's Custom Overlay"
-            :src="overlay"
-            onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
-          />
+          <img alt="Embed's Custom Overlay" :src="overlay" />
         </a>
       </div>
     </div>
     <div v-show="isTitleVisible" class="fixed inset-x-2">
       <a :href="link">
-        <div class="truncate text-left">
+        <div class=" cursor-default truncate text-left">
           {{ showOnline ? onlineDisplay.title : offlineDisplay.title }}
         </div>
       </a>

@@ -13,7 +13,7 @@
             </div>
             <twitch-art v-else-if="info.box_art_url"
               :imageType="'boxArt'"
-              :src="info.box_art_url || 'https://placehold.co/600x400'"
+              :src="info.box_art_url"
             ></twitch-art>
             <div>
               <span v-if="popular" class="text-gray-800 bg-red-400 p-1 rounded-sm">

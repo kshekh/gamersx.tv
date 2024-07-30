@@ -191,6 +191,7 @@
 				}
 				#iubenda_policy h1, #iubenda_policy h2, #iubenda_policy h3 {
 					color: var(--site_privacy_label_font_color) !important;
+                    cursor: default;
 				}
             {% endif %}
 
@@ -256,7 +257,7 @@
         <!-- End Meta Pixel Code -->
 
 	</head>
-	<body class="bg-black">
+	<body class="bg-black overflow-x-hidden">
 		<div class="h-full flex flex-col">
 			{% set isLoggedIn = app.session.get('is_logged_in') %}
 			{% set isRequiredToLoginTwitch = app.session.get('login_required_to_connect_twitch') %}
@@ -452,7 +453,7 @@
 							</ul>
 
 							<div class="flex flex-col justify-between items-center w-full md:flex-row">
-								<p class="text-grey text-xxs md:text-sm mb-1 md:mb-0">&copy; 2023 GamersX. All Rights Reserved</p>
+								<p class="cursor-default text-grey text-xxs md:text-sm mb-1 md:mb-0">&copy; 2023 GamersX. All Rights Reserved</p>
 
 
 								<div class="flex items-center space-x-1">

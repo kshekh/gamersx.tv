@@ -91,10 +91,6 @@ Encore
     //.autoProvidejQuery()
 ;
 
-Encore.addAliases({
-  'vue': '@vue/compat',
-});
-
 const config = Encore.getWebpackConfig();
 config.watchOptions = {
     poll: 300,

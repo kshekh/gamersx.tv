@@ -2,6 +2,7 @@
   <div class="w-full h-full flex flex-col">
     <div
       class="
+        cursor-default
         cut-edge__wrapper
         flex-grow
         min-h-0

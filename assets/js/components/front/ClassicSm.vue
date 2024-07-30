@@ -15,6 +15,7 @@
     >
       <h2
         class="
+          cursor-default
           text-white
           font-calibri font-bold
           text-sm
@@ -241,7 +242,6 @@ export default {
         this.$refs.backArrow.classList.remove("sliderArrowHide")
       }else
         this.$refs.backArrow.classList.add("sliderArrowHide")
-      this.$root.$emit('close-other-layouts');
     },
     setIsMobileDevice() {
       const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);

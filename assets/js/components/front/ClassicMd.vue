@@ -16,6 +16,7 @@
     >
       <h2
         class="
+          cursor-default
           text-white
           font-calibri font-bold
           text-sm
@@ -58,7 +59,7 @@
         style="width: 100%"
         class="
         flex
-        overflow-hidden custom-smooth-scroll
+       custom-smooth-scroll
         pt-5
         xl:pt-9
         pb-7
@@ -204,7 +205,6 @@ export default {
         this.$refs.backArrow.classList.remove("sliderArrowHide")
       }else
         this.$refs.backArrow.classList.add("sliderArrowHide")
-      this.$root.$emit('close-other-layouts');
     },
     setIsMobileDevice() {
       const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);

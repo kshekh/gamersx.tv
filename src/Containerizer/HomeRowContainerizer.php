@@ -18,6 +18,9 @@ class HomeRowContainerizer extends LiveContainerizer implements ContainerizerInt
     public function getContainers(): Array {
         $containers = Array();
         $containerizer = $this->containerizer;
+//        if ($this->homeRow->getTitle() === 'NumberedRow') {
+//            dd($this->homeRow->getItems());
+//        }
         foreach ($this->homeRow->getItems() as $item) {
             $containerized = $containerizer($item);
             $containers = array_merge($containers, $containerized->getContainers());

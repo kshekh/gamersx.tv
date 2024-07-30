@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      class="relative z-10 flex flex-col opacity-1 transform rounded-md transition-all duration-700 backdrop-filter backdrop-blur-xs shadow-smooth px-7 -mx-7"
+      class="cursor-default relative z-10 flex flex-col opacity-1 transform rounded-md transition-all duration-700 backdrop-filter backdrop-blur-xs shadow-smooth px-7 -mx-7"
       :class="[
         decreaseInfoBoxSize
           ? 'md:max-w-1/4 md:min-w-180'
@@ -30,24 +30,22 @@
           v-else-if="showOverlay"
           alt="Embed's Custom Overlay"
           :src="overlay"
-          onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
           class="max-h-20 md:max-h-28 xl:max-h-52"
         />
         <img
           v-else-if="overlay && offlineDisplay.showEmbed"
           alt="Embed's Custom Overlay"
           :src="overlay"
-          onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
           class="max-h-20 md:max-h-28 xl:max-h-52"
         />
       </div>
 
       <p
-        class="text-white transition-all duration-300"
+        class="cursor-default text-white transition-all duration-300"
         :class="[
           decreaseInfoBoxSize
-            ? 'text-8 md:text-xs xl:text-sm mb-1 xl:mb-2'
-            : 'text-xs md:text-sm xl:text-lg mb-2 xl:mb-4',
+            ? 'cursor-default text-8 md:text-xs xl:text-sm mb-1 xl:mb-2'
+            : 'cursor-default text-xs md:text-sm xl:text-lg mb-2 xl:mb-4',
         ]"
       >
         {{ description }}
@@ -169,6 +167,7 @@
 <script>
 import TwitchEmbed from "../../embeds/TwitchEmbedFullWidth.vue";
 import YouTubeEmbed from "../../embeds/YouTubeFullWidth.vue";
+import embedFrameMixin from "../../../mixins/embedFrameMixin";
 
 export default {
   name: "EmbedContainerFullWidthDescriptive",
@@ -176,6 +175,7 @@ export default {
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
   },
+  mixins: [embedFrameMixin],
   props: [
     "title",
     "info",
@@ -248,7 +248,9 @@ export default {
       this.playVideo();
     },
     playVideo() {
-      this.$root.$emit("close-other-layouts", this.embedData.elementId);
+      this.$root.$emit("close-other-layouts", this.$root.containerId);
+      this.closeContainer();
+
       if (this.$refs.embed) this.$refs.embed.startPlayer();
     },
     videoBuffered() {
