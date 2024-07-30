@@ -1,13 +1,3 @@
-controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
-    type: attribute
-
-kernel:
-    resource: App\Kernel
-    type: attribute
-
 terms:
     path:          /terms
     controller:    Symfony\Bundle\FrameworkBundle\Controller\TemplateController
@@ -19,7 +9,7 @@ terms:
         maxAge:    86400
         sharedAge: 86400
 
-        # whether caching should apply for client caches only
+        # whether or not caching should apply for client caches only
         private: true
 privacy_policy:
     path:          /privacy-policy
@@ -32,5 +22,5 @@ privacy_policy:
         maxAge:    86400
         sharedAge: 86400
 
-        # whether caching should apply for client caches only
+        # whether or not caching should apply for client caches only
         private: true

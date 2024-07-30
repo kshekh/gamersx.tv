@@ -4,9 +4,8 @@ namespace App\Repository;
 
 use App\Entity\HomeRowItem;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Result;
-use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -25,6 +24,8 @@ class HomeRowItemRepository extends ServiceEntityRepository
     }
 
     /**
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function add(HomeRowItem $entity, bool $flush = true): void
     {
@@ -35,6 +36,8 @@ class HomeRowItemRepository extends ServiceEntityRepository
     }
 
     /**
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function remove(HomeRowItem $entity, bool $flush = true): void
     {
@@ -44,39 +47,21 @@ class HomeRowItemRepository extends ServiceEntityRepository
         }
     }
 
-    /**
-     * @throws Exception
-     * @throws NonUniqueResultException
-     */
-    public function findUniqueItem($key, $value, $how_row_item_id = ''): string|array|int|float
+    public function findUniqueItem($key,$value,$how_row_item_id = '')
     {
-//        $entityManager = $this->getEntityManager();
-        $connection = $this->getEntityManager()->getConnection();
+        $em = $this->getEntityManager();
+        $connection = $em->getConnection();
 
-//        $qb = $this->getEntityManager()->createQueryBuilder()
-//            ->select('hri.id')
-//            ->from(HomeRowItem::class, 'hri')
-//            ->where("JSON_EXTRACT('hri.topic', '$." . $key . "') = :value")
-//            ->andWhere('hri.is_unique_container = 0')
-//            ->setParameter('value', $value);
-//        dd($qb->getQuery()->getResult());
-//        return $qb->getQuery()->getSingleColumnResult();
-
-        $sql = '
-                SELECT * FROM home_row_item
-                WHERE JSON_EXTRACT(topic, :key) = :value
-                AND is_unique_container = 0 AND is_published = 1
-               ';
-
+        $sql = "SELECT * FROM home_row_item WHERE JSON_EXTRACT(topic, :key) = :value AND is_unique_container = 0 AND is_published = 1";
         if($how_row_item_id != '') {
             $sql .= " AND id != $how_row_item_id ";
         }
-        $statement = $connection->executeQuery($sql, [
-            'key' => '$.' . $key,
-            'value' => $value
-        ]);
+        $statement = $connection->prepare($sql);
+        $statement->bindValue('key', '$.' . $key);
+        $statement->bindValue('value', $value);
+        $statement->execute();
 
-        return $statement->fetchFirstColumn();
+        return $statement->fetchAll();
     }
 
     public function findStreamer()
@@ -93,7 +78,8 @@ class HomeRowItemRepository extends ServiceEntityRepository
             ->setParameter(':itemTypeStreamer', 'streamer')
             ;
 
-        return $qb->getQuery()->getResult();
+        $results = $qb->getQuery()->getResult();
+        return $results;
     }
 
     // /**

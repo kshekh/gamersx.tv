@@ -2,31 +2,39 @@
 
 namespace App\Entity;
 
-use App\Repository\PartnerRoleRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PartnerRoleRepository::class)]
+/**
+ * @ORM\Entity()
+ */
 class PartnerRole
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
 
-    #[ORM\ManyToOne(inversedBy: 'partnerRoles')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Partner $partner = null;
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="partnerRoles")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Partner::class, inversedBy="partnerRoles")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $partner;
 
     const ADMIN = 'ROLE_PARTNER_ADMIN';
     const EDITOR = 'ROLE_PARTNER_EDITOR';
     const AD_EDITOR = 'ROLE_PARTNER_AD_EDITOR';
-
-    #[ORM\Column(length: 255)]
-    private ?string $role = null;
-
-    #[ORM\ManyToOne(inversedBy: 'partnerRoles')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $role;
 
     public function getId(): ?int
     {

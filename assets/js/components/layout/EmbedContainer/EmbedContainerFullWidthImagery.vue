@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full flex flex-col">
+  <div class="cursor-default w-full h-full flex flex-col">
     <div
       @click="isShowTwitchEmbed = true"
       v-show="!isEmbedVisible"
@@ -26,7 +26,6 @@
           v-else-if="showOverlay"
           alt="Embed's Custom Overlay"
           :src="overlay"
-          onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
           class="relative top-1/2 transform -translate-y-1/2 w-full h-full object-cover"
         />
         <play-button
@@ -80,12 +79,12 @@ import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 
 import PlayButton from "../../helpers/PlayButton.vue";
-
+import embedMixin from "../../../mixins/embedFrameMixin";
 import isBoxInViewport from "../../../mixins/isBoxInViewport";
 
 export default {
   name: "EmbedContainerFullWidthImagery",
-  mixins: [isBoxInViewport],
+  mixins: [isBoxInViewport, embedMixin],
   components: {
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
@@ -127,7 +126,11 @@ export default {
   },
   methods: {
     playVideo() {
-      this.$root.$emit("close-other-layouts");
+      this.isCursorHere = false;
+      this.closeContainer();
+
+      this.$root.$emit("close-other-layouts", this.embedData.elementId);
+
       setTimeout(() => {
         if (this.showOverlay || this.showArt) {
           this.isOverlayVisible = false;
@@ -144,9 +147,9 @@ export default {
         this.isOverlayVisible = true;
         this.isEmbedVisible = false;
       }
-      // if (this.$refs.embed.isPlaying()) {
-      this.$refs.embed.stopPlayer();
-      // }
+      if (this.$refs?.embed?.isPlaying()) {
+        this.$refs.embed.stopPlayer();
+      }
       window.removeEventListener("scroll", this.checkIfBoxInViewPort);
       this.$emit("show-controls");
     },

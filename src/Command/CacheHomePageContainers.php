@@ -5,47 +5,39 @@ namespace App\Command;
 use App\Containerizer\ContainerizerFactory;
 use App\Entity\HomeRow;
 use App\Service\HomeRowInfo;
-use Doctrine\ORM\EntityManagerInterface;
-use Exception;
+use App\Traits\ErrorLogTrait;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Component\Cache\Adapter\RedisAdapter;
-use Symfony\Component\Cache\DefaultMarshaller;
-use Symfony\Component\Cache\DeflateMarshaller;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 
-#[AsCommand(
-    name: 'app:cache-home-page-containers',
-    description: 'This command will cache the containers for home/api to save load time'
-)]
 class CacheHomePageContainers extends Command
 {
-    private ContainerizerFactory $containerizer;
-    private EntityManagerInterface $entityManager;
-    private HomeRowInfo $homeRowInfo;
-    private $redis_host;
+    use ErrorLogTrait;
 
-    public function __construct(EntityManagerInterface $em, ContainerizerFactory $containerizer, HomeRowInfo $homeRowInfo, $redis_host)
+    private $containerizer;
+    private $container;
+    private $homeRowInfo;
+    protected static $defaultName = 'app:cache-home-page-containers';
+    protected static $defaultDescription = 'This command will cache the containers for home/api to save load time';
+
+    public function __construct(ContainerInterface $container, ContainerizerFactory $containerizer, HomeRowInfo $homeRowInfo)
     {
         $this->containerizer = $containerizer;
-        $this->entityManager = $em;
+        $this->container = $container;
         $this->homeRowInfo = $homeRowInfo;
-        $this->redis_host = $redis_host;
         parent::__construct();
     }
 
-    protected function configure(): void
+    protected function configure()
     {
-        $this->setDescription('This command will cache the containers for home/api to save load time');
+        $this
+            ->setDescription(self::$defaultDescription);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -57,30 +49,29 @@ class CacheHomePageContainers extends Command
         $containerizer = $this->containerizer;
 
         try {
-            $cache = new RedisAdapter(new \Predis\Client(['host' => 'redis']), 'namespace', 0);
+            $cache = new FilesystemAdapter('', 0, '/tmp/cache');
+
             // Deleting old cache
             //Previously `home` cache delete directly, now `home_item` item used to save temporary cache.
             //If `home_item` contain cache then first delete it, generate new save into it and at the end assign `home_item` into `home`
             $cache->delete('home_item');
 
             $beta = 1.0;
-            $rowChannels = $cache->get('home_item', function (ItemInterface $item) use ($containerizer) {
-                $rows = $this->entityManager->getRepository(HomeRow::class)
+            $em = $this->container->get('doctrine')->getManager();
+            $rowChannels = $cache->get('home_item', function (ItemInterface $item) use ($containerizer, $em) {
+                $rows = $em->getRepository(HomeRow::class)
                     ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
 
 //                $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
-                /*
-                 * Cycle through all the rows of the home_rows table
-                 * Examples: FullWidthDescription, NumberedRow, etc.
-                 */
+
                 foreach ($rows as $row) {
+
                     $isPublishedStartTime = $this->homeRowInfo->convertHoursMinutesToSeconds($row->getIsPublishedStart());
                     $isPublishedEndTime = $this->homeRowInfo->convertHoursMinutesToSeconds($row->getIsPublishedEnd());
                     $timezone = $row->getTimezone();
-                    date_default_timezone_set(timezoneId: $timezone ?: 'America/Los_Angeles');
+                    date_default_timezone_set($timezone ? $timezone : 'America/Los_Angeles');
                     $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
-
-                    if (! $row->getIsPublished()) {
+                    if ($row->getIsPublished() === FALSE) {
                         continue;
                     }
 
@@ -96,11 +87,10 @@ class CacheHomePageContainers extends Command
                         $thisRow['rowPaddingTop'] = ($row->getRowPaddingTop() != null)? $row->getRowPaddingTop(): 0;
                         $thisRow['rowPaddingBottom'] = ($row->getRowPaddingBottom() != null)? $row->getRowPaddingBottom(): 0;
 
-                        // Returns an item of type HomeRowContainerizer
-                        $containerized = $containerizer(toBeContainerized: $row);
-
-                        // Calls the getContainers() method in HomeRowContainerizer
+                        $containers = array();
+                        $containerized = $containerizer($row);
                         $channels = $containerized->getContainers();
+
                         foreach ($channels as $key => $channel) {
                             $channels[$key]['isGlowStyling'] = $row->getIsGlowStyling();
                         }
@@ -128,24 +118,27 @@ class CacheHomePageContainers extends Command
 
             // Deleting cache
             $cache->delete('home_item');
-            $message = "Containers Cached successfully";
+            $message = "Containers Cached successfully";;
             $io->success($message);
             return 0;
-        } catch (Exception $ex) {
-            $message = 'message2: ' . $ex->getMessage() . '\n' . 'file: ' . $ex->getFile() . '\n' . 'line: ' . $ex->getLine() . '\n' . 'code: ' . $ex->getCode();
+        } catch (\Exception $ex) {
+            $message = $ex->getMessage() . " ".$ex->getFile() ." ". $ex->getLine();
+            $this->log_error($message, "500", "home_cache_clear");
         }
         $io->error($message);
         return -1;
     }
 
-    protected function json($data, int $status = 200, array $headers = []): JsonResponse
+    protected function json($data, int $status = 200, array $headers = [], array $context = []): JsonResponse
     {
-        $encoders = [new JsonEncoder()];
-        $normalizers = [new ObjectNormalizer()];
-        $serializer = new Serializer($normalizers, $encoders);
+        if ($this->container->has('serializer')) {
+            $json = $this->container->get('serializer')->serialize($data, 'json', array_merge([
+                'json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS,
+            ], $context));
 
-        $jsonContent = $serializer->serialize($data, 'json');
+            return new JsonResponse($json, $status, $headers, true);
+        }
 
-        return new JsonResponse($jsonContent, $status, $headers, true);
+        return new JsonResponse($data, $status, $headers);
     }
 }

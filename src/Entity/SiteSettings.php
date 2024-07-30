@@ -2,19 +2,24 @@
 
 namespace App\Entity;
 
-use App\Repository\SiteSettingRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: SiteSettingRepository::class)]
+/**
+ * @ORM\Entity()
+ */
 class SiteSettings
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
 
-    #[ORM\Column(options: ['default' => 1])]
-    private ?bool $disableHomeAccess = null;
+    /**
+     * @ORM\Column(type="boolean", options={"default" : 1})
+     */
+    private $disableHomeAccess;
 
     public function getId(): ?int
     {

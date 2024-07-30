@@ -3,33 +3,37 @@
 namespace App\Entity;
 
 use App\Model\PartneredInterface;
-use App\Repository\HomeRowItemRepository;
-use DateTime;
-use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Repository\HomeRowItemRepository;
 /**
  * @ORM\Entity(repositoryClass=HomeRowItemRepository::class)
  * @Vich\Uploadable
  */
-#[Vich\Uploadable]
-#[ORM\Entity(repositoryClass: HomeRowItemRepository::class)]
 class HomeRowItem implements PartneredInterface
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $label = null;
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $label;
 
-    #[ORM\Column(type: Types::SMALLINT)]
-    private ?int $sortIndex = null;
+    /**
+     * The index of the item in the HomeRow
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     */
+    private $sortIndex;
 
     const TYPE_GAME = 'game';
     const TYPE_STREAMER = 'streamer';
@@ -41,88 +45,146 @@ class HomeRowItem implements PartneredInterface
     const TYPE_TWITCH_PLAYLIST = 'twitch_playlist';
     const TYPE_YOUTUBE_VIDEO = 'youtube_video';
     const TYPE_YOUTUBE_PLAYLIST = 'youtube_playlist';
+    /**
+     * @ORM\Column(type="string", length=32)
+     */
+    private $itemType;
 
-    #[ORM\Column(length: 32)]
-    private ?string $itemType = null;
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $videoId;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $videoId = null;
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $playlistId;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $playlistId = null;
+    /**
+     * Options to be passed into Containerizer
+     *
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $topic = [];
 
-    #[ORM\Column(nullable: true)]
-    private ?array $topic = null;
+    /**
+     * Options to be passed into Containerizer
+     *
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $sortAndTrimOptions = [];
 
-    #[ORM\Column(nullable: true)]
-    private ?array $sortAndTrimOptions = null;
+    /**
+     * Whether to always show box/profile art for this item
+     *
+     * @ORM\Column(type="boolean")
+     */
+    private $showArt;
 
-    #[ORM\Column]
-    private ?bool $showArt = null;
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $customArt;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $customArt = null;
+    /**
+     * @Vich\UploadableField(mapping="hri_custom", fileNameProperty="customArt")
+     *
+     * @var File|null
+     */
+    private $customArtFile;
 
-    #[Vich\UploadableField(mapping: 'hri_custom', fileNameProperty: 'customArt')]
-    private ?File $customArtFile = null;
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $overlayArt;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $overlayArt = null;
-
-    #[Vich\UploadableField(mapping: 'hri_overlay', fileNameProperty: 'overlayArt')]
-    private ?File $overlayArtFile = null;
+    /**
+     * @Vich\UploadableField(mapping="hri_overlay", fileNameProperty="overlayArt")
+     *
+     * @var File|null
+     */
+    private $overlayArtFile;
 
     const OFFLINE_DISPLAY_ART = 'art';
     const OFFLINE_DISPLAY_OVERLAY = 'overlay';
     const OFFLINE_DISPLAY_STREAM = 'stream';
     const OFFLINE_DISPLAY_NONE = 'none';
-
-    #[ORM\Column(length: 32)]
-    private ?string $offlineDisplayType = null;
+    /**
+     * @ORM\Column(type="string", length=32)
+     */
+    private $offlineDisplayType;
 
     const LINK_TYPE_GAMERSX = 'gamersx';
     const LINK_TYPE_EXTERNAL = 'external';
     const LINK_TYPE_CUSTOM = 'custom';
+    /**
+     * @ORM\Column(type="string", length=32)
+     */
+    private $linkType;
 
-    #[ORM\Column(length: 32)]
-    private ?string $linkType = null;
+    /**
+     * The Home Row this item belongs to
+     *
+     * @ORM\ManyToOne(targetEntity=HomeRow::class, inversedBy="items")
+     * @ORM\JoinColumn()
+     */
+    private $homeRow;
 
-    #[ORM\ManyToOne(targetEntity: HomeRow::class, inversedBy: 'items')]
-    #[ORM\JoinColumn]
-    private ?HomeRow $homeRow = null;
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $customLink;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $customLink = null;
+    /**
+     * @ORM\ManyToOne(targetEntity=Partner::class, inversedBy="homeRowItems")
+     */
+    private $partner;
 
-    #[ORM\ManyToOne(inversedBy: 'homeRowItems')]
-    private ?Partner $partner = null;
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $description;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isPublished;
 
-    #[ORM\Column]
-    private ?bool $isPublished = null;
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $timezone;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $timezone = null;
+    /**
+     * @ORM\Column(name="isPublishedStart",type="string", length=255, nullable=true)
+     */
+    private $isPublishedStart;
 
-    #[ORM\Column(length: 255)]
-    private ?string $isPublishedStart = null;
+    /**
+     * @ORM\Column(name="isPublishedEnd", type="string", length=255, nullable=true)
+     */
+    private $isPublishedEnd;
 
-    #[ORM\Column(length: 255)]
-    private ?string $isPublishedEnd = null;
+    /**
+     * @ORM\Column(type="datetime")
+     * @var \DateTime
+     */
+    private $updatedAt;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?DateTimeInterface $updatedAt = null;
+    /**
+     * @ORM\Column(type="boolean", options={"default" : 0})
+     */
+    private $isPartner;
 
-    #[ORM\Column(options: ['default' => 0])]
-    private ?bool $isPartner = null;
+    /**
+     * @ORM\OneToMany(targetEntity=HomeRowItemOperation::class, mappedBy="home_row_item")
+     */
+    private $homeRowItemOperations;
 
-    #[ORM\OneToMany(mappedBy: 'homeRowItem', targetEntity: HomeRowItemOperation::class)]
-    private Collection $homeRowItemOperations;
-
-    #[ORM\Column(options: ['default' => 0, 'comment' => '0 = unique, 1 = allow repeat'])]
-    private ?bool $is_unique_container = null;
+    /**
+     * @ORM\Column(type="boolean", options={"default" : 1,"comment":"0 = unique,1 = allow repeat"})
+     */
+    private $is_unique_container;
 
     public function __construct()
     {
@@ -250,7 +312,7 @@ class HomeRowItem implements PartneredInterface
     {
         $this->customArtFile = $customArtFile;
         if (null !== $customArtFile) {
-            $this->updatedAt = new DateTime('now');
+            $this->updatedAt = new \DateTime('now');
         }
 
         return $this;
@@ -277,7 +339,7 @@ class HomeRowItem implements PartneredInterface
     {
         $this->overlayArtFile = $overlayArtFile;
         if (null !== $overlayArtFile) {
-            $this->updatedAt = new DateTime('now');
+            $this->updatedAt = new \DateTime('now');
         }
 
         return $this;
@@ -430,17 +492,16 @@ class HomeRowItem implements PartneredInterface
     }
 
     /**
-     * @return DateTimeInterface
+     * @return \DateTime
      */
-    public function getUpdatedAt(): DateTimeInterface
+    public function getUpdatedAt(): ?\DateTime
     {
         return $this->updatedAt;
     }
-
     /**
-     * @param DateTime|null $updatedAt
+     * @param \DateTime $updatedAt
      */
-    public function setUpdatedAt(?DateTime $updatedAt): void
+    public function setUpdatedAt(?\DateTime $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
     }

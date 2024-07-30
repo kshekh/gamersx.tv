@@ -2,8 +2,14 @@ sonata_admin:
     title: 'GamersX Admin'
     title_logo: '/images/controller.png'
     templates:
-        dashboard: '@SonataAdmin/Core/dashboard.html.twig'
         layout: 'admin/standard_layout.html.twig'
+        user_block: 'admin/user_block.html.twig'
+
+    security:
+        handler: sonata.admin.security.handler.role
+
+        role_admin: ROLE_ADMIN
+        role_super_admin: ROLE_SUPER_ADMIN
 
     dashboard:
         groups:
@@ -18,10 +24,17 @@ sonata_admin:
             sonata_user:
                 label: Users and Partners
                 items:
+                    - sonata.user.admin.user
                     - admin.partner
                     - admin.partner_role
-        blocks:
-            - { type: sonata.admin.block.admin_list, position: left }
+
+    options:
+        legacy_twig_text_extension: false
+
+    assets:
+        extra_javascripts:
+            - 'js/custom-admin.js'
+            - 'js/admin-login.js'
 
 sonata_block:
     blocks:

@@ -3,70 +3,106 @@
 namespace App\Entity;
 
 use App\Model\PartneredInterface;
-use App\Repository\HomeRowRepository;
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: HomeRowRepository::class)]
+/**
+ * @ORM\Entity()
+ */
 class HomeRow implements PartneredInterface
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
 
-    #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $title;
 
-    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
-    private ?int $sortIndex = null;
+    /**
+     * The index of the item in the HomeRow
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     */
+    private $sortIndex;
 
-
-    #[ORM\Column(length: 32)]
-    private ?string $layout = null;
+    /**
+     * The name of the vue component for this row
+     *
+     * @ORM\Column(type="string", length=32)
+     */
+    private $layout;
 
     const SORT_ASC = 'asc';
     const SORT_DESC = 'desc';
     const SORT_FIXED = 'fixed';
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $options = [];
 
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    private ?array $options = null;
+    /**
+     * @ORM\OneToMany(targetEntity=HomeRowItem::class, mappedBy="homeRow", orphanRemoval=true)
+     * @ORM\OrderBy({"sortIndex" = "ASC"})
+     */
+    private $items;
 
-    #[ORM\OneToMany(mappedBy: 'homeRow', targetEntity: HomeRowItem::class, orphanRemoval: true)]
-    private ?Collection $items;
+    /**
+     * @ORM\ManyToOne(targetEntity=Partner::class, inversedBy="homeRows")
+     */
+    private $partner;
 
-    #[ORM\ManyToOne(targetEntity: Partner::class, inversedBy: 'homeRows')]
-    private ?Partner $partner = null;
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isPublished;
 
-    #[ORM\Column]
-    private bool $isPublished;
+    /**
+     * @ORM\Column(type="string", length=50)
+     */
+    private $isGlowStyling;
 
-    #[ORM\Column(length: 50, options: ['default' => 0])]
-    private ?bool $isGlowStyling = null;
+    /**
+     * @ORM\Column(type="string", length=50, options={"default" : 0})
+     */
+    private $isCornerCut;
 
-    #[ORM\Column(length: 50, options: ['default' => 0])]
-    private ?bool $isCornerCut = null;
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $timezone;
 
-    #[ORM\Column(length: 255)]
-    private ?string $timezone = null;
+    /**
+     * @ORM\Column(name="isPublishedStart",type="string", length=255, nullable=true)
+     */
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?DateTime $isPublishedStart = null;
+    private $isPublishedStart;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?DateTime $isPublishedEnd = null;
+    /**
+     * @ORM\Column(name="isPublishedEnd",type="string", length=255, nullable=true)
+     */
+    private $isPublishedEnd;
 
-    #[ORM\Column(options: ['default' => 0])]
-    private ?bool $onGamersXtv = null;
+    /**
+     * @ORM\Column(type="boolean", options={"default" : 0})
+     */
+    private $onGamersXtv;
 
-    #[ORM\Column(nullable: true, options: ['default' => 0])]
-    private ?int $row_padding_top = null;
+    /**
+     * @ORM\Column(type="integer", nullable=true, options={"default" : 0})
+     */
+    private $row_padding_top;
 
-    #[ORM\Column(nullable: true, options: ['default' => 0])]
-    private ?int $row_padding_bottom = null;
+    /**
+     * @ORM\Column(type="integer", nullable=true, options={"default" : 0})
+     */
+    private $row_padding_bottom;
 
     public function __construct()
     {
@@ -127,7 +163,7 @@ class HomeRow implements PartneredInterface
     }
 
     /**
-     * @return Collection
+     * @return Collection|HomeRowItem[]
      */
     public function getItems(): Collection
     {
@@ -189,7 +225,7 @@ class HomeRow implements PartneredInterface
         return $this;
     }
 
-    public function getIsGlowStyling(): ?bool
+    public function getIsGlowStyling(): ?string
     {
         return $this->isGlowStyling;
     }
@@ -201,7 +237,7 @@ class HomeRow implements PartneredInterface
         return $this;
     }
 
-    public function getIsCornerCut(): ?bool
+    public function getIsCornerCut(): ?string
     {
         return $this->isCornerCut;
     }
@@ -224,24 +260,24 @@ class HomeRow implements PartneredInterface
 
         return $this;
     }
-    public function getIsPublishedStart(): ?DateTime
+    public function getIsPublishedStart(): ?string
     {
         return $this->isPublishedStart;
     }
 
-    public function setIsPublishedStart(?DateTime $isPublishedStart): self
+    public function setIsPublishedStart(?string $isPublishedStart): self
     {
         $this->isPublishedStart = $isPublishedStart;
 
         return $this;
     }
 
-    public function getIsPublishedEnd(): ?DateTime
+    public function getIsPublishedEnd(): ?string
     {
         return $this->isPublishedEnd;
     }
 
-    public function setIsPublishedEnd(?DateTime $isPublishedEnd): self
+    public function setIsPublishedEnd(?string $isPublishedEnd): self
     {
         $this->isPublishedEnd = $isPublishedEnd;
 
@@ -283,4 +319,5 @@ class HomeRow implements PartneredInterface
 
         return $this;
     }
+
 }

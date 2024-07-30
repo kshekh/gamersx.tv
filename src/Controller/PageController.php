@@ -2,13 +2,16 @@
 
 namespace App\Controller;
 
+use App\Service\TwitchApi;
 use App\Service\YouTubeApi;
 use App\Service\ThemeInfo;
 use App\Entity\HomeRowItem;
-use Psr\Cache\InvalidArgumentException;
+use App\Traits\ErrorLogTrait;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -17,14 +20,17 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class PageController extends AbstractController
 {
-    #[Route('/channel/{id}', name: 'channel')]
+    use ErrorLogTrait;
+
+    /**
+     * @Route("/channel/{id}", name="channel")
+     */
     public function channel(YouTubeApi $youtube, $id): Response
     {
 
        if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
-//                $this->generateUrl('sonata_user_admin_security_login')
-                $this->generateUrl('admin')
+                $this->generateUrl('sonata_user_admin_security_login')
              );
         }
 
@@ -34,15 +40,15 @@ class PageController extends AbstractController
             ])
         ]);
     }
-
-    #[Route('/query/{query}', name: 'query')]
+    /**
+     * @Route("/query/{query}", name="query")
+     */
     public function query(YouTubeApi $youtube, $query): Response
     {
 
         if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
-//                $this->generateUrl('sonata_user_admin_security_login')
-                $this->generateUrl('admin')
+                $this->generateUrl('sonata_user_admin_security_login')
              );
         }
 
@@ -54,13 +60,13 @@ class PageController extends AbstractController
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @Route("/channel/{id}/api", name="channel_api")
      */
-    #[Route('/channel/{id}/api', name: 'channel_api')]
     public function apiChannel(YouTubeApi $youtube, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $id): Response
     {
-        $channelInfo = $gamersxCache->get("channel-$id",
+        try{
+        $channelInfo = $gamersxCache->get("channel-${id}",
             function (ItemInterface $item) use ($id, $youtube, $themeInfoService) {
                 $channel = $youtube->getChannelInfo($id)->getItems()[0];
                 $themeInfo = $themeInfoService->getThemeInfo($id, HomeRowItem::TYPE_CHANNEL);
@@ -100,16 +106,23 @@ class PageController extends AbstractController
             });
 
         return $this->json($channelInfo);
+        } catch (ClientException $th) {
+            $this->log_error($th->getMessage(). " " . $th->getFile() . " " . $th->getLine(), $th->getCode(), "page_controller_api_channel", null);
+            throw $th;
+        } catch (\Exception $ex) {
+            $this->log_error($ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine(), $ex->getCode(), "page_controller_api_channel", null);
+            throw $ex;
+        }
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @Route("/query/{query}/api", name="query_api")
      */
-    #[Route('/query/{query}/api', name: 'query_api')]
     public function apiQuery(YouTubeApi $youtube, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $query): Response
     {
-        $queryInfo = $gamersxCache->get("query-$query",
+        try {
+        $queryInfo = $gamersxCache->get("query-${query}",
             function (ItemInterface $item) use ($query, $youtube, $themeInfoService) {
                 $themeInfo = $themeInfoService->getThemeInfo($query, HomeRowItem::TYPE_YOUTUBE);
 
@@ -170,10 +183,16 @@ class PageController extends AbstractController
             });
 
         return $this->json($queryInfo);
+        } catch (ClientException $th) {
+            $this->log_error($th->getMessage(). " " . $th->getFile() . " " . $th->getLine(), $th->getCode(), "page_controller_api_query", null);
+            throw $th;
+        } catch (\Exception $ex) {
+            $this->log_error($ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine(), $ex->getCode(), "page_controller_api_query", null);
+            throw $ex;
+        }
     }
 
-    private function youtubeResultToEmbedContainer($embed): array
-    {
+    private function youtubeResultToEmbedContainer($embed) {
         $title = "<".$embed->getSnippet()->getChannelTitle() . "> " . $embed->getSnippet()->getDescription();
         return [
             'componentName' => 'EmbedContainer',
@@ -194,8 +213,7 @@ class PageController extends AbstractController
         ];
     }
 
-    private function youtubeChannelInfoToImage($info): array
-    {
+    private function youtubeChannelInfoToImage($info) {
         $imageInfo = $info->getSnippet()->getThumbnails();
         $imageInfo = $imageInfo->getMedium() ? $imageInfo->getMedium() : $imageInfo->getStandard();
         return [
@@ -207,8 +225,10 @@ class PageController extends AbstractController
 
     }
 
-    #[Route('/access-denied', name: 'access_denied')]
-    public function accessDenied(): RedirectResponse
+    /**
+     * @Route("/access-denied", name="access_denied")
+     */
+    public function accessDenied()
     {
         return $this->redirectToRoute('home');
     }

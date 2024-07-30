@@ -1,11 +1,7 @@
 services:
-    Google\Client:
-        class: Google\Client
+    Google_Client:
+        class: Google_Client
         calls:
-            # Authentication with "API key"
             - [setDeveloperKey, ['%env(GOOGLE_API_KEY)%']]
-            # Authentication with "OAuth 2.0" using Client ID & Secret
             - [setClientId, ['%env(GOOGLE_CLIENT_ID)%']]
             - [setClientSecret, ['%env(GOOGLE_CLIENT_SECRET)%']]
-            # Authentication with "OAuth 2.0" or "Service account" using JSON
-            - [setAuthConfig, [ '%kernel.project_dir%/%env(resolve:GOOGLE_AUTH_CONFIG)%']]

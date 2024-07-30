@@ -2,10 +2,6 @@
 
 namespace App\Entity;
 
-use App\Repository\ThemeRepository;
-use DateTimeImmutable;
-use DateTimeInterface;
-use Doctrine\DBAL\Types\Types;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,58 +10,89 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @Vich\Uploadable
  */
-#[ORM\Entity(repositoryClass: ThemeRepository::class)]
-#[Vich\Uploadable()]
 class Theme
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
 
-    #[ORM\Column(length: 32)]
-    private ?string $topicId = null;
+    /**
+     * @ORM\Column(type="string", length=32)
+     */
+    private $topicId;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $label = null;
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $label;
 
-    #[ORM\Column(length: 32)]
-    private ?string $itemType = null;
+    /**
+     * @ORM\Column(type="string", length=32)
+     */
+    private $itemType;
 
     const IMAGE_TYPE_BANNER = 'banner';
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $bannerImage;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $bannerImage = null;
-
-    #[Vich\UploadableField(mapping: 'theme_banner', fileNameProperty: 'bannerImage')]
-    private ?File $bannerImageFile = null;
+    /**
+     * @Vich\UploadableField(mapping="theme_banner", fileNameProperty="bannerImage")
+     *
+     * @var File|null
+     */
+    private $bannerImageFile;
 
     const IMAGE_TYPE_EMBED_BACKGROUND = 'embed';
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $embedBackground;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $embedBackground = null;
-
-    #[Vich\UploadableField(mapping: 'theme_embed', fileNameProperty: 'embedBackground')]
-    private ?File $embedBackgroundFile = null;
+    /**
+     * @Vich\UploadableField(mapping="theme_embed", fileNameProperty="embedBackground")
+     *
+     * @var File|null
+     */
+    private $embedBackgroundFile;
 
     const IMAGE_TYPE_CUSTOM_ART = 'art';
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $customArt;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $customArt = null;
-
-    #[Vich\UploadableField(mapping: 'theme_art', fileNameProperty: 'customArt')]
-    private ?File $customArtFile = null;
+    /**
+     * @Vich\UploadableField(mapping="theme_art", fileNameProperty="customArt")
+     *
+     * @var File|null
+     */
+    private $customArtFile;
 
     const IMAGE_TYPE_ART_BACKGROUND = 'artBg';
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $artBackground;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $artBackground = null;
+    /**
+     * @Vich\UploadableField(mapping="theme_art_background", fileNameProperty="artBackground")
+     *
+     * @var File|null
+     */
+    private $artBackgroundFile;
 
-    #[Vich\UploadableField(mapping: 'theme_art_background', fileNameProperty: 'artBackground')]
-    private ?File $artBackgroundFile = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?DateTimeInterface $updatedAt = null;
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * Need an updateable field as a fix for vich uploader bug
+     * https://github.com/dustin10/VichUploaderBundle/blob/master/docs/known_issues.md
+     */
+    private $updatedAt;
 
     public function getId(): ?int
     {
@@ -130,7 +157,7 @@ class Theme
         $this->bannerImageFile = $bannerImageFile;
 
         if (null !== $bannerImageFile ) {
-            $this->updatedAt = new DateTimeImmutable();
+            $this->updatedAt = new \DateTimeImmutable();
         }
 
         return $this;
@@ -158,7 +185,7 @@ class Theme
         $this->embedBackgroundFile = $embedBackgroundFile;
 
         if (null !== $embedBackgroundFile ) {
-            $this->updatedAt = new DateTimeImmutable();
+            $this->updatedAt = new \DateTimeImmutable();
         }
 
         return $this;
@@ -186,7 +213,7 @@ class Theme
         $this->customArtFile = $customArtFile;
 
         if (null !== $customArtFile ) {
-            $this->updatedAt = new DateTimeImmutable();
+            $this->updatedAt = new \DateTimeImmutable();
         }
 
         return $this;
@@ -214,19 +241,19 @@ class Theme
         $this->artBackgroundFile = $artBackgroundFile;
 
         if (null !== $artBackgroundFile ) {
-            $this->updatedAt = new DateTimeImmutable();
+            $this->updatedAt = new \DateTimeImmutable();
         }
 
         return $this;
     }
 
 
-    public function getUpdatedAt(): ?DateTimeInterface
+    public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?DateTimeInterface $updatedAt): self
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
 
@@ -236,8 +263,6 @@ class Theme
 
     public function __toString(): string
     {
-        $label = "";
-
         if ($this->getLabel()) {
             $label = $this->getLabel();
         } else if ($this->getTopicId()) {

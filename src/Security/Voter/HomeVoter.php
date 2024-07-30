@@ -2,20 +2,21 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
 use App\Entity\PartnerRole;
 use App\Model\PartneredInterface;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
+use Symfony\Component\Security\Core\Role\Role;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class HomeVoter extends Voter
 {
-    private Security $security;
-    private RoleHierarchyInterface $roles;
+    private $security;
+    private $roles;
 
     public function __construct(Security $security, RoleHierarchyInterface $roles)
     {
@@ -23,14 +24,14 @@ class HomeVoter extends Voter
         $this->roles = $roles;
     }
 
-    protected function supports(string $attribute, $subject): bool
+    protected function supports($attribute, $subject)
     {
         //  This voter votes on HOME_ROW and HOME_ROW_ITEM permissions
-        return $subject instanceof HomeRowAdmin || $subject instanceof HomeRow ||
-            $subject instanceof HomeRowItemAdmin || $subject instanceof HomeRowItem;
+        return $subject instanceof \App\Admin\HomeRowAdmin || $subject instanceof \App\Entity\HomeRow ||
+            $subject instanceof \App\Admin\HomeRowItemAdmin || $subject instanceof \App\Entity\HomeRowItem;
     }
 
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         // if the user is anonymous, do not grant access
         $user = $token->getUser();

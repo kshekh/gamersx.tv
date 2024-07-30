@@ -7,7 +7,6 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
-use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Symfony\Component\Routing\RouteCollectionBuilder;
 
 class Kernel extends BaseKernel
@@ -50,12 +49,12 @@ class Kernel extends BaseKernel
         $loader->load($confDir.'/{services}_'.$this->environment.self::CONFIG_EXTS, 'glob');
     }
 
-    protected function configureRoutes(RoutingConfigurator $routes): void
+    protected function configureRoutes(RouteCollectionBuilder $routes): void
     {
-        $extensions = '{php,yaml}';
+        $confDir = $this->getProjectDir().'/config';
 
-        $routes->import('../config/{routes}/' . $this->environment . "/*.$extensions");
-        $routes->import("../config/{routes}/*.$extensions");
-        $routes->import("../config/{routes}.$extensions");
+        $routes->import($confDir.'/{routes}/'.$this->environment.'/*'.self::CONFIG_EXTS, '/', 'glob');
+        $routes->import($confDir.'/{routes}/*'.self::CONFIG_EXTS, '/', 'glob');
+        $routes->import($confDir.'/{routes}'.self::CONFIG_EXTS, '/', 'glob');
     }
 }

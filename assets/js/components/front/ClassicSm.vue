@@ -15,6 +15,7 @@
     >
       <h2
         class="
+          cursor-default
           text-white
           font-calibri font-bold
           text-sm
@@ -145,7 +146,7 @@ import PlayButton from "../helpers/PlayButton.vue";
 import embedMixin from "../../mixins/embedFrameMixin";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
-import 'swiped-events';
+require("swiped-events");
 
 export default {
   name: "ClassicSm",

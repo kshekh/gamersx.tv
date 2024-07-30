@@ -16,6 +16,7 @@
     >
       <h2
         class="
+          cursor-default
           text-white
           font-calibri font-bold
           text-sm
@@ -58,7 +59,7 @@
         style="width: 100%"
         class="
         flex
-        overflow-hidden custom-smooth-scroll
+       custom-smooth-scroll
         pt-5
         xl:pt-9
         pb-7
@@ -110,7 +111,7 @@ import SliderArrow from "../helpers/SliderArrow.vue";
 import embedMixin from "../../mixins/embedFrameMixin";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
-import 'swiped-events';
+require("swiped-events");
 
 export default {
   name: "ClassicMd",

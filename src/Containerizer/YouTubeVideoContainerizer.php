@@ -4,27 +4,28 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
-use App\Service\YouTubeApi;
-use DateTime;
-use DateTimeZone;
-use Doctrine\ORM\EntityManagerInterface;
-use Exception;
+use App\Traits\ErrorLogTrait;
+use Symfony\Component\HttpClient\Exception\ClientException;
 
 class YouTubeVideoContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
-    private HomeRowItem $homeRowItem;
-    private YouTubeApi $youtube;
-    private EntityManagerInterface $entityManager;
+    use ErrorLogTrait;
 
-    public function __construct(HomeRowItem $homeRowItem, YouTubeApi $youtube, EntityManagerInterface $entityManager)
+    private $homeRowItem;
+    private $youtube;
+    private $entityManager;
+
+    public function __construct(HomeRowItem $homeRowItem, $youtube,$entityManager)
     {
         $this->homeRowItem = $homeRowItem;
         $this->youtube = $youtube;
         $this->entityManager = $entityManager;
     }
 
-    public function getContainers(): array
+    public function getContainers(): Array
     {
+        try {
+
         $qb = $this->entityManager->createQueryBuilder();
         $query = $qb->select('hri')
             ->from('App:HomeRowItem', 'hri')
@@ -51,17 +52,17 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
 
         try {
             $info = $youtube->getVideoInfo($videoId)->getItems();
-        } catch (Exception $e) {
-            $this->logger->error("Call to YouTube failed with the message \"".$e->getMessage()."\"");
+        } catch (\Exception $e) {
+            $msg = $e->getMessage()." ".$e->getFile() . " " .$e->getLine();
+            $this->logger->error($msg);
+            $this->log_error($msg, 500, "youtube_video_containerizer", $this->homeRowItem->getId());
             return Array();
         }
 
         $info = $info[0];
         $broadcast = null;
         $description = $homeRowItem->getDescription();
-        $timezone = $this->homeRowItem->getTimezone() ?? 'America/Los_Angeles';
-        $currentTime = new DateTime('now', new DateTimeZone($timezone));
-//         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+        $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
 
         $isPublished = $homeRowItem->getIsPublished();
 
@@ -69,12 +70,13 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
             return Array();
         }
 
-//         $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
-//         $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
-        $isPublishedStartTime = new DateTime($this->homeRowItem->getIsPublishedStart(), new DateTimeZone($timezone));
-        $isPublishedEndTime = new DateTime($this->homeRowItem->getIsPublishedEnd(), new DateTimeZone($timezone));
+        $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
+        $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
 
-        if ($currentTime >= $isPublishedStartTime && $currentTime <= $isPublishedEndTime) {
+        if (
+            !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
+            (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
+        ) {
             // No need for a container if we're not displaying and not online
             if (($homeRowItem->getOfflineDisplayType() === HomeRowItem::OFFLINE_DISPLAY_NONE) &&
                 $broadcast === NULL) {
@@ -84,11 +86,14 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
             $channel_id = $info->getSnippet()->getChannelId();
             try {
                 $channel_info = $youtube->getChannelInfo($channel_id)->getItems();
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
+                $msg = $e->getMessage()." ".$e->getFile() . " " .$e->getLine();
+                $this->logger->error($msg);
+                $this->log_error($msg, 500, "youtube_video_containerizer", $this->homeRowItem->getId());
             }
 
             $channelThumbnails = $channel_info[0]->getSnippet()->getThumbnails();
-            $channelThumbnailInfo = $channelThumbnails->getMedium() ?: $channelThumbnails->getDefault();
+            $channelThumbnailInfo = $channelThumbnails->getMedium() ? $channelThumbnails->getMedium() : $channelThumbnails->getDefault();
 
             $title = $info->getSnippet()->getTitle();
             $link = 'https://www.youtube.com/watch?v='.$info->getId();
@@ -104,7 +109,7 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
                 $homeRowItem->getShowArt() === TRUE) {
                 // Get the sized art link
                 $imageInfo = $info->getSnippet()->getThumbnails();
-                $imageInfo = $imageInfo->getMedium() ?: $imageInfo->getStandard();
+                $imageInfo = $imageInfo->getMedium() ? $imageInfo->getMedium() : $imageInfo->getStandard();
 
                 $image = [
                     'url' => $imageInfo->getUrl(),
@@ -174,6 +179,16 @@ class YouTubeVideoContainerizer extends LiveContainerizer implements Containeriz
             return $this->items;
         }
 
+        return Array();
+    } catch (ClientException $th) {
+        $msg = $th->getMessage(). " " . $th->getFile() . " " . $th->getLine();
+        $this->log_error($msg, $th->getCode(), "youtube_video_containerizer",  $this->homeRowItem ? $this->homeRowItem->getId() : null);
+        $this->logger->error($msg);
+    } catch (\Exception $ex) {
+        $msg = $ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine();
+        $this->log_error($msg, $ex->getCode(), "youtube_video_containerizer",  $this->homeRowItem ? $this->homeRowItem->getId() : null);
+        $this->logger->error($msg);
+    }
         return Array();
     }
 }

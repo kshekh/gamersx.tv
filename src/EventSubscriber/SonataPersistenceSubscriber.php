@@ -11,14 +11,14 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 class SonataPersistenceSubscriber implements EventSubscriberInterface
 {
-    private CacheInterface $gamersxCache;
+    private $gamersxCache;
 
     public function __construct(CacheInterface $gamersxCache)
     {
         $this->gamersxCache = $gamersxCache;
     }
 
-    public function clearCache(PersistenceEvent $event): void
+    public function clearCache(PersistenceEvent $event)
     {
         $admin = $event->getAdmin();
         if ($admin instanceof HomeRowItemAdmin || $admin instanceof HomeRowAdmin ||
@@ -27,7 +27,7 @@ class SonataPersistenceSubscriber implements EventSubscriberInterface
         }
     }
 
-    public static function getSubscribedEvents(): array
+    public static function getSubscribedEvents()
     {
         return [
             'sonata.admin.event.persistence.post_update' => 'clearCache',

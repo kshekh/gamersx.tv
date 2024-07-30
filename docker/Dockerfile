@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-
 ARG HOST_USER_UID=1001
 ARG HOST_USER_GID=1001
 
@@ -18,8 +16,8 @@ COPY composer.json composer.lock /app/
 
 RUN composer install \
     --ignore-platform-reqs \
-    --optimize-autoloader \
     --no-interaction \
+    --no-plugins \
     --no-scripts \
     --prefer-dist \
     --quiet
@@ -32,7 +30,7 @@ RUN composer install \
 # gpg: command not found
 
 # Build a container to be used for development scripts
-FROM php:8.3-cli as worker
+FROM php:7.4-cli as worker
 
 ARG HOST_USER_UID
 ARG HOST_USER_GID
@@ -91,7 +89,7 @@ WORKDIR /app
 
 COPY . /app/
 
-COPY --from=vendor --chown=root:root /app/vendor /app/vendor
+COPY --from=vendor --chown=root:root /app/vendor/. /app/vendor
 
 RUN pecl install -o -f redis \
 &&  rm -rf /tmp/pear \
@@ -114,25 +112,20 @@ COPY ./docker/php/php.ini /usr/local/etc/php/
 # - Build the static Sonata bundles with Symfony for the web server
 # - Prepare the backend scripts for the upstream task.
 
-FROM php:8.3-cli-alpine as backend
+FROM php:7.4-cli as backend
 
 RUN docker-php-source extract \
     && docker-php-source delete
 
-WORKDIR /app
+RUN mkdir /app
 
 # Copy the site files
 COPY . /app/
 
-# Copy php dependencies from Stage 1
-COPY --from=vendor --chown=root:root /app/vendor /app/vendor
+WORKDIR /app
 
-# Verify that the vendor directory was copied successfully
-RUN if [ ! -d "/app/vendor" ]; then \
-        echo "Error: Vendor directory not found!"; \
-        ls -la /app; \
-        exit 1; \
-    fi
+# Copy php dependencies from Stage 1
+COPY --from=vendor /app/vendor/. /app/vendor
 
 # Build the bundles
 RUN php bin/console assets:install
@@ -147,7 +140,7 @@ RUN php bin/console assets:install
 # - Fix the permissions.
 # - Serve PHP scripts upstream to nginx with Fpm.
 
-FROM php:8.3-fpm-alpine as app
+FROM php:7.4-fpm-alpine as app
 
 ARG HOST_USER_UID
 ARG HOST_USER_GID
@@ -210,13 +203,13 @@ CMD ["/usr/local/bin/docker-php-entrypoint","php-fpm","-F"]
 # - Install the node modules.
 # - Build the remaining static front end assets.
 
-FROM node:21.7.3-alpine as frontend
+FROM node:16-alpine as frontend
 
 ARG HOST_USER_UID
 ARG HOST_USER_GID
 
 WORKDIR /app
-COPY package.json postcss.config.js tailwind.config.js vite.config.js yarn.lock /app/
+COPY package.json postcss.config.js tailwind.config.js webpack.config.js yarn.lock /app/
 
 # Add the user that nginx will be expecting
 RUN addgroup --gid ${HOST_USER_GID} nginx

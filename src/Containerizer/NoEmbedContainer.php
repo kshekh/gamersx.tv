@@ -4,22 +4,17 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
-use DateTime;
-use DateTimeZone;
 
 class NoEmbedContainer extends LiveContainerizer implements ContainerizerInterface
 {
-    private HomeRowItem $homeRowItem;
+    private $homeRowItem;
 
     public function __construct(HomeRowItem $homeRowItem)
     {
         $this->homeRowItem = $homeRowItem;
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function getContainers(): array
+    public function getContainers(): Array
     {
         $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
@@ -30,9 +25,7 @@ class NoEmbedContainer extends LiveContainerizer implements ContainerizerInterfa
 
         $title = $rowName;
         $description = $homeRowItem->getDescription();
-        $timezone = $this->homeRowItem->getTimezone() ?? 'America/Los_Angeles';
-        $currentTime = new DateTime('now', new DateTimeZone($timezone));
-//         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+        $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
 
         $isPublished = $homeRowItem->getIsPublished();
 
@@ -40,12 +33,13 @@ class NoEmbedContainer extends LiveContainerizer implements ContainerizerInterfa
             return Array();
         }
 
-//         $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
-//         $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
-        $isPublishedStartTime = new DateTime($this->homeRowItem->getIsPublishedStart(), new DateTimeZone($timezone));
-        $isPublishedEndTime = new DateTime($this->homeRowItem->getIsPublishedEnd(), new DateTimeZone($timezone));
+        $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
+        $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
 
-        if ($currentTime >= $isPublishedStartTime && $currentTime <= $isPublishedEndTime) {
+        if (
+           !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
+           (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
+        ) {
             $display = [
                 'title' => $title,
                 'showArt' => TRUE,

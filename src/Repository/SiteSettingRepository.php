@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
-use App\Entity\MasterSetting;
 use App\Entity\SiteSettings;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -23,6 +24,8 @@ class SiteSettingRepository extends ServiceEntityRepository
     }
 
     /**
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function add(SiteSettings $entity, bool $flush = true): void
     {
@@ -33,6 +36,8 @@ class SiteSettingRepository extends ServiceEntityRepository
     }
 
     /**
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function remove(SiteSettings $entity, bool $flush = true): void
     {

@@ -19,7 +19,7 @@
         type="video/mp4"
       />
     </video> -->
-
+   
     <div :id="embedDataCopy.elementId"></div>
   </div>
 </template>
@@ -46,22 +46,22 @@ export default {
     embedYouTube: function () {
       // let _this = this;
       // window.YT.ready(function() {
-      console.log("embedYouTubeRollback")
-      this.embed = new YT.Player(this.embedDataCopy.elementId, {
-        width: this.width || 540,
-        height: this.height || 300,
-        videoId: this.embedDataCopy.video,
-        autoplay: false,
-        playerVars: {
-          modestbranding: true,
-          rel: 0,
-        },
-        events: {
-          onStateChange: this.playerStateChanged,
-        },
-      });
-      // Listen for other players, stop on their start
-      this.$root.$on("yt-embed-playing", this.stopPlayer);
+        console.log("embedYouTubeRollback")
+        this.embed = new YT.Player(this.embedDataCopy.elementId, {
+            width: this.width || 540,
+            height: this.height || 300,
+            videoId: this.embedDataCopy.video,
+            autoplay: false,
+            playerVars: {
+              modestbranding: true,
+              rel: 0,
+            },
+            events: {
+              onStateChange: this.playerStateChanged,
+            },
+          });
+          // Listen for other players, stop on their start
+          this.$root.$on("yt-embed-playing", this.stopPlayer);
       // })
     },
     playerStateChanged: function (e) {

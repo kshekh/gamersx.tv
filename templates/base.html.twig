@@ -7,7 +7,6 @@
             _iub.csConfiguration = {"applyGdprForCH":false,"askConsentAtCookiePolicyUpdate":true,"countryDetection":true,"enableFadp":true,"enableLgpd":true,"enableTcf":true,"enableUspr":true,"floatingPreferencesButtonDisplay":false,"gdprAppliesGlobally":false,"googleAdditionalConsentMode":true,"lang":"en","lgpdAppliesGlobally":false,"logLevel":"info","perPurposeConsent":true,"preferenceCookie":{"expireAfter":180},"siteId":3228129,"showBannerForUS":true,"tcfPurposes":{"2":"consent_only","3":"consent_only","4":"consent_only","5":"consent_only","6":"consent_only","7":"consent_only","8":"consent_only","9":"consent_only","10":"consent_only"},"usprPurposes":"s,sh,adv","whitelabel":false,"cookiePolicyId":49149225, "banner":{ "acceptButtonDisplay":true,"backgroundOverlay":true,"closeButtonDisplay":false,"customizeButtonDisplay":true,"explicitWithdrawal":true,"listPurposes":true,"position":"float-top-center","prependOnBody":true,"rejectButtonDisplay":true,"showPurposesToggles":true }};
         </script>
         <script type="text/javascript" src="https://cs.iubenda.com/autoblocking/3228129.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/swiped-events/1.2.0/swiped-events.min.js" integrity="sha512-9+LGfjYbkKUzUhs1qyz0d/T5g/v4c+bCuYz2YHOuiAE3LLFnDbRUsMviLEzLRRGM1MXBswzb7UWZiysgkyHMdA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script type="text/javascript" src="//cdn.iubenda.com/cs/tcf/stub-v2.js"></script>
         <script type="text/javascript" src="//cdn.iubenda.com/cs/tcf/safe-tcf-v2.js"></script>
         <script type="text/javascript" src="//cdn.iubenda.com/cs/gpp/stub.js"></script>
@@ -19,7 +18,7 @@
 			{% endblock %}
 		</title>
 		{% block stylesheets %}
-            {{ vite_entry_link_tags('app') }}
+			{{ encore_entry_link_tags('app') }}
 		{% endblock %}
 		<meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- Google tag (gtag.js) -->
@@ -30,15 +29,14 @@
             gtag('js', new Date());
             gtag('config', 'G-SRMHMJDY8E');
         </script>
-        <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.png') }}">
+        <link rel="icon" type="image/x-icon" href="/images/favicon.png">
 		<!--<script src="https://cdn.tailwindcss.com"></script>-->
 		{% block javascripts %}
-            {{ vite_entry_script_tags('app') }}
 			<!-- Load the Twitch embed script -->
 			<script src="https://embed.twitch.tv/embed/v1.js"></script>
 			<script src="https://www.youtube.com/player_api"></script>
-			{{ vite_entry_script_tags('app') }}
-			{{ vite_entry_script_tags('main') }}
+			{{ encore_entry_script_tags('app') }}
+			{{ encore_entry_script_tags('main') }}
 		{% endblock %}
         {% set get_active_theme = master_theme.findOneBy({'status':1}) %}
         {% set get_theme_setting = [] %}
@@ -193,6 +191,7 @@
 				}
 				#iubenda_policy h1, #iubenda_policy h2, #iubenda_policy h3 {
 					color: var(--site_privacy_label_font_color) !important;
+                    cursor: default;
 				}
             {% endif %}
 
@@ -275,7 +274,7 @@
                             <img src="{{ site_header_background }}" class="shrink-0 w-24 md:w-72 mr-3 md:mr-14 xl:mr-4 header_background">
                         {% endif %}
                         {% set header_logo = (get_theme_setting_array['header_logo'] is defined and get_theme_setting_array['header_logo'] != '')? get_theme_setting_array['header_logo'] :'logo.png' %}
-                        <img src="{{ asset('images/logo.png') }}" class="shrink-0 w-22 sm:w-24 md:w-72 mr-3 md:mr-14 xl:mr-4" alt="Site logo"/>
+                        <img src="{{ aws_s3_custom_uri_prefix~'/'~header_logo }}" class="shrink-0 w-22 sm:w-24 md:w-72 mr-3 md:mr-14 xl:mr-4"/>
 						{#
 						<div class="flex flex-grow items-center justify-between xl:justify-end ml-auto">
 							<nav class="hidden xl:block">
@@ -330,7 +329,7 @@
 							{% else %}
 							<a href="api/twitch-login" class="custom-header-btn flex items-center elementor-button text-[5px] sm:text-base py-1 px-2 sm:py-0 sm:px-[40px] sm:h-10 " role="button" onmouseover="changeBtnColor()" onmouseout="changeNormalBtnColor()">
 								<span class="elementor-button-text">Login With Twitch</span>
-								<img src='{{ asset('images/twitch-icon-white.png') }}' class="sm:ml-2 w-3.5 sm:w-2.5 h-3.5 sm:h-2.5 sm:w-5 sm:h-5" id="twitch-btn-icon" alt="white twitch icon">
+								<img src="/images/twitch-icon-white.png" class="sm:ml-2 w-3.5 sm:w-2.5 h-3.5 sm:h-2.5 sm:w-5 sm:h-5" id="twitch-btn-icon">
 							</a>
 							{% endif %}
                         {% endif %}
@@ -447,14 +446,14 @@
 								<li>
 									<a class="w-6 h-6 md:w-7 md:h-7 xl:w-10 xl:h-10 hover:opacity-80" viewbox="0 0 16 16" href="https://www.gamersx.gg/">
 										<div class="w-6 h-6 md:w-7 md:h-7 xl:w-10 xl:h-10" style="background: #6441A5; border-radius: 50%">
-											<img style="filter: grayscale(100%) saturate(0%) brightness(50%) contrast(300%); transform: scale(.7)" src='{{ asset('images/gmx-logo-black.png') }}' alt="GamersX Logo"></img>
+											<img style="filter: grayscale(100%) saturate(0%) brightness(50%) contrast(300%); transform: scale(.7)" src="/images/gmx-logo-black.png"></img>
 										</div>
 									</a>
 								</li>
 							</ul>
 
 							<div class="flex flex-col justify-between items-center w-full md:flex-row">
-								<p class="text-grey text-xxs md:text-sm mb-1 md:mb-0">&copy; 2023 GamersX. All Rights Reserved</p>
+								<p class="cursor-default text-grey text-xxs md:text-sm mb-1 md:mb-0">&copy; 2023 GamersX. All Rights Reserved</p>
 
 
 								<div class="flex items-center space-x-1">
@@ -469,10 +468,9 @@
 						</div>
 					</div>
 				</footer>
-                </div>
 			{% endblock %}
 		</div>
-    </body>
+		</body>
     <script>
 		function closeToast() {
 			document.getElementById("toast-warning").style.display = "none";
@@ -524,8 +522,8 @@
          */
     </script>
     <script>
-        if ("{{ app.environment }}" !== "dev" && "{{ app.request.schemeAndHttpHost }}" === "https://gamersx.tv"  && navigator.userAgent.toLowerCase().match(/mobile/i)){
+        if ("{{ app.environment }}" != "dev" && "{{ app.request.schemeAndHttpHost }}" == "https://gamersx.tv"  && navigator.userAgent.toLowerCase().match(/mobile/i)){
             window.location.replace("{{ redirect_url }}");
         }
     </script>
-</html>
+	</html>

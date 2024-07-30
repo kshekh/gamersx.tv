@@ -2,31 +2,41 @@
 
 namespace App\Entity;
 
-use App\Repository\PartnerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-
-#[ORM\Entity(repositoryClass: PartnerRepository::class)]
+/**
+ * @ORM\Entity()
+ */
 class Partner
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
 
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $name;
 
-    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: PartnerRole::class)]
-    private Collection $partnerRoles;
+    /**
+     * @ORM\OneToMany(targetEntity=PartnerRole::class, mappedBy="partner")
+     */
+    private $partnerRoles;
 
-    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: HomeRow::class)]
-    private Collection $homeRows;
+    /**
+     * @ORM\OneToMany(targetEntity=HomeRow::class, mappedBy="partner")
+     */
+    private $homeRows;
 
-    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: HomeRowItem::class)]
-    private Collection $homeRowItems;
+    /**
+     * @ORM\OneToMany(targetEntity=HomeRowItem::class, mappedBy="partner")
+     */
+    private $homeRowItems;
 
     public function __construct()
     {
@@ -53,7 +63,7 @@ class Partner
     }
 
     /**
-     * @return Collection
+     * @return Collection|PartnerRole[]
      */
     public function getPartnerRoles(): Collection
     {
@@ -92,7 +102,7 @@ class Partner
     }
 
     /**
-     * @return Collection
+     * @return Collection|HomeRow[]
      */
     public function getHomeRows(): Collection
     {
@@ -122,7 +132,7 @@ class Partner
     }
 
     /**
-     * @return Collection
+     * @return Collection|HomeRowItem[]
      */
     public function getHomeRowItems(): Collection
     {

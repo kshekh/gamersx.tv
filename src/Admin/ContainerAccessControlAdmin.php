@@ -1,32 +1,69 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Admin;
 
+use App\Entity\HomeRow;
+use App\Form\SortAndTrimOptionsType;
+use Knp\Menu\ItemInterface as MenuItemInterface;
+use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, NumberType, TimeType, TimezoneType};
+use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\AdminBundle\Route\RouteCollectionInterface;
 use Sonata\AdminBundle\Show\ShowMapper;
+use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 
-class ContainerAccessControlAdmin extends AbstractAdmin
+final class ContainerAccessControlAdmin extends AbstractAdmin
 {
-    protected function configureFormFields(FormMapper $form): void
+    public function createQuery($context = 'list'): ProxyQuery
     {
-        $form->add('streamer_name');
+        /** @var ProxyQuery $query */
+        $query = parent::createQuery($context);
+        $rootAlias = $query->getRootAliases()[0];
+        $query
+            ->setSortOrder('ASC')
+            ->setSortBy([], ['fieldName' => 'id']);
+
+        $query->where($rootAlias.'.is_blacklisted = 1');
+        $query->orWhere($rootAlias.'.is_full_site_blacklisted = 1');
+
+        return $query;
     }
 
-    protected function configureDatagridFilters(DatagridMapper $filter): void
+    protected $datagridValues = array(
+        '_page' => 1,
+        '_sort_order' => 'ASC',
+        '_sort_by' => 'sortIndex'
+    );
+
+
+    protected function configureRoutes(RouteCollectionInterface $collection): void
     {
-        $filter
+        $collection
+            ->remove('create')
+            ->remove('delete')
+            ->add('remove_blacklisted_container',$this->getRouterIdParameter().'/remove_blacklisted_container')
+            ->add('full_site_blacklisted_container',$this->getRouterIdParameter().'/full_site_blacklisted_container');
+        ;
+    }
+
+    protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
+    {
+        $datagridMapper
             ->add('streamer_name')
             ->add('priority')
             ->add('is_blacklist')
-            ->add('whitelist');
+            ->add('whitelist')
+        ;
     }
 
-    protected function configureListFields(ListMapper $list): void
+    protected function configureListFields(ListMapper $listMapper): void
     {
-        $list
+        $listMapper
             ->add('home_row_item', null, [
                 'label' => 'Row',
                 'sortable' => false
@@ -51,11 +88,48 @@ class ContainerAccessControlAdmin extends AbstractAdmin
                 'label' => 'Full site blacklist',
                 'sortable' => false,
                 'template'=> 'ContainerAccessControlAdmin/column_full_site_blacklist.html.twig'
-            ]);
+            ])
+        ;
     }
 
-    protected function configureShowFields(ShowMapper $show): void
+    protected function configureFormFields(FormMapper $formMapper): void
     {
-        $show->add('streamer_name');
+        $formMapper
+            ->add('streamer_name')
+        ;
+    }
+    protected function configureShowFields(ShowMapper $showMapper): void
+    {
+        $showMapper
+            ->add('streamer_name')
+        ;
+    }
+
+    protected function configureBatchActions($actions)
+    {
+
+        if ($this->hasRoute('list') && $this->hasAccess('list')) {
+            $actions['export'] = [
+                'label' => 'Download Export Zip',
+                'ask_confirmation' => FALSE,
+            ];
+        }
+
+        return $actions;
+    }
+
+
+    public function alterNewInstance(object $instance): void
+    {
+        $user = $this->getConfigurationPool()->getContainer()->get('security.token_storage')->getToken()->getUser();
+        $roles = $user->getPartnerRoles();
+
+        if (!$roles->isEmpty()) {
+            $partner = $roles->first()->getPartner();
+
+            if ($partner !== null) {
+                $instance->setPartner($partner);
+            }
+        }
     }
 }

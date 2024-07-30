@@ -4,28 +4,28 @@ namespace App\Containerizer;
 
 use App\Entity\HomeRowItem;
 use App\Service\HomeRowInfo;
-use App\Service\YouTubeApi;
-use DateTime;
-use DateTimeZone;
-use Exception;
+use App\Traits\ErrorLogTrait;
+use Symfony\Component\HttpClient\Exception\ClientException;
 
 class YouTubeQueryContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
-    private HomeRowItem $homeRowItem;
-    private YouTubeApi $youtube;
+    use ErrorLogTrait;
 
-    public function __construct(HomeRowItem $homeRowItem, YouTubeApi $youtube)
+    private $homeRowItem;
+    private $youtube;
+
+    public function __construct(HomeRowItem $homeRowItem, $youtube)
     {
         $this->homeRowItem = $homeRowItem;
         $this->youtube = $youtube;
     }
 
-    public function getContainers(): array
+    public function getContainers(): Array
     {
+        try {
         $homeRowInfo = new HomeRowInfo();
         $homeRowItem = $this->homeRowItem;
         $youtube = $this->youtube;
-        $max = 0;
 
         $this->options = $homeRowItem->getSortAndTrimOptions();
         if (array_key_exists('maxContainers', $this->options)) {
@@ -37,9 +37,7 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
 
         $query = $homeRowItem->getTopic()['topicId'];
         $description = $homeRowItem->getDescription();
-        $timezone = $this->homeRowItem->getTimezone() ?? 'America/Los_Angeles';
-        $currentTime = new DateTime('now', new DateTimeZone($timezone));
-//         $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+        $currentTime = $homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
 
         $isPublished = $homeRowItem->getIsPublished();
 
@@ -47,18 +45,19 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
             return Array();
         }
 
-        $isPublishedStartTime = new DateTime($this->homeRowItem->getIsPublishedStart(), new DateTimeZone($timezone));
-        $isPublishedEndTime = new DateTime($this->homeRowItem->getIsPublishedEnd(), new DateTimeZone($timezone));
-//         $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
-//         $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
+        $isPublishedStartTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedStart());
+        $isPublishedEndTime = $homeRowInfo->convertHoursMinutesToSeconds($homeRowItem->getIsPublishedEnd());
 
-        if ($currentTime >= $isPublishedStartTime && $currentTime <= $isPublishedEndTime) {
-            try {
-                $broadcasts = $youtube->searchLiveChannels($query, $max)->getItems();
-            } catch (Exception $e) {
-                $this->logger->error("Call to YouTube failed with the message \"".$e->getErrors()[0]['message']."\"");
-                return Array();
-            }
+        if (
+            !is_null($isPublishedStartTime) && !is_null($isPublishedEndTime) &&
+           (($currentTime >= $isPublishedStartTime) && ($currentTime <= $isPublishedEndTime))
+        ) {
+            // try {
+                $broadcasts = $youtube->searchLiveChannels($query, $max, null, null)->getItems();
+            // } catch (\Exception $e) {
+            //     $this->logger->error("Call to YouTube failed with the message \"".$e->getErrors()[0]['message']."\"");
+            //     return Array();
+            // }
 
             $videoIds = [];
             foreach ($broadcasts as $broadcast) {
@@ -128,6 +127,15 @@ class YouTubeQueryContainerizer extends LiveContainerizer implements Containeriz
             $this->trim();
 
             return $this->items;
+        }
+        } catch (ClientException $th) {
+            $msg = $th->getMessage(). " " . $th->getFile() . " " . $th->getLine();
+            $this->log_error($msg, $th->getCode(), "youtube_query_containerizer",  $this->homeRowItem ? $this->homeRowItem->getId() : null);
+            $this->logger->error($msg);
+        } catch (\Exception $ex) {
+            $msg = $ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine();
+            $this->log_error($msg, $ex->getCode(), "youtube_query_containerizer",  $this->homeRowItem ? $this->homeRowItem->getId() : null);
+            $this->logger->error($msg);
         }
 
         return Array();

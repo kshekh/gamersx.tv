@@ -1,10 +1,10 @@
 {% block topic_row %}
 
-{{ vite_entry_script_tags('topicSelector') }}
-{{ vite_entry_link_tags('topicSelector') }}
+{{ encore_entry_script_tags('topic-selector') }}
+{{ encore_entry_link_tags('topic-selector') }}
 
-{{ vite_entry_script_tags('streamerSelector') }}
-{{ vite_entry_link_tags('streamerSelector') }}
+{{ encore_entry_script_tags('streamer-selector') }}
+{{ encore_entry_link_tags('streamer-selector') }}
 
 {% set searchType = value.itemType ?? form.searchType.vars.value %}
 <div class="box">

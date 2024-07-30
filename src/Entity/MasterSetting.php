@@ -3,25 +3,34 @@
 namespace App\Entity;
 
 use App\Repository\MasterSettingRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: MasterSettingRepository::class)]
+/**
+ * @ORM\Entity(repositoryClass=MasterSettingRepository::class)
+ */
 class MasterSetting
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
 
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $name;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $value = null;
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $value;
 
-    #[ORM\ManyToOne(inversedBy: 'masterSettings')]
-    private ?MasterTheme $master_theme = null;
+    /**
+     * @ORM\ManyToOne(targetEntity=MasterTheme::class, inversedBy="masterSettings")
+     */
+    private $master_theme;
 
     public function getId(): ?int
     {

@@ -3,29 +3,23 @@
 namespace App\Containerizer;
 
 use App\Entity\HomeRow;
+use App\Entity\HomeRowItem;
 
 class HomeRowContainerizer extends LiveContainerizer implements ContainerizerInterface
 {
+    private $containerizer;
+    private $homeRow;
 
-    public function __construct(
-        private readonly ContainerizerFactory $containerizer,
-        private readonly HomeRow              $homeRow
-    ) {}
+    public function __construct(HomeRow $homeRow, ContainerizerFactory $containerizer) {
+        $this->homeRow = $homeRow;
+        $this->containerizer = $containerizer;
+    }
 
-    public function getContainers(): array {
+    public function getContainers(): Array {
         $containers = Array();
         $containerizer = $this->containerizer;
-
-        /*
-         * The getItems method calls all HomeRowItems related to the current homeRow instance
-         */
         foreach ($this->homeRow->getItems() as $item) {
-            /*
-             * Calling the $containerizer object triggers the invoke function
-             * which takes $item as an argument
-             */
             $containerized = $containerizer($item);
-            // Merge the retrieved containers into the empty $containers array
             $containers = array_merge($containers, $containerized->getContainers());
         }
 
@@ -37,7 +31,7 @@ class HomeRowContainerizer extends LiveContainerizer implements ContainerizerInt
         return $this->items;
     }
 
-    protected function sort(): array
+    protected function sort(): Array
     {
         if (array_key_exists('itemSortType', $this->options)) {
             $sort = $this->options['itemSortType'];

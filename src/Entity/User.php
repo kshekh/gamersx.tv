@@ -2,54 +2,47 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Sonata\UserBundle\Entity\BaseUser;
 
-#[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="fos_user__user")
+ */
+class User extends BaseUser
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column(length: 180)]
-    private ?string $username = null;
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    protected $id;
 
     /**
-     * @var list<string> The user roles
+     * @ORM\OneToMany(targetEntity=PartnerRole::class, mappedBy="user", orphanRemoval=true)
      */
-    #[ORM\Column]
-    private array $roles = [];
+    private $partnerRoles;
 
     /**
-     * @var ?string The hashed password
+     * @ORM\Column(type="string", length=255)
      */
-    #[ORM\Column]
-    private ?string $password = null;
+    private $twitchUserId;
 
     /**
-     * @var Collection<int, PartnerRole>
+     * @ORM\Column(type="string", length=500)
      */
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: PartnerRole::class, orphanRemoval: true)]
-    private Collection $partnerRoles;
+    private $twitchAccessToken;
 
-    #[ORM\Column(length: 255)]
-    private ?string $twitchUserId = null;
-
-    #[ORM\Column(length: 500)]
-    private ?string $twitchAccessToken = null;
-
-    #[ORM\Column(length: 500)]
-    private ?string $twitchRefreshToken = null;
+    /**
+     * @ORM\Column(type="string", length=500)
+     */
+    private $twitchRefreshToken;
 
     public function __construct()
     {
+        parent::__construct();
         $this->partnerRoles = new ArrayCollection();
     }
 
@@ -58,95 +51,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    public function getUsername(): ?string
-    {
-        return $this->username;
-    }
-
-    public function setUsername(string $username): static
-    {
-        $this->username = $username;
-
-        return $this;
-    }
-
     /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
-    public function getUserIdentifier(): string
-    {
-        return (string) $this->username;
-    }
-
-    /**
-     * @see UserInterface
-     *
-     * @return list<string>
-     */
-    public function getRoles(): array
-    {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
-    }
-
-    /**
-     * @param list<string> $roles
-     */
-    public function setRoles(array $roles): static
-    {
-        $this->roles = $roles;
-
-        return $this;
-    }
-
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(string $password): static
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * @see UserInterface
-     */
-    public function eraseCredentials(): void
-    {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
-    }
-
-    /**
-     * @return Collection<int, PartnerRole>
+     * @return Collection|PartnerRole[]
      */
     public function getPartnerRoles(): Collection
     {
         return $this->partnerRoles;
     }
 
-    public function addPartnerRole(PartnerRole $partnerRole): static
+    public function addPartnerRole(PartnerRole $partnerRole): self
     {
         if (!$this->partnerRoles->contains($partnerRole)) {
-            $this->partnerRoles->add($partnerRole);
+            $this->partnerRoles[] = $partnerRole;
             $partnerRole->setUser($this);
         }
 
         return $this;
     }
 
-    public function removePartnerRole(PartnerRole $partnerRole): static
+    public function removePartnerRole(PartnerRole $partnerRole): self
     {
         if ($this->partnerRoles->removeElement($partnerRole)) {
             // set the owning side to null (unless already changed)
@@ -163,7 +86,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->twitchUserId;
     }
 
-    public function setTwitchUserId(string $twitchUserId): static
+    public function setTwitchUserId(string $twitchUserId): self
     {
         $this->twitchUserId = $twitchUserId;
 
@@ -175,7 +98,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->twitchAccessToken;
     }
 
-    public function setTwitchAccessToken(string $twitchAccessToken): static
+    public function setTwitchAccessToken(string $twitchAccessToken): self
     {
         $this->twitchAccessToken = $twitchAccessToken;
 
@@ -187,15 +110,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->twitchRefreshToken;
     }
 
-    public function setTwitchRefreshToken(string $twitchRefreshToken): static
+    public function setTwitchRefreshToken(string $twitchRefreshToken): self
     {
         $this->twitchRefreshToken = $twitchRefreshToken;
 
         return $this;
-    }
-
-    public function __toString(): string
-    {
-        return (string) $this->username;
     }
 }

@@ -1,109 +1,100 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Admin;
 
+use App\Entity\HomeRow;
 use App\Form\SortAndTrimOptionsType;
+use Knp\Menu\ItemInterface as MenuItemInterface;
+use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, HiddenType, NumberType, TimeType, TimezoneType};
+use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
-use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\AdminBundle\Route\RouteCollectionInterface;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\TimeType;
-use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
+use Sonata\AdminBundle\Show\ShowMapper;
+use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 
-class HomeRowAdmin extends AbstractAdmin
+final class HomeRowAdmin extends AbstractAdmin
 {
-    protected function configureFormFields(FormMapper $form): void
+    public function createQuery($context = 'list'): ProxyQuery
     {
-        $form
-            ->add('title')
-            ->add('sortIndex')
-            ->add('layout', ChoiceType::class, [
-                'choices' => [
-                    'Classic Small' => 'ClassicSm',
-                    'Classic Medium' => 'ClassicMd',
-                    'Classic Large' => 'ClassicLg',
-                    'Classic Vertical' => 'ClassicVertical',
-                    'Full Width - Descriptive' => 'FullWidthDescriptive',
-                    'Full Width - Imagery' => 'FullWidthImagery',
-                    'Parallax' => 'Parallax',
-                    'Numbered' => 'NumberedRow',
-                ]
-            ])
-            ->add('partner')
-            ->add('options', SortAndTrimOptionsType::class, [
-                'label' => 'Sort and Trim Options',
-                'required' => false,
-            ])
-            ->add('isPublished')
-            ->add('isGlowStyling', ChoiceType::class, [
-                'choices' => [
-                    'Enabled If Live' => 'enabled_if_live',
-                    'Always On' => 'always_on',
-                    'Always Off' => 'always_off',
-                    'Enabled If Offline' => 'enabled_if_offline'
-                ]
-            ])
-            ->add('isCornerCut', ChoiceType::class, [
-                'choices' => [
-                    'Enabled If Live' => 'enabled_if_live',
-                    'Always On' => 'always_on',
-                    'Always Off' => 'always_off',
-                    'Enabled If Offline' => 'enabled_if_offline'
-                ]
-            ])
-            ->add('isPublished', null, [
-                'help' => 'Current Server Time: ' . date('H:i')
-            ])
-            ->add('timezone', TimezoneType::class, ['required' => false])
-            ->add('isPublishedStart', TimeType::class, [
-                'label' => 'Publish Start Time',
-                'required' => false,
-                'input_format' => 'H:i:s',
-                'widget' => 'single_text',
-                'attr' => [
-                    'class' => 'timepicker',
-                    'title' => "Start timepicker for published",
-                ]
-            ])
-            ->add('isPublishedEnd', TimeType::class, [
-                'label' => 'Publish End Time',
-                'required' => false,
-                'input_format' => 'H:i:s',
-                'widget' => 'single_text',
-                'attr' => [
-                    'class' => 'timepicker',
-                    'title' => "End timepicker for published",
-                ]
-            ])
-            ->add('onGamersXtv', null, [
-                'label' => 'add \'on GamersX TV\' to end of row title'
-            ], [
-                'type' => 'string'
-            ])
-            ->add('row_padding_top',null,[
-                'label' => 'Row Padding Top(In px)',
-            ])
-            ->add('row_padding_bottom',null,[
-                'label' => 'Row Padding Bottom(In px)',
-            ]);
+        /** @var ProxyQuery $query */
+        $query = parent::createQuery($context);
+
+        return $query
+            ->setSortOrder('ASC')
+            ->setSortBy([], ['fieldName' => 'sortIndex'])
+            ;
     }
 
-    protected function configureDatagridFilters(DatagridMapper $datagrid): void
+    protected $datagridValues = array(
+        '_page' => 1,
+        '_sort_order' => 'ASC',
+        '_sort_by' => 'sortIndex'
+    );
+    public function configureActionButtons($action, $object = null)
     {
-        $datagrid
+        $list = parent::configureActionButtons($action, $object);
+        $list['importForm']['template'] = 'CRUD/import_button.html.twig';
+        return $list;
+    }
+
+    public function getDashboardActions()
+    {
+        $actions = parent::getDashboardActions();
+
+        $actions['importForm'] = [
+            'label' => 'Import',
+            'url' => $this->generateUrl('importForm'),
+            'icon' => 'level-up',
+        ];
+
+        return $actions;
+    }
+
+    protected function configureTabMenu(
+        MenuItemInterface $menu,
+        $action,
+        AdminInterface $childAdmin = null
+    ) {
+        if (!$childAdmin && !in_array($action, ['edit', 'show'])) {
+            return;
+        }
+
+        $admin = $this->isChild() ? $this->getParent() : $this;
+        $id = $admin->getRequest()->get('id');
+
+        $menu->addChild('View Row', $admin->generateMenuUrl('show', ['id' => $id]));
+
+        if ($this->isGranted('EDIT')) {
+            $menu->addChild('Edit Row', $admin->generateMenuUrl('edit', ['id' => $id]));
+        }
+
+        if ($this->isGranted('LIST')) {
+            $menu->addChild(
+                'Manage Items',
+                $admin->generateMenuUrl('admin.home_row_item.list', ['id' => $id])
+            );
+        }
+    }
+
+    protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
+    {
+        $datagridMapper
             ->add('title')
             ->add('partner')
             ->add('isPublished')
             ->add('isGlowStyling')
-            ->add('onGamersXtv');
+            ->add('onGamersXtv')
+        ;
     }
 
-    protected function configureListFields(ListMapper $list): void
+    protected function configureListFields(ListMapper $listMapper): void
     {
-        $list
+        $listMapper
             ->add('title', null, [
                 'editable' => true,
                 'sortable' => false
@@ -167,12 +158,91 @@ class HomeRowAdmin extends AbstractAdmin
                         'direction' => 'down'
                     ],
                 ],
-            ]);
+            ])
+        ;
     }
 
-    protected function configureShowFields(ShowMapper $show): void
+    protected function configureFormFields(FormMapper $formMapper): void
     {
-        $show
+        $formMapper
+            ->add('title')
+            ->add('sortIndex')
+            ->add('layout', ChoiceType::class, [
+                'choices' => [
+                    'Classic Small' => 'ClassicSm',
+                    'Classic Medium' => 'ClassicMd',
+                    'Classic Large' => 'ClassicLg',
+                    'Classic Vertical' => 'ClassicVertical',
+                    'Full Width - Descriptive' => 'FullWidthDescriptive',
+                    'Full Width - Imagery' => 'FullWidthImagery',
+                    'Parallax' => 'Parallax',
+                    'Numbered' => 'NumberedRow',
+                ]
+            ])
+            ->add('partner')
+            ->add('options', SortAndTrimOptionsType::class, [
+                'label' => 'Sort and Trim Options',
+                'required' => false,
+            ])
+            ->add('isPublished')
+            ->add('isGlowStyling', ChoiceType::class, [
+                'choices' => [
+                    'Enabled If Live' => 'enabled_if_live',
+                    'Always On' => 'always_on',
+                    'Always Off' => 'always_off',
+                    'Enabled If Offline' => 'enabled_if_offline'
+                ]
+            ])
+            ->add('isCornerCut', ChoiceType::class, [
+                'choices' => [
+                    'Enabled If Live' => 'enabled_if_live',
+                    'Always On' => 'always_on',
+                    'Always Off' => 'always_off',
+                    'Enabled If Offline' => 'enabled_if_offline'
+                ]
+            ])
+            ->add('isPublished', null, [
+                'help' => 'Current Server Time: ' . date('H:i')
+            ])
+            ->add('timezone', TimezoneType::class, ['required' => false])
+            ->add('isPublishedStart', TimeType::class, [
+                'label' => 'Publish Start Time',
+                'required' => false,
+                'input' => 'string',
+                'input_format' => 'H:i:s',
+                'widget' => 'single_text',
+                'attr' => [
+                    'class' => 'timepicker',
+                    'title' => "Start timepicker for published",
+                ]
+            ])
+            ->add('isPublishedEnd', TimeType::class, [
+                'label' => 'Publish End Time',
+                'required' => false,
+                'input' => 'string',
+                'input_format' => 'H:i:s',
+                'widget' => 'single_text',
+                'attr' => [
+                    'class' => 'timepicker',
+                    'title' => "End timepicker for published",
+                ]
+            ])
+            ->add('onGamersXtv', null, [
+                'label' => 'add \'on GamersX TV\' to end of row title'
+            ], [
+                'type' => 'string'
+            ])
+            ->add('row_padding_top',null,[
+                'label' => 'Row Padding Top(In px)',
+            ])
+            ->add('row_padding_bottom',null,[
+                'label' => 'Row Padding Bottom(In px)',
+            ])
+        ;
+    }
+    protected function configureShowFields(ShowMapper $showMapper): void
+    {
+        $showMapper
             ->add('title')
             ->add('sortIndex')
             ->add('layout')
@@ -180,11 +250,13 @@ class HomeRowAdmin extends AbstractAdmin
             ->add('options')
             ->add('isPublished')
             ->add('isGlowStyling')
-            ->add('onGamersXtv');
+            ->add('onGamersXtv')
+        ;
     }
 
-    protected function configureBatchActions(array $actions): array
+    protected function configureBatchActions($actions)
     {
+
         if ($this->hasRoute('list') && $this->hasAccess('list')) {
             $actions['export'] = [
                 'label' => 'Download Export Zip',
@@ -202,5 +274,19 @@ class HomeRowAdmin extends AbstractAdmin
             ->add('importForm')
             ->add('import')
         ;
+    }
+
+    public function alterNewInstance(object $instance): void
+    {
+        $user = $this->getConfigurationPool()->getContainer()->get('security.token_storage')->getToken()->getUser();
+        $roles = $user->getPartnerRoles();
+
+        if (!$roles->isEmpty()) {
+            $partner = $roles->first()->getPartner();
+
+            if ($partner !== null) {
+                $instance->setPartner($partner);
+            }
+        }
     }
 }

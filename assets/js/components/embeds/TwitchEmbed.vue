@@ -1,8 +1,8 @@
 <template>
-  <div @mouseover="showTwitchEmbed = true" @mouseenter="startPlayer" @mouseleave="stopPlayer">
+  <div @mouseover="showTwitchEmbed = true">
     <img
       v-if="image && isBuffering"
-      :src="image['url']"
+      :src="image.url"
       class="relative top-1/2 transform -translate-y-1/2 w-full"
     />
     <video
@@ -28,9 +28,10 @@
       @load="handleIframeLoad"
       width="854"
       height="480"
-      allowfullscreen="allowfullscreen"
-    >
-    </iframe>
+      frameborder="0"
+      allowfullscreen="true"
+      scrolling="no"
+    ></iframe>
     <div
       v-else
       :id="embedDataCopy.elementId"
@@ -66,7 +67,7 @@ export default {
   methods: {
     embedTwitch: function () {
       let element = document.getElementById(this.embedDataCopy.elementId)
-      if (element.children.length === 0) {
+      if (element.children.length == 0) {
         this.embed = new Twitch.Embed(this.embedDataCopy.elementId, {
           width: this.width || 540,
           height: this.height || 300,
@@ -78,7 +79,7 @@ export default {
           // controls: false,
           parent: window.location.hostname,
         });
-
+        
         this.embed.addEventListener(Twitch.Player.PLAY, this.setIsPlaying);
         this.embed.addEventListener(Twitch.Player.PAUSE, this.setIsNotPlaying);
         this.embed.addEventListener(Twitch.Player.ENDED, this.setIsNotPlaying);
@@ -102,7 +103,7 @@ export default {
         !this.embedPlaying &&
         (this.isShowTwitchEmbed || this.showTwitchEmbed)
       ) {
-        this.embed.play();
+        this.embed?.play();
         this.embed.setMuted(false);
         this.embedPlaying = true;
       }
@@ -145,7 +146,7 @@ export default {
     embedDataCopy() {
       return { ...this.embedData };
     },
-    loadingVideo() {
+    loadingVideo(){
       return this.loaders[Math.floor(Math.random()*this.loaders.length)]
     }
   },
@@ -163,3 +164,6 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+</style>

@@ -1,14 +1,60 @@
-import { createPinia } from "pinia";
-import { createApp } from "vue";
-import Home from "./components/Home.vue";
+import Vue from "vue";
+import Home from "./components/Home";
 
-const app = createApp(Home, {
-  isVisibleVideoContainer: false,
-  containerId: '',
-  isPinnedContainer: false,
-  isMoveContainer: false,
-  embedRef: '',
-})
+/**
+ * * Create a fresh Vue Application instance
+ * */
+new Vue({
+  el: "#app-home",
+  components: { Home },
+  created: function () {
+    this.isVisibleVideoContainer = false;
+    this.containerId = '';
+    this.isPinnedContainer = false;
+    this.isMoveContainer = false;
+    this.embedRef = '';
+    this.currentVisibleContainerPositionY = '',
+    this.currentVisibleContainerPositionX = '',
 
-app.use(createPinia());
-app.mount('#app-home');
+    this.startParentPosition = {
+      Y: '',
+      X: ''
+    },
+
+    this.bottomRightPosition = {
+      Y: '',
+      X: ''
+    },
+
+    this.pinnedPosition = {
+      Y: '',
+      X: ''
+    },
+
+    this.unPinnedPosition = {
+      Y: '',
+      X: ''
+    },
+
+    this.lastMovedPosition = {
+      Y: '',
+      X: ''
+    },
+
+    this.currentPosition = {
+      Y: '',
+      X: ''
+    },
+
+    this.positionBeforeUnpin = {
+      top: '',
+      left: ''
+  },
+
+  this.previousPinnedPosition = {
+    y: '',
+    x: ''
+  }
+  },
+});
+

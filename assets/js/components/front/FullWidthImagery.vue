@@ -3,6 +3,7 @@
     @swiped-left="forward()"
     @swiped-right="back()"
     class="
+      cursor-default
       mb-7
       md:mb-9
       xl:mb-14
@@ -109,7 +110,7 @@ import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerImagery
 import SliderDot from "../helpers/SliderDot.vue";
 import SliderArrowBig from "../helpers/SliderArrowBig.vue";
 
-import 'swiped-events';
+require("swiped-events");
 
 export default {
   name: "FullWidthImagery",

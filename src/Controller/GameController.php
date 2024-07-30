@@ -5,10 +5,12 @@ namespace App\Controller;
 use App\Service\TwitchApi;
 use App\Service\ThemeInfo;
 use App\Entity\HomeRowItem;
-use Psr\Cache\InvalidArgumentException;
+use App\Traits\ErrorLogTrait;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -17,7 +19,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 class GameController extends AbstractController
 {
 
-    #[Route('/game/{id}', name: 'game')]
+    use ErrorLogTrait;
+
+    /**
+     * @Route("/game/{id}", name="game")
+     */
     public function index(TwitchApi $twitch, $id): Response
     {
 
@@ -35,20 +41,19 @@ class GameController extends AbstractController
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @Route("/game/{id}/api", name="game_api")
      */
-    #[Route('/game/{id}/api', name: 'game_api')]
     public function apiGame(TwitchApi $twitch, ThemeInfo $themeInfoService,
         CacheInterface $gamersxCache, $id): Response
     {
+        try {
         if (!$this->isGranted('ROLE_LOCKED')) {
             return new RedirectResponse(
-//                $this->generateUrl('sonata_user_admin_security_login')
-                $this->generateUrl('admin')
+                $this->generateUrl('sonata_user_admin_security_login')
              );
         }
 
-        $gameInfo = $gamersxCache->get("game-$id",
+        $gameInfo = $gamersxCache->get("game-${id}",
             function (ItemInterface $item) use ($id, $twitch, $themeInfoService) {
                 $game = $twitch->getGameInfo($id);
                 $themeInfo = $themeInfoService->getThemeInfo($id, HomeRowItem::TYPE_GAME);
@@ -75,6 +80,14 @@ class GameController extends AbstractController
             });
 
         return $this->json($gameInfo);
+
+        } catch (ClientException $th) {
+            $this->log_error($th->getMessage(). " " . $th->getFile() . " " . $th->getLine(), $th->getCode(), "game_api", null);
+            throw $th;
+        } catch (\Exception $ex) {
+            $this->log_error($ex->getMessage(). " " . $ex->getFile() . " " . $ex->getLine(), $ex->getCode(), "game_api", null);
+            throw $ex;
+        }
     }
 
 }
