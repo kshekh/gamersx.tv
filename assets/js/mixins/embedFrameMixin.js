@@ -161,7 +161,7 @@ export default {
       const resultX =
         viewportWidth -
         videoContainerPosition.width -
-        50 -
+        140 -
         videoContainerPosition.left;
 
       videoContainer.style.transform = `translateY(${resultY}px) translateX(${resultX}px)`;

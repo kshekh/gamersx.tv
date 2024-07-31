@@ -1,9 +1,9 @@
 <template>
-  <div class="cursor-default w-full h-full shrink-0" ref="itemWrapper" v-if="!isMobileDevice">
+  <div class="cursor-default w-full h-full shrink-0 " ref="itemWrapper" v-if="!isMobileDevice">
     <div class="cut-edge__wrapper w-full h-full" :class="getGlow">
       <div
         @click="isShowTwitchEmbed = true"
-        class="w-full h-full cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
+        class="w-full h-full border-[2px] rounded-[10px] overflow-hidden !border-[#7A4ECC]/40  cut-edge__clipped-top-left-sm bg-black"
         :class="getOutline"
       >
         <!-- Show the embed with overlay if there's an embed -->
@@ -122,27 +122,27 @@
             ></component>
           </div>
         </div>
-        <a
-          :href="link"
-          class="cursor-default flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
-          :title="offlineDisplay.title"
-        >
-          <div class="mr-2 overflow-hidden">
-            <h5
-              class="cursor-default text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
-            >
-              {{ offlineDisplay.title }}
-            </h5>
-            <h6
-              class="cursor-default text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
-            >
-              {{ embedData.channel }}
-            </h6>
-          </div>
-          <h6 class="cursor-default text-8 text-grey font-play whitespace-nowrap">
-            {{ liveViewerCount }} viewers
-          </h6>
-        </a>
+<!--        <a-->
+<!--          :href="link"-->
+<!--          class="cursor-default flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"-->
+<!--          :title="offlineDisplay.title"-->
+<!--        >-->
+<!--          <div class="mr-2 overflow-hidden">-->
+<!--            <h5-->
+<!--              class="cursor-default text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"-->
+<!--            >-->
+<!--              {{ offlineDisplay.title }}-->
+<!--            </h5>-->
+<!--            <h6-->
+<!--              class="cursor-default text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"-->
+<!--            >-->
+<!--              {{ embedData.channel }}-->
+<!--            </h6>-->
+<!--          </div>-->
+<!--          <h6 class="cursor-default text-8 text-grey font-play whitespace-nowrap">-->
+<!--            {{ liveViewerCount }} viewers-->
+<!--          </h6>-->
+<!--        </a>-->
       </CommonContainer>
     </div>
   </div>

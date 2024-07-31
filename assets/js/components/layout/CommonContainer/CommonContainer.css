@@ -1,12 +1,13 @@
 .actions--wrapper {
-  height: 26px;
-  width: 120px;
+  height: 30px;
+  width: 180px;
   display: flex;
   position: relative;
+  gap: 4px;
   top: 0;
   right: 0;
-  left: calc(100% - 120px);
-  border: 3px solid #130E1C;
+  left: calc(100% - 180px);
+  /*border: 3px solid #130E1C;*/
   border-radius: 10px 10px 0 0;
   z-index: 30;
   background-color: #fff;
@@ -31,15 +32,16 @@
 /*}*/
 
 .actions--btn {
-  max-width: 40px;
-  max-height: 40px;
-  width: 100%;
+  /*max-width: 40px;*/
+  /*max-height: 40px;*/
+  width: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-right: 3px solid #000;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  padding: 4px;
 }
 
 /*.actions--wrapper .actions--btn:first-child {*/
@@ -102,17 +104,4 @@
 /*padding: 6px 6px 0px;*/
 /*gap: 4px;*/
 
-/*position: absolute;*/
-/*width: 200px;*/
-/*height: 40px;*/
-/*left: 297px;*/
-/*top: -37px;*/
-
-/*background: #130E1C;*/
-/*border-width: 3px 3px 0px 3px;*/
-/*border-style: solid;*/
-/*border-color: #7A4ECC;*/
-/*border-radius: 10px 10px 0px 0px;*/
-
-/* pin */
-
+/* menu interaction */

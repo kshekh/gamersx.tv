@@ -3,7 +3,7 @@ services:
 
   mysql:
     container_name: gamersx-mysql
-    image: mariadb:10.5.5
+    image: mariadb:10.5.8
     env_file:
       - .env.local
     environment:

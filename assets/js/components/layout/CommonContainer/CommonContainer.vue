@@ -2,9 +2,9 @@
   <div
     :class="[...classNames]"
     :style="{ zIndex: '1000', ...customStyles }"
-    class="w-full h-full"
+    class="w-[500px] h-[350px] "
   >
-    <div oncontextmenu="false" class="actions--wrapper">
+    <div oncontextmenu="false" class="actions--wrapper border-4 border-b-0 shadow-2xl shadow-purple-600 border-purple overflow-hidden">
       <div
         @click="(event) => $emit('on-pin', event)"
         :class="['actions--btn', { 'actions--btn-active': isPinActive }]"
@@ -23,7 +23,7 @@
       </div>
     </div>
     <div
-      class="w-full h-full flex flex-col relative cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
+      class="w-full h-full p-14 flex flex-col relative rounded-[10px] rounded-tr-none bg-black border-4 !shadow-2xl !shadow-purple-600 border-purple"
       :class="innerWrapperClassNames"
     >
       <slot></slot>

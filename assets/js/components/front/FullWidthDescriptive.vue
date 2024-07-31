@@ -207,7 +207,7 @@ export default {
       isAllowPlaying: true,
       isFirstVideoLoaded: false,
       isMouseStopped: false,
-      isMouseMovingTimeout: false,
+      isMouseMovingTimeout: 0,
       isMobileDevice: false,
       currentChannel: null,
       isEmbedVisible: false,
@@ -400,13 +400,28 @@ export default {
       }
     },
   },
+  // checkScrollPosition() {
+  //   console.log('checkScrollPosition called'); // Log to confirm method call
+  //   const embedWrapper = this.$refs.embedWrapper;
+  //   if (!embedWrapper) {
+  //     console.log('embedWrapper not found');
+  //     return;
+  //   }
+  //   const scrollPosition = window.scrollY + window.innerHeight;
+  //   const embedPosition = embedWrapper.offsetTop + (embedWrapper.offsetHeight * 0.75);
+  //   console.log('scrollPosition:', scrollPosition, 'embedPosition:', embedPosition);
+  //   if (scrollPosition > embedPosition && !this.hasScrolledPast75) {
+  //     this.hasScrolledPast75 = true;
+  //     this.clickContainer(this.currentChannel.embedData.elementId, true);
+  //   }
+  // },
   mounted() {
     const refItem = this.$refs.sliderDotRef.getBoundingClientRect().top;
 
     if (!this.isRowFirst) {
       this.isAllowPlaying = false;
     } else {
-      window.addEventListener("scroll", this.checkIfBoxInViewPort);
+      window.addEventListener("scroll", this.checkScrollPosition);
     }
 
     this.displayChannels = this.settings.channels.filter(this.showChannel);
@@ -414,18 +429,20 @@ export default {
     this.setIsMobileDevice();
     this.currentChannel = this.displayChannels.find((item) => item.embedData);
 
-    setTimeout(() => {
-      // window.scrollTo({
-      //   top: refItem,
-      //   behavior: "smooth",
-      // });
-
-      if (this.currentChannel && this.currentChannel?.embedData?.elementId && this.$refs.embed) {
-      this.clickContainer(this.currentChannel.embedData.elementId, true);
-    }
-    }, 1000);
-
-
+    // setTimeout(() => {
+    //   // window.scrollTo({
+    //   //   top: refItem,
+    //   //   behavior: "smooth",
+    //   // });
+    //
+    //   if (this.currentChannel && this.currentChannel?.embedData?.elementId && this.$refs.embed) {
+    //     this.clickContainer(this.currentChannel.embedData.elementId, true);
+    // }
+    // }, 1000);
+  },
+  beforeDestroy() {
+    // Remove the scroll event listener
+    window.removeEventListener('scroll', this.checkScrollPosition);
   },
   updated: function () {
     if (
