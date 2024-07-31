@@ -49,7 +49,7 @@ class CacheHomePageContainers extends Command
         $containerizer = $this->containerizer;
 
         try {
-            $cache = new FilesystemAdapter();
+            $cache = new FilesystemAdapter('', 0, '/tmp/cache');
 
             // Deleting old cache
             //Previously `home` cache delete directly, now `home_item` item used to save temporary cache.

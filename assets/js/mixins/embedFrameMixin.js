@@ -145,7 +145,7 @@ export default {
       const viewportHeight = document.documentElement.clientHeight;
       const viewportWidth = document.documentElement.clientWidth;
 
-      const resultY = isFullWidth
+      let resultY = isFullWidth
         ? viewportHeight -
           videoContainerPosition.height -
           50 -
@@ -155,6 +155,8 @@ export default {
           videoContainerPosition.height -
           50 -
           videoContainerPosition.top;
+
+      resultY -= 10;
 
       const resultX =
         viewportWidth -

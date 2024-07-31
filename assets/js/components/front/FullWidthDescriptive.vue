@@ -415,17 +415,17 @@ export default {
     this.currentChannel = this.displayChannels.find((item) => item.embedData);
 
     setTimeout(() => {
-      window.scrollTo({
-        top: refItem,
-        behavior: "smooth",
-      });
+      // window.scrollTo({
+      //   top: refItem,
+      //   behavior: "smooth",
+      // });
 
       if (this.currentChannel && this.currentChannel?.embedData?.elementId && this.$refs.embed) {
       this.clickContainer(this.currentChannel.embedData.elementId, true);
     }
     }, 1000);
 
-    
+
   },
   updated: function () {
     if (

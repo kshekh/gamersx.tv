@@ -9,7 +9,6 @@
         @click="(event) => $emit('on-pin', event)"
         :class="['actions--btn', { 'actions--btn-active': isPinActive }]"
       >
-        <div class="left--border"></div>
         <CommonContainerIcon :icon-type="'pin'" />
       </div>
       <div

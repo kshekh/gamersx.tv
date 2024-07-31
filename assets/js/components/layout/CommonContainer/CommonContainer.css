@@ -1,33 +1,34 @@
 .actions--wrapper {
   height: 26px;
-  width: 140px;
+  width: 120px;
   display: flex;
   position: relative;
-  top: 0px;
-  left: calc(100% - 140px);
-  border: 3px solid #000;
-  border-left: none;
+  top: 0;
+  right: 0;
+  left: calc(100% - 120px);
+  border: 3px solid #130E1C;
+  border-radius: 10px 10px 0 0;
   z-index: 30;
-  background-color: #352f44;
-  clip-path: polygon(
-    15px 0px,
-    /* top left */ 100% 0px,
-    /* right top */ 100% 100%,
-    0% 100%,
-    /* bottom left */ 1px 39px
-  );
+  background-color: #fff;
+  /*clip-path: polygon(*/
+  /*  15px 0px,*/
+  /*  !* top left *! 100% 0px,*/
+  /*  !* right top *! 100% 100%,*/
+  /*  0% 100%,*/
+  /*  !* bottom left *! 1px 39px*/
+  /*);*/
 }
 
-.left--border {
-  position: relative;
-  top: 0px;
-  left: 9px;
-  height: 26px;
-  width: 3px;
-  transform: rotateZ(200deg);
-  background-color: #000;
-  z-index: 30;
-}
+/*.left--border {*/
+/*  position: relative;*/
+/*  top: 0;*/
+/*  left: 9px;*/
+/*  height: 26px;*/
+/*  width: 3px;*/
+/*  transform: rotateZ(200deg);*/
+/*  background-color: #000;*/
+/*  z-index: 30;*/
+/*}*/
 
 .actions--btn {
   max-width: 40px;
@@ -41,9 +42,9 @@
   transition: background-color 0.3s ease;
 }
 
-.actions--wrapper .actions--btn:first-child {
-  max-width: 60px;
-}
+/*.actions--wrapper .actions--btn:first-child {*/
+/*  max-width: 60px;*/
+/*}*/
 
 .actions--wrapper .actions--btn:nth-child(2) {
   cursor: grab;
@@ -82,12 +83,36 @@
   fill: #000 !important; /* Змініть цей колір на бажаний */
 }
 
-.actions--wrapper .actions--btn:nth-child(1) svg {
-  margin-left: 12px;
-}
+/*.actions--wrapper .actions--btn:nth-child(1) svg {*/
+/*  margin-left: 12px;*/
+/*}*/
 
 .actions--btn-move-disabled {
   cursor: no-drop !important;
   background-color: rgb(180 180 180) !important;
   user-select: none !important;
 }
+
+/* menu interaction */
+
+/* Auto layout */
+/*display: flex;*/
+/*flex-direction: row;*/
+/*align-items: flex-start;*/
+/*padding: 6px 6px 0px;*/
+/*gap: 4px;*/
+
+/*position: absolute;*/
+/*width: 200px;*/
+/*height: 40px;*/
+/*left: 297px;*/
+/*top: -37px;*/
+
+/*background: #130E1C;*/
+/*border-width: 3px 3px 0px 3px;*/
+/*border-style: solid;*/
+/*border-color: #7A4ECC;*/
+/*border-radius: 10px 10px 0px 0px;*/
+
+/* pin */
+

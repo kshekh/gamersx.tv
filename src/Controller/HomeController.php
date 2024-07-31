@@ -47,7 +47,7 @@ class HomeController extends AbstractController
      */
     public function apiHome(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
     {
-        $cache = new FilesystemAdapter();
+        $cache = new FilesystemAdapter('', 0, '/tmp/cache');
 
         $rowChannels = $cache->getItem('home');
         $home_container_refreshed_at = null;
@@ -73,7 +73,7 @@ class HomeController extends AbstractController
      */
     public function apiHomeRows(): Response
     {
-        $cache = new FilesystemAdapter();
+        $cache = new FilesystemAdapter('', 0, '/tmp/cache');
         $rowChannels = $cache->getItem('home');
         $rows = [];
         // get cache from new rows_data key
