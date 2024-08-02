@@ -11,10 +11,8 @@
   >
     <div class="container mx-auto">
       <div class="pb-50p"></div>
-      <div
-        class="px-4 md:px-12 flex items-center justify-between absolute inset-0 z-10"
-      >
-        <slider-arrow
+      <div class="px-4 md:px-12 flex items-center justify-between absolute inset-0 z-10">
+        <SliderArrow
           :isNext="false"
           :videoType="currentChannelEmbedName"
           @arrow-clicked="back()"
@@ -32,6 +30,7 @@
               v-for="(channel, index) in displayChannels"
               :key="index"
             >
+              <!--channel.componentName possible values: EmbedContainer-->
               <component
                 :is="channel.componentName"
                 v-if="index === rowIndex"
@@ -54,7 +53,7 @@
               ref="sliderDotRef"
               class="flex items-center space-x-1 md:space-x-2 z-10 self-end md:self-center absolute -bottom-[30px]"
             >
-              <slider-dot
+              <SliderDot
                 v-for="(channel, index) in displayChannels"
                 :key="'channelDot' + index"
                 :embedType="currentChannelEmbedName"
@@ -66,7 +65,7 @@
           </div>
         </div>
 
-        <slider-arrow
+        <SliderArrow
           :isNext="true"
           :videoType="currentChannelEmbedName"
           @arrow-clicked="forward()"
@@ -187,8 +186,8 @@ export default {
     YouTubeEmbed: YouTubeEmbed,
     NoEmbedContainer: NoEmbedContainer,
     "title-addinional-description": TitleAdditionalDescription,
-    "slider-dot": SliderDot,
-    "slider-arrow": SliderArrow,
+    SliderDot: SliderDot,
+    SliderArrow: SliderArrow,
   },
   props: {
     settings: {
@@ -340,6 +339,7 @@ export default {
       if (this.$root.isVisibleVideoContainer) {
         return;
       }
+      console.log("I am allowed to play: ", this.isAllowPlaying);
       this.isAllowPlaying = false;
       this.isMouseStopped = false;
       clearTimeout(this.isMouseMovingTimeout);

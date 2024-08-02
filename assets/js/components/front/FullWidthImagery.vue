@@ -141,19 +141,19 @@ export default {
           // backgroundImage: "url(https://picsum.photos/2000/3000)"
           backgroundImage: "url(" + selected.customArt + ")",
         };
-      } else {
-        return {};
       }
+
+      return {};
     },
     currentChannelEmbedName() {
       let selected = this.displayChannels[this.rowIndex];
 
       if (selected && selected.embedName) {
         return selected.embedName;
-      } else {
-        // Default for now
-        return "TwitchEmbed";
       }
+
+      // Default for now
+      return "TwitchEmbed";
     },
   },
   methods: {
@@ -191,8 +191,8 @@ export default {
     setActiveChannel(channelIndex) {
       this.rowIndex = channelIndex;
     },
-    toggleControls(val) {
-      this.isControlsShown = val;
+    toggleControls(controlsShow) {
+      this.isControlsShown = controlsShow;
     },
   },
   mounted: function () {

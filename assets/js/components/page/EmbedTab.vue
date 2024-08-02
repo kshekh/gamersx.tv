@@ -17,5 +17,8 @@ export default {
     'EmbedContainer': EmbedContainer,
   },
   props: ['streams'],
+  mounted() {
+    console.log('stream component name', this.streams)
+  }
 }
 </script>

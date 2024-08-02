@@ -23,6 +23,7 @@
       </div>
 
       <div v-bind:style="embedBg" class="w-auto p-4">
+        <!--one of the components from components/embeds-->
         <component
           :is="embed.componentName"
           v-bind="embed"

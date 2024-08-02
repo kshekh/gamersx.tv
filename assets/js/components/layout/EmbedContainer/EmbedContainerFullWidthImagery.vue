@@ -1,5 +1,8 @@
 <template>
   <div class="cursor-default w-full h-full flex flex-col">
+    <!--
+      If the embed isn't visible show a simple image with a play button.
+    -->
     <div
       @click="isShowTwitchEmbed = true"
       v-show="!isEmbedVisible"
@@ -28,18 +31,20 @@
           :src="overlay"
           class="relative top-1/2 transform -translate-y-1/2 w-full h-full object-cover"
         />
-        <play-button
+        <PlayButton
           v-if="showEmbed && embedData"
           class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 h-12 md:h-16 xl:h-32 w-12 md:w-16 xl:w-32"
           svgClass="w-3 md:w-7 xl:w-12"
           wrapperClass="md:pl-1.5 xl:pl-3"
-          :videoType="playBtnColor"
+          :videoType="getVideoType"
           @click.native="playVideo"
         />
       </div>
     </div>
 
-    <!-- Show the embed with overlay if there's an embed -->
+    <!--
+      Show the embed with overlay if there's an embed
+    -->
     <div v-if="showEmbed && embedData">
       <div
         class="cut-edge__wrapper flex-grow min-h-0 absolute inset-0 z-20 py-5 md:py-8 xl:py-12 px-4 md:px-18 xl:px-32 opacity-0 transition-opacity duration-300 ease-linear"
@@ -88,7 +93,7 @@ export default {
   components: {
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
-    "play-button": PlayButton,
+    PlayButton: PlayButton,
   },
   props: [
     "title",
@@ -126,11 +131,18 @@ export default {
   },
   methods: {
     playVideo() {
-      this.isCursorHere = false;
+      this.isCursorHere = false; // ???
       this.closeContainer();
 
       this.$root.$emit("close-other-layouts", this.embedData.elementId);
 
+      /*
+      * Immediately set both the isOverlayVisible and isEmbedVisible as false.
+      *
+      * By using setTimeout with a delay of 0, the function inside the setTimeout
+      * is deferred until the next event loop cycle. This means that the code inside the
+      * setTimeout will run after the current call stack is cleared.
+      */
       setTimeout(() => {
         if (this.showOverlay || this.showArt) {
           this.isOverlayVisible = false;
@@ -140,7 +152,7 @@ export default {
 
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
       this.$refs.embed.startPlayer();
-      this.$emit("hide-controls");
+      this.$emit("hide-controls"); // hide the controls
     },
     scrollOut() {
       if (this.showOverlay || this.showArt) {
@@ -166,25 +178,29 @@ export default {
         }
       }
 
-      if (
-        this.isCornerCut === "always_on" ||
-        (this.isCornerCut === "enabled_if_live" && this.showOnline) ||
-        (this.isCornerCut === "enabled_if_offline" && !this.showOnline)
-      ) {
-        if (this.embedName === "TwitchEmbed") {
-          this.cornerCutStyling.outline = "cut-edge__clipped--twitch";
-          this.cornerCutStyling.outlineBorder =
-            "cut-edge__clipped--twitch border-purple";
-        } else if (this.embedName === "YouTubeEmbed") {
-          this.cornerCutStyling.outline = "cut-edge__clipped--youtube";
-          this.cornerCutStyling.outlineBorder =
-            "cut-edge__clipped--youtube border-red";
-        }
-      }
+      /*
+      * NOTE: THE FOLLOWING IS COMMENTED OUT BECAUSE WE ARE NOT USING
+      * CLIPPED EDGES!
+      */
+      // if (
+      //   this.isCornerCut === "always_on" ||
+      //   (this.isCornerCut === "enabled_if_live" && this.showOnline) ||
+      //   (this.isCornerCut === "enabled_if_offline" && !this.showOnline)
+      // ) {
+      //   if (this.embedName === "TwitchEmbed") {
+      //     this.cornerCutStyling.outline = "cut-edge__clipped--twitch";
+      //     this.cornerCutStyling.outlineBorder =
+      //       "cut-edge__clipped--twitch border-purple";
+      //   } else if (this.embedName === "YouTubeEmbed") {
+      //     this.cornerCutStyling.outline = "cut-edge__clipped--youtube";
+      //     this.cornerCutStyling.outlineBorder =
+      //       "cut-edge__clipped--youtube border-red";
+      //   }
+      // }
     },
   },
   computed: {
-    playBtnColor() {
+    getVideoType() {
       return this.embedName === "TwitchEmbed" ? "twitch" : "youtube";
     },
     showEmbed() {
@@ -225,6 +241,9 @@ export default {
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
   },
   destroyed() {
+    /*
+    * Runs the toggleControls method in FullWidthImagery
+    */
     this.$emit("show-controls");
     this.$root.$off("close-other-layouts", this.scrollOut);
   },
