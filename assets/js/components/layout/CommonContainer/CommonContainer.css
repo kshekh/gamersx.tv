@@ -5,10 +5,9 @@
   position: relative;
   top: 0;
   right: 0;
-  left: calc(100% - 180px);
-  /*border: 3px solid #130E1C;*/
+  left: calc(100% - 177px);
   border-radius: 10px 10px 0 0;
-  border-bottom: 1px solid black;
+  /*border-bottom: 1px solid black;*/
   z-index: 30;
   background-color: #fff;
   /*clip-path: polygon(*/
@@ -38,7 +37,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-right: 3px solid #000;
   cursor: pointer;
   transition: background-color 0.3s ease;
   padding: 4px;
@@ -58,9 +56,9 @@
   user-select: none;
 }
 
-.actions--wrapper .actions--btn:last-child {
-  border-right: none;
-}
+/*.actions--wrapper .actions--btn:last-child {*/
+/*  border-right: none;*/
+/*}*/
 
 .actions--btn:hover {
   background-color: transparent;
