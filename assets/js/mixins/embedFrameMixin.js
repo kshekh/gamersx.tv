@@ -1,24 +1,58 @@
+/*
+*********Description*********
+The provided code defines a Vue.js component that manages the display, interaction,
+and behavior of embedded video content, such as Twitch or YouTube videos, within a web page.
+The component maintains various states, such as the position, size, visibility,
+and interaction status of the embed container. It allows users to pin, move,
+and drag the video container, providing a responsive and interactive experience.
+
+When the mouse enters the container, it triggers the display and starts the
+video player if necessary. Clicking on the container sets its position
+and ensures only one embed is visible at a time. The component includes methods
+for handling mouse events (like dragging and dropping), pinning/unpinning the video
+container, and adjusting styles based on user interactions and viewport changes.
+The computed properties dynamically determine the display attributes, such as the
+embed size and button colors, based on the video type and display settings.
+Lifecycle hooks manage event listeners for window resizing and custom events to
+maintain the component’s behavior and appearance dynamically.
+
+*********Properties*********
+
+--------Refs ($refs)--------
+channelBox: div element used for displaying channels. Used in components/front
+embed: refers to the actual Twitch or YouTube embed. Used in layout/EmbedContainer
+embedWrapper: div element that wraps around the actual embed element. Used in components/front
+
+--------Root ($root)--------
+containerId
+embedRef
+isMoveContainer
+isPinnedContainer
+isVisibleVideoContainer
+*/
 export default {
+  // Data properties for the component
   data() {
     return {
-      startX: 0,
-      embedWidth: 0,
-      scrollLeft: 0,
-      embedHeight: 0,
+      startX: 0, // Starting X position for dragging
+      embedWidth: 0, // Width of the embedded content
+      scrollLeft: 0, // Initial scroll position for dragging
+      embedHeight: 0, // Height of the embedded content
 
-      isPined: false,
-      mouseDown: false,
-      isCursorHere: false,
-      isEmbedVisible: false,
+      isPined: false, // Whether the container is pinned
+      mouseDown: false, // Whether the mouse is pressed down
+      isCursorHere: false, // Whether the cursor is over the container
+      isEmbedVisible: false, // Whether the embed is visible
 
-      isPinBtnActive: false,
-      isMoveBtnActive: false,
+      isPinBtnActive: false, // Whether the pin button is active
+      isMoveBtnActive: false, // Whether the move button is active
 
-      position: { top: "", left: "" },
+      position: { top: "", left: "" }, // Position of the container
     };
   },
 
   methods: {
+    // Method called when the mouse enters the container
     mouseEntered() {
       if (this.$root.isVisibleVideoContainer) {
         return;
@@ -36,6 +70,7 @@ export default {
       }
     },
 
+    // Method called when the container is clicked
     clickContainer(elementId, isFullWidth) {
       if (this.$root.containerId === elementId) {
         return;
@@ -77,10 +112,12 @@ export default {
       }
     },
 
+    // Method called when the mouse leaves the container
     mouseLeave() {
       this.isCursorHere = false;
     },
 
+    // Method to close the container
     closeContainer(isButtonClick) {
       if (isButtonClick) {
         this.isPined = false;
@@ -108,9 +145,9 @@ export default {
       }
     },
 
+    // Method to hide the video
     async hideVideo(elementId) {
-      // use the condition below for the Offline embed containers to auto-play and dont get closed
-
+      // Use the condition below for the offline embed containers to auto-play and not get closed
       if (
         !(elementId && this.embedData && this.embedData.elementId === elementId)
       ) {
@@ -119,7 +156,6 @@ export default {
         }
         this.isEmbedVisible = false;
         this.$root.isVisibleVideoContainer = false;
-        // this.$root.isPinnedContainer = false;
         this.$root.isMoveContainer = false;
         this.$root.containerId = "";
         this.isPinBtnActive = false;
@@ -132,7 +168,11 @@ export default {
       }
     },
 
+    // Method to set the position of the embed
     setEmbedPosition(isFullWidth) {
+      /*
+      *  Ensures that the video remains in the same position if it is pinned
+      */
       if (this.$root.isPinnedContainer && !!this.position.top) {
         const videoContainer = this.$refs.embedWrapper;
         videoContainer.style.top = this.position.top + "px";
@@ -142,32 +182,25 @@ export default {
       }
       const videoContainer = this.$refs.embedWrapper;
       const videoContainerPosition = videoContainer.getBoundingClientRect();
+      // Get the height of the root element
       const viewportHeight = document.documentElement.clientHeight;
+      // Get the width of the root element
       const viewportWidth = document.documentElement.clientWidth;
 
-      let resultY = isFullWidth
-        ? viewportHeight -
-          videoContainerPosition.height -
-          50 -
-          videoContainerPosition.top +
-          600
-        : viewportHeight -
-          videoContainerPosition.height -
-          50 -
-          videoContainerPosition.top;
+      let resultY = viewportHeight - videoContainerPosition.height - 50;
+      if (isFullWidth) {
+        resultY = viewportHeight - videoContainerPosition.height - 50 - 10; // Ensure it's at the bottom
+      }
 
-      resultY -= 10;
+      const resultX = viewportWidth - videoContainerPosition.width - 140 - 10; // Ensure it's at the right edge
 
-      const resultX =
-        viewportWidth -
-        videoContainerPosition.width -
-        140 -
-        videoContainerPosition.left;
+      console.log(resultY, resultX);
 
       videoContainer.style.transform = `translateY(${resultY}px) translateX(${resultX}px)`;
       videoContainer.style.opacity = "1";
     },
 
+    // Method to handle pinning the container
     onPinHandler(ev, isFullWidth) {
       const container = this.$refs.embedWrapper;
       const top = Math.abs(container.getBoundingClientRect().top);
@@ -201,6 +234,7 @@ export default {
       this.$root.isPinnedContainer = true;
     },
 
+    // Method to handle mouse down event for dragging
     onMouseDownHandler(ev, isFullWidth) {
       this.$refs.embedWrapper.style.transition = "none";
       if (this.isPined) {
@@ -237,6 +271,7 @@ export default {
       };
     },
 
+    // Method to reset embed styles
     resetEmbedStyles() {
       if (this.$refs.itemWrapper) {
         if (
@@ -251,11 +286,13 @@ export default {
       }
     },
 
+    // Method to set the embed sizes
     setEmbedSizes() {
       this.embedWidth = window.innerWidth > 1279 ? 400 : 355;
       this.embedHeight = window.innerWidth > 1279 ? 350 : 311;
     },
 
+    // Method to start dragging
     startDragging(e) {
       if (this.$root.isMoveContainer) {
         return;
@@ -266,10 +303,12 @@ export default {
       this.triggerDragging(e);
     },
 
+    // Method to stop dragging
     stopDragging(e) {
       this.mouseDown = false;
     },
 
+    // Method to handle dragging
     triggerDragging(e) {
       e.preventDefault();
 
@@ -287,11 +326,14 @@ export default {
     },
   },
 
+  // Computed properties for the component
   computed: {
+    // Computed property for the play button color
     playBtnColor() {
       return this.embedName === "TwitchEmbed" ? "twitch" : "youtube";
     },
 
+    // Computed property to determine if the embed should be shown
     showEmbed() {
       return (
         (this.showOnline && this.onlineDisplay.showEmbed) ||
@@ -299,6 +341,7 @@ export default {
       );
     },
 
+    // Computed property to determine if the art should be shown
     showArt() {
       return (
         (this.showOnline && this.onlineDisplay.showArt) ||
@@ -306,6 +349,7 @@ export default {
       );
     },
 
+    // Computed property to determine if the overlay should be shown
     showOverlay() {
       return (
         this.overlay &&
@@ -314,6 +358,7 @@ export default {
       );
     },
 
+    // Computed property for the embed size
     embedSize() {
       return {
         width: this.embedWidth + "px",
@@ -322,17 +367,21 @@ export default {
     },
   },
 
+  // Lifecycle hooks
   created() {
+    // Add event listener for window resize
     window.addEventListener("resize", this.setEmbedSizes);
     this.setEmbedSizes();
   },
 
   mounted() {
+    // Listen for the "close-other-layouts" event
     this.$root.$on("close-other-layouts", this.hideVideo);
     this.resetEmbedStyles();
   },
 
   destroyed() {
+    // Remove the "close-other-layouts" event listener and window resize listener
     this.$root.$off("close-other-layouts", this.hideVideo);
     window.removeEventListener("resize", this.setEmbedSizes);
   },

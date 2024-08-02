@@ -400,29 +400,39 @@ export default {
       }
     },
   },
-  // checkScrollPosition() {
-  //   console.log('checkScrollPosition called'); // Log to confirm method call
-  //   const embedWrapper = this.$refs.embedWrapper;
-  //   if (!embedWrapper) {
-  //     console.log('embedWrapper not found');
-  //     return;
-  //   }
-  //   const scrollPosition = window.scrollY + window.innerHeight;
-  //   const embedPosition = embedWrapper.offsetTop + (embedWrapper.offsetHeight * 0.75);
-  //   console.log('scrollPosition:', scrollPosition, 'embedPosition:', embedPosition);
-  //   if (scrollPosition > embedPosition && !this.hasScrolledPast75) {
-  //     this.hasScrolledPast75 = true;
-  //     this.clickContainer(this.currentChannel.embedData.elementId, true);
-  //   }
-  // },
   mounted() {
     const refItem = this.$refs.sliderDotRef.getBoundingClientRect().top;
 
     if (!this.isRowFirst) {
       this.isAllowPlaying = false;
-    } else {
-      window.addEventListener("scroll", this.checkScrollPosition);
     }
+    // else {
+    //   window.addEventListener("scroll", this.checkScrollPosition);
+    // }
+
+    const options = {
+      root: null, // Use the viewport as the root
+      rootMargin: '0px', // No margin needed for this specific use case
+      threshold: 0.1 // Trigger when 10% of the embed wrapper is visible
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.intersectionRatio <= 0.1 && !this.$root.isVisibleVideoContainer) {
+          // The embed wrapper is 90% or more hidden
+          this.clickContainer(this.currentChannel.embedData.elementId, true);
+        }
+      });
+    }, options);
+
+    // Observe the embed wrapper
+    if (this.$refs.embedWrapper) {
+      observer.observe(this.$refs.embedWrapper);
+    }
+
+    // rootMargin: '0px 0px -100% 0px',
+    //   threshold: 0
+
 
     this.displayChannels = this.settings.channels.filter(this.showChannel);
 
@@ -441,7 +451,6 @@ export default {
     // }, 1000);
   },
   beforeDestroy() {
-    // Remove the scroll event listener
     window.removeEventListener('scroll', this.checkScrollPosition);
   },
   updated: function () {
