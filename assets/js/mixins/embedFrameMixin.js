@@ -204,6 +204,7 @@ export default {
     // Method to set the position of the embed
     setEmbedPosition(isFullWidth) {
       const videoContainer = this.$refs.embedWrapper;
+      console.log('I have been called to set the embed position')
       /*
       * Ensures that the video remains in the same position if it is pinned
       */
@@ -211,7 +212,7 @@ export default {
         const videoContainer = this.$refs.embedWrapper;
         videoContainer.style.top = this.position.top + "px";
         videoContainer.style.left = this.position.left + "px";
-        videoContainer.style.opacity = "1";
+        videoContainer.style.opacity = 1;
         return;
       }
 
@@ -225,6 +226,11 @@ export default {
       let offsetY = 40;
 
       let containerPositionY = videoContainerPosition.y;
+      let containerPositionX = videoContainerPosition.x;
+
+      console.log('container position X', containerPositionX);
+      console.log('container position Y', containerPositionY);
+
       let moveToPositionY = viewportHeight - videoContainerPosition.height - offsetY;
       let translateDistanceY = moveToPositionY - containerPositionY;
 
@@ -233,8 +239,23 @@ export default {
       const targetPositionX = viewportWidth - containerWidth - offsetX;
       const translateDistanceX = targetPositionX - containerPositionLeft;
 
+      console.log('translate distance X', translateDistanceX)
+      console.log('translate distance Y', translateDistanceY)
+
+      videoContainer.style['transform-origin'] = 'bottom right';
       videoContainer.style.transform = `translateY(${translateDistanceY}px) translateX(${translateDistanceX}px)`;
-      videoContainer.style.opacity = "1";
+      videoContainer.style.opacity = 1;
+
+      console.log('video container', videoContainer)
+    },
+
+    resetEmbed() {
+      console.trace();
+      console.log('I was called to reset the embed')
+      const videoContainer = this.$refs.embedWrapper;
+      videoContainer.style.top = 0;
+      videoContainer.style.left = 0;
+      videoContainer.style.opacity = 0;
     },
 
     // Method to handle pinning the container
@@ -316,16 +337,18 @@ export default {
     *  is used by all embed containers except for EmbedContainerFullWidthDescriptive
     */
     resetEmbedStyles() {
+      console.log('I should reset: ', this.$root.isVisibleVideoContainer === false &&
+      this.$refs.embedWrapper !== undefined);
       if (this.$refs.itemWrapper) {
         if (
           this.$root.isVisibleVideoContainer === false &&
           this.$refs.embedWrapper !== undefined
         ) {
-          // console.log('I reset');
+          console.log('I reset');
 
           const container = this.$refs.embedWrapper;
           container.style.position = "absolute";
-          container.style.opacity = "0";
+          container.style.opacity = 0;
           container.style.transform = "none";
         }
       }

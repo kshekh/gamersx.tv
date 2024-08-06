@@ -8,7 +8,7 @@ export default {
       const elemTop = elemCoordinates.top + window.scrollY;
       const elemBottom = elemCoordinates.bottom + window.scrollY;
 
-      if ( ((elemBottom <= docViewTop) || (elemTop >= docViewBottom)) ) {
+      if (((elemBottom <= docViewTop) || (elemTop >= docViewBottom))) {
         this.scrollOut();
       }
     },
@@ -23,7 +23,7 @@ export default {
       console.log(docViewBottom, 'docViewBottom')
       console.log(elemTop, 'elemTop')
       console.log(elemBottom, 'elemBottom')
-      if ( ((elemBottom <= docViewTop) || (elemTop >= docViewBottom)) ) {
+      if (((elemBottom <= docViewTop) || (elemTop >= docViewBottom))) {
         console.log('I have scrolled out');
         this.scrollOut();
       } else {
@@ -34,8 +34,6 @@ export default {
     checkIfInOriginalViewport() {
       const docViewTop = window.scrollY;
       const docViewBottom = docViewTop + window.innerHeight;
-      // console.log('current coordinates (top)', docViewTop);
-      // console.log('current coordinates (bottom)', docViewBottom);
 
       const originalCoordinates = this.baseCoordinates;
       if (!originalCoordinates) {
@@ -44,16 +42,19 @@ export default {
 
       const elemTop = originalCoordinates.top;
       const elemBottom = originalCoordinates.bottom;
-      // console.log('original coordinates (top)', elemTop);
-      // console.log('original coordinates (bottom)', elemBottom);
 
-      if (elemBottom <= docViewTop || elemTop >= docViewBottom) {
-        console.log('I am out');
-        this.scrollOut();
-      } else {
-        console.log('I am in');
+      // Calculate 10% thresholds (instead of 90%)
+      const elemTop10Percent = elemTop + 0.1 * originalCoordinates.height;
+      const elemBottom10Percent = elemBottom - 0.1 * originalCoordinates.height;
+
+      // Check if more than 10% of the element is within the viewport
+      if (elemBottom10Percent >= docViewTop && elemTop10Percent <= docViewBottom) {
+        console.log('More than 10% visible - scrollIn');
         this.scrollIn();
+      } else {
+        console.log('10% or less visible - scrollOut');
+        this.scrollOut();
       }
-    }
+    },
   }
-};
+}
