@@ -80,7 +80,7 @@
       :class="[
         getGlow,
         {
-          invisible: !isEmbedVisible,
+          invisible: !isEmbedVisible
         },
       ]"
       ref="embedWrapper"
@@ -358,8 +358,7 @@ export default {
     },
     scrollIn: function () {
       this.isScrolledIn = true;
-      this.resetEmbedStyles();
-      this.$refs.embedWrapper.style.opacity = 0;
+      this.isEmbedVisible = false;
     },
     scrollOut: function () {
       if (this.$root.isVisibleVideoContainer) {
@@ -367,14 +366,11 @@ export default {
       }
 
       this.isAllowPlaying = false;
+      this.isEmbedVisible = true;
       this.isMouseStopped = false;
       this.isScrolledIn = false;
 
       clearTimeout(this.isMouseMovingTimeout);
-
-      this.clickContainer(this.currentChannel.embedData.elementId, true);
-      this.$refs.embedWrapper.style.opacity = 1;
-      // window.removeEventListener("scroll", this.checkIfInOriginalViewport);
     },
     handleFirstVideoLoaded: function () {
       this.isFirstVideoLoaded = true;
@@ -439,12 +435,12 @@ export default {
       this.isAllowPlaying = false;
     }
 
-    // let observer = this.initObserver();
-    //
-    // // Observe the embed wrapper
-    // if (this.$refs.embedWrapper) {
-    //   observer.observe(this.$refs.embedWrapper);
-    // }
+    let observer = this.initObserver();
+
+    // Observe the embed wrapper
+    if (this.$refs.embedWrapper) {
+      observer.observe(this.$refs.embedWrapper);
+    }
 
     window.addEventListener('scroll', this.checkIfInOriginalViewport);
 

@@ -80,9 +80,6 @@ export default {
         return;
       }
 
-      console.log('before container ID', this.$root.containerId);
-      console.log('before element ID', elementId)
-
       if (!!this.$root.embedRef && this.$root.isPinnedContainer) {
         const prevVideoContainer = this.$root.embedRef;
         const preVideoContainerPosition =
@@ -120,8 +117,6 @@ export default {
        */
       if (this.isCursorHere && this.$root.isVisibleVideoContainer) {
         setTimeout(() => {
-          this.setEmbedPosition(isFullWidth);
-
           // Running the following event triggers the hideVideo method
           this.$root.$emit("close-other-layouts", this.$root.containerId);
 
@@ -147,7 +142,6 @@ export default {
       this.isPinBtnActive = false;
       this.$root.isVisibleVideoContainer = false;
       this.$root.containerId = "";
-      console.log('I have closed this container');
       this.resetEmbedStyles();
 
       this.isEmbedVisible = false;
@@ -250,12 +244,10 @@ export default {
     },
 
     resetEmbed() {
-      console.trace();
-      console.log('I was called to reset the embed')
       const videoContainer = this.$refs.embedWrapper;
-      videoContainer.style.top = 0;
-      videoContainer.style.left = 0;
-      videoContainer.style.opacity = 0;
+      videoContainer.style.position = 'absolute';
+      videoContainer.style.transform = 'none';
+      videoContainer.style.opacity = 1;
     },
 
     // Method to handle pinning the container
@@ -337,8 +329,8 @@ export default {
     *  is used by all embed containers except for EmbedContainerFullWidthDescriptive
     */
     resetEmbedStyles() {
-      console.log('I should reset: ', this.$root.isVisibleVideoContainer === false &&
-      this.$refs.embedWrapper !== undefined);
+      // console.log('I should reset: ', this.$refs.itemWrapper && this.$root.isVisibleVideoContainer === false &&
+      // this.$refs.embedWrapper !== undefined);
       if (this.$refs.itemWrapper) {
         if (
           this.$root.isVisibleVideoContainer === false &&
@@ -435,6 +427,19 @@ export default {
         height: this.embedHeight + "px",
       };
     },
+  },
+
+  watch: {
+    isEmbedVisible: function (status) {
+      console.log('The embed is visible: ', status)
+      if (status === true) {
+        console.log('I should set the position');
+        this.setEmbedPosition()
+      } else if (status === false) {
+        console.log('I should reset the embed');
+        this.resetEmbed()
+      }
+    }
   },
 
   // Lifecycle hooks

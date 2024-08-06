@@ -49,11 +49,15 @@ export default {
 
       // Check if more than 10% of the element is within the viewport
       if (elemBottom10Percent >= docViewTop && elemTop10Percent <= docViewBottom) {
-        console.log('More than 10% visible - scrollIn');
-        this.scrollIn();
+        if (!this.isScrolledIn) {
+          console.log('More than 10% visible - scrollIn');
+          this.scrollIn();
+        }
       } else {
-        console.log('10% or less visible - scrollOut');
-        this.scrollOut();
+        if (this.isScrolledIn) {
+          console.log('10% or less visible - scrollOut');
+          this.scrollOut();
+        }
       }
     },
   }

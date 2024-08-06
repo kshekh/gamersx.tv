@@ -314,17 +314,11 @@ export default {
     },
   },
   watch: {
-    isAllowPlaying(currentStatus, newStatus) {
-      if (currentStatus === true) {
-        if (this.showOverlay || this.showArt) {
-          this.isEmbedVisible = true;
-        }
-
+    isAllowPlaying: function (playStatus) {
+      if (playStatus === true) {
         this.playVideo();
       } else {
-        console.log("I will stop the embed and make it disappear", (this.$refs.embed && this.$refs.embed.isPlaying()))
-        if (this.$refs.embed && this.$refs.embed.isPlaying()) {
-          this.isEmbedVisible = false; // refers to the twitch or YouTube embed
+        if (this.$refs.embed) {
           this.isHideButtonClicked = false; // makes the hide button visible again
           this.$refs.embed.stopPlayer();
         }
