@@ -247,7 +247,16 @@ export default {
       const videoContainer = this.$refs.embedWrapper;
       videoContainer.style.position = 'absolute';
       videoContainer.style.transform = 'none';
-      videoContainer.style.opacity = 1;
+      videoContainer.style.opacity = 0;
+    },
+
+    resetContainerStyles() {
+      const bodyRef = document.body.querySelector('.common-container__body');
+      bodyRef.style.background = 'none';
+      bodyRef.style.outline = 'none';
+
+      const actionRef = document.body.querySelector('.common-container__actions');
+      actionRef.style.opacity = 0;
     },
 
     // Method to handle pinning the container
@@ -336,8 +345,6 @@ export default {
           this.$root.isVisibleVideoContainer === false &&
           this.$refs.embedWrapper !== undefined
         ) {
-          console.log('I reset');
-
           const container = this.$refs.embedWrapper;
           container.style.position = "absolute";
           container.style.opacity = 0;
@@ -438,6 +445,7 @@ export default {
       } else if (status === false) {
         console.log('I should reset the embed');
         this.resetEmbed()
+        this.resetContainerStyles();
       }
     }
   },

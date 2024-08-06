@@ -418,15 +418,29 @@ div.full-width-embed-first-row iframe {
   }
 }
 
+
 .common-container__body {
-  background: #130E1C;
-  outline: 3px solid #7A4ECC;
+  background: none;
+  outline: none;
+  transition: 1s background ease-in;
 }
 
 .common-container__actions {
+  height: 30px;
+  width: 180px;
+  display: flex;
+  position: relative;
+  top: 0;
+  right: 0;
+  left: calc(100% - 177px);
+  opacity: 0;
+  transition: 1s opacity;
+  /*border-bottom: 1px solid black;*/
+  z-index: 30;
+  background-color: #fff;
   border: 3px solid #7A4ECC;
   border-bottom: none;
-  border-radius: 10px;
+  border-radius: 10px 10px 0 0;
 }
 
 .common-container__actions .actions--btn {

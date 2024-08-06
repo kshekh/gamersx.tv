@@ -3,7 +3,6 @@
     ref="embedWrapper"
     @swiped-left="forward"
     @swiped-right="back"
-    @mouseenter="mouseEntered"
     @mousemove="checkMouseActive"
     class="home-row mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative min-h-mobile home-banner-section"
     :class="{ 'mobile-full-width': isMobileDevice }"
@@ -359,6 +358,7 @@ export default {
     scrollIn: function () {
       this.isScrolledIn = true;
       this.isEmbedVisible = false;
+      this.isAllowPlaying = true;
     },
     scrollOut: function () {
       if (this.$root.isVisibleVideoContainer) {
@@ -369,6 +369,15 @@ export default {
       this.isEmbedVisible = true;
       this.isMouseStopped = false;
       this.isScrolledIn = false;
+
+      setTimeout(() => {
+        const bodyRef = document.body.querySelector('.common-container__body');
+        bodyRef.style.background = '#000';
+        bodyRef.style.outline = '3px solid #7A4ECC';
+
+        const actionRef = document.body.querySelector('.common-container__actions');
+        actionRef.style.opacity = 1;
+      }, 3000)
 
       clearTimeout(this.isMouseMovingTimeout);
     },

@@ -1,15 +1,16 @@
 .actions--wrapper {
-  height: 30px;
-  width: 180px;
-  display: flex;
-  position: relative;
-  top: 0;
-  right: 0;
-  left: calc(100% - 177px);
-  border-radius: 10px 10px 0 0;
-  /*border-bottom: 1px solid black;*/
-  z-index: 30;
-  background-color: #fff;
+  /*height: 30px;*/
+  /*width: 180px;*/
+  /*display: flex;*/
+  /*position: relative;*/
+  /*top: 0;*/
+  /*right: 0;*/
+  /*left: calc(100% - 177px);*/
+  /*border-radius: 10px 10px 0 0;*/
+  /*!*border-bottom: 1px solid black;*!*/
+  /*z-index: 30;*/
+  /*background-color: #fff;*/
+  /*opacity: 0;*/
   /*clip-path: polygon(*/
   /*  15px 0px,*/
   /*  !* top left *! 100% 0px,*/
