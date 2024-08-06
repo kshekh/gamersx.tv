@@ -159,23 +159,23 @@ export default {
       // this.rowIndex = (this.rowIndex - 1).mod(this.displayChannels.length);
       // this.reorder();
       const content = this.$refs.channelBox
-      let content_scoll_left = content.scrollLeft;
-      content_scoll_left -= 300;
-      if (content_scoll_left <= 0) {
-        content_scoll_left = 0;
+      let content_scroll_left = content.scrollLeft;
+      content_scroll_left -= 300;
+      if (content_scroll_left <= 0) {
+        content_scroll_left = 0;
       }
-      content.scrollLeft = content_scoll_left;
+      content.scrollLeft = content_scroll_left;
     },
     forward() {
       const content = this.$refs.channelBox
       const content_scroll_width = content.scrollWidth;
-      let content_scoll_left = content.scrollLeft;
-      content_scoll_left += 300;
-      if (content_scoll_left >= content_scroll_width)
+      let content_scroll_left = content.scrollLeft;
+      content_scroll_left += 300;
+      if (content_scroll_left >= content_scroll_width)
       {
-        content_scoll_left = content_scroll_width;
+        content_scroll_left = content_scroll_width;
       }
-      content.scrollLeft = content_scoll_left;
+      content.scrollLeft = content_scroll_left;
     },
     reorder() {
       // this.$root.$emit('close-other-layouts');
@@ -186,7 +186,6 @@ export default {
       // }
     },
     hideArrows(left = true,right = true){
-      // console.log(this.$refs)
       if (right)
         this.$refs.forwardArrow.classList.add("sliderArrowHide")
       if (left)
@@ -194,7 +193,7 @@ export default {
     },
 
     handleScroll () {
-      if (this.$refs.channelBox.scrollLeft == this.max_scroll_left){
+      if (this.$refs.channelBox.scrollLeft === this.max_scroll_left){
         this.$refs.forwardArrow.classList.add("sliderArrowHide")
       }
       else{
@@ -222,13 +221,13 @@ export default {
     this.setIsMobileDevice();
   },
   updated: function() {
-    if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels.filter(this.showChannel))){
+    if(JSON.stringify(this.displayChannels) !== JSON.stringify(this.settings.channels.filter(this.showChannel))){
       this.displayChannels = this.settings.channels.filter(this.showChannel);
     }
     this.allowScrolling =
       this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
     this.max_scroll_left = this.$refs.channelBox.scrollWidth - this.$refs.channelBox.clientWidth;
-    if (this.max_scroll_left == 0){
+    if (this.max_scroll_left === 0){
       this.hideArrows()
     }
     this.hideArrows(true,false)

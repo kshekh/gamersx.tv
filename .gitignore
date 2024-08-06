@@ -86,3 +86,5 @@ yarn-error.log
 ###< phpunit/phpunit ###
 
 .idea/
+
+gamersx_local_090724.sql

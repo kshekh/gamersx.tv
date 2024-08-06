@@ -6,7 +6,9 @@ use App\Containerizer\ContainerizerFactory;
 use App\Entity\HomeRow;
 use App\Service\HomeRowInfo;
 use App\Traits\ErrorLogTrait;
+use Predis\Client;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -49,7 +51,7 @@ class CacheHomePageContainers extends Command
         $containerizer = $this->containerizer;
 
         try {
-            $cache = new FilesystemAdapter('', 0, '/tmp/cache');
+            $cache = new RedisAdapter(new Client('tcp://127.0.0.1:6379'), 'namespace', 0);
 
             // Deleting old cache
             //Previously `home` cache delete directly, now `home_item` item used to save temporary cache.

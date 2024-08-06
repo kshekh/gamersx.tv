@@ -7,7 +7,7 @@
         :class="getGlow"
       >
         <div
-          class="w-full h-full cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
+          class="w-full h-full border-[3px] !border-[#7A4ECC]/40 rounded-[10px] bg-black"
           :class="getOutline"
           style="aspect-ratio: 1/2"
         >

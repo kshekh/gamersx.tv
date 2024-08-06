@@ -11,7 +11,7 @@
       :class="getGlow"
     >
       <div
-        class="w-full h-full cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black shrink-0"
+        class="w-full h-full border-[3px] !border-[#7A4ECC]/40 rounded-[10px] bg-black shrink-0"
         :class="getOutline"
       >
         <!-- Show the embed with overlay if there's an embed -->

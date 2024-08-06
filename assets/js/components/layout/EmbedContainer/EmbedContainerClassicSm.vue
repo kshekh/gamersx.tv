@@ -3,7 +3,7 @@
     <div class="cut-edge__wrapper w-full h-full" :class="getGlow">
       <div
         @click="isShowTwitchEmbed = true"
-        class="w-full h-full cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
+        class="w-full h-full border-[3px] !border-[#7A4ECC]/40 rounded-[10px] bg-black"
         :class="getOutline"
         style="aspect-ratio: 16/9"
       >

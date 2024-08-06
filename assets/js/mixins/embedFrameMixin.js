@@ -198,7 +198,6 @@ export default {
     // Method to set the position of the embed
     setEmbedPosition(isFullWidth) {
       const videoContainer = this.$refs.embedWrapper;
-      console.log('I have been called to set the embed position')
       /*
       * Ensures that the video remains in the same position if it is pinned
       */
@@ -222,9 +221,6 @@ export default {
       let containerPositionY = videoContainerPosition.y;
       let containerPositionX = videoContainerPosition.x;
 
-      console.log('container position X', containerPositionX);
-      console.log('container position Y', containerPositionY);
-
       let moveToPositionY = viewportHeight - videoContainerPosition.height - offsetY;
       let translateDistanceY = moveToPositionY - containerPositionY;
 
@@ -239,8 +235,6 @@ export default {
       videoContainer.style['transform-origin'] = 'bottom right';
       videoContainer.style.transform = `translateY(${translateDistanceY}px) translateX(${translateDistanceX}px)`;
       videoContainer.style.opacity = 1;
-
-      console.log('video container', videoContainer)
     },
 
     resetEmbed() {
@@ -250,12 +244,11 @@ export default {
       videoContainer.style.opacity = 0;
     },
 
-    setEmbedStyles() {
-      console.log('I need to set the embed styles')
+    setContainerStyles() {
       setTimeout(() => {
         const bodyRef = document.body.querySelectorAll('.common-container__body');
         for (let i = 0; i < bodyRef.length; i++) {
-          bodyRef[i].style.background = '#000';
+          bodyRef[i].style.background = '#130E1C';
           bodyRef[i].style.outline = '3px solid #7A4ECC';
         }
 
@@ -462,7 +455,7 @@ export default {
       if (status === true) {
         console.log('I should set the position');
         this.setEmbedPosition()
-        this.setEmbedStyles();
+        this.setContainerStyles();
       } else if (status === false) {
         console.log('I should reset the embed');
         this.resetEmbed()

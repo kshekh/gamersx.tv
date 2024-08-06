@@ -7,7 +7,7 @@
       style="aspect-ratio: 16/9"
     >
       <div
-        class="w-full h-full cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
+        class="w-full h-full border-[3px] !border-[#7A4ECC]/40 rounded-[10px] bg-black"
         :class="getOutline"
       >
         <!-- Show the embed with overlay if there's an embed -->

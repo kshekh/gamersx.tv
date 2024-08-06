@@ -7,6 +7,8 @@ use App\Entity\HomeRowItem;
 use App\Entity\SiteSettings;
 use App\Containerizer\ContainerizerFactory;
 use App\Service\HomeRowInfo;
+use Predis\Client;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -47,7 +49,7 @@ class HomeController extends AbstractController
      */
     public function apiHome(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
     {
-        $cache = new FilesystemAdapter('', 0, '/tmp/cache');
+        $cache = new RedisAdapter(new Client('tcp://127.0.0.1:6379'), 'namespace', 0);
 
         $rowChannels = $cache->getItem('home');
         $home_container_refreshed_at = null;
@@ -73,7 +75,7 @@ class HomeController extends AbstractController
      */
     public function apiHomeRows(): Response
     {
-        $cache = new FilesystemAdapter('', 0, '/tmp/cache');
+        $cache = new RedisAdapter(new Client('tcp://127.0.0.1:6379'), 'namespace', 0);
         $rowChannels = $cache->getItem('home');
         $rows = [];
         // get cache from new rows_data key

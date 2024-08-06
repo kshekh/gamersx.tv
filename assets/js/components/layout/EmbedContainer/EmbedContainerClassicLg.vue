@@ -3,7 +3,7 @@
     <div class="cut-edge__wrapper w-full h-full" :class="getGlow">
       <div
         @click="isShowTwitchEmbed = true"
-        class="w-full h-full border-[2px] rounded-[10px] overflow-hidden !border-[#7A4ECC]/40  cut-edge__clipped-top-left-sm bg-black"
+        class="w-full h-full border-[3px] rounded-[10px] overflow-hidden !border-[#7A4ECC]/40  cut-edge__clipped-top-left-sm bg-black"
         :class="getOutline"
       >
         <!-- Show the embed with overlay if there's an embed -->
@@ -292,9 +292,9 @@ export default {
   },
   methods: {
     handleClick: function (embedData) {
-      console.log('handle click called me!')
+      this.resetContainerStyles();
       this.clickContainer(embedData.elementId, false);
-      this.setEmbedStyles();
+      this.setContainerStyles();
     },
     computeGlowStyling: function () {
       if (
