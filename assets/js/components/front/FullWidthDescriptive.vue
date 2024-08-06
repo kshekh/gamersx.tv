@@ -1,13 +1,14 @@
 <template>
   <div
     ref="embedWrapper"
-    @swiped-left="forward()"
-    @swiped-right="back()"
-    @mouseenter="mouseEntered()"
-    @mousemove="checkMouseActive()"
+    @swiped-left="forward"
+    @swiped-right="back"
+    @mouseenter="mouseEntered"
+    @mousemove="checkMouseActive"
     class="home-row mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative min-h-mobile home-banner-section"
     :class="{ 'mobile-full-width': isMobileDevice }"
     :style="customBg"
+    style="will-change: transform"
   >
     <div class="container mx-auto">
       <div class="pb-50p"></div>
@@ -15,7 +16,7 @@
         <SliderArrow
           :isNext="false"
           :videoType="currentChannelEmbedName"
-          @arrow-clicked="back()"
+          @arrow-clicked="back"
         />
 
         <div
@@ -201,6 +202,7 @@ export default {
   },
   data: function () {
     return {
+      baseCoordinates: {},
       rowIndex: 0,
       displayChannels: [],
       isAllowPlaying: true,
@@ -210,6 +212,7 @@ export default {
       isMobileDevice: false,
       currentChannel: null,
       isEmbedVisible: false,
+      isScrolledIn: true,
       isShowTwitchEmbed: false,
       glowStyling: {
         glow: "",
@@ -296,6 +299,22 @@ export default {
     },
   },
   methods: {
+    initObserver: function () {
+      const options = {
+        root: null, // Use the viewport as the root
+        rootMargin: '0px', // No margin needed for this specific use case
+        threshold: 0.1 // Trigger when 10% of the embed wrapper is visible
+      };
+
+      return new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.intersectionRatio <= 0.1 && !this.$root.isVisibleVideoContainer) {
+            // The embed wrapper is 90% or more hidden
+            this.clickContainer(this.currentChannel.embedData.elementId, true);
+          }
+        });
+      }, options);
+    },
     showChannel: function (channel) {
       return (
         (channel.showOnline &&
@@ -320,7 +339,7 @@ export default {
       this.rowIndex = (this.rowIndex + 1).mod(this.displayChannels.length);
       this.reorder();
     },
-    reorder() {
+    reorder: function () {
       this.checkMouseActive();
       for (let i = 0; i < this.$refs.channelDivs.length; i++) {
         let j = (i - this.rowIndex).mod(this.$refs.channelDivs.length);
@@ -328,30 +347,38 @@ export default {
         this.$refs.channelDivs[i].style.order = j + 1;
       }
     },
-    setActiveChannel(channelIndex) {
+    setActiveChannel: function (channelIndex) {
       this.rowIndex = channelIndex;
     },
-    mouseEntered() {
-      this.isAllowPlaying = true;
-      window.addEventListener("scroll", this.checkIfBoxInViewPort);
+    mouseEntered: function () {
+      if (this.isScrolledIn) {
+        this.isAllowPlaying = true;
+        // window.addEventListener("scroll", this.checkIfInOriginalViewport);
+      }
     },
-    scrollOut() {
+    scrollIn: function () {
+      this.isScrolledIn = true;
+    },
+    scrollOut: function () {
       if (this.$root.isVisibleVideoContainer) {
         return;
       }
-      console.log("I am allowed to play: ", this.isAllowPlaying);
+
       this.isAllowPlaying = false;
       this.isMouseStopped = false;
+      this.isScrolledIn = false;
+
       clearTimeout(this.isMouseMovingTimeout);
-      window.removeEventListener("scroll", this.checkIfBoxInViewPort);
+
+      // window.removeEventListener("scroll", this.checkIfInOriginalViewport);
     },
-    handleFirstVideoLoaded() {
+    handleFirstVideoLoaded: function () {
       this.isFirstVideoLoaded = true;
     },
-    activateMouseStopped() {
+    activateMouseStopped: function () {
       this.isMouseStopped = true;
     },
-    checkMouseActive() {
+    checkMouseActive: function () {
       this.isMouseStopped = false;
       clearTimeout(this.isMouseMovingTimeout);
       this.isMouseMovingTimeout = setTimeout(() => {
@@ -362,11 +389,7 @@ export default {
       const checkDeviceType = navigator.userAgent
         .toLowerCase()
         .match(/mobile/i);
-      if (checkDeviceType) {
-        this.isMobileDevice = true;
-      } else {
-        this.isMobileDevice = false;
-      }
+      this.isMobileDevice = !!checkDeviceType;
     },
     computeGlowStyling: function () {
       if (
@@ -399,40 +422,30 @@ export default {
         }
       }
     },
+    setBaseCoordinates: function () {
+      this.baseCoordinates = this.$refs.embedWrapper.getBoundingClientRect()
+    },
   },
   mounted() {
+    this.setBaseCoordinates();
+
     const refItem = this.$refs.sliderDotRef.getBoundingClientRect().top;
 
     if (!this.isRowFirst) {
       this.isAllowPlaying = false;
     }
-    // else {
-    //   window.addEventListener("scroll", this.checkScrollPosition);
-    // }
 
-    const options = {
-      root: null, // Use the viewport as the root
-      rootMargin: '0px', // No margin needed for this specific use case
-      threshold: 0.1 // Trigger when 10% of the embed wrapper is visible
-    };
-
-    const observer = new IntersectionObserver((entries, observer) => {
-      entries.forEach(entry => {
-        if (entry.intersectionRatio <= 0.1 && !this.$root.isVisibleVideoContainer) {
-          // The embed wrapper is 90% or more hidden
-          this.clickContainer(this.currentChannel.embedData.elementId, true);
-        }
-      });
-    }, options);
+    let observer = this.initObserver();
 
     // Observe the embed wrapper
     if (this.$refs.embedWrapper) {
       observer.observe(this.$refs.embedWrapper);
     }
 
+    window.addEventListener('scroll', this.checkIfInOriginalViewport);
+
     // rootMargin: '0px 0px -100% 0px',
     //   threshold: 0
-
 
     this.displayChannels = this.settings.channels.filter(this.showChannel);
 
@@ -451,7 +464,7 @@ export default {
     // }, 1000);
   },
   beforeDestroy() {
-    window.removeEventListener('scroll', this.checkScrollPosition);
+    window.removeEventListener('scroll', this.checkIfInOriginalViewport);
   },
   updated: function () {
     if (

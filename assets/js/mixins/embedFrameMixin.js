@@ -75,27 +75,34 @@ export default {
     *
     * Called by: All embed containers except FullWidthImagery.
     */
-    clickContainer(elementId, isFullWidth) {
+    clickContainer(elementId, isFullWidth = false) {
       if (this.$root.containerId === elementId) {
         return;
       }
-      console.log('container ID', this.$root.containerId);
-      console.log('element ID', elementId)
+
+      console.log('before container ID', this.$root.containerId);
+      console.log('before element ID', elementId)
+
       if (!!this.$root.embedRef && this.$root.isPinnedContainer) {
         const prevVideoContainer = this.$root.embedRef;
-        const videoContainerPosition =
+        const preVideoContainerPosition =
           prevVideoContainer.getBoundingClientRect();
 
         this.position = {
           top: isFullWidth
-            ? videoContainerPosition.top + window.scrollY
-            : videoContainerPosition.top + window.scrollY,
-          left: videoContainerPosition.left,
+            ? preVideoContainerPosition.top + window.scrollY
+            : preVideoContainerPosition.top + window.scrollY,
+          left: preVideoContainerPosition.left,
         };
       }
 
       this.closeContainer();
 
+      /*
+      * This method closes whatever container is currently running.
+      *
+      * NOTE: It only triggers if there is currently a running container.
+      */
       if (this.$root.containerId) {
         this.$root.$emit("close-other-layouts", this.$root.containerId);
       }
@@ -104,13 +111,18 @@ export default {
       this.$root.embedRef = this.$refs.embedWrapper;
       this.isCursorHere = true; // only set as "true" here
       this.$root.isVisibleVideoContainer = true; // only set as "true" here
-      console.log('container ID', this.$root.containerId)
 
-      // isCursorHere is always true because we just set it as true
+      /*
+       *
+       *
+       * NOTE: isCursorHere and isVisibleVideoContainer are always true because we
+       * set their values to true in this method.
+       */
       if (this.isCursorHere && this.$root.isVisibleVideoContainer) {
         setTimeout(() => {
           this.setEmbedPosition(isFullWidth);
 
+          // Running the following event triggers the hideVideo method
           this.$root.$emit("close-other-layouts", this.$root.containerId);
 
           this.position = { top: "", left: "" };
@@ -119,7 +131,7 @@ export default {
 
           if (this.$refs.embed) {
             this.$refs.embed.startPlayer()
-          };
+          }
         }, 30);
       }
     },
@@ -135,7 +147,7 @@ export default {
       this.isPinBtnActive = false;
       this.$root.isVisibleVideoContainer = false;
       this.$root.containerId = "";
-
+      console.log('I have closed this container');
       this.resetEmbedStyles();
 
       this.isEmbedVisible = false;
@@ -159,23 +171,27 @@ export default {
 
     // Method to hide the video
     async hideVideo(elementId) {
-      console.log('element ID (hide): ', elementId);
-      console.log('element ID (hide) embed: ', this.embedData);
-      console.trace();
-      console.log('I should hide: ', !(elementId && this.embedData && this.embedData.elementId === elementId));
+      // console.log('element ID (hide): ', elementId);
+      // console.log('element ID (hide) embed: ', this.embedData);
+      // console.trace();
+      // console.log('I should hide: ', !(elementId && this.embedData && this.embedData.elementId === elementId));
       // Use the condition below for the offline embed containers to auto-play and not get closed
       if (
-        !(elementId && this.embedData && this.embedData.elementId === elementId)
+        elementId && !(this.embedData && this.embedData.elementId === elementId)
       ) {
+        /*
+        * If the container is not pinned then reset embed styles
+        */
         if (!this.$root.isPinnedContainer) {
           console.log('I reset on hide');
           this.resetEmbedStyles();
         }
+
         this.isEmbedVisible = false;
+        this.isPinBtnActive = false;
         this.$root.isVisibleVideoContainer = false;
         this.$root.isMoveContainer = false;
-        this.$root.containerId = "";
-        this.isPinBtnActive = false;
+        // this.$root.containerId = ""; // NOTE: Maybe change this back
 
         if (this.$refs.embed) {
           if (this.$refs.embed.isPlaying()) {
@@ -187,8 +203,9 @@ export default {
 
     // Method to set the position of the embed
     setEmbedPosition(isFullWidth) {
+      const videoContainer = this.$refs.embedWrapper;
       /*
-      *  Ensures that the video remains in the same position if it is pinned
+      * Ensures that the video remains in the same position if it is pinned
       */
       if (this.$root.isPinnedContainer && !!this.position.top) {
         const videoContainer = this.$refs.embedWrapper;
@@ -197,43 +214,25 @@ export default {
         videoContainer.style.opacity = "1";
         return;
       }
-      const videoContainer = this.$refs.embedWrapper;
+
       const videoContainerPosition = videoContainer.getBoundingClientRect();
-      // Get the height of the root element
-      const viewportHeight = document.documentElement.clientHeight;
-      // Get the width of the root element
-      const viewportWidth = document.documentElement.clientWidth;
+
+      // Get the height and width of the root element
+      const viewportHeight = document.documentElement.offsetHeight;
+      const viewportWidth = document.documentElement.offsetWidth;
+
+      const offsetX = 40;
+      let offsetY = 40;
 
       let containerPositionY = videoContainerPosition.y;
-      let offsetY = 40;
       let moveToPositionY = viewportHeight - videoContainerPosition.height - offsetY;
       let translateDistanceY = moveToPositionY - containerPositionY;
 
-      const containerPositionLeft = videoContainerPosition.left; // Current left position of the container
-      const containerWidth = videoContainer.clientWidth + 100; // Width of the container
-      const offsetX = 40; // Desired distance from the right edge of the viewport
-      const targetPositionX = viewportWidth - containerWidth - offsetX; // Target left position
-      const translateDistanceX = targetPositionX - containerPositionLeft; // Translation distance
+      const containerPositionLeft = videoContainerPosition.left;
+      const containerWidth = videoContainer.offsetWidth * 1.25;
+      const targetPositionX = viewportWidth - containerWidth - offsetX;
+      const translateDistanceX = targetPositionX - containerPositionLeft;
 
-      console.log('container position left', containerPositionLeft)
-      // console.log('move to position X', moveToPositionX);
-      console.log('translate distance X', translateDistanceX);
-      console.log('viewport width', viewportWidth);
-
-      // let resultY = viewportHeight - videoContainerPosition.height - 50;
-      // if (isFullWidth) {
-      //   resultY = viewportHeight - videoContainerPosition.height - 50 - 10; // Ensure it's at the bottom
-      // }
-      //
-      // const resultX = viewportWidth - videoContainerPosition.width - 140 - 10; // Ensure it's at the right edge
-      //
-      console.log('container position', videoContainerPosition);
-      // console.log(resultY, resultX);
-      // // 350 400
-      console.log('container dimensions', videoContainer.clientHeight, videoContainer.clientWidth);
-      // 572 1420
-      console.log('document dimensions', document.documentElement.clientHeight, document.documentElement.clientWidth)
-      console.log('Embed is visible', this.isEmbedVisible);
       videoContainer.style.transform = `translateY(${translateDistanceY}px) translateX(${translateDistanceX}px)`;
       videoContainer.style.opacity = "1";
     },
@@ -317,12 +316,13 @@ export default {
     *  is used by all embed containers except for EmbedContainerFullWidthDescriptive
     */
     resetEmbedStyles() {
-      console.log('I reset');
       if (this.$refs.itemWrapper) {
         if (
           this.$root.isVisibleVideoContainer === false &&
           this.$refs.embedWrapper !== undefined
         ) {
+          // console.log('I reset');
+
           const container = this.$refs.embedWrapper;
           container.style.position = "absolute";
           container.style.opacity = "0";
@@ -342,9 +342,11 @@ export default {
       if (this.$root.isMoveContainer) {
         return;
       }
+
       this.mouseDown = true;
       this.startX = e.pageX - this.$refs.channelBox.offsetLeft;
       this.scrollLeft = this.$refs.channelBox.scrollLeft;
+
       this.triggerDragging(e);
     },
 

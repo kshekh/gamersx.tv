@@ -13,18 +13,46 @@ export default {
       }
     },
     checkScrollPosition() {
-      const embedWrapper = this.$refs.embedWrapper;
-      if (!embedWrapper) {
-        console.log('embedWrapper not found');
+      const docViewTop = window.scrollY;
+      const docViewBottom = docViewTop + window.innerHeight;
+
+      const elemCoordinates = this.$refs.embedWrapper.getBoundingClientRect();
+      const elemTop = elemCoordinates.top + window.scrollY;
+      const elemBottom = elemCoordinates.bottom + window.scrollY;
+      console.log(docViewTop, 'docViewTop')
+      console.log(docViewBottom, 'docViewBottom')
+      console.log(elemTop, 'elemTop')
+      console.log(elemBottom, 'elemBottom')
+      if ( ((elemBottom <= docViewTop) || (elemTop >= docViewBottom)) ) {
+        console.log('I have scrolled out');
+        this.scrollOut();
+      } else {
+        console.log('I am scrolled in');
+        this.scrollIn();
+      }
+    },
+    checkIfInOriginalViewport() {
+      const docViewTop = window.scrollY;
+      const docViewBottom = docViewTop + window.innerHeight;
+      // console.log('current coordinates (top)', docViewTop);
+      // console.log('current coordinates (bottom)', docViewBottom);
+
+      const originalCoordinates = this.baseCoordinates;
+      if (!originalCoordinates) {
         return;
       }
 
-      const scrollPosition = window.scrollY + window.innerHeight;
-      const embedPosition = embedWrapper.offsetTop + (embedWrapper.offsetHeight * 0.75);
-      console.log('scrollPosition:', scrollPosition, 'embedPosition:', embedPosition);
-      if (scrollPosition > embedPosition && !this.hasScrolledPast75) {
-        this.hasScrolledPast75 = true;
-        this.clickContainer(this.currentChannel.embedData.elementId, true);
+      const elemTop = originalCoordinates.top;
+      const elemBottom = originalCoordinates.bottom;
+      // console.log('original coordinates (top)', elemTop);
+      // console.log('original coordinates (bottom)', elemBottom);
+
+      if (elemBottom <= docViewTop || elemTop >= docViewBottom) {
+        console.log('I am out');
+        this.scrollOut();
+      } else {
+        console.log('I am in');
+        this.scrollIn();
       }
     }
   }

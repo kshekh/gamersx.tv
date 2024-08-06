@@ -263,8 +263,6 @@ export default {
       if (this.$root.containerId) {
         this.$root.$emit("close-other-layouts", this.$root.containerId);
       }
-      console.log('We play');
-      console.trace();
       /*
       * Sets the following properties to false:
       * - isPinned
@@ -321,10 +319,10 @@ export default {
         if (this.showOverlay || this.showArt) {
           this.isEmbedVisible = true;
         }
-        console.log('I changed')
+
         this.playVideo();
       } else {
-        console.log("I am not allowed to play");
+        console.log("I will stop the embed and make it disappear", (this.$refs.embed && this.$refs.embed.isPlaying()))
         if (this.$refs.embed && this.$refs.embed.isPlaying()) {
           this.isEmbedVisible = false; // refers to the twitch or YouTube embed
           this.isHideButtonClicked = false; // makes the hide button visible again

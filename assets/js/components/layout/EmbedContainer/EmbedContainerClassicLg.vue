@@ -10,7 +10,7 @@
         <div
           v-if="showEmbed && embedData"
           class="w-full h-full relative overflow-hidden"
-          @click="clickContainer(embedData.elementId)"
+          @click="clickContainer(embedData.elementId, false)"
         >
           <img
             v-if="showArt && image"
@@ -332,6 +332,7 @@ export default {
       if (this.$root.isVisibleVideoContainer) {
         return;
       }
+      console.log('It was me!');
       if (this.showOverlay || this.showArt) {
         this.isOverlayVisible = true;
         this.isEmbedVisible = false;
