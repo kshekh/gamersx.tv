@@ -219,7 +219,7 @@ export default {
       let offsetY = 40;
 
       let containerPositionY = videoContainerPosition.y;
-      let containerPositionX = videoContainerPosition.x;
+      // let containerPositionX = videoContainerPosition.x;
 
       let moveToPositionY = viewportHeight - videoContainerPosition.height - offsetY;
       let translateDistanceY = moveToPositionY - containerPositionY;
@@ -228,6 +228,9 @@ export default {
       const containerWidth = videoContainer.offsetWidth * 1.25;
       const targetPositionX = viewportWidth - containerWidth - offsetX;
       const translateDistanceX = targetPositionX - containerPositionLeft;
+
+      console.log('desired position Y', moveToPositionY)
+      console.log('desired position X', targetPositionX)
 
       console.log('translate distance X', translateDistanceX)
       console.log('translate distance Y', translateDistanceY)
@@ -250,11 +253,13 @@ export default {
         for (let i = 0; i < bodyRef.length; i++) {
           bodyRef[i].style.background = '#130E1C';
           bodyRef[i].style.outline = '3px solid #7A4ECC';
+          bodyRef[i].style.filter = 'drop-shadow(0 5px 10px rgba(122, 78, 204, 0.5))';
         }
 
         const actionRef = document.body.querySelectorAll('.common-container__actions');
         for(let i = 0; i < actionRef.length; i++) {
           actionRef[i].style.opacity = 1;
+          actionRef[i].style.filter = 'drop-shadow(0 5px 10px rgba(122, 78, 204, 0.5))';
         }
       }, 3000)
     },
