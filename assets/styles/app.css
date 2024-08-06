@@ -6,6 +6,10 @@
 @import url("./text-stroke.css");
 @import url("./custom/elementor.css");
 
+:root {
+  --site_body_color: var(#130E1C);
+}
+
 @layer base {
   html,
   body {

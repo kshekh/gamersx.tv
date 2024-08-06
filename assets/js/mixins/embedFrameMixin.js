@@ -261,7 +261,7 @@ export default {
           actionRef[i].style.opacity = 1;
           actionRef[i].style.filter = 'drop-shadow(0 5px 10px rgba(122, 78, 204, 0.5))';
         }
-      }, 3000)
+      }, 2000)
     },
 
     resetContainerStyles() {
@@ -269,11 +269,13 @@ export default {
       for(let i = 0; i < bodyRef.length; i++) {
         bodyRef[i].style.background = 'none';
         bodyRef[i].style.outline = 'none';
+        bodyRef[i].style.filter = 'none';
       }
 
       const actionRef = document.body.querySelectorAll('.common-container__actions');
       for(let i = 0; i < actionRef.length; i++) {
         actionRef[i].style.opacity = 0;
+        actionRef[i].style.filter = 'none';
       }
     },
 
