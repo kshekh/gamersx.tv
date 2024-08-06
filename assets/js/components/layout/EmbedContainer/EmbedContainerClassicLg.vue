@@ -10,8 +10,9 @@
         <div
           v-if="showEmbed && embedData"
           class="w-full h-full relative overflow-hidden"
-          @click="clickContainer(embedData.elementId, false)"
+          @click="handleClick(embedData)"
         >
+          <h1>click</h1>
           <img
             v-if="showArt && image"
             :src="image.url"
@@ -290,6 +291,11 @@ export default {
     this.setIsMobileDevice();
   },
   methods: {
+    handleClick: function (embedData) {
+      console.log('handle click called me!')
+      this.clickContainer(embedData.elementId, false);
+      this.setEmbedStyles();
+    },
     computeGlowStyling: function () {
       if (
         this.isGlowStyling === "always_on" ||

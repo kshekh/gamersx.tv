@@ -250,13 +250,33 @@ export default {
       videoContainer.style.opacity = 0;
     },
 
-    resetContainerStyles() {
-      const bodyRef = document.body.querySelector('.common-container__body');
-      bodyRef.style.background = 'none';
-      bodyRef.style.outline = 'none';
+    setEmbedStyles() {
+      console.log('I need to set the embed styles')
+      setTimeout(() => {
+        const bodyRef = document.body.querySelectorAll('.common-container__body');
+        for (let i = 0; i < bodyRef.length; i++) {
+          bodyRef[i].style.background = '#000';
+          bodyRef[i].style.outline = '3px solid #7A4ECC';
+        }
 
-      const actionRef = document.body.querySelector('.common-container__actions');
-      actionRef.style.opacity = 0;
+        const actionRef = document.body.querySelectorAll('.common-container__actions');
+        for(let i = 0; i < actionRef.length; i++) {
+          actionRef[i].style.opacity = 1;
+        }
+      }, 3000)
+    },
+
+    resetContainerStyles() {
+      const bodyRef = document.body.querySelectorAll('.common-container__body');
+      for(let i = 0; i < bodyRef.length; i++) {
+        bodyRef[i].style.background = 'none';
+        bodyRef[i].style.outline = 'none';
+      }
+
+      const actionRef = document.body.querySelectorAll('.common-container__actions');
+      for(let i = 0; i < actionRef.length; i++) {
+        actionRef[i].style.opacity = 0;
+      }
     },
 
     // Method to handle pinning the container
@@ -442,6 +462,7 @@ export default {
       if (status === true) {
         console.log('I should set the position');
         this.setEmbedPosition()
+        this.setEmbedStyles();
       } else if (status === false) {
         console.log('I should reset the embed');
         this.resetEmbed()

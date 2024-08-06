@@ -5,9 +5,9 @@
     @swiped-right="back"
     @mousemove="checkMouseActive"
     class="home-row mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative min-h-mobile home-banner-section"
+    style="will-change: transform"
     :class="{ 'mobile-full-width': isMobileDevice }"
     :style="customBg"
-    style="will-change: transform"
   >
     <div class="container mx-auto">
       <div class="pb-50p"></div>
@@ -369,15 +369,6 @@ export default {
       this.isEmbedVisible = true;
       this.isMouseStopped = false;
       this.isScrolledIn = false;
-
-      setTimeout(() => {
-        const bodyRef = document.body.querySelector('.common-container__body');
-        bodyRef.style.background = '#000';
-        bodyRef.style.outline = '3px solid #7A4ECC';
-
-        const actionRef = document.body.querySelector('.common-container__actions');
-        actionRef.style.opacity = 1;
-      }, 3000)
 
       clearTimeout(this.isMouseMovingTimeout);
     },
