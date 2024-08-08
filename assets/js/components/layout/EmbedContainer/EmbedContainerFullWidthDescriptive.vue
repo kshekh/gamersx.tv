@@ -152,19 +152,19 @@
       Displays either the TwitchEmbed or the YouTubeEmbed
     -->
     <div v-if="showEmbed && embedData">
-      <div v-show="isEmbedVisible">
+      <div v-show="isAllowPlaying">
         <component
-          v-if="isEmbedVisible"
+          v-if="isAllowPlaying"
           ref="embed"
+          class="flex-grow min-h-0 absolute inset-0 full-width-embed-first-row"
           :is="embedName"
           :embedData="embedData"
           :isRowFirst="isRowFirst"
           :customBg="customBg"
-          @video-buffered="videoBuffered"
-          @set-is-playing="updateIsPlaying"
-          class="flex-grow min-h-0 absolute inset-0 full-width-embed-first-row"
           :width="'100%'"
           :height="'100%'"
+          @video-buffered="videoBuffered"
+          @set-is-playing="updateIsPlaying"
         ></component>
       </div>
     </div>

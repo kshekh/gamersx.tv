@@ -123,6 +123,7 @@ export default {
           this.position = { top: "", left: "" };
           this.$root.isPinnedContainer = false;
           this.isEmbedVisible = true;
+          this.isShowTwitchEmbed = true;
 
           if (this.$refs.embed) {
             this.$refs.embed.startPlayer()
@@ -148,7 +149,7 @@ export default {
 
       if (isButtonClick) {
         this.$root.isPinnedContainer = false;
-        console.log('I reset on close when button clicked');
+        // console.log('I reset on close when button clicked');
 
         if (this.$refs.embed && this.$refs.embed.isPlaying()) {
           this.$refs.embed.stopPlayer();
@@ -156,7 +157,7 @@ export default {
         return;
       }
 
-      console.log('I reset on close just cause');
+      // console.log('I reset on close just cause');
 
       if (this.$refs.embed && this.$refs.embed.isPlaying()) {
         this.$refs.embed.stopPlayer();
@@ -177,7 +178,7 @@ export default {
         * If the container is not pinned then reset embed styles
         */
         if (!this.$root.isPinnedContainer) {
-          console.log('I reset on hide');
+          // console.log('I reset on hide');
           this.resetEmbedStyles();
         }
 
@@ -198,6 +199,10 @@ export default {
     // Method to set the position of the embed
     setEmbedPosition(isFullWidth) {
       const videoContainer = this.$refs.embedWrapper;
+      if (!videoContainer) {
+        return;
+      }
+
       /*
       * Ensures that the video remains in the same position if it is pinned
       */
@@ -229,11 +234,11 @@ export default {
       const targetPositionX = viewportWidth - containerWidth - offsetX;
       const translateDistanceX = targetPositionX - containerPositionLeft;
 
-      console.log('desired position Y', moveToPositionY)
-      console.log('desired position X', targetPositionX)
+      // console.log('desired position Y', moveToPositionY)
+      // console.log('desired position X', targetPositionX)
 
-      console.log('translate distance X', translateDistanceX)
-      console.log('translate distance Y', translateDistanceY)
+      // console.log('translate distance X', translateDistanceX)
+      // console.log('translate distance Y', translateDistanceY)
 
       videoContainer.style['transform-origin'] = 'bottom right';
       videoContainer.style.transform = `translateY(${translateDistanceY}px) translateX(${translateDistanceX}px)`;
@@ -242,9 +247,11 @@ export default {
 
     resetEmbed() {
       const videoContainer = this.$refs.embedWrapper;
-      videoContainer.style.position = 'absolute';
-      videoContainer.style.transform = 'none';
-      videoContainer.style.opacity = 0;
+      if (videoContainer) {
+        videoContainer.style.position = 'absolute';
+        videoContainer.style.transform = 'none';
+        videoContainer.style.opacity = 0;
+      }
     },
 
     setContainerStyles() {
@@ -276,6 +283,19 @@ export default {
       for(let i = 0; i < actionRef.length; i++) {
         actionRef[i].style.opacity = 0;
         actionRef[i].style.filter = 'none';
+      }
+    },
+
+    /**
+     * Unmount the parent container.
+     * NOTE: This method is used for handling the unmounting of the fullwidth embed
+     *
+     * @param embedId
+     */
+    unmountContainer(embedId) {
+      const parentContainer = document.getElementById(embedId);
+      if (parentContainer) {
+        parentContainer.remove()
       }
     },
 
@@ -481,7 +501,7 @@ export default {
   mounted() {
     // Listen for the "close-other-layouts" event
     this.$root.$on("close-other-layouts", this.hideVideo);
-    console.log('I reset on mount');
+    // console.log('I reset on mount');
     this.resetEmbedStyles();
   },
 

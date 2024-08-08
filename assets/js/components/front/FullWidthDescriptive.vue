@@ -370,6 +370,8 @@ export default {
       this.isMouseStopped = false;
       this.isScrolledIn = false;
 
+      this.unmountContainer(this.currentChannel.embedData.elementId)
+
       clearTimeout(this.isMouseMovingTimeout);
     },
     handleFirstVideoLoaded: function () {

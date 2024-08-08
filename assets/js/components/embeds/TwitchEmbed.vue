@@ -1,12 +1,12 @@
 <template>
   <div @mouseover="showTwitchEmbed = true">
     <img
-      v-if="image && isBuffering"
-      :src="image.url"
+      v-if="!!(image && isBuffering)"
+      :src="image['url']"
       class="relative top-1/2 transform -translate-y-1/2 w-full"
     />
     <video
-      v-else-if="overlay && isBuffering"
+      v-else-if="!!(overlay && isBuffering)"
       autoplay="autoplay"
       muted="muted"
       loop="loop"
@@ -66,8 +66,8 @@ export default {
   },
   methods: {
     embedTwitch: function () {
-      let element = document.getElementById(this.embedDataCopy.elementId)
-      if (element.children.length == 0) {
+      let element = document.getElementById(this.embedDataCopy.elementId);
+      if (element.children.length === 0) {
         this.embed = new Twitch.Embed(this.embedDataCopy.elementId, {
           width: this.width || 540,
           height: this.height || 300,
@@ -76,23 +76,37 @@ export default {
           layout: "video",
           autoplay: true,
           muted: false,
-          // controls: false,
+          controls: false,
           parent: window.location.hostname,
         });
-        
-        this.embed.addEventListener(Twitch.Player.PLAY, this.setIsPlaying);
-        this.embed.addEventListener(Twitch.Player.PAUSE, this.setIsNotPlaying);
-        this.embed.addEventListener(Twitch.Player.ENDED, this.setIsNotPlaying);
+        console.log('the embed created ', this.embed)
+        this.embed.addEventListener(Twitch.Player.PLAY, () => {
+          console.log('PLAY event triggered');
+          this.setIsPlaying();
+        });
+        this.embed.addEventListener(Twitch.Player.PAUSE, () => {
+          console.log('PAUSE event triggered');
+          this.setIsNotPlaying();
+        });
+        this.embed.addEventListener(Twitch.Player.ENDED, () => {
+          console.log('ENDED event triggered');
+          this.setIsNotPlaying();
+        });
         this.embed.addEventListener(Twitch.Player.WAITING, () => {
+          console.log('WAITING event triggered');
           this.isBuffering = true;
         });
         this.embed.addEventListener(Twitch.Player.PLAYING, () => {
+          console.log('PLAYING event triggered');
           this.isBuffering = false;
+          console.log('i set is buffering to ', this.isBuffering)
         });
         this.embed.addEventListener(Twitch.Player.OFFLINE, () => {
+          console.log('OFFLINE event triggered');
           this.embedPlaying = false;
           this.isBuffering = false;
         });
+        console.log('is it still buffering? ', this.isBuffering);
       } else {
         this.isBuffering = false;
         this.startPlayer()
@@ -103,8 +117,9 @@ export default {
         !this.embedPlaying &&
         (this.isShowTwitchEmbed || this.showTwitchEmbed)
       ) {
+        console.log('details regarding the embed', this.embed);
         this.embed?.play();
-        this.embed.setMuted(false);
+        this.embed?.setMuted(false);
         this.embedPlaying = true;
       }
     },
