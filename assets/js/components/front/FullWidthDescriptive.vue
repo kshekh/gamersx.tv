@@ -437,6 +437,10 @@ export default {
       this.isAllowPlaying = false;
     }
 
+    setInterval(() => {
+      console.log('the container ID is ', this.$root.containerId)
+    }, 4000)
+
     let observer = this.initObserver();
 
     // Observe the embed wrapper

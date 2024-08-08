@@ -68,7 +68,7 @@ export default {
         controls: true,
         parent: window.location.hostname,
       });
-      console.log('full width embed', this.embed)
+
       this.embed.addEventListener(Twitch.Player.PLAY, this.setIsPlaying);
       this.embed.addEventListener(Twitch.Player.PAUSE, this.setIsNotPlaying);
       this.embed.addEventListener(Twitch.Player.ENDED, this.setIsNotPlaying);
@@ -89,7 +89,6 @@ export default {
     },
   },
   mounted: function () {
-    console.log('I mounted the full width twitch embed');
     this.embedTwitch();
   },
 };
