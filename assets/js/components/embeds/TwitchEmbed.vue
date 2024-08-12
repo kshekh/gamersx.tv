@@ -1,22 +1,23 @@
 <template>
-  <div @mouseover="showTwitchEmbed = true" @mouseenter="startPlayer" @mouseleave="stopPlayer">
+  <div
+    @mouseover="showTwitchEmbed = true"
+    @mouseenter="startPlayer"
+    @mouseleave="stopPlayer"
+  >
     <img
-      v-if="image && isBuffering"
+      v-if="!!(image && isBuffering)"
       :src="image['url']"
       class="relative top-1/2 transform -translate-y-1/2 w-full"
     />
     <video
-      v-else-if="overlay && isBuffering"
+      v-else-if="!!(overlay && isBuffering)"
       autoplay="autoplay"
       muted="muted"
       loop="loop"
       playsinline=""
       class="h-full md:w-full object-cover"
     >
-      <source
-        :src="loadingVideo"
-        type="video/mp4"
-      />
+      <source :src="loadingVideo" type="video/mp4" />
     </video>
     <iframe
       v-if="embedDataCopy.type === 'twitch_clip'"
@@ -57,7 +58,7 @@ export default {
   data: function () {
     return {
       embed: {},
-      loaders:['/images/Sequence_01_final.mp4'],
+      loaders: ["/images/Sequence_01_final.mp4"],
       embedPlaying: false,
       showTwitchEmbed: false,
       isBuffering: true,
@@ -65,7 +66,7 @@ export default {
   },
   methods: {
     embedTwitch: function () {
-      let element = document.getElementById(this.embedDataCopy.elementId)
+      let element = document.getElementById(this.embedDataCopy.elementId);
       if (element.children.length === 0) {
         this.embed = new Twitch.Embed(this.embedDataCopy.elementId, {
           width: this.width || 540,
@@ -75,26 +76,40 @@ export default {
           layout: "video",
           autoplay: true,
           muted: false,
-          // controls: false,
+          controls: false,
           parent: window.location.hostname,
         });
-
-        this.embed.addEventListener(Twitch.Player.PLAY, this.setIsPlaying);
-        this.embed.addEventListener(Twitch.Player.PAUSE, this.setIsNotPlaying);
-        this.embed.addEventListener(Twitch.Player.ENDED, this.setIsNotPlaying);
+        console.log("the embed created ", this.embed);
+        this.embed.addEventListener(Twitch.Player.PLAY, () => {
+          console.log("PLAY event triggered");
+          this.setIsPlaying();
+        });
+        this.embed.addEventListener(Twitch.Player.PAUSE, () => {
+          console.log("PAUSE event triggered");
+          this.setIsNotPlaying();
+        });
+        this.embed.addEventListener(Twitch.Player.ENDED, () => {
+          console.log("ENDED event triggered");
+          this.setIsNotPlaying();
+        });
         this.embed.addEventListener(Twitch.Player.WAITING, () => {
+          console.log("WAITING event triggered");
           this.isBuffering = true;
         });
         this.embed.addEventListener(Twitch.Player.PLAYING, () => {
+          console.log("PLAYING event triggered");
           this.isBuffering = false;
+          console.log("i set is buffering to ", this.isBuffering);
         });
         this.embed.addEventListener(Twitch.Player.OFFLINE, () => {
+          console.log("OFFLINE event triggered");
           this.embedPlaying = false;
           this.isBuffering = false;
         });
+        console.log("is it still buffering? ", this.isBuffering);
       } else {
         this.isBuffering = false;
-        this.startPlayer()
+        this.startPlayer();
       }
     },
     startPlayer: function () {
@@ -102,8 +117,9 @@ export default {
         !this.embedPlaying &&
         (this.isShowTwitchEmbed || this.showTwitchEmbed)
       ) {
-        this.embed.play();
-        this.embed.setMuted(false);
+        console.log("details regarding the embed", this.embed);
+        this.embed?.play();
+        this.embed?.setMuted(false);
         this.embedPlaying = true;
       }
     },
@@ -139,15 +155,15 @@ export default {
     },
     handleIframeLoad(e) {
       this.isBuffering = false;
-    }
+    },
   },
   computed: {
     embedDataCopy() {
       return { ...this.embedData };
     },
     loadingVideo() {
-      return this.loaders[Math.floor(Math.random()*this.loaders.length)]
-    }
+      return this.loaders[Math.floor(Math.random() * this.loaders.length)];
+    },
   },
   watch: {
     showTwitchEmbed(newVal) {

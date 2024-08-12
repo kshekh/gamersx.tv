@@ -8,6 +8,7 @@ use App\Service\HomeRowInfo;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use App\Traits\ErrorLogTrait;
+use Predis\Client;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -73,7 +74,7 @@ class CacheHomePageContainers extends Command
                 $rows = $this->entityManager->getRepository(HomeRow::class)
                     ->findBy(['isPublished' => TRUE], ['sortIndex' => 'ASC']);
 
-//                $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
+                //                $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
                 /*
                  * Cycle through all the rows of the home_rows table
                  * Examples: FullWidthDescription, NumberedRow, etc.
@@ -85,7 +86,7 @@ class CacheHomePageContainers extends Command
                     date_default_timezone_set(timezoneId: $timezone ?: 'America/Los_Angeles');
                     $currentTime = $this->homeRowInfo->convertHoursMinutesToSeconds(date('H:i'));
 
-                    if (! $row->getIsPublished()) {
+                    if (!$row->getIsPublished()) {
                         continue;
                     }
 
@@ -98,8 +99,8 @@ class CacheHomePageContainers extends Command
                         $thisRow['sortIndex'] = $row->getSortIndex();
                         $thisRow['componentName'] = $row->getLayout();
                         $thisRow['onGamersXtv'] = $row->getonGamersXtv();
-                        $thisRow['rowPaddingTop'] = ($row->getRowPaddingTop() != null)? $row->getRowPaddingTop(): 0;
-                        $thisRow['rowPaddingBottom'] = ($row->getRowPaddingBottom() != null)? $row->getRowPaddingBottom(): 0;
+                        $thisRow['rowPaddingTop'] = ($row->getRowPaddingTop() != null) ? $row->getRowPaddingTop() : 0;
+                        $thisRow['rowPaddingBottom'] = ($row->getRowPaddingBottom() != null) ? $row->getRowPaddingBottom() : 0;
 
                         // Returns an item of type HomeRowContainerizer
                         $containerized = $containerizer(toBeContainerized: $row);
@@ -126,7 +127,7 @@ class CacheHomePageContainers extends Command
 
             if ($homeItemCache->isHit()) {
                 $homeItemCacheValue = $homeItemCache->get();
-                $homeCacheArr = ['home_container_refreshed_at' => date('Y-m-d H:i:s'),'rows_data'=>$homeItemCacheValue];
+                $homeCacheArr = ['home_container_refreshed_at' => date('Y-m-d H:i:s'), 'rows_data' => $homeItemCacheValue];
                 $homeCache->set($homeCacheArr);
                 $cache->save($homeCache);
             }
@@ -137,7 +138,7 @@ class CacheHomePageContainers extends Command
             $io->success($message);
             return 0;
         } catch (\Exception $ex) {
-            $message = $ex->getMessage() . " ".$ex->getFile() ." ". $ex->getLine();
+            $message = $ex->getMessage() . " " . $ex->getFile() . " " . $ex->getLine();
             $this->log_error($message, "500", "home_cache_clear");
         }
         $io->error($message);

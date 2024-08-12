@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="numberedRow">
     <div
       class="flex items-center justify-between pl-8 md:pl-10 xl:pl-24 pr-4 md:pr-5 xl:pr-12"
     >
@@ -150,12 +150,14 @@ export default {
       // this.rowIndex = (this.rowIndex - 1).mod(this.displayChannels.length);
       // this.reorder();
       const content = this.$refs.channelBox;
-      let content_scoll_left = content.scrollLeft;
-      content_scoll_left -= 300;
-      if (content_scoll_left <= 0) {
-        content_scoll_left = 0;
+      let content_scroll_left = content.scrollLeft;
+
+      content_scroll_left -= 300;
+      if (content_scroll_left <= 0) {
+        content_scroll_left = 0;
       }
-      content.scrollLeft = content_scoll_left;
+
+      content.scrollLeft = content_scroll_left;
     },
     forward() {
       const content = this.$refs.channelBox;

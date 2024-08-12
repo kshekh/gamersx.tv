@@ -47,7 +47,7 @@ export default {
           className = "bg-red shadow-youtube";
           break;
         case "twitch":
-          className = "bg-purple shadow-twitch";
+          className = "bg-[#6441a5] shadow-twitch";
           break;
       }
 

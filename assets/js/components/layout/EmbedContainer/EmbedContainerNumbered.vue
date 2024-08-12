@@ -11,7 +11,7 @@
       :class="getGlow"
     >
       <div
-        class="w-full h-full cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black shrink-0"
+        class="w-full h-full border-[3px] !border-[#7A4ECC]/40 rounded-[10px] bg-black shrink-0"
         :class="getOutline"
       >
         <!-- Show the embed with overlay if there's an embed -->
@@ -80,9 +80,13 @@
       ref="embedWrapper"
       :style="embedSize"
     >
-      <div
-        class="w-full h-full flex flex-col relative cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
-        :class="getOutline"
+      <CommonContainer
+        @on-pin="onPinHandler"
+        @close-container="() => closeContainer(true)"
+        @on-mouse-down="onMouseDownHandler"
+        :isPinActive="isPinBtnActive"
+        :isMoveActive="isMoveBtnActive"
+        :innerWrapperClassNames="getOutline"
       >
         <div class="flex-grow min-h-0 relative">
           <div class="absolute inset-0 bg-black overflow-hidden">
@@ -142,7 +146,9 @@
               {{ embedData.channel }}
             </h6>
           </div>
-          <h6 class="cursor-default text-8 text-grey font-play whitespace-nowrap">
+          <h6
+            class="cursor-default text-8 text-grey font-play whitespace-nowrap"
+          >
             {{ liveViewerCount }} viewers
           </h6>
         </a>

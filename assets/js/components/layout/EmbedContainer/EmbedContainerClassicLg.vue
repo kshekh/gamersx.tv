@@ -1,20 +1,22 @@
 <template>
-  <div class="cursor-default w-full h-full shrink-0" ref="itemWrapper" v-if="!isMobileDevice">
+  <div
+    class="cursor-default w-full h-full shrink-0"
+    ref="itemWrapper"
+    v-if="!isMobileDevice"
+  >
     <div class="cut-edge__wrapper w-full h-full" :class="getGlow">
       <div
         @click="isShowTwitchEmbed = true"
-        @mouseenter="console.log('mouse has entered')"
-        @mouseleave="console.log('mouse has left')"
-        class="w-full h-full cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
+        class="w-full h-full border-[3px] rounded-[10px] overflow-hidden !border-[#7A4ECC]/40 cut-edge__clipped-top-left-sm bg-black"
         :class="getOutline"
       >
         <!-- Show the embed with overlay if there's an embed -->
         <div
           v-if="showEmbed && embedData"
           class="w-full h-full relative overflow-hidden"
-          @mouseenter="mouseEntered"
-          @mouseleave="mouseLeave"
+          @click="handleClick(embedData)"
         >
+          <h1>click</h1>
           <img
             v-if="showArt && image"
             alt="Embed with custom art"
@@ -75,12 +77,14 @@
           invisible: !isEmbedVisible,
         },
       ]"
-      ref="embedWrapper"
-      :style="embedSize"
     >
-      <div
-        class="w-full h-full flex flex-col relative cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
-        :class="getOutline"
+      <CommonContainer
+        @on-pin="onPinHandler"
+        @close-container="() => closeContainer(true)"
+        @on-mouse-down="onMouseDownHandler"
+        :isPinActive="isPinBtnActive"
+        :isMoveActive="isMoveBtnActive"
+        :innerWrapperClassNames="getOutline"
       >
         <div class="flex-grow min-h-0 relative">
           <div class="absolute inset-0 bg-black overflow-hidden">
@@ -102,7 +106,7 @@
             :class="{ 'opacity-100': isEmbedVisible }"
           >
             <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
-              <h5 class=" cursor-default text-xxs text-white font-play truncate">
+              <h5 class="cursor-default text-xxs text-white font-play truncate">
                 {{ offlineDisplay.title }}
               </h5>
               <h6 class="cursor-default text-8 text-white font-play truncate">
@@ -123,28 +127,28 @@
             ></component>
           </div>
         </div>
-        <a
-          :href="link"
-          class="cursor-default flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
-          :title="offlineDisplay.title"
-        >
-          <div class="mr-2 overflow-hidden">
-            <h5
-              class="cursor-default text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
-            >
-              {{ offlineDisplay.title }}
-            </h5>
-            <h6
-              class="cursor-default text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
-            >
-              {{ embedData.channel }}
-            </h6>
-          </div>
-          <h6 class="cursor-default text-8 text-grey font-play whitespace-nowrap">
-            {{ liveViewerCount }} viewers
-          </h6>
-        </a>
-      </div>
+        <!--        <a-->
+        <!--          :href="link"-->
+        <!--          class="cursor-default flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"-->
+        <!--          :title="offlineDisplay.title"-->
+        <!--        >-->
+        <!--          <div class="mr-2 overflow-hidden">-->
+        <!--            <h5-->
+        <!--              class="cursor-default text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"-->
+        <!--            >-->
+        <!--              {{ offlineDisplay.title }}-->
+        <!--            </h5>-->
+        <!--            <h6-->
+        <!--              class="cursor-default text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"-->
+        <!--            >-->
+        <!--              {{ embedData.channel }}-->
+        <!--            </h6>-->
+        <!--          </div>-->
+        <!--          <h6 class="cursor-default text-8 text-grey font-play whitespace-nowrap">-->
+        <!--            {{ liveViewerCount }} viewers-->
+        <!--          </h6>-->
+        <!--        </a>-->
+      </CommonContainer>
     </div>
   </div>
 
@@ -195,9 +199,20 @@
             'pointer-events-none z-negative': !isEmbedVisible,
           },
         ]"
-        style="top: 50%;left: 0;transform: translateY(-50%);z-index: 99;display: flex;align-items: center; width: auto !important;"
+        style="
+          top: 50%;
+          left: 0;
+          transform: translateY(-50%);
+          z-index: 99;
+          display: flex;
+          align-items: center;
+          width: auto !important;
+        "
       >
-        <div ref="embedWrapper" :class="{'relative w-full h-full main-parent':true}">
+        <div
+          ref="embedWrapper"
+          :class="{ 'relative w-full h-full main-parent': true }"
+        >
           <component
             v-if="embedData"
             ref="embed"
@@ -280,6 +295,11 @@ export default {
     this.setIsMobileDevice();
   },
   methods: {
+    handleClick: function (embedData) {
+      this.resetContainerStyles();
+      this.clickContainer(embedData.elementId, false);
+      this.setContainerStyles();
+    },
     computeGlowStyling: function () {
       if (
         this.isGlowStyling === "always_on" ||
@@ -319,6 +339,10 @@ export default {
       this.$emit("hide-controls");
     },
     scrollOut() {
+      if (this.$root.isVisibleVideoContainer) {
+        return;
+      }
+      console.log("It was me!");
       if (this.showOverlay || this.showArt) {
         this.isOverlayVisible = true;
         this.isEmbedVisible = false;
@@ -330,9 +354,11 @@ export default {
       this.$emit("show-controls");
     },
     setIsMobileDevice() {
-      const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
+      const checkDeviceType = navigator.userAgent
+        .toLowerCase()
+        .match(/mobile/i);
       this.isMobileDevice = !!checkDeviceType;
-    }
+    },
   },
   // created() {
   //   if(!this.showOnline && this.embedData){

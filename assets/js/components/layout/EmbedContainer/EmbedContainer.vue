@@ -88,6 +88,7 @@ export default {
   },
   methods: {
     mouseEntered: function(e) {
+      console.log('The mouse enters twitch')
       if (this.showOverlay) {
         this.isOverlayVisible = false;
         this.isEmbedVisible = true;
@@ -128,6 +129,7 @@ export default {
   mounted: function() {
     this.isOverlayVisible = this.showOverlay;
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
+    console.log('The embed data is ', this.embedData);
   },
   // created() {
   //   if(!this.showOnline && this.embedData){

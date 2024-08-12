@@ -61,6 +61,7 @@
             : 'space-x-2 md:space-x-3 xl:space-x-4',
         ]"
       >
+        <!--Hero Element "Hide" Button-->
         <button
           v-if="showEmbed && embedData"
           @click.stop="handlePlayVideo()"
@@ -74,6 +75,7 @@
         >
           Hide
         </button>
+        <!--Hero Element "More Info" Button-->
         <a
           :href="link"
           class="text-white p-1 transition-all duration-300 bg-opacity-30 text-center hover:bg-opacity-100"
@@ -81,7 +83,7 @@
             bgColor,
             decreaseInfoBoxSize
               ? 'text-8 md:text-xs xl:text-sm md:px-1 md:py-1 xl:py-2 xl:px-4 min-w-50 md:min-w-90 xl:min-w-75'
-              : 'text-xs md:text-sm xl:text-lg min-w-50 min-w-70 md:min-w-75 md:min-w-90 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6',
+              : 'text-xs md:text-sm xl:text-lg min-w-50 md:min-w-75 xl:min-w-130 md:px-3 md:py-2 xl:py-3 xl:px-6',
           ]"
           target="_blank"
         >
@@ -145,21 +147,26 @@
         </svg>
       </div>
     </div>
-    <!-- Show the embed with overlay if there's an embed -->
+    <!--
+      The entire hero element displayed at the top.
+
+      Show the embed with overlay if there's an embed.
+      Displays either the TwitchEmbed or the YouTubeEmbed
+    -->
     <div v-if="showEmbed && embedData">
-      <div v-show="isEmbedVisible">
+      <div v-show="isAllowPlaying">
         <component
-          v-if="isEmbedVisible"
+          v-if="isAllowPlaying"
           ref="embed"
+          class="flex-grow min-h-0 absolute inset-0 full-width-embed-first-row"
           :is="embedName"
           :embedData="embedData"
           :isRowFirst="isRowFirst"
           :customBg="customBg"
-          @video-buffered="videoBuffered"
-          @set-is-playing="updateIsPlaying"
-          class="flex-grow min-h-0 absolute inset-0 full-width-embed-first-row"
           :width="'100%'"
           :height="'100%'"
+          @video-buffered="videoBuffered"
+          @set-is-playing="updateIsPlaying"
         ></component>
       </div>
     </div>
@@ -242,13 +249,35 @@ export default {
     },
   },
   methods: {
+    /*
+     * Triggers when the hide button is clicked. Starts playing the video.
+     * Disables pointer events.
+     *
+     * Side effects: hides the infoBox because the video is playing.
+     */
     handlePlayVideo() {
       this.isHideButtonClicked = true;
-
       this.playVideo();
     },
     playVideo() {
-      this.$root.$emit("close-other-layouts", this.embedData.elementId);
+      if (this.$root.containerId) {
+        this.$root.$emit("close-other-layouts", this.$root.containerId);
+      }
+      /*
+       * Sets the following properties to false:
+       * - isPinned
+       * - isPinBtnActive
+       * - isEmbedVisible
+       * - $root.isVisibleVideoContainer
+       *
+       * Makes $root.containerId an empty string
+       *
+       * Calls the resetEmbedStyles method from embedFrameMixin which targets the embedWrapper
+       * and makes the opacity 0, position absolute, and sets transform to none.
+       */
+      this.closeContainer();
+
+      // If there is an embed, then run the startPlayer method
       if (this.$refs.embed) this.$refs.embed.startPlayer();
     },
     videoBuffered() {
@@ -273,9 +302,11 @@ export default {
         }
       }
     },
-    updateIsPlaying(newVal) {
-      this.isVideoPlaying = newVal;
+    // Change the isVideoPlaying value
+    updateIsPlaying(status) {
+      this.isVideoPlaying = status;
     },
+    // Emit the activate-mouse-stopped event after 3 seconds
     activateIsMouseStopped() {
       setTimeout(() => {
         this.$emit("activate-mouse-stopped");
@@ -283,23 +314,19 @@ export default {
     },
   },
   watch: {
-    isAllowPlaying(newVal, oldVal) {
-      if (newVal === true) {
-        if (this.showOverlay || this.showArt) {
-          this.isEmbedVisible = true;
-        }
-
+    isAllowPlaying: function (playStatus) {
+      if (playStatus === true) {
         this.playVideo();
       } else {
-        if (this.$refs.embed && this.$refs.embed.isPlaying()) {
-          this.isEmbedVisible = false;
-          this.isHideButtonClicked = false;
+        if (this.$refs.embed) {
+          this.isHideButtonClicked = false; // makes the hide button visible again
           this.$refs.embed.stopPlayer();
         }
       }
     },
   },
   mounted() {
+    // Whenever the close-other-layouts event is triggered run the hideVideo method
     this.$root.$on("close-other-layouts", this.hideVideo);
   },
   destroyed() {

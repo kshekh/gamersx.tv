@@ -7,7 +7,7 @@
         :class="getGlow"
       >
         <div
-          class="w-full h-full cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
+          class="w-full h-full border-[3px] !border-[#7A4ECC]/40 rounded-[10px] bg-black"
           :class="getOutline"
           style="aspect-ratio: 1/2"
         >
@@ -77,9 +77,13 @@
       ref="embedWrapper"
       :style="embedSize"
     >
-      <div
-        class="w-full h-full flex flex-col relative cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black"
-        :class="getOutline"
+      <CommonContainer
+        @on-pin="onPinHandler"
+        @close-container="() => closeContainer(true)"
+        @on-mouse-down="onMouseDownHandler"
+        :isPinActive="isPinBtnActive"
+        :isMoveActive="isMoveBtnActive"
+        :innerWrapperClassNames="getOutline"
       >
         <div class="cursor-default flex-grow min-h-0 relative">
           <div class="absolute inset-0 bg-black overflow-hidden">

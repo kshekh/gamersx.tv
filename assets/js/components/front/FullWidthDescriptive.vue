@@ -1,12 +1,12 @@
 <template>
   <div
     ref="embedWrapper"
-    @swiped-left="forward()"
-    @swiped-right="back()"
-    @mouseenter="mouseEntered()"
-    @mousemove="checkMouseActive()"
+    @swiped-left="forward"
+    @swiped-right="back"
+    @mousemove="checkMouseActive"
     class="home-row mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative min-h-mobile home-banner-section"
-    :class="{'mobile-full-width': isMobileDevice}"
+    style="will-change: transform"
+    :class="{ 'mobile-full-width': isMobileDevice }"
     :style="customBg"
   >
     <div class="container mx-auto">
@@ -14,10 +14,10 @@
       <div
         class="px-4 md:px-12 flex items-center justify-between absolute inset-0 z-10"
       >
-        <slider-arrow
+        <SliderArrow
           :isNext="false"
           :videoType="currentChannelEmbedName"
-          @arrow-clicked="back()"
+          @arrow-clicked="back"
         />
 
         <div
@@ -32,6 +32,7 @@
               v-for="(channel, index) in displayChannels"
               :key="index"
             >
+              <!--channel.componentName possible values: EmbedContainer-->
               <component
                 :is="channel.componentName"
                 v-if="index === rowIndex"
@@ -50,23 +51,114 @@
           <div
             class="flex items-center space-x-1 md:space-x-2 z-10 self-end md:self-center absolute -bottom-[30px]"
           >
-            <slider-dot
-              v-for="(channel, index) in displayChannels"
-              :key="'channelDot' + index"
-              :embedType="currentChannelEmbedName"
-              :dotIndex="index"
-              :isDotActive="index === rowIndex"
-              @slider-dot-clicked="setActiveChannel"
-            />
+            <div
+              ref="sliderDotRef"
+              class="flex items-center space-x-1 md:space-x-2 z-10 self-end md:self-center absolute -bottom-[30px]"
+            >
+              <SliderDot
+                v-for="(channel, index) in displayChannels"
+                :key="'channelDot' + index"
+                :embedType="currentChannelEmbedName"
+                :dotIndex="index"
+                :isDotActive="index === rowIndex"
+                @slider-dot-clicked="setActiveChannel"
+              />
+            </div>
           </div>
         </div>
 
-        <slider-arrow
+        <SliderArrow
           :isNext="true"
           :videoType="currentChannelEmbedName"
           @arrow-clicked="forward()"
         />
       </div>
+    </div>
+
+    <div
+      v-if="showEmbed && currentChannel && currentChannel.embedData"
+      class="cut-edge__wrapper absolute z-30 transition-opacity-transform ease-linear duration-500"
+      :class="[
+        getGlow,
+        {
+          invisible: !isEmbedVisible,
+        },
+      ]"
+      ref="embedWrapper"
+      :style="embedSize"
+    >
+      <CommonContainer
+        @on-pin="(ev) => onPinHandler(ev, true)"
+        @close-container="() => closeContainer(true)"
+        @on-mouse-down="(ev) => onMouseDownHandler(ev, true)"
+        :isPinActive="isPinBtnActive"
+        :isMoveActive="isMoveBtnActive"
+        :innerWrapperClassNames="getOutline"
+      >
+        <div class="flex-grow min-h-0 relative">
+          <div class="absolute inset-0 bg-black overflow-hidden">
+            <img
+              v-if="showArt && image"
+              :src="currentChannel.image.url"
+              class="relative top-1/2 transform -translate-y-1/2 w-full"
+            />
+            <img
+              v-else-if="showOverlay"
+              alt="Embed's Custom Overlay"
+              :src="currentChannel.overlay"
+              class="relative top-1/2 transform -translate-y-1/2 w-full"
+            />
+          </div>
+          <div
+            class="relative w-full h-full transition-opacity ease-linear duration-500 delay-750 opacity-0 bg-black"
+            :class="{ 'opacity-100': isEmbedVisible }"
+          >
+            <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
+              <h5 class="cursor-default text-xxs text-white font-play truncate">
+                {{ currentChannel.offlineDisplay.title }}
+              </h5>
+              <h6 class="cursor-default text-8 text-white font-play truncate">
+                {{ currentChannel.embedData.channel }}
+              </h6>
+            </div>
+            <component
+              v-if="currentChannel.embedData"
+              ref="embed"
+              :is="currentChannel.embedName"
+              :embedData="currentChannel.embedData"
+              :overlay="currentChannel.overlay"
+              :image="currentChannel.image"
+              :isShowTwitchEmbed="isShowTwitchEmbed"
+              class="w-full h-full"
+              :width="'100%'"
+              :height="'100%'"
+            ></component>
+          </div>
+        </div>
+        <a
+          :href="currentChannel.link"
+          class="cursor-default flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
+          :title="currentChannel.offlineDisplay.title"
+        >
+          <div class="cursor-default mr-2 overflow-hidden">
+            <h5
+              class="cursor-default text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
+            >
+              {{ currentChannel.offlineDisplay.title }}
+            </h5>
+            <h6
+              class="cursor-default text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
+            >
+              {{ currentChannel.embedData.channel }}
+            </h6>
+          </div>
+          <h6
+            class="cursor-default text-8 text-grey font-play whitespace-nowrap"
+          >
+            {{ currentChannel.liveViewerCount }} viewers
+          </h6>
+        </a>
+      </CommonContainer>
     </div>
   </div>
 </template>
@@ -74,11 +166,13 @@
 <script>
 import EmbedContainer from "../layout/EmbedContainer/EmbedContainerFullWidthDescriptive.vue";
 import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerDescriptive.vue";
-
+import embedMixin from "../../mixins/embedFrameMixin";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
-
+import CommonContainer from "../layout/CommonContainer/CommonContainer.vue";
 import SliderDot from "../helpers/SliderDot.vue";
 import SliderArrow from "../helpers/SliderArrow.vue";
+import TwitchEmbed from "../embeds/TwitchEmbed.vue";
+import YouTubeEmbed from "../embeds/YouTubeEmbed.vue";
 
 import isBoxInViewport from "../../mixins/isBoxInViewport";
 
@@ -86,13 +180,16 @@ import isBoxInViewport from "../../mixins/isBoxInViewport";
 
 export default {
   name: "FullWidthDescriptive",
-  mixins: [isBoxInViewport],
+  mixins: [isBoxInViewport, embedMixin],
   components: {
+    CommonContainer: CommonContainer,
     EmbedContainer: EmbedContainer,
+    TwitchEmbed: TwitchEmbed,
+    YouTubeEmbed: YouTubeEmbed,
     NoEmbedContainer: NoEmbedContainer,
     "title-addinional-description": TitleAdditionalDescription,
-    "slider-dot": SliderDot,
-    "slider-arrow": SliderArrow,
+    SliderDot: SliderDot,
+    SliderArrow: SliderArrow,
   },
   props: {
     settings: {
@@ -106,16 +203,68 @@ export default {
   },
   data: function () {
     return {
+      baseCoordinates: {},
       rowIndex: 0,
       displayChannels: [],
       isAllowPlaying: true,
       isFirstVideoLoaded: false,
       isMouseStopped: false,
-      isMouseMovingTimeout: false,
-      isMobileDevice: false
+      isMouseMovingTimeout: 0,
+      isMobileDevice: false,
+      currentChannel: null,
+      isEmbedVisible: false,
+      isScrolledIn: true,
+      isShowTwitchEmbed: false,
+      glowStyling: {
+        glow: "",
+      },
+      cornerCutStyling: {
+        outline: "",
+        outlineBorder: "",
+      },
     };
   },
   computed: {
+    showEmbed() {
+      return (
+        (this.currentChannel &&
+          this.currentChannel?.showOnline &&
+          this.currentChannel?.onlineDisplay.showEmbed) ||
+        (!this.currentChannel?.showOnline &&
+          this.currentChannel?.offlineDisplay.showEmbed)
+      );
+    },
+    showArt() {
+      return (
+        (this.currentChannel &&
+          this.currentChannel?.showOnline &&
+          this.currentChannel?.onlineDisplay.showArt) ||
+        (!this.currentChannel?.showOnline &&
+          this.currentChannel?.offlineDisplay.showArt)
+      );
+    },
+    showOverlay() {
+      return (
+        this.currentChannel &&
+        this.currentChannel?.overlay &&
+        ((this.currentChannel?.showOnline &&
+          this.currentChannel?.onlineDisplay.showOverlay) ||
+          (!this.currentChannel?.showOnline &&
+            this.currentChannel?.offlineDisplay.showOverlay))
+      );
+    },
+    getOutline: function () {
+      this.computeGlowStyling();
+      return this.cornerCutStyling.outline;
+    },
+    getGlow: function () {
+      this.computeGlowStyling();
+      return this.glowStyling.glow;
+    },
+    getOutlineBorder: function () {
+      this.computeGlowStyling();
+      return this.cornerCutStyling.outlineBorder;
+    },
     isRowFirst() {
       return this.rowPosition === 0;
     },
@@ -135,8 +284,30 @@ export default {
     currentChannelEmbedName() {
       let selected = this.displayChannels[this.rowIndex];
 
-      if (selected && selected['embedName']) {
-        return selected['embedName'];
+      if (selected && selected["embedName"]) {
+        return selected["embedName"];
+      } else {
+        // Default for now
+        return "TwitchEmbed";
+      }
+    },
+    currentChannelEmbed() {
+      let selected =
+        this.displayChannels && this.displayChannels[this.rowIndex];
+
+      if (selected) {
+        return selected;
+      } else {
+        // Default for now
+        return "TwitchEmbed";
+      }
+    },
+    currentChannelEmbed() {
+      let selected =
+        this.displayChannels && this.displayChannels[this.rowIndex];
+
+      if (selected) {
+        return selected;
       } else {
         // Default for now
         return "TwitchEmbed";
@@ -144,16 +315,35 @@ export default {
     },
   },
   methods: {
+    initObserver: function () {
+      const options = {
+        root: null, // Use the viewport as the root
+        rootMargin: "0px", // No margin needed for this specific use case
+        threshold: 0.1, // Trigger when 10% of the embed wrapper is visible
+      };
+
+      return new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+          if (
+            entry.intersectionRatio <= 0.1 &&
+            !this.$root.isVisibleVideoContainer
+          ) {
+            // The embed wrapper is 90% or more hidden
+            this.clickContainer(this.currentChannel.embedData.elementId, true);
+          }
+        });
+      }, options);
+    },
     showChannel: function (channel) {
       return (
-        (channel['showOnline'] &&
-          (channel['onlineDisplay'].showArt ||
-            channel['onlineDisplay'].showEmbed ||
-            channel['onlineDisplay'].showOverlay)) ||
-        (!channel['showOnline'] &&
-          (channel['offlineDisplay'].showArt ||
-            channel['offlineDisplay'].showEmbed ||
-            channel['offlineDisplay'].showOverlay))
+        (channel["showOnline"] &&
+          (channel["onlineDisplay"].showArt ||
+            channel["onlineDisplay"].showEmbed ||
+            channel["onlineDisplay"].showOverlay)) ||
+        (!channel["showOnline"] &&
+          (channel["offlineDisplay"].showArt ||
+            channel["offlineDisplay"].showEmbed ||
+            channel["offlineDisplay"].showOverlay))
       );
     },
     first: function () {
@@ -168,7 +358,7 @@ export default {
       this.rowIndex = (this.rowIndex + 1).mod(this.displayChannels.length);
       this.reorder();
     },
-    reorder() {
+    reorder: function () {
       this.checkMouseActive();
       for (let i = 0; i < this.$refs.channelDivs.length; i++) {
         let j = (i - this.rowIndex).mod(this.$refs.channelDivs.length);
@@ -176,30 +366,42 @@ export default {
         this.$refs.channelDivs[i].style.order = j + 1;
       }
     },
-    setActiveChannel(channelIndex) {
+    setActiveChannel: function (channelIndex) {
       this.rowIndex = channelIndex;
     },
-    mouseEntered() {
-      console.log('ok')
-      this.isAllowPlaying = true;
-      window.addEventListener("scroll", this.checkIfBoxInViewPort);
+    mouseEntered: function () {
+      if (this.isScrolledIn) {
+        this.isAllowPlaying = true;
+        // window.addEventListener("scroll", this.checkIfInOriginalViewport);
+      }
     },
-    scrollOut() {
+    scrollIn: function () {
+      this.isScrolledIn = true;
+      this.isEmbedVisible = false;
+      console.log("ok");
+      this.isAllowPlaying = true;
+    },
+    scrollOut: function () {
       if (this.$root.isVisibleVideoContainer) {
         return;
       }
+
       this.isAllowPlaying = false;
+      this.isEmbedVisible = true;
       this.isMouseStopped = false;
+      this.isScrolledIn = false;
+
+      this.unmountContainer(this.currentChannel.embedData.elementId);
+
       clearTimeout(this.isMouseMovingTimeout);
-      window.removeEventListener("scroll", this.checkIfBoxInViewPort);
     },
-    handleFirstVideoLoaded() {
+    handleFirstVideoLoaded: function () {
       this.isFirstVideoLoaded = true;
     },
-    activateMouseStopped() {
+    activateMouseStopped: function () {
       this.isMouseStopped = true;
     },
-    checkMouseActive() {
+    checkMouseActive: function () {
       this.isMouseStopped = false;
       clearTimeout(this.isMouseMovingTimeout);
       this.isMouseMovingTimeout = setTimeout(() => {
@@ -210,23 +412,97 @@ export default {
       const checkDeviceType = navigator.userAgent
         .toLowerCase()
         .match(/mobile/i);
-      if (checkDeviceType) {
-        this.isMobileDevice = true;
-      } else {
-        this.isMobileDevice = false;
+      this.isMobileDevice = !!checkDeviceType;
+    },
+    computeGlowStyling: function () {
+      if (
+        (this.currentChannel &&
+          this.currentChannel.isGlowStyling === "always_on") ||
+        (this.currentChannel.isGlowStyling === "enabled_if_live" &&
+          this.showOnline) ||
+        (this.currentChannel.isGlowStyling === "enabled_if_offline" &&
+          !this.showOnline)
+      ) {
+        if (
+          this.currentChannel &&
+          this.currentChannel.embedName === "TwitchEmbed"
+        ) {
+          this.glowStyling.glow = "cut-edge__wrapper--twitch";
+          this.cornerCutStyling.outlineBorder =
+            "cut-edge__clipped--twitch border-purple";
+        } else if (
+          this.currentChannel &&
+          this.currentChannel.embedName === "YouTubeEmbed"
+        ) {
+          this.glowStyling.glow = "cut-edge__wrapper--youtube";
+          this.cornerCutStyling.outlineBorder =
+            "cut-edge__clipped--youtube border-red";
+        }
       }
+
+      if (
+        this.isCornerCut === "always_on" ||
+        (this.isCornerCut === "enabled_if_live" && this.showOnline) ||
+        (this.isCornerCut === "enabled_if_offline" && !this.showOnline)
+      ) {
+        if (
+          this.currentChannel &&
+          this.currentChannel.embedName === "TwitchEmbed"
+        ) {
+          this.cornerCutStyling.outline = "cut-edge__clipped--twitch";
+        } else if (
+          this.currentChannel &&
+          this.currentChannel.embedName === "YouTubeEmbed"
+        ) {
+          this.cornerCutStyling.outline = "cut-edge__clipped--youtube";
+        }
+      }
+    },
+    setBaseCoordinates: function () {
+      this.baseCoordinates = this.$refs.embedWrapper.getBoundingClientRect();
     },
   },
   mounted() {
-    console.log('The root is ' + this.$root.isVisibleVideoContainer);
+    console.log("The root is " + this.$root.isVisibleVideoContainer);
+    this.setBaseCoordinates();
+
+    const refItem = this.$refs.sliderDotRef.getBoundingClientRect().top;
+
     if (!this.isRowFirst) {
       this.isAllowPlaying = false;
-    } else {
-      window.addEventListener("scroll", this.checkIfBoxInViewPort);
     }
+
+    let observer = this.initObserver();
+
+    // Observe the embed wrapper
+    if (this.$refs.embedWrapper) {
+      observer.observe(this.$refs.embedWrapper);
+    }
+
+    window.addEventListener("scroll", this.checkIfInOriginalViewport);
+
+    // rootMargin: '0px 0px -100% 0px',
+    //   threshold: 0
+
     this.displayChannels = this.settings.channels.filter(this.showChannel);
     console.log(this.displayChannels);
+
     this.setIsMobileDevice();
+    this.currentChannel = this.displayChannels.find((item) => item.embedData);
+
+    // setTimeout(() => {
+    //   // window.scrollTo({
+    //   //   top: refItem,
+    //   //   behavior: "smooth",
+    //   // });
+    //
+    //   if (this.currentChannel && this.currentChannel?.embedData?.elementId && this.$refs.embed) {
+    //     this.clickContainer(this.currentChannel.embedData.elementId, true);
+    // }
+    // }, 1000);
+  },
+  beforeDestroy() {
+    window.removeEventListener("scroll", this.checkIfInOriginalViewport);
   },
   updated: function () {
     if (

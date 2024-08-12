@@ -7,6 +7,8 @@ use App\Entity\HomeRowItem;
 use App\Entity\SiteSettings;
 use App\Containerizer\ContainerizerFactory;
 use App\Service\HomeRowInfo;
+use Predis\Client;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -19,11 +21,11 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class HomeController extends AbstractController
 {
-   private HomeRowInfo $homeRowInfo;
-   private $redis_host;
+    private HomeRowInfo $homeRowInfo;
+    private $redis_host;
 
 
-    public function __construct(HomeRowInfo $homeRowInfo,  $redis_host)
+    public function __construct(HomeRowInfo $homeRowInfo, $redis_host)
     {
         $this->homeRowInfo = $homeRowInfo;
         $this->redis_host = $redis_host;
@@ -56,8 +58,8 @@ class HomeController extends AbstractController
         // home_container_refreshed_at managed to get time of last cache clear
         if ($rowChannels->isHit()) {
             $rowChannelsData = $rowChannels->get();
-            $rows = $rowChannelsData['rows_data']??null;
-            $home_container_refreshed_at = $rowChannelsData['home_container_refreshed_at']??null;
+            $rows = $rowChannelsData['rows_data'] ?? null;
+            $home_container_refreshed_at = $rowChannelsData['home_container_refreshed_at'] ?? null;
         }
 
         return $this->json([
@@ -71,13 +73,13 @@ class HomeController extends AbstractController
     #[Route('/home/rows/api', name: 'home_cache_api')]
     public function apiHomeRows(): Response
     {
-        $cache = new FilesystemAdapter();
+        $cache = new RedisAdapter(new Client('redis://redis:6379'), 'namespace', 0);
         $rowChannels = $cache->getItem('home');
         $rows = [];
         // get cache from new rows_data key
         if ($rowChannels->isHit()) {
             $rowChannelsData = $rowChannels->get();
-            $rows = array_column($rowChannelsData['rows_data']??[],"componentName");
+            $rows = array_column($rowChannelsData['rows_data'] ?? [], "componentName");
         }
         return $this->json([
             'settings' => [
@@ -104,8 +106,8 @@ class HomeController extends AbstractController
         $return_data = [];
         foreach ($streamer_list as $streamer) {
             $item_type = $streamer->getItemType();
-            $topic_id  = $streamer->getTopic()['topicId'];
-            $username  = $streamer->getTopic()['label'];
+            $topic_id = $streamer->getTopic()['topicId'];
+            $username = $streamer->getTopic()['label'];
 
             $return_data[] = [
                 'Platform' => $item_type,
@@ -118,7 +120,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-//    /**
+    //    /**
 //     * @Route("/home/api/cache", name="home_api_cache")
 //     */
 //    public function apiHomeCache(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response

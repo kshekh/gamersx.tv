@@ -151,7 +151,7 @@ export default {
     },
 
     handleScroll() {
-      if (this.$refs.channelBox.scrollLeft == this.max_scroll_left) {
+      if (this.$refs.channelBox.scrollLeft === this.max_scroll_left) {
         this.$refs.forwardArrow.classList.add("sliderArrowHide");
       } else {
         this.$refs.forwardArrow.classList.remove("sliderArrowHide");
@@ -168,14 +168,14 @@ export default {
     this.$refs.channelBox.scrollLeft = 0;
   },
   updated: function () {
-    if(JSON.stringify(this.displayChannels) != JSON.stringify(this.settings.channels.filter(this.showChannel))){
+    if(JSON.stringify(this.displayChannels) !== JSON.stringify(this.settings.channels.filter(this.showChannel))){
       this.displayChannels = this.settings.channels.filter(this.showChannel);
     }
     this.allowScrolling =
       this.$refs.channelBox.scrollWidth > this.$refs.channelBox.clientWidth;
     this.max_scroll_left =
       this.$refs.channelBox.scrollWidth - this.$refs.channelBox.clientWidth;
-    if (this.max_scroll_left == 0) {
+    if (this.max_scroll_left === 0) {
       this.hideArrows();
     }
     this.hideArrows(true, false);

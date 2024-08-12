@@ -1,49 +1,51 @@
 .actions--wrapper {
-  height: 26px;
-  width: 140px;
-  display: flex;
-  position: relative;
-  top: 0px;
-  left: calc(100% - 140px);
-  border: 3px solid #000;
-  border-left: none;
-  z-index: 30;
-  background-color: #352f44;
-  clip-path: polygon(
-    15px 0px,
-    /* top left */ 100% 0px,
-    /* right top */ 100% 100%,
-    0% 100%,
-    /* bottom left */ 1px 39px
-  );
+  /*height: 30px;*/
+  /*width: 180px;*/
+  /*display: flex;*/
+  /*position: relative;*/
+  /*top: 0;*/
+  /*right: 0;*/
+  /*left: calc(100% - 177px);*/
+  /*border-radius: 10px 10px 0 0;*/
+  /*!*border-bottom: 1px solid black;*!*/
+  /*z-index: 30;*/
+  /*background-color: #fff;*/
+  /*opacity: 0;*/
+  /*clip-path: polygon(*/
+  /*  15px 0px,*/
+  /*  !* top left *! 100% 0px,*/
+  /*  !* right top *! 100% 100%,*/
+  /*  0% 100%,*/
+  /*  !* bottom left *! 1px 39px*/
+  /*);*/
 }
 
-.left--border {
-  position: relative;
-  top: 0px;
-  left: 9px;
-  height: 26px;
-  width: 3px;
-  transform: rotateZ(200deg);
-  background-color: #000;
-  z-index: 30;
-}
+/*.left--border {*/
+/*  position: relative;*/
+/*  top: 0;*/
+/*  left: 9px;*/
+/*  height: 26px;*/
+/*  width: 3px;*/
+/*  transform: rotateZ(200deg);*/
+/*  background-color: #000;*/
+/*  z-index: 30;*/
+/*}*/
 
 .actions--btn {
-  max-width: 40px;
-  max-height: 40px;
-  width: 100%;
+  /*max-width: 40px;*/
+  /*max-height: 40px;*/
+  width: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-right: 3px solid #000;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  padding: 4px;
 }
 
-.actions--wrapper .actions--btn:first-child {
-  max-width: 60px;
-}
+/*.actions--wrapper .actions--btn:first-child {*/
+/*  max-width: 60px;*/
+/*}*/
 
 .actions--wrapper .actions--btn:nth-child(2) {
   cursor: grab;
@@ -55,9 +57,9 @@
   user-select: none;
 }
 
-.actions--wrapper .actions--btn:last-child {
-  border-right: none;
-}
+/*.actions--wrapper .actions--btn:last-child {*/
+/*  border-right: none;*/
+/*}*/
 
 .actions--btn:hover {
   background-color: transparent;
@@ -82,12 +84,23 @@
   fill: #000 !important; /* Змініть цей колір на бажаний */
 }
 
-.actions--wrapper .actions--btn:nth-child(1) svg {
-  margin-left: 12px;
-}
+/*.actions--wrapper .actions--btn:nth-child(1) svg {*/
+/*  margin-left: 12px;*/
+/*}*/
 
 .actions--btn-move-disabled {
   cursor: no-drop !important;
   background-color: rgb(180 180 180) !important;
   user-select: none !important;
 }
+
+/* menu interaction */
+
+/* Auto layout */
+/*display: flex;*/
+/*flex-direction: row;*/
+/*align-items: flex-start;*/
+/*padding: 6px 6px 0px;*/
+/*gap: 4px;*/
+
+/* menu interaction */
