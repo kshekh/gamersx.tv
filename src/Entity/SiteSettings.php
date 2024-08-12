@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\SiteSettingRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\Table(name: 'site_settings')]
 #[ORM\Entity(repositoryClass: SiteSettingRepository::class)]
 class SiteSettings
 {

@@ -5,7 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Model\Group;
 
 #[ORM\Entity]
-#[ORM\Table(name: "fos_user__group")]
+#[ORM\Table(name: "fos_user_user__group")]
 class UserGroup extends Group
 {
 

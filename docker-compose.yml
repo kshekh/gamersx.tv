@@ -10,7 +10,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
-      - "3309:3306"
+      - "3306:3306"
     networks:
       - gamersx
     volumes:
@@ -20,7 +20,7 @@ services:
     container_name: gamersx-redis
     image: redis:7.0.15-alpine3.20
     ports:
-      - "6380:6379"
+      - "6379:6379"
     networks:
       - gamersx
 

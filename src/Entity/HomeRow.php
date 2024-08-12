@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\Table(name: 'home_rows')]
 #[ORM\Entity(repositoryClass: HomeRowRepository::class)]
 class HomeRow implements PartneredInterface
 {

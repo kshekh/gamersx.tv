@@ -10,8 +10,8 @@ use FOS\UserBundle\Model\User as BaseUser;
 use App\Repository\UserRepository;
 use Sonata\UserBundle\Model\UserInterface;
 
+#[ORM\Table(name: 'fos_user__user')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: "fos_user__user")]
 class User extends BaseUser
 {
     #[ORM\Id]
@@ -22,14 +22,14 @@ class User extends BaseUser
     #[ORM\OneToMany(targetEntity: PartnerRole::class, mappedBy: "user", orphanRemoval: true)]
     private $partnerRoles;
 
-    #[ORM\Column(type: "string", length: 255)]
-    private $twitchUserId;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $twitchUserId = null;
 
-    #[ORM\Column(type: "string", length: 500)]
-    private $twitchAccessToken;
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $twitchAccessToken = null;
 
-    #[ORM\Column(type: "string", length: 500)]
-    private $twitchRefreshToken;
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $twitchRefreshToken = null;
 
     #[ORM\Column(type: "datetime")]
     private $createdAt;
@@ -47,59 +47,59 @@ class User extends BaseUser
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     protected $gender =  self::GENDER_UNKNOWN;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected $firstname;
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $firstname = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected $lastname;
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $lastname = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected $website;
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $website = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected $biography;
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $biography = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected $locale;
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $locale = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected $timezone;
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $timezone = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected $phone;
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $phone = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected $facebookUid;
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $facebookUid = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected $facebookName;
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $facebookName = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected $facebookData;
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $facebookData = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected $twitterUid;
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $twitterUid = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected $twitterName;
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $twitterName = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected $twitterData;
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $twitterData = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected $gplusUid;
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $gplusUid = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected $gplusName;
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $gplusName = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected $token;
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $token = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    protected $twoStepCode;
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $twoStepCode = null;
 
-    #[ORM\Column(type: "datetime", length: 255)]
-    protected $dateOfBirth;
+    #[ORM\Column(type: "datetime", length: 255, nullable: true)]
+    protected $dateOfBirth = null;
 
     #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: "users")]
     #[ORM\JoinTable(name: "fos_user_user_group")]
