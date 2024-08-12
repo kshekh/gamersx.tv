@@ -33,5 +33,4 @@ class SiteSettings
 
         return $this;
     }
-
 }

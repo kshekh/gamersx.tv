@@ -1,52 +1,53 @@
-import { createPinia } from "pinia";
 import { createApp } from "vue";
+import { createPinia } from "pinia";
 import Home from "./components/Home.vue";
 
-/**
- * * Create a fresh Vue Application instance
- * */
-new Vue({
-  el: "#app-home",
-  components: { Home },
-  created: function () {
-    this.isVisibleVideoContainer = false;
-    this.containerId = "";
-    this.isPinnedContainer = false;
-    this.isMoveContainer = false;
-    this.embedRef = "";
-    (this.currentVisibleContainerPositionY = ""),
-      (this.currentVisibleContainerPositionX = ""),
-      (this.startParentPosition = {
+const app = createApp({
+  data() {
+    return {
+      isVisibleVideoContainer: false,
+      containerId: "",
+      isPinnedContainer: false,
+      isMoveContainer: false,
+      embedRef: "",
+      currentVisibleContainerPositionY: "",
+      currentVisibleContainerPositionX: "",
+      startParentPosition: {
         Y: "",
         X: "",
-      }),
-      (this.bottomRightPosition = {
+      },
+      bottomRightPosition: {
         Y: "",
         X: "",
-      }),
-      (this.pinnedPosition = {
+      },
+      pinnedPosition: {
         Y: "",
         X: "",
-      }),
-      (this.unPinnedPosition = {
+      },
+      unPinnedPosition: {
         Y: "",
         X: "",
-      }),
-      (this.lastMovedPosition = {
+      },
+      lastMovedPosition: {
         Y: "",
         X: "",
-      }),
-      (this.currentPosition = {
+      },
+      currentPosition: {
         Y: "",
         X: "",
-      }),
-      (this.positionBeforeUnpin = {
+      },
+      positionBeforeUnpin: {
         top: "",
         left: "",
-      }),
-      (this.previousPinnedPosition = {
+      },
+      previousPinnedPosition: {
         y: "",
         x: "",
-      });
+      },
+    };
   },
 });
+
+app.use(createPinia());
+app.component("Home", Home);
+app.mount("#app-home");

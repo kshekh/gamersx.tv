@@ -31,11 +31,11 @@ class HomeController extends AbstractController
     public function index(EntityManagerInterface $entityManager): Response
     {
         $row = $entityManager->getRepository(SiteSettings::class)->findOneBy([]);
-
-        if ($this->isGranted('ROLE_LOGIN_ALLOWED') || (isset($row) && (!$row->getDisableHomeAccess() || $row->getDisableHomeAccess() == false))) {
+        
+        if ($this->isGranted('ROLE_LOGIN_ALLOWED') || (isset($row) && (!$row->getDisableHomeAccess()))) {
             return $this->render('home/index.html.twig');
         }
-
+        
         return new RedirectResponse(
             $this->generateUrl('sonata_user_admin_security_login')
         );
