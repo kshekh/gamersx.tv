@@ -2,20 +2,16 @@
 
 namespace App\Controller;
 
-use App\Entity\HomeRow;
 use App\Entity\HomeRowItem;
 use App\Entity\SiteSettings;
 use App\Containerizer\ContainerizerFactory;
 use App\Service\HomeRowInfo;
 use Predis\Client;
-use Symfony\Component\Cache\Adapter\RedisAdapter;
-use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\{Response, RedirectResponse};
 use Doctrine\ORM\EntityManagerInterface;
 

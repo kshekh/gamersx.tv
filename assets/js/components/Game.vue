@@ -52,7 +52,7 @@
             <div class="text-lg">{{ popular.title }}</div>
             <div class="text-lg ml-auto">{{ popular.viewer_count }}</div>
             <div class="pl-4">
-              <img class="inline" src="/images/red-eye.png" />
+              <img class="inline" :src="RedEye" />
             </div>
           </div>
         </div>

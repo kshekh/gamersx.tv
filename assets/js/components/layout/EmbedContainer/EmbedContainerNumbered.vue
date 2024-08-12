@@ -87,76 +87,76 @@
         :isPinActive="isPinBtnActive"
         :isMoveActive="isMoveBtnActive"
         :innerWrapperClassNames="getOutline"
-      >
-        <div class="flex-grow min-h-0 relative">
-          <div class="absolute inset-0 bg-black overflow-hidden">
-            <img
-              v-if="showArt && image"
-              :src="image.url"
-              class="relative top-1/2 transform -translate-y-1/2 w-full"
-            />
-            <img
-              v-else-if="showOverlay"
-              alt="Embed's Custom Overlay"
-              :src="overlay"
-              onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
-              class="relative top-1/2 transform -translate-y-1/2 w-full"
-            />
-          </div>
-          <div
-            class="relative w-full h-full transition-opacity ease-linear duration-500 delay-750 opacity-0 bg-black"
-            :class="{ 'opacity-100': isEmbedVisible }"
-          >
-            <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
-              <h5 class="cursor-default text-xxs text-white font-play truncate">
-                {{ offlineDisplay.title }}
-              </h5>
-              <h6 class="cursor-default text-8 text-white font-play truncate">
-                {{ embedData.channel }}
-              </h6>
-            </div>
-            <component
-              v-if="embedData"
-              ref="embed"
-              :is="embedName"
-              :embedData="embedData"
-              :overlay="overlay"
-              :image="image"
-              :isShowTwitchEmbed="isShowTwitchEmbed"
-              class="w-full h-full"
-              :width="'100%'"
-              :height="'100%'"
-            ></component>
-          </div>
+      />
+      <div class="flex-grow min-h-0 relative">
+        <div class="absolute inset-0 bg-black overflow-hidden">
+          <img
+            v-if="showArt && image"
+            :src="image.url"
+            class="relative top-1/2 transform -translate-y-1/2 w-full"
+          />
+          <img
+            v-else-if="showOverlay"
+            alt="Embed's Custom Overlay"
+            :src="overlay"
+            onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
+            class="relative top-1/2 transform -translate-y-1/2 w-full"
+          />
         </div>
-        <a
-          :href="link"
-          class="cursor-default flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
-          :title="offlineDisplay.title"
+        <div
+          class="relative w-full h-full transition-opacity ease-linear duration-500 delay-750 opacity-0 bg-black"
+          :class="{ 'opacity-100': isEmbedVisible }"
         >
-          <div class="cursor-default mr-2 overflow-hidden">
-            <h5
-              class="cursor-default text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
-            >
+          <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
+            <h5 class="cursor-default text-xxs text-white font-play truncate">
               {{ offlineDisplay.title }}
             </h5>
-            <h6
-              class="cursor-default text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
-            >
+            <h6 class="cursor-default text-8 text-white font-play truncate">
               {{ embedData.channel }}
             </h6>
           </div>
-          <h6
-            class="cursor-default text-8 text-grey font-play whitespace-nowrap"
-          >
-            {{ liveViewerCount }} viewers
-          </h6>
-        </a>
+          <component
+            v-if="embedData"
+            ref="embed"
+            :is="embedName"
+            :embedData="embedData"
+            :overlay="overlay"
+            :image="image"
+            :isShowTwitchEmbed="isShowTwitchEmbed"
+            class="w-full h-full"
+            :width="'100%'"
+            :height="'100%'"
+          ></component>
+        </div>
       </div>
+      <a
+        :href="link"
+        class="cursor-default flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
+        :title="offlineDisplay.title"
+      >
+        <div class="cursor-default mr-2 overflow-hidden">
+          <h5
+            class="cursor-default text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
+          >
+            {{ offlineDisplay.title }}
+          </h5>
+          <h6
+            class="cursor-default text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
+          >
+            {{ embedData.channel }}
+          </h6>
+        </div>
+        <h6 class="cursor-default text-8 text-grey font-play whitespace-nowrap">
+          {{ liveViewerCount }} viewers
+        </h6>
+      </a>
     </div>
   </div>
 
-  <div class="flex items-center w-18 h-24 md:w-24 md:h-32 xl:w-30 xl:h-40 shrink-0" v-else>
+  <div
+    class="flex items-center w-18 h-24 md:w-24 md:h-32 xl:w-30 xl:h-40 shrink-0"
+    v-else
+  >
     <div
       @click="isShowTwitchEmbed = true"
       v-show="!isEmbedVisible"
@@ -166,7 +166,7 @@
     >
       <div
         class="cut-edge__clipped cut-edge__clipped-top-right-md h-full bg-black overflow-hidden"
-        :class="{'getOutline':true, 'numbered-mobile':isMobileDevice}"
+        :class="{ getOutline: true, 'numbered-mobile': isMobileDevice }"
       >
         <img
           v-if="showArt && image"
@@ -203,9 +203,20 @@
             'pointer-events-none z-negative': !isEmbedVisible,
           },
         ]"
-        style="top: 50%;left: 0;transform: translateY(-50%);z-index: 99;display: flex;align-items: center; width: auto !important;"
+        style="
+          top: 50%;
+          left: 0;
+          transform: translateY(-50%);
+          z-index: 99;
+          display: flex;
+          align-items: center;
+          width: auto !important;
+        "
       >
-        <div ref="embedWrapper" :class="{'relative w-full h-full main-parent':true}">
+        <div
+          ref="embedWrapper"
+          :class="{ 'relative w-full h-full main-parent': true }"
+        >
           <component
             v-if="embedData"
             ref="embed"
@@ -332,8 +343,10 @@ export default {
   },
   methods: {
     setIsMobileDevice() {
-      const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
-      if(checkDeviceType) {
+      const checkDeviceType = navigator.userAgent
+        .toLowerCase()
+        .match(/mobile/i);
+      if (checkDeviceType) {
         this.isMobileDevice = true;
       } else {
         this.isMobileDevice = false;
@@ -347,10 +360,12 @@ export default {
       ) {
         if (this.embedName === "TwitchEmbed") {
           this.glowStyling.glow = "cut-edge__wrapper--twitch";
-          this.cornerCutStyling.outlineBorder = "cut-edge__clipped--twitch border-purple";
+          this.cornerCutStyling.outlineBorder =
+            "cut-edge__clipped--twitch border-purple";
         } else if (this.embedName === "YouTubeEmbed") {
           this.glowStyling.glow = "cut-edge__wrapper--youtube";
-          this.cornerCutStyling.outlineBorder = "cut-edge__clipped--youtube border-red";
+          this.cornerCutStyling.outlineBorder =
+            "cut-edge__clipped--youtube border-red";
         }
       }
 
