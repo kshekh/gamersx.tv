@@ -5,6 +5,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Doctrine\DBAL\Connection;
+use Doctrine\Common\EventManager; // Add this import
 
 class BeforeAllRoutesListener implements EventSubscriberInterface
 {
@@ -17,7 +18,6 @@ class BeforeAllRoutesListener implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        // Register the method to be called on the kernel.request event
         return [
             KernelEvents::REQUEST => 'onKernelRequest',
         ];
@@ -25,21 +25,21 @@ class BeforeAllRoutesListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event)
     {
-        // Check if this is the master request (not a sub-request)
-        // if (!$event->isMainRequest()) {
-        //     dd("dadi");
-        //     return;
-        // }
-
         $connection = $this->doctrine;
         $params = $connection->getParams();
         $params['host'] = "172.20.0.4";
+
+        // Create a new EventManager (if needed)
+        $eventManager = new EventManager(); 
+
+        // OR, if you have existing listeners you want to keep:
+        // $eventManager = $connection->_getEventManager(); // Access the protected property
+
         $connection->__construct(
             $params,
             $connection->getDriver(),
             $connection->getConfiguration(),
-            $connection->getEventManager()
+            $eventManager // Pass the EventManager here
         );
-        // dd($connection->getParams());
     }
 }
