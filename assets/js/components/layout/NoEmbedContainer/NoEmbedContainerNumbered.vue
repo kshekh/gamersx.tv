@@ -1,6 +1,6 @@
 <template>
   <div
-    class="cursor-default cut-edge__wrapper flex items-center w-18 h-24 md:w-24 md:h-32 xl:w-28 xl:h-40 shrink-0 z-10 relative"
+    class="cursor-default flex items-center w-18 h-24 md:w-24 md:h-32 xl:w-28 xl:h-40 shrink-0 z-10 relative"
   >
     <a
       :href="link"

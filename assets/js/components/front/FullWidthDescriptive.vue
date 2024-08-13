@@ -79,7 +79,6 @@
       v-if="showEmbed && currentChannel && currentChannel.embedData"
       class="cut-edge__wrapper absolute z-30 transition-opacity-transform ease-linear duration-500"
       :class="[
-        getGlow,
         {
           invisible: !isEmbedVisible,
         },
@@ -93,7 +92,6 @@
         @on-mouse-down="(ev) => onMouseDownHandler(ev, true)"
         :isPinActive="isPinBtnActive"
         :isMoveActive="isMoveBtnActive"
-        :innerWrapperClassNames="getOutline"
       >
         <div class="flex-grow min-h-0 relative">
           <div class="absolute inset-0 bg-black overflow-hidden">
@@ -216,13 +214,6 @@ export default {
       isEmbedVisible: false,
       isScrolledIn: true,
       isShowTwitchEmbed: false,
-      glowStyling: {
-        glow: "",
-      },
-      cornerCutStyling: {
-        outline: "",
-        outlineBorder: "",
-      },
     };
   },
   computed: {
@@ -254,18 +245,6 @@ export default {
           (!this.currentChannel?.showOnline &&
             this.currentChannel?.offlineDisplay.showOverlay))
       );
-    },
-    getOutline: function () {
-      this.computeGlowStyling();
-      return this.cornerCutStyling.outline;
-    },
-    getGlow: function () {
-      this.computeGlowStyling();
-      return this.glowStyling.glow;
-    },
-    getOutlineBorder: function () {
-      this.computeGlowStyling();
-      return this.cornerCutStyling.outlineBorder;
     },
     isRowFirst() {
       return this.rowPosition === 0;
@@ -403,50 +382,6 @@ export default {
         .toLowerCase()
         .match(/mobile/i);
       this.isMobileDevice = !!checkDeviceType;
-    },
-    computeGlowStyling: function () {
-      if (
-        (this.currentChannel &&
-          this.currentChannel.isGlowStyling === "always_on") ||
-        (this.currentChannel.isGlowStyling === "enabled_if_live" &&
-          this.showOnline) ||
-        (this.currentChannel.isGlowStyling === "enabled_if_offline" &&
-          !this.showOnline)
-      ) {
-        if (
-          this.currentChannel &&
-          this.currentChannel.embedName === "TwitchEmbed"
-        ) {
-          this.glowStyling.glow = "cut-edge__wrapper--twitch";
-          this.cornerCutStyling.outlineBorder =
-            "cut-edge__clipped--twitch border-purple";
-        } else if (
-          this.currentChannel &&
-          this.currentChannel.embedName === "YouTubeEmbed"
-        ) {
-          this.glowStyling.glow = "cut-edge__wrapper--youtube";
-          this.cornerCutStyling.outlineBorder =
-            "cut-edge__clipped--youtube border-red";
-        }
-      }
-
-      if (
-        this.isCornerCut === "always_on" ||
-        (this.isCornerCut === "enabled_if_live" && this.showOnline) ||
-        (this.isCornerCut === "enabled_if_offline" && !this.showOnline)
-      ) {
-        if (
-          this.currentChannel &&
-          this.currentChannel.embedName === "TwitchEmbed"
-        ) {
-          this.cornerCutStyling.outline = "cut-edge__clipped--twitch";
-        } else if (
-          this.currentChannel &&
-          this.currentChannel.embedName === "YouTubeEmbed"
-        ) {
-          this.cornerCutStyling.outline = "cut-edge__clipped--youtube";
-        }
-      }
     },
     setBaseCoordinates: function () {
       this.baseCoordinates = this.$refs.embedWrapper.getBoundingClientRect();

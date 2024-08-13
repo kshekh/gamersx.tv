@@ -3,7 +3,7 @@
     class="cursor-default absolute left-1/3 md:left-1/5 w-22 md:w-12 xl:w-22 h-48 md:h-26 xl:h-48"
   >
     <div
-      class="relative top-1/2 -translate-y-1/2 left-0 w-full h-full cut-edge__wrapper shrink-0 cut-edge__wrapper--twitch"
+      class="relative top-1/2 -translate-y-1/2 left-0 w-full h-full shrink-0 cut-edge__wrapper--twitch"
     >
       <a
         :href="link"

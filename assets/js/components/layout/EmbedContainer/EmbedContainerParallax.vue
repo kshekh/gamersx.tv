@@ -6,7 +6,7 @@
     <div class="relative left-1/5 w-20 h-40 md:w-28 md:h-56" ref="itemWrapper">
       <div
         @click="isShowTwitchEmbed = true"
-        class="w-full h-full cut-edge__wrapper shrink-0"
+        class="w-full h-full shrink-0"
         :class="getGlow"
       >
         <div
@@ -67,7 +67,7 @@
     </div>
     <div
       v-if="showEmbed && embedData"
-      class="cut-edge__wrapper absolute z-30 transition-opacity-transform ease-linear duration-500"
+      class="absolute z-30 transition-opacity-transform ease-linear duration-500"
       :class="[
         getGlow,
         {
@@ -157,7 +157,7 @@
       <div
         @click="isShowTwitchEmbed = true"
         v-show="!isEmbedVisible"
-        class="w-full h-full cut-edge__wrapper shrink-0"
+        class="w-full h-full shrink-0"
         :class="getGlow"
       >
         <div
@@ -223,7 +223,7 @@
     <!-- Show the embed with overlay if there's an embed, section moved to make it absolute of parent relative -->
     <div v-if="showEmbed && embedData">
       <div
-        class="cut-edge__wrapper flex-grow min-h-0 absolute inset-0 z-20 py-5 md:py-8 xl:py-12 px-4 md:px-18 xl:px-32 opacity-0 transition-opacity duration-300 ease-linear custom-embed-m"
+        class="flex-grow min-h-0 absolute inset-0 z-20 py-5 md:py-8 xl:py-12 px-4 md:px-18 xl:px-32 opacity-0 transition-opacity duration-300 ease-linear custom-embed-m"
         :class="[
           getOutlineBorder,
           {

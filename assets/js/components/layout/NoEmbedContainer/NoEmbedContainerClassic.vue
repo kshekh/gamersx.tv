@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="cursor-default cut-edge__wrapper w-full h-full shrink-0 cut-edge__wrapper--twitch"
-  >
+  <div class="cursor-default w-full h-full shrink-0 cut-edge__wrapper--twitch">
     <a
       :href="link"
       class="block w-full h-full cut-edge__clipped cut-edge__clipped--sm-border bg-black cut-edge__clipped--twitch overflow-hidden"

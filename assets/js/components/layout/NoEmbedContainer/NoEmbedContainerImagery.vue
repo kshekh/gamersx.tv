@@ -1,7 +1,7 @@
 <template>
   <div class="w-full h-full flex flex-col">
     <div
-      class="cursor-default cut-edge__wrapper flex-grow min-h-0 w-36 md:w-86 xl:w-118 relative cut-edge__wrapper--twitch"
+      class="cursor-default flex-grow min-h-0 w-36 md:w-86 xl:w-118 relative cut-edge__wrapper--twitch"
     >
       <div
         class="cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-right-md h-full bg-black overflow-hidden cut-edge__clipped--twitch"
