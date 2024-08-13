@@ -14,8 +14,7 @@
         <div
           v-if="showEmbed && embedData"
           class="w-full h-full relative overflow-hidden"
-          @mouseenter="mouseEntered"
-          @mouseleave="mouseLeave"
+          @click="clickContainer(embedData.elementId)"
         >
           <img
             v-if="showArt && image"
@@ -27,7 +26,6 @@
             v-else-if="showOverlay"
             alt="Embed's Custom Overlay"
             :src="overlay"
-            onerror="this.onerror=null; this.src='https://placehold.co/400x600'"
             class="relative top-1/2 transform -translate-y-1/2 w-full"
             style="height: inherit"
           />
@@ -43,7 +41,6 @@
           <a :href="link" class="block w-full h-full overflow-hidden">
             <img
               :src="image.url"
-              onerror="this.onerror=null; this.src='https://placehold.co/400x600'"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               style="height: inherit"
             />
@@ -57,7 +54,6 @@
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               alt="Embed's Custom Overlay"
               :src="overlay"
-              onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
               style="height: inherit"
             />
           </a>
@@ -83,71 +79,71 @@
         :isPinActive="isPinBtnActive"
         :isMoveActive="isMoveBtnActive"
         :innerWrapperClassNames="getOutline"
-      />
-      <div class="flex-grow min-h-0 relative">
-        <div class="absolute inset-0 bg-black overflow-hidden">
-          <img
-            v-if="showArt && image"
-            :src="image.url"
-            class="relative top-1/2 transform -translate-y-1/2 w-full"
-            style="height: inherit"
-          />
-          <img
-            v-else-if="showOverlay"
-            alt="Embed's Custom Overlay"
-            :src="overlay"
-            onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
-            class="relative top-1/2 transform -translate-y-1/2 w-full"
-            style="height: inherit"
-          />
+      >
+        <div class="flex-grow min-h-0 relative">
+          <div class="absolute inset-0 bg-black overflow-hidden">
+            <img
+              v-if="showArt && image"
+              :src="image.url"
+              class="relative top-1/2 transform -translate-y-1/2 w-full"
+              style="height: inherit"
+            />
+            <img
+              v-else-if="showOverlay"
+              alt="Embed's Custom Overlay"
+              :src="overlay"
+              class="relative top-1/2 transform -translate-y-1/2 w-full"
+              style="height: inherit"
+            />
+          </div>
+          <div
+            class="relative w-full h-full transition-opacity ease-linear duration-500 delay-750 opacity-0 bg-black"
+            :class="{ 'opacity-100': isEmbedVisible }"
+          >
+            <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
+              <h5 class="text-xxs text-white font-play truncate">
+                {{ offlineDisplay.title }}
+              </h5>
+              <h6 class="text-8 text-white font-play truncate">
+                {{ embedData.channel }}
+              </h6>
+            </div>
+            <component
+              v-if="embedData"
+              ref="embed"
+              :is="embedName"
+              :embedData="embedData"
+              :overlay="overlay"
+              :image="image"
+              :isShowTwitchEmbed="isShowTwitchEmbed"
+              class="w-full h-full"
+              :width="'100%'"
+              :height="'100%'"
+            ></component>
+          </div>
         </div>
-        <div
-          class="relative w-full h-full transition-opacity ease-linear duration-500 delay-750 opacity-0 bg-black"
-          :class="{ 'opacity-100': isEmbedVisible }"
+        <a
+          :href="link"
+          class="flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
+          :title="offlineDisplay.title"
         >
-          <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
-            <h5 class="text-xxs text-white font-play truncate">
+          <div class="cursor-default mr-2 overflow-hidden">
+            <h5
+              class="text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
+            >
               {{ offlineDisplay.title }}
             </h5>
-            <h6 class="text-8 text-white font-play truncate">
+            <h6
+              class="text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
+            >
               {{ embedData.channel }}
             </h6>
           </div>
-          <component
-            v-if="embedData"
-            ref="embed"
-            :is="embedName"
-            :embedData="embedData"
-            :overlay="overlay"
-            :image="image"
-            :isShowTwitchEmbed="isShowTwitchEmbed"
-            class="w-full h-full"
-            :width="'100%'"
-            :height="'100%'"
-          ></component>
-        </div>
-      </div>
-      <a
-        :href="link"
-        class="flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
-        :title="offlineDisplay.title"
-      >
-        <div class="cursor-default mr-2 overflow-hidden">
-          <h5
-            class="text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
-          >
-            {{ offlineDisplay.title }}
-          </h5>
-          <h6
-            class="text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
-          >
-            {{ embedData.channel }}
+          <h6 class="text-8 text-grey font-play whitespace-nowrap">
+            {{ liveViewerCount }} viewers
           </h6>
-        </div>
-        <h6 class="text-8 text-grey font-play whitespace-nowrap">
-          {{ liveViewerCount }} viewers
-        </h6>
-      </a>
+        </a>
+      </CommonContainer>
     </div>
   </div>
 </template>
@@ -155,13 +151,14 @@
 <script>
 import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
-
+import CommonContainer from "../CommonContainer/CommonContainer.vue";
 import embedMixin from "../../../mixins/embedFrameMixin";
 
 export default {
   name: "EmbedContainerClassicVertical",
   mixins: [embedMixin],
   components: {
+    CommonContainer: CommonContainer,
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
   },

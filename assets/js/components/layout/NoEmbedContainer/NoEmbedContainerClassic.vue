@@ -1,26 +1,10 @@
 <template>
   <div
-    class="
-      cursor-default
-      cut-edge__wrapper
-      w-full
-      h-full
-      shrink-0
-      cut-edge__wrapper--twitch
-    "
+    class="cursor-default cut-edge__wrapper w-full h-full shrink-0 cut-edge__wrapper--twitch"
   >
     <a
       :href="link"
-      class="
-        block
-        w-full
-        h-full
-        cut-edge__clipped
-        cut-edge__clipped--sm-border
-        bg-black
-        cut-edge__clipped--twitch
-        overflow-hidden
-      "
+      class="block w-full h-full cut-edge__clipped cut-edge__clipped--sm-border bg-black cut-edge__clipped--twitch overflow-hidden"
       :class="borderClass"
       target="_blank"
     >
@@ -54,15 +38,14 @@ export default {
     "componentName",
     "embedName",
     "embedData",
-    "cuttedBorder"
+    "cuttedBorder",
   ],
   data: function () {
-    return {
-    };
+    return {};
   },
   computed: {
     borderClass() {
-      return this.cuttedBorder ? 'cut-edge__clipped-top-left-sm' : '';
+      return this.cuttedBorder ? "cut-edge__clipped-top-left-sm" : "";
     },
     showArt: function () {
       return (

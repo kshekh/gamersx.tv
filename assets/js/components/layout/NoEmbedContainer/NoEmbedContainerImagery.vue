@@ -1,28 +1,10 @@
 <template>
   <div class="w-full h-full flex flex-col">
     <div
-      class="
-        cursor-default
-        cut-edge__wrapper
-        flex-grow
-        min-h-0
-        w-36
-        md:w-86
-        xl:w-118
-        relative
-        cut-edge__wrapper--twitch
-      "
+      class="cursor-default cut-edge__wrapper flex-grow min-h-0 w-36 md:w-86 xl:w-118 relative cut-edge__wrapper--twitch"
     >
       <div
-        class="
-          cut-edge__clipped
-          cut-edge__clipped--sm-border
-          cut-edge__clipped-top-right-md
-          h-full
-          bg-black
-          overflow-hidden
-          cut-edge__clipped--twitch
-        "
+        class="cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-right-md h-full bg-black overflow-hidden cut-edge__clipped--twitch"
         style="aspect-ratio: 3/4"
       >
         <img
@@ -40,21 +22,7 @@
         />
         <a
           :href="link"
-          class="
-            absolute
-            top-1/2
-            left-1/2
-            transform
-            -translate-x-1/2 -translate-y-1/2
-            z-10
-            h-12
-            md:h-16
-            xl:h-32
-            w-12
-            md:w-16
-            xl:w-32
-            rounded-full
-          "
+          class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 h-12 md:h-16 xl:h-32 w-12 md:w-16 xl:w-32 rounded-full"
           target="_blank"
         >
           <play-button

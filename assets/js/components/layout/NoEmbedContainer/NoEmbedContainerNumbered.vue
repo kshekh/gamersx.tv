@@ -1,35 +1,10 @@
 <template>
   <div
-    class="
-      cursor-default
-      cut-edge__wrapper
-      flex
-      items-center
-      w-18
-      h-24
-      md:w-24
-      md:h-32
-      xl:w-28
-      xl:h-40
-      shrink-0
-      z-10
-      relative
-    "
+    class="cursor-default cut-edge__wrapper flex items-center w-18 h-24 md:w-24 md:h-32 xl:w-28 xl:h-40 shrink-0 z-10 relative"
   >
     <a
       :href="link"
-      class="
-        block
-        w-full
-        h-full
-        cut-edge__clipped
-        cut-edge__clipped--sm-border
-        cut-edge__clipped-top-left-sm
-        bg-black
-        shrink-0
-        cut-edge__clipped--twitch
-        overflow-hidden
-      "
+      class="block w-full h-full cut-edge__clipped cut-edge__clipped--sm-border cut-edge__clipped-top-left-sm bg-black shrink-0 cut-edge__clipped--twitch overflow-hidden"
       target="_blank"
     >
       <img

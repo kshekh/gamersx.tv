@@ -2,47 +2,18 @@
   <div
     @swiped-left="forward()"
     @swiped-right="back()"
-    class="
-      cursor-default
-      mb-7
-      md:mb-9
-      xl:mb-14
-      bg-cover bg-no-repeat
-      relative
-      overflow-hidden
-      min-h-mobile
-    "
+    class="cursor-default mb-7 md:mb-9 xl:mb-14 bg-cover bg-no-repeat relative overflow-hidden min-h-mobile"
     :style="customBg"
   >
     <div class="container mx-auto">
       <div class="pb-50p"></div>
       <div
-        class="
-          pr-4
-          md:pr-12
-          py-2.5
-          md:py-6
-          xl:py-11
-          flex
-          items-center
-          justify-between
-          absolute
-          inset-0
-          z-10
-        "
+        class="pr-4 md:pr-12 py-2.5 md:py-6 xl:py-11 flex items-center justify-between absolute inset-0 z-10"
       >
         <div class="flex w-full h-full items-center justify-between">
           <div
             ref="channelBox"
-            class="
-              py-2.5
-              sm:py-0
-              sm:mr-20
-              w-full
-              h-full
-              flex flex-col
-              justify-center
-            "
+            class="py-2.5 sm:py-0 sm:mr-20 w-full h-full flex flex-col justify-center"
           >
             <div
               ref="channelDivs"
@@ -61,15 +32,7 @@
           </div>
           <div
             v-show="isControlsShown"
-            class="
-              flex
-              items-center
-              space-x-1
-              md:space-x-2
-              relative
-              z-10
-              self-end
-            "
+            class="flex items-center space-x-1 md:space-x-2 relative z-10 self-end"
           >
             <slider-dot
               v-for="(channel, index) in displayChannels"
@@ -86,17 +49,16 @@
           v-show="isControlsShown"
           class="pr-8 sm:pr-0 ml-2 md:ml-5 xl:ml-8 shrink-0 relative z-10 flex"
         >
-         <slider-arrow-big
-          :isNext="false"
-          :videoType="currentChannelEmbedName"
-          @arrow-big-clicked="back()"
-        />
-         <slider-arrow-big
-          :isNext="true"
-          :videoType="currentChannelEmbedName"
-          @arrow-big-clicked="forward()"
-        />
-
+          <slider-arrow-big
+            :isNext="false"
+            :videoType="currentChannelEmbedName"
+            @arrow-big-clicked="back()"
+          />
+          <slider-arrow-big
+            :isNext="true"
+            :videoType="currentChannelEmbedName"
+            @arrow-big-clicked="forward()"
+          />
         </div>
       </div>
     </div>
@@ -110,7 +72,7 @@ import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerImagery
 import SliderDot from "../helpers/SliderDot.vue";
 import SliderArrowBig from "../helpers/SliderArrowBig.vue";
 
-import 'swiped-events';
+import "swiped-events";
 
 export default {
   name: "FullWidthImagery",
@@ -118,7 +80,7 @@ export default {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
     "slider-dot": SliderDot,
-    "slider-arrow-big": SliderArrowBig
+    "slider-arrow-big": SliderArrowBig,
   },
   props: {
     settings: {
@@ -199,7 +161,10 @@ export default {
     this.displayChannels = this.settings.channels.filter(this.showChannel);
   },
   updated: function () {
-    if(JSON.stringify(this.displayChannels) !== JSON.stringify(this.settings.channels.filter(this.showChannel))){
+    if (
+      JSON.stringify(this.displayChannels) !==
+      JSON.stringify(this.settings.channels.filter(this.showChannel))
+    ) {
       this.displayChannels = this.settings.channels.filter(this.showChannel);
     }
   },

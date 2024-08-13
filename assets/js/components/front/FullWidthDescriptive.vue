@@ -176,7 +176,7 @@ import YouTubeEmbed from "../embeds/YouTubeEmbed.vue";
 
 import isBoxInViewport from "../../mixins/isBoxInViewport";
 
-// import * from 'swiped-events';
+import "swiped-events";
 
 export default {
   name: "FullWidthDescriptive",
@@ -284,19 +284,8 @@ export default {
     currentChannelEmbedName() {
       let selected = this.displayChannels[this.rowIndex];
 
-      if (selected && selected["embedName"]) {
-        return selected["embedName"];
-      } else {
-        // Default for now
-        return "TwitchEmbed";
-      }
-    },
-    currentChannelEmbed() {
-      let selected =
-        this.displayChannels && this.displayChannels[this.rowIndex];
-
-      if (selected) {
-        return selected;
+      if (selected && selected.embedName) {
+        return selected.embedName;
       } else {
         // Default for now
         return "TwitchEmbed";
@@ -336,14 +325,14 @@ export default {
     },
     showChannel: function (channel) {
       return (
-        (channel["showOnline"] &&
-          (channel["onlineDisplay"].showArt ||
-            channel["onlineDisplay"].showEmbed ||
-            channel["onlineDisplay"].showOverlay)) ||
-        (!channel["showOnline"] &&
-          (channel["offlineDisplay"].showArt ||
-            channel["offlineDisplay"].showEmbed ||
-            channel["offlineDisplay"].showOverlay))
+        (channel.showOnline &&
+          (channel.onlineDisplay.showArt ||
+            channel.onlineDisplay.showEmbed ||
+            channel.onlineDisplay.showOverlay)) ||
+        (!channel.showOnline &&
+          (channel.offlineDisplay.showArt ||
+            channel.offlineDisplay.showEmbed ||
+            channel.offlineDisplay.showOverlay))
       );
     },
     first: function () {
@@ -378,7 +367,6 @@ export default {
     scrollIn: function () {
       this.isScrolledIn = true;
       this.isEmbedVisible = false;
-      console.log("ok");
       this.isAllowPlaying = true;
     },
     scrollOut: function () {
@@ -463,7 +451,6 @@ export default {
     },
   },
   mounted() {
-    console.log("The root is " + this.$root.isVisibleVideoContainer);
     this.setBaseCoordinates();
 
     const refItem = this.$refs.sliderDotRef.getBoundingClientRect().top;
@@ -485,7 +472,6 @@ export default {
     //   threshold: 0
 
     this.displayChannels = this.settings.channels.filter(this.showChannel);
-    console.log(this.displayChannels);
 
     this.setIsMobileDevice();
     this.currentChannel = this.displayChannels.find((item) => item.embedData);

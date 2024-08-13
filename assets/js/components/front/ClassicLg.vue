@@ -80,7 +80,7 @@ import SliderArrow from "../helpers/SliderArrow.vue";
 import embedMixin from "../../mixins/embedFrameMixin";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
-import 'swiped-events';
+import "swiped-events";
 
 export default {
   name: "ClassicLg",
@@ -173,7 +173,11 @@ export default {
       const checkDeviceType = navigator.userAgent
         .toLowerCase()
         .match(/mobile/i);
-      this.isMobileDevice = !!checkDeviceType;
+      if (checkDeviceType) {
+        this.isMobileDevice = true;
+      } else {
+        this.isMobileDevice = false;
+      }
     },
   },
   mounted() {
@@ -181,7 +185,6 @@ export default {
     this.$refs.channelBox.addEventListener("scroll", this.handleScroll);
     this.$refs.channelBox.scrollLeft = 0;
     this.setIsMobileDevice();
-    console.log(this.isMobileDevice);
   },
   updated: function () {
     if (

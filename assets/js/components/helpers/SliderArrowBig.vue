@@ -1,24 +1,12 @@
 <template>
   <button
     @click="handleClick()"
-    class="
-            ml-2
-            md:ml-5
-            xl:ml-8
-            shrink-0
-            relative
-            z-10
-            transition-all
-            duration-300
-            transform
-            hover:scale-110
-            slider_arrow_big
-          "
+    class="ml-2 md:ml-5 xl:ml-8 shrink-0 relative z-10 transition-all duration-300 transform hover:scale-110 slider_arrow_big"
     :class="[
       videoTypeClass,
       {
-        'transform rotate-180': !isNext
-      }
+        'transform rotate-180': !isNext,
+      },
     ]"
   >
     <svg
@@ -85,12 +73,12 @@ export default {
   props: {
     videoType: {
       type: String,
-      required: true
+      required: true,
     },
     isNext: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
   computed: {
     videoTypeClass() {
@@ -106,12 +94,12 @@ export default {
       }
 
       return className;
-    }
+    },
   },
   methods: {
     handleClick() {
       this.$emit("arrow-big-clicked");
-    }
-  }
+    },
+  },
 };
 </script>

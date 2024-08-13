@@ -19,16 +19,13 @@
           <h1>click</h1>
           <img
             v-if="showArt && image"
-            alt="Embed with custom art"
             :src="image.url"
             class="relative top-1/2 transform -translate-y-1/2 w-full object-fit"
-            onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
           />
           <img
             v-else-if="showOverlay"
             alt="Embed's Custom Overlay"
             :src="overlay"
-            onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
             class="relative top-1/2 transform -translate-y-1/2 w-full object-cover"
           />
           <!--          <img-->
@@ -36,7 +33,7 @@
           <!--            src="/images/live-icon.gif"-->
           <!--            class="" style="position: Layout-sc-1xcs6mc-0 top-bar--pointer-enabledLayout-sc-1xcs6mc-0 top-bar--pointer-enabled;top: 10px;width: 75px;right: 0;"-->
           <!--          />-->
-          <PlayButton
+          <play-button
             class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none"
             :videoType="playBtnColor"
           />
@@ -46,10 +43,8 @@
         <div v-else-if="showArt && image" class="w-full h-full">
           <a :href="link" class="block w-full h-full overflow-hidden">
             <img
-              :src="image['url']"
+              :src="image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
-              alt="No embed"
-              onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
             />
           </a>
         </div>
@@ -61,7 +56,6 @@
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               alt="Embed's Custom Overlay"
               :src="overlay"
-              onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
             />
           </a>
         </div>
@@ -70,8 +64,15 @@
 
     <div
       v-if="showEmbed && embedData"
-      class="cut-edge__wrapper absolute z-30 transition-opacity-transform ease-linear duration-500"
+      ref="embedWrapper"
+      :style="embedSize"
       :class="[
+        'cut-edge__wrapper',
+        'absolute',
+        'z-30',
+        'transition-opacity-transform',
+        'ease-linear',
+        'duration-500',
         getGlow,
         {
           invisible: !isEmbedVisible,
@@ -97,7 +98,6 @@
               v-else-if="showOverlay"
               alt="Embed's Custom Overlay"
               :src="overlay"
-              onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
             />
           </div>
@@ -174,7 +174,6 @@
           v-else-if="showOverlay"
           alt="Embed's Custom Overlay"
           :src="overlay"
-          onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
           class="relative top-1/2 transform -translate-y-1/2 w-full h-full object-cover"
         />
         <play-button
@@ -241,16 +240,17 @@ import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 
 import embedMixin from "../../../mixins/embedFrameMixin";
-
+import CommonContainer from "../CommonContainer/CommonContainer.vue";
 import PlayButton from "../../helpers/PlayButton.vue";
 
 export default {
   name: "EmbedContainerClassicLg",
   mixins: [embedMixin],
   components: {
+    CommonContainer: CommonContainer,
     TwitchEmbed: TwitchEmbed,
     YouTubeEmbed: YouTubeEmbed,
-    PlayButton: PlayButton,
+    "play-button": PlayButton,
   },
   props: [
     "title",
@@ -357,13 +357,12 @@ export default {
       const checkDeviceType = navigator.userAgent
         .toLowerCase()
         .match(/mobile/i);
-      this.isMobileDevice = !!checkDeviceType;
+      if (checkDeviceType) {
+        this.isMobileDevice = true;
+      } else {
+        this.isMobileDevice = false;
+      }
     },
   },
-  // created() {
-  //   if(!this.showOnline && this.embedData){
-  //     this.mouseEntered();
-  //   }
-  // }
 };
 </script>

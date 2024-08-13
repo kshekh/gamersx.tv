@@ -10,8 +10,13 @@
       <!-- <svg class="text-white fill-current" viewBox="0 0 19 30" :class="svgClass">
         <path d="M 19 14.999 L 0 30 L 0 0 L 19 14.999 Z"/>
       </svg> -->
-      <svg class="fill-current" viewBox="0 0 21 28" fill="white" :class="svgClass">
-        <path d="M 21 13.999 L 0 28 L 0 0 L 21 13.999 Z"/>
+      <svg
+        class="fill-current"
+        viewBox="0 0 21 28"
+        fill="white"
+        :class="svgClass"
+      >
+        <path d="M 21 13.999 L 0 28 L 0 0 L 21 13.999 Z" />
       </svg>
     </div>
   </button>
@@ -23,15 +28,15 @@ export default {
   props: {
     videoType: {
       type: String,
-      required: true
+      required: true,
     },
     svgClass: {
       type: String,
-      default: "w-4"
+      default: "w-4",
     },
     wrapperClass: {
       type: String,
-      default: "pl-1"
+      default: "pl-1",
     },
     buttonClass: {
       type: String,
@@ -52,7 +57,7 @@ export default {
       }
 
       return className;
-    }
-  }
+    },
+  },
 };
 </script>

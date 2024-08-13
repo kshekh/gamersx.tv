@@ -50,6 +50,7 @@ export default {
       position: { top: "", left: "" }, // Position of the container
     };
   },
+
   methods: {
     // Method called when the mouse enters the container
     // mouseEntered() {
@@ -258,7 +259,7 @@ export default {
     setContainerStyles() {
       setTimeout(() => {
         const bodyRef = document.body.querySelectorAll(
-          ".common-container__body"
+          ".common-container__body",
         );
         for (let i = 0; i < bodyRef.length; i++) {
           bodyRef[i].style.background = "#130E1C";
@@ -268,7 +269,7 @@ export default {
         }
 
         const actionRef = document.body.querySelectorAll(
-          ".common-container__actions"
+          ".common-container__actions",
         );
         for (let i = 0; i < actionRef.length; i++) {
           actionRef[i].style.opacity = 1;
@@ -287,7 +288,7 @@ export default {
       }
 
       const actionRef = document.body.querySelectorAll(
-        ".common-container__actions"
+        ".common-container__actions",
       );
       for (let i = 0; i < actionRef.length; i++) {
         actionRef[i].style.opacity = 0;
@@ -429,9 +430,15 @@ export default {
     // Method to handle dragging
     triggerDragging(e) {
       e.preventDefault();
+
+      if (this.$root.isMoveContainer) {
+        return;
+      }
+
       if (!this.mouseDown) {
         return;
       }
+
       const x = e.pageX - this.$refs.channelBox.offsetLeft;
       const scroll = x - this.startX;
       this.$refs.channelBox.scrollLeft = this.scrollLeft - scroll;

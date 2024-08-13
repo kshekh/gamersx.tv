@@ -21,7 +21,6 @@
             v-show="isOverlayVisible"
             alt="Embed's Custom Overlay"
             :src="overlay"
-            onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
           />
           <component
             v-show="isEmbedVisible"
@@ -35,17 +34,13 @@
       <!-- If there's only an overlay, show that instead with a link -->
       <div class="embed-frame" v-else-if="showOverlay">
         <a :href="link">
-          <img
-            alt="Embed's Custom Overlay"
-            :src="overlay"
-            onerror="this.onerror=null; this.src='https://placehold.co/600x400'"
-          />
+          <img alt="Embed's Custom Overlay" :src="overlay" />
         </a>
       </div>
     </div>
     <div v-show="isTitleVisible" class="fixed inset-x-2">
       <a :href="link">
-        <div class=" cursor-default truncate text-left">
+        <div class="cursor-default truncate text-left">
           {{ showOnline ? onlineDisplay.title : offlineDisplay.title }}
         </div>
       </a>
@@ -61,7 +56,7 @@ export default {
   name: "EmbedContainer",
   components: {
     TwitchEmbed: TwitchEmbed,
-    YouTubeEmbed: YouTubeEmbed
+    YouTubeEmbed: YouTubeEmbed,
   },
   props: [
     "title",
@@ -79,23 +74,23 @@ export default {
     "info",
     "broadcast",
   ],
-  data: function() {
+  data: function () {
     return {
       isOverlayVisible: true,
       isEmbedVisible: false,
-      isTitleVisible: false
+      isTitleVisible: false,
     };
   },
   methods: {
-    mouseEntered: function(e) {
-      console.log('The mouse enters twitch')
+    mouseEntered: function (e) {
+      console.log("The mouse enters twitch");
       if (this.showOverlay) {
         this.isOverlayVisible = false;
         this.isEmbedVisible = true;
       }
       this.$refs.embed.startPlayer();
     },
-    mouseLeft: function(e) {
+    mouseLeft: function (e) {
       if (this.showOverlay) {
         this.isOverlayVisible = true;
         this.isEmbedVisible = false;
@@ -103,33 +98,33 @@ export default {
       if (this.$refs.embed.isPlaying()) {
         this.$refs.embed.stopPlayer();
       }
-    }
+    },
   },
   computed: {
-    showEmbed: function() {
+    showEmbed: function () {
       return (
         (this.showOnline && this.onlineDisplay.showEmbed) ||
         (!this.showOnline && this.offlineDisplay.showEmbed)
       );
     },
-    showArt: function() {
+    showArt: function () {
       return (
         (this.showOnline && this.onlineDisplay.showArt) ||
         (!this.showOnline && this.offlineDisplay.showArt)
       );
     },
-    showOverlay: function() {
+    showOverlay: function () {
       return (
         this.overlay &&
         ((this.showOnline && this.onlineDisplay.showOverlay) ||
           (!this.showOnline && this.offlineDisplay.showOverlay))
       );
-    }
+    },
   },
-  mounted: function() {
+  mounted: function () {
     this.isOverlayVisible = this.showOverlay;
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
-    console.log('The embed data is ', this.embedData);
+    console.log("The embed data is ", this.embedData);
   },
   // created() {
   //   if(!this.showOnline && this.embedData){

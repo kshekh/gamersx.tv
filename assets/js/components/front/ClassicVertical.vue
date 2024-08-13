@@ -72,7 +72,7 @@ import SliderArrow from "../helpers/SliderArrow.vue";
 import embedMixin from "../../mixins/embedFrameMixin";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
-import 'swiped-events';
+import "swiped-events";
 
 export default {
   name: "ClassicLg",
@@ -168,7 +168,10 @@ export default {
     this.$refs.channelBox.scrollLeft = 0;
   },
   updated: function () {
-    if(JSON.stringify(this.displayChannels) !== JSON.stringify(this.settings.channels.filter(this.showChannel))){
+    if (
+      JSON.stringify(this.displayChannels) !==
+      JSON.stringify(this.settings.channels.filter(this.showChannel))
+    ) {
       this.displayChannels = this.settings.channels.filter(this.showChannel);
     }
     this.allowScrolling =

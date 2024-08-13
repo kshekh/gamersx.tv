@@ -7,7 +7,7 @@
         class="cursor-default text-white font-calibri font-bold text-sm md:text-2xl xl:text-4xl mr-2"
       >
         {{ settings.title }}
-        <TitleAdditionalDescription v-show="settings.onGamersXtv" />
+        <title-addinional-description v-show="settings.onGamersXtv" />
       </h2>
       <!--      <div class="flex items-center space-x-5">-->
       <!--        <slider-arrow-->
@@ -22,9 +22,12 @@
       <!--        />-->
       <!--      </div>-->
     </div>
-    <div :class="{'relative':isMobileDevice,'flex':true}" style="align-items: center">
+    <div
+      :class="{ relative: isMobileDevice, flex: true }"
+      style="align-items: center"
+    >
       <div class="w5-center" ref="backArrow">
-        <SliderArrow
+        <slider-arrow
           :isNext="false"
           :videoType="'twitch'"
           @arrow-clicked="back()"
@@ -59,21 +62,7 @@
           <component
             :is="channel.componentName"
             v-bind="channel"
-            :channelName="channel['user_name']"
-            :componentName="channel['componentName']"
-            :customArt="channel['customArt']"
-            :embedData="channel['embedData']"
-            :embedName="channel['embedName']"
-            :image="channel['image']"
-            :isGlowStyling="channel['isGlowStyling']"
-            :link="channel['link']"
-            :liveViewerCount="channel['liveViewerCount']"
-            :offlineDisplay="channel['offlineDisplay']"
-            :onlineDisplay="channel['onlineDisplay']"
-            :overlay="channel['overlay']"
-            :rowName="channel['rowName']"
-            :showOnline="channel['showOnline']"
-            :title="channel['title']"
+            class=""
           ></component>
         </div>
       </div>
@@ -83,7 +72,7 @@
         style="right: 0"
         :class="{ sliderArrowHide: !(this.displayChannels.length > 1) }"
       >
-        <SliderArrow
+        <slider-arrow
           :isNext="true"
           :videoType="'twitch'"
           @arrow-clicked="forward()"
@@ -101,7 +90,7 @@ import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription
 import SliderArrow from "../helpers/SliderArrow.vue";
 import PlayButton from "../helpers/PlayButton.vue";
 
-import 'swiped-events';
+import "swiped-events";
 
 export default {
   name: "NumberedRow",
@@ -109,9 +98,9 @@ export default {
   components: {
     EmbedContainer: EmbedContainer,
     NoEmbedContainer: NoEmbedContainer,
-    TitleAdditionalDescription: TitleAdditionalDescription,
-    SliderArrow: SliderArrow,
-    PlayButton: PlayButton,
+    "title-addinional-description": TitleAdditionalDescription,
+    "slider-arrow": SliderArrow,
+    "play-button": PlayButton,
   },
   props: {
     settings: {
@@ -197,20 +186,28 @@ export default {
     clickPrev() {},
     clickNext() {},
     setIsMobileDevice() {
-      const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
-      this.isMobileDevice = !!checkDeviceType;
+      const checkDeviceType = navigator.userAgent
+        .toLowerCase()
+        .match(/mobile/i);
+      if (checkDeviceType) {
+        this.isMobileDevice = true;
+      } else {
+        this.isMobileDevice = false;
+      }
     },
   },
   mounted: function () {
     this.setIsMobileDevice();
     this.displayChannels = this.settings.channels.filter(this.showChannel);
-    console.log(this.displayChannels);
     this.$refs.channelBox.addEventListener("scroll", this.handleScroll);
     this.$refs.channelBox.scrollLeft = 0;
     this.setIsMobileDevice();
   },
   updated: function () {
-    if(JSON.stringify(this.displayChannels) !== JSON.stringify(this.settings.channels.filter(this.showChannel))){
+    if (
+      JSON.stringify(this.displayChannels) !==
+      JSON.stringify(this.settings.channels.filter(this.showChannel))
+    ) {
       this.displayChannels = this.settings.channels.filter(this.showChannel);
     }
     this.allowScrolling =
