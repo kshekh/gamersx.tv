@@ -294,6 +294,7 @@ export default {
 
       return new IntersectionObserver((entries, observer) => {
         entries.forEach((entry) => {
+          console.log(entry.intersectionRatio);
           if (
             entry.intersectionRatio <= 0.1 &&
             !this.containerStore.isVisibleVideoContainer
@@ -360,6 +361,7 @@ export default {
       this.isMouseStopped = false;
       this.isScrolledIn = false;
 
+      // Remove the original container
       this.unmountContainer(this.currentChannel.embedData.elementId);
 
       clearTimeout(this.isMouseMovingTimeout);
@@ -396,12 +398,13 @@ export default {
       this.isAllowPlaying = false;
     }
 
-    let observer = this.initObserver();
-
     // Observe the embed wrapper
-    if (this.$refs.embedWrapper) {
-      observer.observe(this.$refs.embedWrapper);
-    }
+    this.$nextTick(() => {
+      if (this.$refs.embedWrapper) {
+        let observer = this.initObserver();
+        observer.observe(this.$refs.embedWrapper);
+      }
+    });
 
     window.addEventListener("scroll", this.checkIfInOriginalViewport);
 

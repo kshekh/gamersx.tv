@@ -1,6 +1,5 @@
 <template>
   <div
-    :class="[...classNames]"
     :style="{ zIndex: '1000', ...customStyles }"
     class="w-[500px] h-[350px] common-container"
   >
@@ -44,7 +43,6 @@ export default {
   },
   emits: ["close-container", "on-pin", "on-mouse-down"],
   props: [
-    "classNames",
     "innerWrapperClassNames",
     "customStyles",
     "isPinActive",

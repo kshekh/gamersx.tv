@@ -79,6 +79,10 @@ export default {
      * Called by: All embed containers except FullWidthImagery.
      */
     clickContainer(elementId, isFullWidth = false) {
+      console.log(
+        "clickContainer 1st condition:",
+        this.containerStore.containerId === elementId,
+      );
       if (this.containerStore.containerId === elementId) {
         return;
       }
@@ -316,6 +320,7 @@ export default {
      */
     unmountContainer(embedId) {
       const parentContainer = document.getElementById(embedId);
+
       if (parentContainer) {
         parentContainer.remove();
       }

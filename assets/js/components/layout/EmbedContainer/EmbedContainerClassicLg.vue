@@ -156,7 +156,7 @@
     <div
       @click="isShowTwitchEmbed = true"
       v-show="!isEmbedVisible"
-      class="cut-edge__wrapper h-full w-full md:w-50 xs:pr-26 sm:pr-16 lg:pr-0 xl:pr-16 2xl:pr-0 xs:w-75 md:w-75 lg:w-80 xl:w-118 2xl:w-127"
+      class="h-full w-full xs:pr-26 sm:pr-16 lg:pr-0 xl:pr-16 2xl:pr-0 xs:w-75 md:w-75 lg:w-80 xl:w-118 2xl:w-127"
       style="aspect-ratio: 3/4"
       :class="getGlow"
     >

@@ -416,5 +416,6 @@ export default {
       this.$refs.embed.startPlayer();
       // this.$emit("hide-controls");
     },
+  },
 };
 </script>
