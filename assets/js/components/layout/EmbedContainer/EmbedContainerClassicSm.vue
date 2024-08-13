@@ -347,7 +347,7 @@ export default {
       }, 0);
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
       this.$refs.embed.startPlayer();
-      this.$emit("hide-controls");
+      // this.$emit("hide-controls");
     },
     scrollOut() {
       if (this.containerStore.isVisibleVideoContainer) {
@@ -361,7 +361,7 @@ export default {
       this.$refs.embed.stopPlayer();
       // }
       window.removeEventListener("scroll", this.checkIfBoxInViewPort);
-      this.$emit("show-controls");
+      // this.$emit("show-controls");
     },
     setIsMobileDevice() {
       const checkDeviceType = navigator.userAgent

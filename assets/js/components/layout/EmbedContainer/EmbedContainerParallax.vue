@@ -367,7 +367,7 @@ export default {
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
   },
   unmounted() {
-    this.$emit("show-controls");
+    // this.$emit("show-controls");
     this.$root.$off("close-other-layouts", this.scrollOut);
   },
   methods: {
@@ -420,7 +420,7 @@ export default {
       }, 0);
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
       this.$refs.embed.startPlayer();
-      this.$emit("hide-controls");
+      // this.$emit("hide-controls");
     },
     scrollOut() {
       // if (this.$root.isVisibleVideoContainer) {
