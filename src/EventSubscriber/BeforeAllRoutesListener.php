@@ -27,7 +27,7 @@ class BeforeAllRoutesListener implements EventSubscriberInterface
     {
         $connection = $this->doctrine;
         $params = $connection->getParams();
-        $params['host'] = "172.20.0.4";
+        // $params['host'] = "172.20.0.4";
 
         // Create a new EventManager (if needed)
         $eventManager = new EventManager(); 

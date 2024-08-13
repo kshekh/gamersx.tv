@@ -44,7 +44,6 @@ class HomeController extends AbstractController
     #[Route('/home/api', name: 'home_api')]
     public function apiHome(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
     {
-        // $cache = new FilesystemAdapter();
         $cache = new RedisAdapter(new Client(['host' => 'localhost']), 'namespace', 0);
         
         $rowChannels = $cache->getItem('home');
