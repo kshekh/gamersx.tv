@@ -487,7 +487,7 @@ export default {
     // }
     // }, 1000);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener("scroll", this.checkIfInOriginalViewport);
   },
   updated: function () {

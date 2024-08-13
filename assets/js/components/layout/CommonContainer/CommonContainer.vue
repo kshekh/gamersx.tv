@@ -58,7 +58,7 @@ export default {
   mounted() {
     document.addEventListener("contextmenu", this.disableContextMenu);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     document.removeEventListener("contextmenu", this.disableContextMenu);
   },
 };

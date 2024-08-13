@@ -268,7 +268,7 @@ export default {
       this.requestHomeApi();
     }, this.requestPollingDelay);
   },
-  destroyed: function () {
+  unmounted: function () {
     window.clearInterval(this.pollingApiData);
   },
 };

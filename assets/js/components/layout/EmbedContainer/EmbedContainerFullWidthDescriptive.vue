@@ -329,7 +329,7 @@ export default {
     // Whenever the close-other-layouts event is triggered run the hideVideo method
     this.$root.$on("close-other-layouts", this.hideVideo);
   },
-  destroyed() {
+  unmounted() {
     this.$root.$off("close-other-layouts", this.hideVideo);
   },
 };

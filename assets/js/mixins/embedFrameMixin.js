@@ -515,7 +515,7 @@ export default {
     this.resetEmbedStyles();
   },
 
-  destroyed() {
+  unmounted() {
     // Remove the "close-other-layouts" event listener and window resize listener
     this.$root.$off("close-other-layouts", this.hideVideo);
     window.removeEventListener("resize", this.setEmbedSizes);

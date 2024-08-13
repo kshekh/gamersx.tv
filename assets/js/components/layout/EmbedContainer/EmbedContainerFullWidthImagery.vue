@@ -240,7 +240,7 @@ export default {
     this.isOverlayVisible = this.showOverlay;
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
   },
-  destroyed() {
+  unmounted() {
     /*
      * Runs the toggleControls method in FullWidthImagery
      */

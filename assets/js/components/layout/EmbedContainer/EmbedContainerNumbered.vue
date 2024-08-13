@@ -334,7 +334,7 @@ export default {
     this.isOverlayVisible = this.showOverlay;
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
   },
-  destroyed() {
+  unmounted() {
     this.$emit("show-controls");
     this.$root.$off("close-other-layouts", this.scrollOut);
   },
