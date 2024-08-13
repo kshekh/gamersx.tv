@@ -83,6 +83,8 @@ export default {
         "clickContainer 1st condition:",
         this.containerStore.containerId === elementId,
       );
+      console.log("element ID: ", elementId);
+      console.log("container ID: ", this.containerStore.containerId);
       if (this.containerStore.containerId === elementId) {
         return;
       }

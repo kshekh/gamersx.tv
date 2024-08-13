@@ -163,6 +163,7 @@
 
 <script>
 import { mapStores } from "pinia";
+import { useIntersectionObserver } from "@vueuse/core/index.cjs";
 import EmbedContainer from "../layout/EmbedContainer/EmbedContainerFullWidthDescriptive.vue";
 import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerDescriptive.vue";
 import embedMixin from "../../mixins/embedFrameMixin";
@@ -292,18 +293,24 @@ export default {
         threshold: 0.1, // Trigger when 10% of the embed wrapper is visible
       };
 
-      return new IntersectionObserver((entries, observer) => {
-        entries.forEach((entry) => {
-          console.log(entry.intersectionRatio);
-          if (
-            entry.intersectionRatio <= 0.1 &&
-            !this.containerStore.isVisibleVideoContainer
-          ) {
-            // The embed wrapper is 90% or more hidden
-            this.clickContainer(this.currentChannel.embedData.elementId, true);
-          }
-        });
-      }, options);
+      useIntersectionObserver(
+        this.observerTarget,
+        (entries) => {
+          entries.forEach((entry) => {
+            console.log(entry.intersectionRatio);
+            if (
+              entry.intersectionRatio <= 0.1 &&
+              !this.containerStore.isVisibleVideoContainer
+            ) {
+              this.clickContainer(
+                this.currentChannel.embedData.elementId,
+                true,
+              );
+            }
+          });
+        },
+        options,
+      );
     },
     showChannel: function (channel) {
       return (
@@ -364,6 +371,8 @@ export default {
       // Remove the original container
       this.unmountContainer(this.currentChannel.embedData.elementId);
 
+      this.clickContainer(this.currentChannel.embedData.elementId, true);
+
       clearTimeout(this.isMouseMovingTimeout);
     },
     handleFirstVideoLoaded: function () {
@@ -401,8 +410,7 @@ export default {
     // Observe the embed wrapper
     this.$nextTick(() => {
       if (this.$refs.embedWrapper) {
-        let observer = this.initObserver();
-        observer.observe(this.$refs.embedWrapper);
+        // this.initObserver();
       }
     });
 

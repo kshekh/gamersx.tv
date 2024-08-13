@@ -90,8 +90,8 @@
               href="api/twitch-login"
               @click="handleTwitchLogin"
               role="button"
-              onmouseover="changeBtnColor(event)"
-              onmouseout="changeNormalBtnColor(event)"
+              onmouseover="changeBtnColor"
+              onmouseout="changeNormalBtnColor"
               class="flex items-center elementor-button text-xxs xs:text-xxs sm:text-xs md:text-sm lg:text-sm xl:text-xl xxl:text-lg mx-2 sm:py-0 h-7 sm:h-10 xxs:px-0 xs:-x-1 md:px-6"
             >
               <span class="elementor-button-text">Login With Twitch</span>
