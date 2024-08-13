@@ -164,6 +164,7 @@
 </template>
 
 <script>
+import { mapStores } from "pinia";
 import EmbedContainer from "../layout/EmbedContainer/EmbedContainerFullWidthDescriptive.vue";
 import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerDescriptive.vue";
 import embedMixin from "../../mixins/embedFrameMixin";
@@ -173,7 +174,7 @@ import SliderDot from "../helpers/SliderDot.vue";
 import SliderArrow from "../helpers/SliderArrow.vue";
 import TwitchEmbed from "../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../embeds/YouTubeEmbed.vue";
-
+import { useContainerStore } from "../stores/containerStore";
 import isBoxInViewport from "../../mixins/isBoxInViewport";
 
 import "swiped-events";
@@ -225,6 +226,7 @@ export default {
     };
   },
   computed: {
+    ...mapStores(useContainerStore),
     showEmbed() {
       return (
         (this.currentChannel &&
@@ -315,7 +317,7 @@ export default {
         entries.forEach((entry) => {
           if (
             entry.intersectionRatio <= 0.1 &&
-            !this.$root.isVisibleVideoContainer
+            !this.containerStore.isVisibleVideoContainer
           ) {
             // The embed wrapper is 90% or more hidden
             this.clickContainer(this.currentChannel.embedData.elementId, true);
@@ -370,7 +372,7 @@ export default {
       this.isAllowPlaying = true;
     },
     scrollOut: function () {
-      if (this.$root.isVisibleVideoContainer) {
+      if (this.containerStore.isVisibleVideoContainer) {
         return;
       }
 
