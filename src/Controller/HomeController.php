@@ -45,8 +45,8 @@ class HomeController extends AbstractController
     public function apiHome(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
     {
         // $cache = new FilesystemAdapter();
-        $cache = new RedisAdapter(new \Predis\Client(['host' => 'redis']), 'namespace', 0);
-
+        $cache = new RedisAdapter(new Client(['host' => 'localhost']), 'namespace', 0);
+        
         $rowChannels = $cache->getItem('home');
         $home_container_refreshed_at = null;
         $rows = null;
@@ -57,7 +57,7 @@ class HomeController extends AbstractController
             $rows = $rowChannelsData['rows_data'] ?? null;
             $home_container_refreshed_at = $rowChannelsData['home_container_refreshed_at'] ?? null;
         }
-
+        
         return $this->json([
             'settings' => [
                 'rows' => $rows,
@@ -69,7 +69,7 @@ class HomeController extends AbstractController
     #[Route('/home/rows/api', name: 'home_cache_api')]
     public function apiHomeRows(): Response
     {
-        $cache = new RedisAdapter(new Client('redis://redis:6379'), 'namespace', 0);
+        $cache = new RedisAdapter(new Client(['host' => 'localhost']), 'namespace', 0);
         $rowChannels = $cache->getItem('home');
         $rows = [];
         // get cache from new rows_data key

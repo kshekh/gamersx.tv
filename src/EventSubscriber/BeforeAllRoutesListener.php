@@ -2,10 +2,8 @@
 namespace App\EventSubscriber;
 
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 
 class BeforeAllRoutesListener implements EventSubscriberInterface

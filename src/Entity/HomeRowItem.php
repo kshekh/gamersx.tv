@@ -17,7 +17,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @Vich\Uploadable
  */
 #[Vich\Uploadable]
-#[ORM\Table(name: 'home_row_items')]
+#[ORM\Table(name: 'home_row_item')]
 #[ORM\Entity(repositoryClass: HomeRowItemRepository::class)]
 class HomeRowItem implements PartneredInterface
 {
