@@ -242,6 +242,8 @@ import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 import embedMixin from "../../../mixins/embedFrameMixin";
 import CommonContainer from "../CommonContainer/CommonContainer.vue";
 import PlayButton from "../../helpers/PlayButton.vue";
+import { useContainerStore } from "../../stores/containerStore";
+import { mapStores } from "pinia";
 
 export default {
   name: "EmbedContainerClassicLg",
@@ -282,6 +284,7 @@ export default {
     };
   },
   computed: {
+    ...mapStores(useContainerStore),
     getOutline: function () {
       this.computeGlowStyling();
       return this.cornerCutStyling.outline;
@@ -339,7 +342,7 @@ export default {
       this.$emit("hide-controls");
     },
     scrollOut() {
-      if (this.$root.isVisibleVideoContainer) {
+      if (this.containerStore.isVisibleVideoContainer) {
         return;
       }
       console.log("It was me!");
