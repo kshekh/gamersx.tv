@@ -362,13 +362,8 @@ export default {
   mounted() {
     this.setIsMobileDevice();
 
-    this.$root.$on("close-other-layouts", this.scrollOut);
     this.isOverlayVisible = this.showOverlay;
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
-  },
-  unmounted() {
-    // this.$emit("show-controls");
-    this.$root.$off("close-other-layouts", this.scrollOut);
   },
   methods: {
     setIsMobileDevice() {
@@ -411,7 +406,6 @@ export default {
       }
     },
     playVideo() {
-      this.$root.$emit("close-other-layouts");
       setTimeout(() => {
         if (this.showOverlay || this.showArt) {
           this.isOverlayVisible = false;
@@ -422,20 +416,5 @@ export default {
       this.$refs.embed.startPlayer();
       // this.$emit("hide-controls");
     },
-    scrollOut() {
-      // if (this.$root.isVisibleVideoContainer) {
-      //   return;
-      // }
-      // if (this.showOverlay || this.showArt) {
-      //   this.isOverlayVisible = true;
-      //   this.isEmbedVisible = false;
-      // }
-      // if (this.$refs.embed.isPlaying()) {
-      //   this.$refs.embed.stopPlayer();
-      // }
-      // window.removeEventListener("scroll", this.checkIfBoxInViewPort);
-      // this.$emit("show-controls");
-    },
-  },
 };
 </script>
