@@ -1,9 +1,5 @@
 <template>
-  <div
-    @mouseover="showTwitchEmbed = true"
-    @mouseenter="startPlayer"
-    @mouseleave="stopPlayer"
-  >
+  <div @mouseover="showTwitchEmbed = true">
     <img
       v-if="!!(image && isBuffering)"
       :src="image['url']"
@@ -29,9 +25,10 @@
       @load="handleIframeLoad"
       width="854"
       height="480"
-      allowfullscreen="allowfullscreen"
-    >
-    </iframe>
+      frameborder="0"
+      allowfullscreen="true"
+      scrolling="no"
+    ></iframe>
     <div
       v-else
       :id="embedDataCopy.elementId"
@@ -179,3 +176,5 @@ export default {
   },
 };
 </script>
+
+<style scoped></style>
