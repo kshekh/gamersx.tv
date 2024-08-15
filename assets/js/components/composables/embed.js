@@ -1,5 +1,5 @@
 export function useEmbed() {
-  function setDimensions() {
+  function setSizes() {
     this.embedWidth = window.innerWidth > 1279 ? 400 : 355;
     this.embedHeight = window.innerWidth > 1279 ? 350 : 311;
   }
@@ -46,7 +46,7 @@ export function useEmbed() {
     videoContainer.style.opacity = 1;
   }
 
-  function resetEmbed() {
+  function reset() {
     const videoContainer = containerStore.embedWrapper;
     if (videoContainer) {
       videoContainer.style.position = "absolute";
@@ -55,7 +55,7 @@ export function useEmbed() {
     }
   }
 
-  function resetEmbedStyles() {
+  function resetStyles() {
     if (this.$refs.itemWrapper) {
       if (
         this.$refs.embedWrapper !== undefined &&

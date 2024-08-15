@@ -19,7 +19,7 @@ export function useContainer() {
       };
     }
 
-    closeCurrentContainer();
+    hideOrCloseContainer();
 
     /*
      * This method hide whatever container is currently running.
@@ -40,8 +40,8 @@ export function useContainer() {
       isEmbedVisible.value = false;
       isShowTwitchEmbed.value = false; // What is this ???
 
-      if (videoStore.currentEmbed) {
-        videoStore.currentEmbed.startPlayer();
+      if (videoStore.activeEmbed) {
+        videoStore.activeEmbed.startPlayer();
       }
     }, 30);
   }
@@ -84,16 +84,23 @@ export function useContainer() {
     }
   }
 
-  function closeCurrentContainer(isButtonClicked) {
+  async function hideOrCloseContainer(
+    isButtonClicked = false,
+    resetStyles = false,
+  ) {
+    if (resetStyles && !containerStore.isPinnedContainer) {
+      this.resetEmbedStyles();
+    }
+
     isEmbedVisible.value = false;
     isPinned.value = false;
     isPinBtnActive.value = false;
-    containerStore.containerId = "";
-    containerStore.isPinnedContainer = false;
+    containerStore.isMoveContainer = false;
     containerStore.isVisibleVideoContainer = false;
+    containerStore.containerId = "";
 
-    if (isButtonClicked) {
-      this.stopCurrentPlayer();
+    if (isButtonClicked || resetStyles) {
+      stopCurrentPlayer();
     }
   }
 
@@ -101,6 +108,12 @@ export function useContainer() {
     const parentContainer = document.getElementById(embedId);
     if (parentContainer) {
       parentContainer.remove();
+    }
+  }
+
+  function stopCurrentPlayer() {
+    if (videoStore.activeEmbed && videoStore.activeEmbed.isPlaying()) {
+      videoStore.activeEmbed.stopPlayer();
     }
   }
 }

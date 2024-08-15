@@ -50,8 +50,6 @@ function clickContainer(elementId, isFullWidth = false) {
   containerStore.isVisibleVideoContainer = true; // only set as "true" here
 
   /*
-   *
-   *
    * NOTE: isCursorHere and isVisibleVideoContainer are always true because we
    * set their values to true in this method.
    */
@@ -63,8 +61,8 @@ function clickContainer(elementId, isFullWidth = false) {
       isEmbedVisible.value = false;
       isShowTwitchEmbed.value = false; // What is this ???
 
-      if (videoStore.currentEmbed) {
-        videoStore.currentEmbed.startPlayer();
+      if (videoStore.activeEmbed) {
+        videoStore.activeEmbed.startPlayer();
       }
     }, 30);
   }
@@ -188,8 +186,8 @@ function clickContainer(elementId, isFullWidth = false) {
    * Stops the current player if there is any
    */
   function stopCurrentPlayer() {
-    if (videoStore.currentEmbed && videoStore.currentEmbed.isPlaying()) {
-      videoStore.currentEmbed.stopPlayer();
+    if (videoStore.activeEmbed && videoStore.activeEmbed.isPlaying()) {
+      videoStore.activeEmbed.stopPlayer();
     }
   }
 }

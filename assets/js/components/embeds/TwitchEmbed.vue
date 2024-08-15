@@ -1,3 +1,56 @@
+<script setup>
+import { ref, computed, watch, onMounted } from "vue";
+import { useTwitchEmbed } from "../composables/twitchEmbed";
+import { useVideoStore } from "../stores/VideoStore";
+
+const props = defineProps({
+  image: Object,
+  overlay: String,
+  isShowTwitchEmbed: Boolean,
+  isMobileDevice: Boolean,
+  height: [Number, String],
+  width: [Number, String],
+  info: {},
+  broadcast: {},
+});
+
+const videoIframe = ref(null); // Ref for the iframe
+
+const {
+  isBuffering,
+  showTwitchEmbed,
+  embedTwitch,
+  handleIframeLoad,
+  loadingVideo,
+} = useTwitchEmbed(
+  ref(useVideoStore().embedData),
+  false,
+  props.height,
+  props.width,
+); // Use your composable
+
+const embedDataCopy = computed(() => {
+  return { ...props.embedData };
+});
+
+watch(showTwitchEmbed, (newVal) => {
+  if (newVal === true) {
+    embedTwitch();
+  }
+});
+
+watch(
+  () => props.isShowTwitchEmbed,
+  (newVal) => {
+    if (newVal === true) {
+      embedTwitch();
+    }
+  },
+);
+
+onMounted(() => embedTwitch());
+</script>
+
 <template>
   <div @mouseover="showTwitchEmbed = true">
     <img
@@ -37,144 +90,3 @@
     ></div>
   </div>
 </template>
-
-<script>
-export default {
-  name: "TwitchEmbed",
-  props: {
-    embedData: Object,
-    image: Object,
-    overlay: String,
-    isShowTwitchEmbed: Boolean,
-    isMobileDevice: Boolean,
-    height: [Number, String],
-    width: [Number, String],
-    info: {},
-    broadcast: {},
-  },
-  data: function () {
-    return {
-      embed: {},
-      loaders: ["/images/Sequence_01_final.mp4"],
-      embedPlaying: false,
-      showTwitchEmbed: false,
-      isBuffering: true,
-    };
-  },
-  methods: {
-    embedTwitch: function () {
-      let element = document.getElementById(this.embedDataCopy.elementId);
-      if (element.children.length === 0) {
-        this.embed = new Twitch.Embed(this.embedDataCopy.elementId, {
-          width: this.width || 540,
-          height: this.height || 300,
-          channel: this.embedDataCopy.channel,
-          video: this.embedDataCopy.video,
-          layout: "video",
-          autoplay: true,
-          muted: false,
-          controls: false,
-          parent: window.location.hostname,
-        });
-        console.log("the embed created ", this.embed);
-        this.embed.addEventListener(Twitch.Player.PLAY, () => {
-          console.log("PLAY event triggered");
-          this.setIsPlaying();
-        });
-        this.embed.addEventListener(Twitch.Player.PAUSE, () => {
-          console.log("PAUSE event triggered");
-          this.setIsNotPlaying();
-        });
-        this.embed.addEventListener(Twitch.Player.ENDED, () => {
-          console.log("ENDED event triggered");
-          this.setIsNotPlaying();
-        });
-        this.embed.addEventListener(Twitch.Player.WAITING, () => {
-          console.log("WAITING event triggered");
-          this.isBuffering = true;
-        });
-        this.embed.addEventListener(Twitch.Player.PLAYING, () => {
-          console.log("PLAYING event triggered");
-          this.isBuffering = false;
-          console.log("i set is buffering to ", this.isBuffering);
-        });
-        this.embed.addEventListener(Twitch.Player.OFFLINE, () => {
-          console.log("OFFLINE event triggered");
-          this.embedPlaying = false;
-          this.isBuffering = false;
-        });
-        console.log("is it still buffering? ", this.isBuffering);
-      } else {
-        this.isBuffering = false;
-        this.startPlayer();
-      }
-    },
-    startPlayer: function () {
-      if (
-        !this.embedPlaying &&
-        (this.isShowTwitchEmbed || this.showTwitchEmbed)
-      ) {
-        console.log("details regarding the embed", this.embed);
-        this.embed?.play();
-        this.embed?.setMuted(false);
-        this.embedPlaying = true;
-      }
-    },
-    stopPlayer: function () {
-      if (this.embedPlaying) {
-        this.embed.pause();
-        this.embedPlaying = false;
-      }
-    },
-    isPlaying: function () {
-      return this.embedPlaying;
-    },
-    setIsPlaying: function () {
-      this.embedPlaying = true;
-    },
-    setIsNotPlaying: function () {
-      this.embedPlaying = false;
-    },
-    handlePlayerStateChanged(event) {
-      const { video_id, play, play_reason } = event.detail;
-      if (video_id === this.embedDataCopy.elementId) {
-        if (play && play_reason === "auto") {
-          this.embedPlaying = true;
-          this.isBuffering = false;
-        } else if (!play && play_reason === "buffering") {
-          this.embedPlaying = false;
-          this.isBuffering = true;
-        } else {
-          this.embedPlaying = false;
-          this.isBuffering = false;
-        }
-      }
-    },
-    handleIframeLoad(e) {
-      this.isBuffering = false;
-    },
-  },
-  computed: {
-    embedDataCopy() {
-      return { ...this.embedData };
-    },
-    loadingVideo() {
-      return this.loaders[Math.floor(Math.random() * this.loaders.length)];
-    },
-  },
-  watch: {
-    showTwitchEmbed(newVal) {
-      if (newVal === true) {
-        this.embedTwitch();
-      }
-    },
-    isShowTwitchEmbed(newVal) {
-      if (newVal === true) {
-        this.embedTwitch();
-      }
-    },
-  },
-};
-</script>
-
-<style scoped></style>

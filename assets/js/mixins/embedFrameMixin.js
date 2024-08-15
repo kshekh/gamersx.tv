@@ -79,20 +79,13 @@ export default {
      * Called by: All embed containers except FullWidthImagery.
      */
     clickContainer(elementId, isFullWidth = false) {
-      console.log(
-        "clickContainer 1st condition:",
-        this.containerStore.containerId === elementId,
-      );
       console.log("element ID: ", elementId);
       console.log("container ID: ", this.containerStore.containerId);
       if (this.containerStore.containerId === elementId) {
         return;
       }
 
-      if (
-        !!this.containerStore.embedRef &&
-        this.containerStore.isPinnedContainer
-      ) {
+      if (!!this.videoStore.embedRef && this.containerStore.isPinnedContainer) {
         const prevVideoContainer = this.containerStore.embedRef;
         const preVideoContainerPosition =
           prevVideoContainer.getBoundingClientRect();
