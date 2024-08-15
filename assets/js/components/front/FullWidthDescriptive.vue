@@ -111,6 +111,8 @@ const showOverlay = computed(() => {
 watch(isEmbedVisible, (isVisible) => {
   if (isVisible) {
     handleEmbedUpdate();
+  } else {
+    videoStore.resetStyles();
   }
 });
 
@@ -198,13 +200,13 @@ function setActiveChannel(channelIndex) {
 function scrollIn() {
   isEmbedVisible.value = false;
   isAllowPlaying.value = true;
-}
 
-function scrollOut() {
   if (!videoStore.activeEmbedIsEmpty) {
     videoStore.clearExistingEmbed();
   }
+}
 
+function scrollOut() {
   isAllowPlaying.value = false;
   isEmbedVisible.value = true;
   isMouseStopped.value = false;
