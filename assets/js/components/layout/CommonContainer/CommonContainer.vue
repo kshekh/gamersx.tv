@@ -7,7 +7,7 @@ import CommonContainerIcon from "./CommonContainerIcon/CommonContainerIcon.vue";
 
 const commonContainerRef = ref(null);
 const isPinActive = ref(false);
-const isMoveActive = ref(false);
+const isMoveBtnActive = ref(false);
 const parentEl = ref(null);
 
 const containerStore = useContainerStore();
@@ -27,8 +27,44 @@ function handleCloseEvent() {
   emit("close-container");
 }
 
-function handleMoveEvent() {
+function handleMoveEvent(event) {
   containerStore.$reset();
+  const container = parentEl.value;
+  container.style.transition = "none";
+
+  isMoveBtnActive.value = true;
+  containerStore.isMoveContainer = true;
+
+  let shiftX = event.clientX - container.getBoundingClientRect().left;
+
+  const moveAt = (pageX, pageY) => {
+    container.style.transform = "none";
+    container.style.left = pageX - shiftX + "px";
+    container.style.top = false ? pageY - 115 + "px" : pageY - 15 + "px";
+  };
+
+  moveAt(event.pageX, event.pageY);
+
+  const onMouseMove = (event) => {
+    moveAt(event.pageX, event.pageY);
+  };
+
+  // Use a function to handle adding and removing the move listener
+  function handleMouseMoveEvents(addEvent) {
+    if (addEvent) {
+      document.addEventListener("mousemove", onMouseMove);
+    } else {
+      document.removeEventListener("mousemove", onMouseMove);
+    }
+  }
+
+  handleMouseMoveEvents(true); // Add move listener on mousedown
+
+  container.onmouseup = () => {
+    handleMouseMoveEvents(false); // Remove move listener on mouseup
+    isMoveBtnActive.value = false;
+    containerStore.isMoveContainer = false;
+  };
 }
 
 function handlePinEvent() {
