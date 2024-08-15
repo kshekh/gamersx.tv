@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, onMounted, onUnmounted, ref } from "vue";
+import { defineEmits, defineProps, onMounted, onUnmounted, ref } from "vue";
 import { useCurrentElement } from "@vueuse/core/index.cjs";
 import { useContainerStore } from "../../stores/containerStore";
 import { useVideoStore } from "../../stores/VideoStore";
@@ -11,6 +11,7 @@ const isMoveActive = ref(false);
 const parentEl = ref(null);
 
 const containerStore = useContainerStore();
+const emit = defineEmits(["close-container"]);
 
 const props = defineProps({
   customStyles: Array,
@@ -19,6 +20,15 @@ const props = defineProps({
 
 function disableContextMenu(event) {
   event.preventDefault();
+}
+
+function handleCloseEvent() {
+  containerStore.$reset();
+  emit("close-container");
+}
+
+function handleMoveEvent() {
+  containerStore.$reset();
 }
 
 function handlePinEvent() {
@@ -87,13 +97,13 @@ onUnmounted(() => {
         <CommonContainerIcon :icon-type="'pin'" />
       </div>
       <div
-        @mousedown="(event) => $emit('on-mouse-down', event)"
+        @mousedown="handleMoveEvent"
         @dragstart="() => false"
         :class="['actions--btn', { 'actions--btn-move-disabled': isPinActive }]"
       >
         <CommonContainerIcon :icon-type="'move'" />
       </div>
-      <div @click="$emit('close-container')" class="actions--btn">
+      <div @click="handleCloseEvent" class="actions--btn">
         <CommonContainerIcon :icon-type="'close'" />
       </div>
     </div>
