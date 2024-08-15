@@ -1,7 +1,45 @@
+<script setup>
+import { defineProps, onMounted, onUnmounted, ref } from "vue";
+import { useCurrentElement } from "@vueuse/core/index.cjs";
+import { useVideoStore } from "../../stores/VideoStore";
+import CommonContainerIcon from "./CommonContainerIcon/CommonContainerIcon.vue";
+
+const commonContainerRef = ref(null);
+const parentEl = ref(null);
+
+const props = defineProps({
+  customStyles: Array,
+  innerWrapperClassNames: Array,
+  isPinActive: Boolean,
+  isMoveActive: Boolean,
+});
+
+function disableContextMenu(event) {
+  event.preventDefault();
+}
+
+function setParentPosition() {
+  const el = useCurrentElement(commonContainerRef);
+  parentEl.value = el.value.parentElement;
+
+  useVideoStore().setPosition(parentEl.value);
+}
+
+onMounted(() => {
+  window.addEventListener("contextmenu", disableContextMenu);
+  setParentPosition();
+});
+
+onUnmounted(() => {
+  window.removeEventListener("contextmenu", disableContextMenu);
+});
+</script>
+
 <template>
   <div
     :style="{ zIndex: '1000', ...customStyles }"
     class="w-[500px] h-[350px] common-container"
+    ref="commonContainerRef"
   >
     <div
       oncontextmenu="false"
@@ -34,34 +72,50 @@
   </div>
 </template>
 
-<script>
-import CommonContainerIcon from "./CommonContainerIcon/CommonContainerIcon.vue";
-export default {
-  name: "CommonContainer",
-  components: {
-    CommonContainerIcon: CommonContainerIcon,
-  },
-  emits: ["close-container", "on-pin", "on-mouse-down"],
-  props: [
-    "innerWrapperClassNames",
-    "customStyles",
-    "isPinActive",
-    "isMoveActive",
-  ],
-  methods: {
-    disableContextMenu(event) {
-      event.preventDefault();
-    },
-  },
-  mounted() {
-    document.addEventListener("contextmenu", this.disableContextMenu);
-  },
-  beforeUnmount() {
-    document.removeEventListener("contextmenu", this.disableContextMenu);
-  },
-};
-</script>
-
 <style lang="css" scoped>
 @import "./CommonContainer.css";
+
+.common-container__body {
+  background: none;
+  outline: none;
+  transition: 1s background ease-in;
+}
+
+.common-container__actions {
+  height: 30px;
+  width: 180px;
+  display: flex;
+  position: relative;
+  top: 0;
+  right: 0;
+  left: calc(100% - 177px);
+  opacity: 0;
+  transition: 1s opacity;
+  /*border-bottom: 1px solid black;*/
+  z-index: 30;
+  background-color: #fff;
+  border: 3px solid #7a4ecc;
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+}
+
+.common-container__actions .actions--btn {
+  border-top: 3px solid #000;
+  overflow: hidden;
+}
+
+.common-container__actions .actions--btn:nth-of-type(1) {
+  border-left: 3px solid #000;
+  border-radius: 5px 0 0 0;
+}
+
+.common-container__actions .actions--btn:nth-of-type(2) {
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+}
+
+.common-container__actions .actions--btn:nth-last-of-type(1) {
+  border-right: 3px solid #000;
+  border-radius: 0 5px 0 0;
+}
 </style>

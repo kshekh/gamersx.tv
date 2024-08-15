@@ -28,13 +28,13 @@ export const useVideoStore = defineStore("video", {
       /*
        * Ensures that the video remains in the same position if it is pinned
        */
-      if (containerStore.isPinnedContainer && !!position.value.top) {
-        videoContainer.style.top = this.position.top + "px";
-        videoContainer.style.left = this.position.left + "px";
-        videoContainer.style.opacity = 1;
+      // if (containerStore.isPinnedContainer && !!position.value.top) {
+      //   videoContainer.style.top = this.position.top + "px";
+      //   videoContainer.style.left = this.position.left + "px";
+      //   videoContainer.style.opacity = 1;
 
-        return;
-      }
+      //   return;
+      // }
 
       const videoContainerPosition = videoContainer.getBoundingClientRect();
 
