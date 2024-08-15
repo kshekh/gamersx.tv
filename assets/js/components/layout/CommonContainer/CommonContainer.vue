@@ -1,21 +1,56 @@
 <script setup>
 import { defineProps, onMounted, onUnmounted, ref } from "vue";
 import { useCurrentElement } from "@vueuse/core/index.cjs";
+import { useContainerStore } from "../../stores/containerStore";
 import { useVideoStore } from "../../stores/VideoStore";
 import CommonContainerIcon from "./CommonContainerIcon/CommonContainerIcon.vue";
 
 const commonContainerRef = ref(null);
+const isPinActive = ref(false);
+const isMoveActive = ref(false);
 const parentEl = ref(null);
+
+const containerStore = useContainerStore();
 
 const props = defineProps({
   customStyles: Array,
   innerWrapperClassNames: Array,
-  isPinActive: Boolean,
-  isMoveActive: Boolean,
 });
 
 function disableContextMenu(event) {
   event.preventDefault();
+}
+
+function handlePinEvent() {
+  const container = parentEl.value;
+  const { top, left } = container.getBoundingClientRect();
+
+  // Unpin the container
+  if (containerStore.isPinned) {
+    isPinActive.value = false;
+
+    container.style.transition = "none";
+    container.style.position = "absolute";
+    container.style.top = top + window.scrollY + "px";
+    container.style.left = left + "px";
+    containerStore.isPinned = false;
+    containerStore.isPinBtnActive = false;
+    containerStore.isPinnedContainer = false;
+
+    return;
+  }
+
+  // Pin the container
+  container.style.transition = "none";
+  container.style.transform = "none";
+  container.style.position = "fixed";
+  container.style.top = top + "px";
+  container.style.left = left + "px";
+
+  isPinActive.value = true;
+
+  containerStore.isPinned = true;
+  containerStore.isPinBtnActive = true;
 }
 
 function setParentPosition() {
@@ -46,7 +81,7 @@ onUnmounted(() => {
       class="actions--wrapper border-4 border-b-0 shadow-2xl shadow-purple-600 border-purple overflow-hidden common-container__actions"
     >
       <div
-        @click="(event) => $emit('on-pin', event)"
+        @click="handlePinEvent"
         :class="['actions--btn', { 'actions--btn-active': isPinActive }]"
       >
         <CommonContainerIcon :icon-type="'pin'" />

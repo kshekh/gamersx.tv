@@ -338,7 +338,7 @@ export default {
         container.style.left = left + "px";
 
         this.isPinned = false;
-        this.isPinBtnActive = false;
+        this.containerStore.isPinBtnActive = false;
         this.containerStore.isPinnedContainer = false;
         return;
       }

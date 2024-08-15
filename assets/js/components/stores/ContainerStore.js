@@ -7,6 +7,8 @@ export const useContainerStore = defineStore("container", {
     currentVisibleContainerPositionY: "",
     embedRef: "",
     isMoveContainer: false,
+    isPinBtnActive: false,
+    isPinned: false,
     isPinnedContainer: false,
     isVisibleVideoContainer: false,
     startParentPosition: {

@@ -368,7 +368,7 @@ onBeforeUnmount(() => {
       >
         <CommonContainer
           @on-pin="(ev) => onPinHandler(ev, true)"
-          @close-container="() => closeContainer(true)"
+          @close-container="() => (isEmbedVisible = false)"
           @on-mouse-down="(ev) => onMouseDownHandler(ev, true)"
           :isPinActive="isPinBtnActive"
           :isMoveActive="isMoveBtnActive"
