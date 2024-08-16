@@ -24,7 +24,7 @@ function disableContextMenu(event) {
 
 function handleCloseEvent() {
   containerStore.$reset();
-  emit("close-container");
+  emit("close-container"); // Sets isEmbedVisible as false
 }
 
 function handleMoveEvent(event) {
@@ -73,8 +73,6 @@ function handlePinEvent() {
 
   // Unpin the container
   if (containerStore.isPinned) {
-    isPinActive.value = false;
-
     container.style.transition = "none";
     container.style.position = "absolute";
     container.style.top = top + window.scrollY + "px";
@@ -92,8 +90,6 @@ function handlePinEvent() {
   container.style.position = "fixed";
   container.style.top = top + "px";
   container.style.left = left + "px";
-
-  isPinActive.value = true;
 
   containerStore.isPinned = true;
   containerStore.isPinBtnActive = true;
@@ -128,14 +124,20 @@ onUnmounted(() => {
     >
       <div
         @click="handlePinEvent"
-        :class="['actions--btn', { 'actions--btn-active': isPinActive }]"
+        :class="[
+          'actions--btn',
+          { 'actions--btn-active': containerStore.isPinBtnActive },
+        ]"
       >
         <CommonContainerIcon :icon-type="'pin'" />
       </div>
       <div
         @mousedown="handleMoveEvent"
         @dragstart="() => false"
-        :class="['actions--btn', { 'actions--btn-move-disabled': isPinActive }]"
+        :class="[
+          'actions--btn',
+          { 'actions--btn-move-disabled': containerStore.isPinBtnActive },
+        ]"
       >
         <CommonContainerIcon :icon-type="'move'" />
       </div>

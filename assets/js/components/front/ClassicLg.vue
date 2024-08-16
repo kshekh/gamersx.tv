@@ -1,3 +1,184 @@
+<script setup>
+import {
+  computed,
+  defineAsyncComponent,
+  ref,
+  reactive,
+  onMounted,
+  onUnmounted,
+  onUpdated,
+} from "vue";
+import SliderArrow from "../helpers/SliderArrow.vue";
+import embedMixin from "../../mixins/embedFrameMixin";
+import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
+
+import "swiped-events";
+import { useContainerStore } from "../stores/containerStore";
+
+const props = defineProps({
+  settings: {
+    type: Object,
+    required: false,
+  },
+});
+
+const containerStore = useContainerStore();
+
+const allowScrolling = ref(false);
+const backArrow = ref(null);
+const channelBox = ref(null);
+const displayChannels = ref([]);
+const forwardArrow = ref(null);
+const isMobileDevice = ref(false);
+const maxScrollLeft = ref(0);
+const mouseDown = ref(false);
+const rowIndex = ref(0);
+const scrollLeft = ref(0);
+const startX = ref(0);
+console.log("display channels", displayChannels.value);
+const showChannel = (channel) => {
+  return (
+    (channel.showOnline &&
+      (channel.onlineDisplay.showArt ||
+        channel.onlineDisplay.showEmbed ||
+        channel.onlineDisplay.showOverlay)) ||
+    (!channel.showOnline &&
+      (channel.offlineDisplay.showArt ||
+        channel.offlineDisplay.showEmbed ||
+        channel.offlineDisplay.showOverlay))
+  );
+};
+
+const first = () => {
+  rowIndex.value = 0;
+  // reorder();
+};
+
+const backward = () => {
+  const content = channelBox.value;
+  let content_scroll_left = content.scrollLeft;
+  content_scroll_left -= 300;
+  if (content_scroll_left <= 0) {
+    content_scroll_left = 0;
+  }
+  content.scrollLeft = content_scroll_left;
+};
+
+const forward = () => {
+  const content = channelBox.value;
+  const content_scroll_width = content.scrollWidth;
+  let content_scroll_left = content.scrollLeft;
+  content_scroll_left += 300;
+  if (content_scroll_left >= content_scroll_width) {
+    content_scroll_left = content_scroll_width;
+  }
+  content.scrollLeft = content_scroll_left;
+};
+
+const hideArrows = (left = true, right = true) => {
+  if (left) backArrow.value.classList.add("sliderArrowHide");
+  if (right) forwardArrow.value.classList.add("sliderArrowHide");
+};
+
+const handleScroll = () => {
+  if (channelBox.value.scrollLeft === maxScrollLeft.value) {
+    forwardArrow.value.classList.add("sliderArrowHide");
+  } else {
+    forwardArrow.value.classList.remove("sliderArrowHide");
+  }
+
+  if (channelBox.value.scrollLeft > 0) {
+    backArrow.value.classList.remove("sliderArrowHide");
+  } else {
+    backArrow.value.classList.add("sliderArrowHide");
+  }
+};
+
+const setIsMobileDevice = () => {
+  isMobileDevice.value = navigator.userAgent.toLowerCase().includes("mobile");
+};
+
+onMounted(() => {
+  displayChannels.value = props.settings.channels.filter(showChannel);
+  console.log("display channels ", displayChannels.value);
+  if (channelBox.value) {
+    channelBox.value.addEventListener("scroll", handleScroll);
+    channelBox.value.scrollLeft = 0;
+  }
+  setIsMobileDevice();
+});
+
+function startDragging(event) {
+  if (containerStore.isMoveContainer) {
+    return;
+  }
+
+  mouseDown.value = true;
+  startX.value = event.pageX - channelBox.value.offsetLeft;
+  scrollLeft.value = channelBox.value.scrollLeft;
+
+  triggerDragging(event);
+}
+
+// Method to stop dragging
+function stopDragging(event) {
+  mouseDown.value = false;
+}
+
+// Method to handle dragging
+function triggerDragging(event) {
+  event.preventDefault();
+
+  if (containerStore.isMoveContainer) {
+    return;
+  }
+
+  if (!mouseDown.value) {
+    return;
+  }
+
+  const x = event.pageX - channelBox.value.offsetLeft;
+  const scroll = x - startX.value;
+  channelBox.value.scrollLeft = scrollLeft.value - scroll;
+}
+
+// Computed
+
+const displayChannelNames = computed(() => {
+  return displayChannels.value.map((channel, index) => {
+    return defineAsyncComponent(() =>
+      channel.componentName === "EmbedContainer"
+        ? import("../layout/EmbedContainer/EmbedContainerClassicLg.vue")
+        : import("../layout/NoEmbedContainer/NoEmbedContainerClassic.vue"),
+    );
+  });
+});
+
+onUpdated(() => {
+  if (
+    JSON.stringify(displayChannels.value) !==
+    JSON.stringify(props.settings.channels.filter(showChannel))
+  ) {
+    displayChannels.value = props.settings.channels.filter(showChannel);
+  }
+  allowScrolling.value =
+    channelBox.value.scrollWidth > channelBox.value.clientWidth;
+  maxScrollLeft.value =
+    channelBox.value.scrollWidth - channelBox.value.clientWidth;
+  if (maxScrollLeft.value === 0) {
+    hideArrows();
+  }
+  hideArrows(true, false);
+  channelBox.value.scrollLeft = 0;
+});
+
+onUnmounted(() => {
+  if (channelBox.value) {
+    channelBox.value.removeEventListener("scroll", handleScroll);
+  }
+});
+</script>
+
 <template>
   <div>
     <div
@@ -6,8 +187,8 @@
       <h2
         class="cursor-default text-white font-calibri font-bold text-sm md:text-2xl xl:text-4xl mr-2"
       >
-        {{ settings.title }}
-        <title-additional-description v-show="settings.onGamersXtv" />
+        {{ props.settings.title }}
+        <TitleAdditionalDescription v-show="props.settings.onGamersXtv" />
       </h2>
       <!--      <div class="flex items-center space-x-5">-->
       <!--        <slider-arrow-->
@@ -28,51 +209,54 @@
       style="align-items: center"
     >
       <div class="w5-center sliderArrowHide" ref="backArrow">
-        <slider-arrow
+        <SliderArrow
           :isNext="false"
           :videoType="'twitch'"
-          @arrow-clicked="back()"
+          @arrow-clicked="backward"
         />
       </div>
       <div
-        v-on="!isMobileDevice ? { mousedown: this.startDragging } : {}"
-        @mousemove="this.triggerDragging"
-        @mouseup="this.stopDragging"
-        @mouseleave="this.stopDragging"
-        @scroll="this.handleScroll"
+        v-on="!isMobileDevice ? { mousedown: startDragging } : {}"
+        @mousemove="triggerDragging"
+        @mouseup="stopDragging"
+        @mouseleave="stopDragging"
+        @scroll="handleScroll"
         ref="channelBox"
         style="width: 100%"
         class="flex overflow-hidden custom-smooth-scroll pt-5 xl:pt-9 pb-7 md:pb-6 xl:pb-12 pl-4"
       >
         <div
-          ref="channelDivs"
           v-for="(channel, index) in displayChannels"
           :key="index"
+          ref="channelDivs"
           class="flex items-center shrink-0 mr-3 md:mr-2 xl:mr-4 w-80 md:w-72 xl:w-96 h-45 md:h-40 xl:h-54"
         >
           <component
-            :is="channel.componentName"
-            v-bind="channel"
-            :cuttedBorder="true"
-          ></component>
+            :is="displayChannelNames[index]"
+            v-bind="{
+              ...channel,
+              cuttedBorder: true,
+            }"
+          />
         </div>
       </div>
       <div
         class="w5-center"
         ref="forwardArrow"
         style="right: 0"
-        :class="{ sliderArrowHide: !(this.displayChannels.length > 1) }"
+        :class="{ sliderArrowHide: !(displayChannels.length > 1) }"
       >
-        <slider-arrow
+        <SliderArrow
           :isNext="true"
           :videoType="'twitch'"
-          @arrow-clicked="forward()"
+          @arrow-clicked="forward"
         />
       </div>
     </div>
   </div>
 </template>
-<script>
+
+<!-- <script>
 import EmbedContainer from "../layout/EmbedContainer/EmbedContainerClassicLg.vue";
 import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerClassic.vue";
 
@@ -204,5 +388,4 @@ export default {
     this.$refs.channelBox.scrollLeft = 0;
   },
 };
-</script>
-<style scoped></style>
+</script> -->

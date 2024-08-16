@@ -226,7 +226,7 @@ function setBaseCoordinates() {
 // Lifecycle hooks
 onMounted(() => {
   const refItem = sliderDotRef.value.getBoundingClientRect().top;
-  console.log("common container ", containerWrapper.value);
+
   // Set up the Intersection Observer directly
   const observer = new IntersectionObserver(
     (entries) => {
