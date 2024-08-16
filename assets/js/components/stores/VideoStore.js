@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 export const useVideoStore = defineStore("video", {
   state: () => ({
     activeEmbed: {},
+    embeddedObject: {},
     isEmbedVisible: false,
     isHideButtonClicked: false,
     isVideoPlaying: false,

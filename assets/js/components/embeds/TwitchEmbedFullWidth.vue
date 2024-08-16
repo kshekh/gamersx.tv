@@ -1,9 +1,12 @@
 <script setup>
 import { defineExpose, defineProps, onMounted, ref } from "vue";
+import { useVideoStore } from "../stores/VideoStore";
 
 const embed = ref(null);
 const embedPlaying = ref(false);
 const isBuffering = ref(false);
+
+const videoStore = useVideoStore();
 
 defineExpose({
   startPlayer,
@@ -24,30 +27,31 @@ function videoBuffered() {
 function startPlayer() {
   if (!embedPlaying.value) {
     embed.play();
-    setIsPlaying();
+    videoStore.setVideoPlaying();
   }
 }
 
 function stopPlayer() {
   if (embedPlaying.value) {
     embed.pause();
-    setIsNotPlaying();
+    videoStore.setVideoNotPlaying();
   }
 }
 
-function setIsPlaying() {
-  embedPlaying.value = true;
-}
-function setIsNotPlaying() {
-  embedPlaying.value = false;
-}
+// function videoStore.setVideoPlaying()() {
+//   embedPlaying.value = true;
+// }
+// function videoStore.setVideoNotPlaying()() {
+//   embedPlaying.value = false;
+// }
 
 function embedTwitch() {
-  embed.value = new Twitch.Embed(this.embedData.elementId, {
-    width: this.width || 540,
-    height: this.height || 300,
-    channel: this.embedData.channel,
-    video: this.embedData.video,
+  console.log("i should embed");
+  embed.value = new Twitch.Embed(embedData.elementId, {
+    width: width || 540,
+    height: height || 300,
+    channel: embedData.channel,
+    video: embedData.video,
     layout: "video",
     autoplay: true,
     muted: true,
@@ -55,9 +59,15 @@ function embedTwitch() {
     parent: window.location.hostname,
   });
 
-  embed.value.addEventListener(Twitch.Player.PLAY, this.setIsPlaying);
-  embed.value.addEventListener(Twitch.Player.PAUSE, this.setIsNotPlaying);
-  embed.value.addEventListener(Twitch.Player.ENDED, this.setIsNotPlaying);
+  embed.value.addEventListener(Twitch.Player.PLAY, videoStore.setVideoPlaying);
+  embed.value.addEventListener(
+    Twitch.Player.PAUSE,
+    videoStore.setVideoNotPlaying,
+  );
+  embed.value.addEventListener(
+    Twitch.Player.ENDED,
+    videoStore.setVideoNotPlaying,
+  );
   embed.value.addEventListener(Twitch.Player.WAITING, () => {
     isBuffering.value = true;
   });
@@ -70,8 +80,10 @@ function embedTwitch() {
   });
   embed.value.addEventListener(Twitch.Embed.VIDEO_READY, () => {
     isBuffering.value = false;
-    videoBuffered();
+    videoBuffered;
   });
+  console.log("embed value ", embed.value);
+  videoStore.embeddedObject = embed.value;
 }
 
 onMounted(() => {

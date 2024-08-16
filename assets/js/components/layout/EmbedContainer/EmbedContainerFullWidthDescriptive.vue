@@ -1,5 +1,12 @@
 <script setup>
-import { computed, ref, watch, defineProps, nextTick } from "vue";
+import {
+  computed,
+  defineAsyncComponent,
+  ref,
+  watch,
+  defineProps,
+  nextTick,
+} from "vue";
 import TwitchEmbed from "../../embeds/TwitchEmbedFullWidth.vue";
 import YouTubeEmbed from "../../embeds/YouTubeFullWidth.vue";
 import { useShowHelpers } from "../../utils/showHelpers";
@@ -59,6 +66,8 @@ const isHideButtonClicked = ref(false);
 const isVideoBuffered = ref(false);
 const isVideoPlaying = ref(false);
 
+const videoStore = useVideoStore();
+
 // Computed Properties
 const bgColor = computed(() =>
   embedName === "TwitchEmbed"
@@ -66,11 +75,19 @@ const bgColor = computed(() =>
     : "bg-red/30 hover:bg-red",
 );
 
+const embedContainerName = computed(() => {
+  return defineAsyncComponent(() =>
+    embedName === "TwitchEmbed"
+      ? import("../../embeds/TwitchEmbedFullWidth.vue")
+      : import("../../embeds/YouTubeFullWidth.vue"),
+  );
+});
+
 const decreaseInfoBoxSize = computed(
   () => isVideoBuffered.value && (isVideoPlaying.value || isEmbedVisible.value),
 );
 
-const isInfoBoxHidden = computed(() => isVideoPlaying.value);
+const isInfoBoxHidden = computed(() => videoStore.isVideoPlaying);
 
 const { showArt, showEmbed, showOverlay } = useShowHelpers({
   showOnline: showOnline,
@@ -278,7 +295,7 @@ watch(
           v-if="isAllowPlaying"
           ref="embed"
           class="flex-grow min-h-0 absolute inset-0 full-width-embed-first-row"
-          :is="embedName"
+          :is="embedContainerName"
           :embedData="embedData"
           :isRowFirst="isRowFirst"
           :customBg="customBg"
