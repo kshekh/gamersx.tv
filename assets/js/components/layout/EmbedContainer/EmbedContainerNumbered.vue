@@ -244,8 +244,6 @@ import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
 import CommonContainer from "../CommonContainer/CommonContainer.vue";
 import embedMixin from "../../../mixins/embedFrameMixin";
 import PlayButton from "../../helpers/PlayButton.vue";
-import { useContainerStore } from "../../stores/containerStore";
-import { mapStores } from "pinia";
 
 export default {
   name: "EmbedContainerNumbered",
@@ -294,7 +292,6 @@ export default {
     };
   },
   computed: {
-    ...mapStores(useContainerStore),
     playBtnColor() {
       return this.embedName === "TwitchEmbed" ? "twitch" : "youtube";
     },
@@ -337,8 +334,8 @@ export default {
     this.isOverlayVisible = this.showOverlay;
     this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
   },
-  unmounted() {
-    // this.$emit("show-controls");
+  destroyed() {
+    this.$emit("show-controls");
     this.$root.$off("close-other-layouts", this.scrollOut);
   },
   methods: {
@@ -391,10 +388,10 @@ export default {
       }, 0);
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
       this.$refs.embed.startPlayer();
-      // this.$emit("hide-controls");
+      this.$emit("hide-controls");
     },
     scrollOut() {
-      if (this.containerStore.isVisibleVideoContainer) {
+      if (this.$root.isVisibleVideoContainer) {
         return;
       }
       if (this.showOverlay || this.showArt) {
@@ -405,7 +402,7 @@ export default {
         this.$refs.embed.stopPlayer();
       }
       window.removeEventListener("scroll", this.checkIfBoxInViewPort);
-      // this.$emit("show-controls");
+      this.$emit("show-controls");
     },
   },
 };

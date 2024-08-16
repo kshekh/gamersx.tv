@@ -75,10 +75,8 @@ import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerParalla
 import SliderArrow from "../helpers/SliderArrow.vue";
 import embedMixin from "../../mixins/embedFrameMixin";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
-import { useContainerStore } from "../stores/containerStore";
-import { mapStores } from "pinia";
 
-import "swiped-events";
+require("swiped-events");
 
 export default {
   name: "Parallax",
@@ -103,9 +101,6 @@ export default {
       max_scroll_left: 0,
       isMobileDevice: false,
     };
-  },
-  computed: {
-    ...mapStores(useContainerStore),
   },
   methods: {
     showChannel: function (channel) {
@@ -161,7 +156,7 @@ export default {
     },
 
     handleScroll() {
-      if (this.containerStore.isMoveContainer) {
+      if (this.$root.isMoveContainer) {
         return;
       }
       if (this.$refs.channelBox.scrollLeft == this.max_scroll_left) {

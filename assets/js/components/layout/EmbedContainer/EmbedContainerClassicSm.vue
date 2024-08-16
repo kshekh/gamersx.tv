@@ -256,8 +256,6 @@ import CommonContainer from "../CommonContainer/CommonContainer.vue";
 
 import embedMixin from "../../../mixins/embedFrameMixin";
 import PlayButton from "../../helpers/PlayButton.vue";
-import { useContainerStore } from "../../stores/containerStore";
-import { mapStores } from "pinia";
 
 export default {
   name: "EmbedContainerClassicSm",
@@ -298,7 +296,6 @@ export default {
     };
   },
   computed: {
-    ...mapStores(useContainerStore),
     getOutline: function () {
       this.computeGlowStyling();
       return this.cornerCutStyling.outline;
@@ -347,10 +344,10 @@ export default {
       }, 0);
       window.addEventListener("scroll", this.checkIfBoxInViewPort);
       this.$refs.embed.startPlayer();
-      // this.$emit("hide-controls");
+      this.$emit("hide-controls");
     },
     scrollOut() {
-      if (this.containerStore.isVisibleVideoContainer) {
+      if (this.$root.isVisibleVideoContainer) {
         return;
       }
       if (this.showOverlay || this.showArt) {
@@ -361,7 +358,7 @@ export default {
       this.$refs.embed.stopPlayer();
       // }
       window.removeEventListener("scroll", this.checkIfBoxInViewPort);
-      // this.$emit("show-controls");
+      this.$emit("show-controls");
     },
     setIsMobileDevice() {
       const checkDeviceType = navigator.userAgent
