@@ -46,7 +46,6 @@ function stopPlayer() {
 // }
 
 function embedTwitch() {
-  console.log("i should embed");
   embed.value = new Twitch.Embed(embedData.elementId, {
     width: width || 540,
     height: height || 300,
@@ -82,7 +81,7 @@ function embedTwitch() {
     isBuffering.value = false;
     videoBuffered;
   });
-  console.log("embed value ", embed.value);
+
   videoStore.embeddedObject = embed.value;
 }
 

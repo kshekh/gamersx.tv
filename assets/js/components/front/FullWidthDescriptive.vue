@@ -8,6 +8,8 @@ import {
   onUpdated,
   computed,
   watch,
+  nextTick,
+  onBeforeMount,
 } from "vue";
 import { useContainerStore } from "../stores/containerStore";
 import { useVideoStore } from "../stores/VideoStore";
@@ -49,11 +51,15 @@ const sliderDotRef = ref(null);
 const videoStore = useVideoStore();
 
 // Computed properties
-// const currentChannelEmbed = computed(() => {
-//   let selected = displayChannels.value && displayChannels.value[rowIndex.value];
-//   console.log("the current channel is ", selected);
-//   return selected || "TwitchEmbed";
-// });
+const currentChannelEmbed = computed(() => {
+  let channel = displayChannels.value && displayChannels.value[rowIndex.value];
+
+  return defineAsyncComponent(() =>
+    channel.embedName === "TwitchEmbed"
+      ? import("../embeds/TwitchEmbed.vue")
+      : import("../embeds/YouTubeEmbed.vue"),
+  );
+});
 
 const currentChannelEmbedName = computed(() => {
   let selected = displayChannels.value[rowIndex.value];
@@ -254,6 +260,18 @@ function setBaseCoordinates() {
 }
 
 // Lifecycle hooks
+onBeforeMount(() => {
+  // If it isn't the first row, then don't allow the video to play
+  if (!isRowFirst.value) {
+    isAllowPlaying.value = false;
+  }
+
+  displayChannels.value = props.settings.channels.filter(showChannel);
+
+  setIsMobileDevice();
+  currentChannel.value = displayChannels.value.find((item) => item.embedData);
+});
+
 onMounted(() => {
   const refItem = sliderDotRef.value.getBoundingClientRect().top;
 
@@ -276,16 +294,6 @@ onMounted(() => {
   if (embedWrapper.value) {
     observer.observe(embedWrapper.value);
   }
-
-  // If it isn't the first row, then don't allow the video to play
-  if (!isRowFirst.value) {
-    isAllowPlaying.value = false;
-  }
-
-  displayChannels.value = props.settings.channels.filter(showChannel);
-
-  setIsMobileDevice();
-  currentChannel.value = displayChannels.value.find((item) => item.embedData);
 });
 
 onUpdated(() => {
@@ -434,7 +442,7 @@ onBeforeUnmount(() => {
             <component
               v-if="currentChannel.embedData"
               ref="embed"
-              :is="currentChannel.embedName"
+              :is="currentChannelEmbed"
               :embedData="currentChannel.embedData"
               :overlay="currentChannel.overlay"
               :image="currentChannel.image"
