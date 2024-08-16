@@ -11,17 +11,11 @@ import {
   nextTick,
   onBeforeMount,
 } from "vue";
-import { useContainerStore } from "../stores/containerStore";
 import { useVideoStore } from "../stores/VideoStore";
-import EmbedContainer from "../layout/EmbedContainer/EmbedContainerFullWidthDescriptive.vue";
-import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerDescriptive.vue";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 import CommonContainer from "../layout/CommonContainer/CommonContainer.vue";
 import SliderDot from "../helpers/SliderDot.vue";
 import SliderArrow from "../helpers/SliderArrow.vue";
-import TwitchEmbed from "../embeds/TwitchEmbed.vue";
-import YouTubeEmbed from "../embeds/YouTubeEmbed.vue";
-import { useCarouselHelpers } from "../utils/carouselHelpers";
 
 import "swiped-events";
 
@@ -409,9 +403,6 @@ onBeforeUnmount(() => {
         @on-pin="(ev) => onPinHandler(ev, true)"
         @close-container="() => (isEmbedVisible = false)"
         @on-mouse-down="(ev) => onMouseDownHandler(ev, true)"
-        :isPinActive="isPinBtnActive"
-        :isMoveActive="isMoveBtnActive"
-        :parentWrapper="containerWrapper"
       >
         <div class="flex-grow min-h-0 relative">
           <div class="absolute inset-0 bg-black overflow-hidden">

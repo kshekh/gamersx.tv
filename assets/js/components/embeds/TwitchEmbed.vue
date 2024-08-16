@@ -62,8 +62,6 @@ const handleIframeLoad = (e) => {
 
 function embedTwitch() {
   if (!embed.value) {
-    console.log("i will embed");
-
     // Ensure embed is created safely without cross-origin access
     embed.value = new Twitch.Embed(embedDataCopy.value.elementId, {
       width: width || 540,
@@ -79,6 +77,7 @@ function embedTwitch() {
 
     // Listen to events via Twitch API
     embed.value.addEventListener(Twitch.Player.PLAY, () => {
+      console.log("the video plays");
       videoStore.setVideoPlaying();
     });
     embed.value.addEventListener(Twitch.Player.PAUSE, () => {
@@ -116,17 +115,17 @@ function embedTwitch() {
 // );
 
 function startPlayer() {
-  if (!embedPlaying.value && (showTwitchEmbed.value || isShowTwitchEmbed)) {
+  if (!videoStore.isVideoPlaying && showTwitchEmbed.value) {
     embed.value?.play();
     embed.value?.setMuted(false);
-    embedPlaying.value = true;
+    videoStore.setVideoNotPlaying();
   }
 }
 
 function stopPlayer() {
-  if (embedPlaying.value) {
+  if (videoStore.isVideoPlaying) {
     embed.value.pause();
-    embedPlaying.value = false;
+    videoStore.setVideoNotPlaying();
   }
 }
 
