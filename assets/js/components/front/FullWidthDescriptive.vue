@@ -1,5 +1,6 @@
 <script setup>
 import {
+  defineAsyncComponent,
   defineProps,
   ref,
   onMounted,
@@ -18,6 +19,7 @@ import SliderDot from "../helpers/SliderDot.vue";
 import SliderArrow from "../helpers/SliderArrow.vue";
 import TwitchEmbed from "../embeds/TwitchEmbed.vue";
 import YouTubeEmbed from "../embeds/YouTubeEmbed.vue";
+import { useCarouselHelpers } from "../utils/carouselHelpers";
 
 import "swiped-events";
 
@@ -65,6 +67,18 @@ const customBg = computed(() => {
         backgroundSize: "100% 100%",
       }
     : {};
+});
+
+const displayChannelNames = computed(() => {
+  return displayChannels.value.map((channel, index) => {
+    return defineAsyncComponent(() =>
+      channel.componentName === "EmbedContainer"
+        ? import(
+            "../layout/EmbedContainer/EmbedContainerFullWidthDescriptive.vue"
+          )
+        : import("../layout/NoEmbedContainer/NoEmbedContainerDescriptive.vue"),
+    );
+  });
 });
 
 const embedSize = computed(() => {
@@ -124,6 +138,13 @@ watch(isScrolledIn, (scrollStatus) => {
   }
 });
 
+// Methods
+const { first, forward, backward } = useCarouselHelpers({
+  channelDivs,
+  displayChannels,
+  rowIndex,
+});
+
 function handleEmbedUpdate() {
   videoStore.resetStyles();
   // videoStore.resetEmbed(containerWrapper.value);
@@ -145,29 +166,6 @@ function showChannel(channel) {
         channel.offlineDisplay.showEmbed ||
         channel.offlineDisplay.showOverlay))
   );
-}
-
-function first() {
-  rowIndex.value = 0;
-  reorder();
-}
-
-function backward() {
-  rowIndex.value = (rowIndex.value - 1).mod(displayChannels.value.length);
-  reorder();
-}
-
-function forward() {
-  rowIndex.value = (rowIndex.value + 1).mod(displayChannels.value.length);
-  reorder();
-}
-
-function reorder() {
-  checkMouseActive();
-  for (let i = 0; i < channelDivs.value.length; i++) {
-    let j = (i - rowIndex.value).mod(channelDivs.value.length);
-    channelDivs.value[i].style.order = j + 1;
-  }
 }
 
 function activateMouseStopped() {
@@ -308,14 +306,16 @@ onBeforeUnmount(() => {
             >
               <!--channel.componentName possible values: EmbedContainer-->
               <component
-                :is="channel.componentName"
+                :is="displayChannelNames[index]"
                 v-if="index === rowIndex"
-                v-bind="channel"
-                :isAllowPlaying="isAllowPlaying"
-                :isRowFirst="isRowFirst"
-                :isFirstVideoLoaded="isFirstVideoLoaded"
-                :isMouseStopped="isMouseStopped"
-                :customBg="customBg"
+                v-bind="{
+                  ...channel,
+                  isAllowPlaying,
+                  isRowFirst,
+                  isFirstVideoLoaded,
+                  isMouseStopped,
+                  customBg,
+                }"
                 @first-video-buffered="handleFirstVideoLoaded"
                 @activate-mouse-stopped="activateMouseStopped"
                 @reset-mouse-moving="checkMouseActive"
