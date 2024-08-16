@@ -65,6 +65,8 @@ const handleClick = (embedData) => {
     videoStore.clearExistingEmbed();
   }
 
+  containerStore.$reset();
+
   videoStore.resetStyles();
   videoStore.storeEmbed(embedData);
   videoStore.setStyles();
