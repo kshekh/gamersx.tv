@@ -52,5 +52,47 @@ export const useContainerStore = defineStore("container", {
     clearContainerId() {
       this.containerId = null;
     },
+    resetAllExceptContainerId() {
+      this.currentVisibleContainerPositionX = "";
+      this.currentVisibleContainerPositionY = "";
+      this.embedRef = "";
+      this.isMoveContainer = false;
+      this.isPinBtnActive = false;
+      this.isPinned = false;
+      this.isPinnedContainer = false;
+      this.isVisibleVideoContainer = false;
+      this.startParentPosition = {
+        Y: "",
+        X: "",
+      };
+      this.bottomRightPosition = {
+        Y: "",
+        X: "",
+      };
+      this.pinnedPosition = {
+        Y: "",
+        X: "",
+      };
+      this.unPinnedPosition = {
+        Y: "",
+        X: "",
+      };
+      this.lastMovedPosition = {
+        Y: "",
+        X: "",
+      };
+      this.currentPosition = {
+        Y: "",
+        X: "",
+      };
+      this.positionBeforeUnpin = {
+        top: "",
+        left: "",
+      };
+      this.previousPinnedPosition = {
+        y: "",
+        x: "",
+      };
+    },
   },
 });

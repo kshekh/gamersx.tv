@@ -25,12 +25,12 @@ function disableContextMenu(event) {
 }
 
 function handleCloseEvent() {
-  containerStore.$reset();
+  containerStore.resetAllExceptContainerId(); // To prevent the container from closing
   emit("close-container"); // Sets isEmbedVisible as false
 }
 
 function handleMoveEvent(event) {
-  containerStore.$reset();
+  containerStore.resetAllExceptContainerId(); // To prevent the container from closing
   const container = parentEl.value;
   container.style.transition = "none";
 
