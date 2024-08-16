@@ -6,7 +6,7 @@ import { useVideoStore } from "../../stores/VideoStore";
 import CommonContainerIcon from "./CommonContainerIcon/CommonContainerIcon.vue";
 
 const commonContainerRef = ref(null);
-const isPinActive = ref(false);
+const isPinBtnActive = ref(false);
 const isMoveBtnActive = ref(false);
 const parentEl = ref(null);
 
@@ -29,13 +29,10 @@ function disableContextMenu(event) {
 }
 
 function handleCloseEvent() {
-  containerStore.resetAllExceptContainerId(); // To prevent the container from closing
   emit("close-container"); // Sets isEmbedVisible as false
 }
 
 function handleMoveEvent(event) {
-  console.log("is full width", isFullWidth);
-  containerStore.resetAllExceptContainerId(); // To prevent the container from closing
   const container = parentEl.value;
   container.style.transition = "none";
 
@@ -85,8 +82,9 @@ function handlePinEvent() {
     container.style.top = top + window.scrollY + "px";
     container.style.left = left + "px";
     containerStore.isPinned = false;
-    containerStore.isPinBtnActive = false;
     containerStore.isPinnedContainer = false;
+
+    isPinBtnActive.value = false;
 
     return;
   }
@@ -99,7 +97,7 @@ function handlePinEvent() {
   container.style.left = left + "px";
 
   containerStore.isPinned = true;
-  containerStore.isPinBtnActive = true;
+  isPinBtnActive.value = true;
 }
 
 function setParentPosition() {
@@ -131,10 +129,7 @@ onUnmounted(() => {
     >
       <div
         @click="handlePinEvent"
-        :class="[
-          'actions--btn',
-          { 'actions--btn-active': containerStore.isPinBtnActive },
-        ]"
+        :class="['actions--btn', { 'actions--btn-active': isPinBtnActive }]"
       >
         <CommonContainerIcon :icon-type="'pin'" />
       </div>
@@ -143,7 +138,7 @@ onUnmounted(() => {
         @dragstart="() => false"
         :class="[
           'actions--btn',
-          { 'actions--btn-move-disabled': containerStore.isPinBtnActive },
+          { 'actions--btn-move-disabled': isPinBtnActive },
         ]"
       >
         <CommonContainerIcon :icon-type="'move'" />
