@@ -177,7 +177,6 @@ function reorder() {
 
 function handleEmbedUpdate() {
   videoStore.resetStyles();
-  // videoStore.resetEmbed(containerWrapper.value);
 
   if (!videoStore.activeEmbedIsEmpty) {
     videoStore.setStyles();
@@ -228,6 +227,8 @@ function scrollIn() {
   isEmbedVisible.value = false;
   isAllowPlaying.value = true;
 
+  videoStore.setVideoPlaying();
+
   if (!videoStore.activeEmbedIsEmpty) {
     videoStore.clearExistingEmbed();
   }
@@ -238,6 +239,7 @@ function scrollOut() {
   isEmbedVisible.value = true;
   isMouseStopped.value = false;
 
+  videoStore.setVideoNotPlaying();
   videoStore.storeEmbed(currentChannel.value.embedData);
 
   clearTimeout(isMouseMovingTimeout.value);
@@ -379,98 +381,94 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <Teleport to="body">
-      <div
-        v-if="
-          showEmbed &&
-          currentChannel &&
-          currentChannel.embedData &&
-          isEmbedVisible
-        "
-        class="cut-edge__wrapper absolute z-30 transition-opacity-transform ease-linear duration-500"
-        :class="[
-          {
-            invisible: !isEmbedVisible,
-          },
-        ]"
-        :style="embedSize"
-        ref="containerWrapper"
+    <div
+      v-if="
+        showEmbed &&
+        currentChannel &&
+        currentChannel.embedData &&
+        isEmbedVisible
+      "
+      class="cut-edge__wrapper absolute z-30 transition-opacity-transform ease-linear duration-500"
+      :class="[
+        {
+          invisible: !isEmbedVisible,
+        },
+      ]"
+      :style="embedSize"
+      ref="containerWrapper"
+    >
+      <CommonContainer
+        @on-pin="(ev) => onPinHandler(ev, true)"
+        @close-container="() => (isEmbedVisible = false)"
+        @on-mouse-down="(ev) => onMouseDownHandler(ev, true)"
+        :isPinActive="isPinBtnActive"
+        :isMoveActive="isMoveBtnActive"
+        :parentWrapper="containerWrapper"
       >
-        <CommonContainer
-          @on-pin="(ev) => onPinHandler(ev, true)"
-          @close-container="() => (isEmbedVisible = false)"
-          @on-mouse-down="(ev) => onMouseDownHandler(ev, true)"
-          :isPinActive="isPinBtnActive"
-          :isMoveActive="isMoveBtnActive"
-          :parentWrapper="containerWrapper"
-        >
-          <div class="flex-grow min-h-0 relative">
-            <div class="absolute inset-0 bg-black overflow-hidden">
-              <img
-                v-if="showArt && image"
-                :src="currentChannel.image.url"
-                class="relative top-1/2 transform -translate-y-1/2 w-full"
-              />
-              <img
-                v-else-if="showOverlay"
-                alt="Embed's Custom Overlay"
-                :src="currentChannel.overlay"
-                class="relative top-1/2 transform -translate-y-1/2 w-full"
-              />
-            </div>
-            <div
-              class="relative w-full h-full transition-opacity ease-linear duration-500 delay-750 opacity-0 bg-black"
-              :class="{ 'opacity-100': isEmbedVisible }"
-            >
-              <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
-                <h5
-                  class="cursor-default text-xxs text-white font-play truncate"
-                >
-                  {{ currentChannel.offlineDisplay.title }}
-                </h5>
-                <h6 class="cursor-default text-8 text-white font-play truncate">
-                  {{ currentChannel.embedData.channel }}
-                </h6>
-              </div>
-              <component
-                v-if="currentChannel.embedData"
-                ref="embed"
-                :is="currentChannel.embedName"
-                :embedData="currentChannel.embedData"
-                :overlay="currentChannel.overlay"
-                :image="currentChannel.image"
-                :isShowTwitchEmbed
-                class="w-full h-full"
-                :width="'100%'"
-                :height="'100%'"
-              ></component>
-            </div>
+        <div class="flex-grow min-h-0 relative">
+          <div class="absolute inset-0 bg-black overflow-hidden">
+            <img
+              v-if="showArt && image"
+              :src="currentChannel.image.url"
+              class="relative top-1/2 transform -translate-y-1/2 w-full"
+            />
+            <img
+              v-else-if="showOverlay"
+              alt="Embed's Custom Overlay"
+              :src="currentChannel.overlay"
+              class="relative top-1/2 transform -translate-y-1/2 w-full"
+            />
           </div>
-          <a
-            :href="currentChannel.link"
-            class="cursor-default flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
-            :title="currentChannel.offlineDisplay.title"
+          <div
+            class="relative w-full h-full transition-opacity ease-linear duration-500 delay-750 opacity-0 bg-black"
+            :class="{ 'opacity-100': isEmbedVisible }"
           >
-            <div class="cursor-default mr-2 overflow-hidden">
-              <h5
-                class="cursor-default text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
-              >
+            <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
+              <h5 class="cursor-default text-xxs text-white font-play truncate">
                 {{ currentChannel.offlineDisplay.title }}
               </h5>
-              <h6
-                class="cursor-default text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
-              >
+              <h6 class="cursor-default text-8 text-white font-play truncate">
                 {{ currentChannel.embedData.channel }}
               </h6>
             </div>
-            <h6
-              class="cursor-default text-8 text-grey font-play whitespace-nowrap"
+            <component
+              v-if="currentChannel.embedData"
+              ref="embed"
+              :is="currentChannel.embedName"
+              :embedData="currentChannel.embedData"
+              :overlay="currentChannel.overlay"
+              :image="currentChannel.image"
+              :isShowTwitchEmbed
+              class="w-full h-full"
+              :width="'100%'"
+              :height="'100%'"
+            ></component>
+          </div>
+        </div>
+        <a
+          :href="currentChannel.link"
+          class="cursor-default flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
+          :title="currentChannel.offlineDisplay.title"
+        >
+          <div class="cursor-default mr-2 overflow-hidden">
+            <h5
+              class="cursor-default text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
             >
-              {{ currentChannel.liveViewerCount }} viewers
+              {{ currentChannel.offlineDisplay.title }}
+            </h5>
+            <h6
+              class="cursor-default text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
+            >
+              {{ currentChannel.embedData.channel }}
             </h6>
-          </a>
-        </CommonContainer>
-      </div>
-    </Teleport>
+          </div>
+          <h6
+            class="cursor-default text-8 text-grey font-play whitespace-nowrap"
+          >
+            {{ currentChannel.liveViewerCount }} viewers
+          </h6>
+        </a>
+      </CommonContainer>
+    </div>
   </div>
 </template>

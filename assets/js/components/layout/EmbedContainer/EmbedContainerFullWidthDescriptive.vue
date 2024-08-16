@@ -101,6 +101,7 @@ function playVideo() {
 }
 
 function stopVideo() {
+  isVideoPlaying.value = false;
   embed.value.stopPlayer();
 }
 
@@ -120,7 +121,6 @@ watch(
 
 <template>
   <div>
-    {{ isInfoBoxHidden }}
     <div
       class="cursor-default relative z-10 flex flex-col opacity-1 transform rounded-md transition-all duration-700 backdrop-filter backdrop-blur-xs shadow-smooth px-7 -mx-7"
       :class="[

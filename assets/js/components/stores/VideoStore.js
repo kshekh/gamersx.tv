@@ -5,6 +5,8 @@ export const useVideoStore = defineStore("video", {
     activeEmbed: {},
     isEmbedVisible: false,
     isHideButtonClicked: false,
+    isVideoPlaying: false,
+    isPositionSet: false,
   }),
   getters: {
     activeEmbedIsEmpty(state) {
@@ -59,6 +61,8 @@ export const useVideoStore = defineStore("video", {
       videoContainer.style["transform-origin"] = "bottom right";
       videoContainer.style.transform = `translateY(${translateDistanceY}px) translateX(${translateDistanceX}px)`;
       videoContainer.style.opacity = 1;
+
+      this.isPositionSet = true;
     },
     setStyles() {
       setTimeout(() => {
@@ -103,6 +107,14 @@ export const useVideoStore = defineStore("video", {
       videoContainer.style.position = "absolute";
       videoContainer.style.transform = "none";
       videoContainer.style.opacity = 0;
+
+      this.isPositionSet = false;
+    },
+    setVideoPlaying() {
+      this.isVideoPlaying = true;
+    },
+    setVideoNotPlaying() {
+      this.isVideoPlaying = false;
     },
   },
 });
