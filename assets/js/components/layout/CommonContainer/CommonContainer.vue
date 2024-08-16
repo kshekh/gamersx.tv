@@ -18,6 +18,8 @@ const isMoveBtnActive = ref(false);
 const parentEl = ref(null);
 
 const containerStore = useContainerStore();
+const videoStore = useVideoStore();
+
 const emit = defineEmits(["close-container"]);
 
 const props = defineProps({
@@ -106,7 +108,7 @@ function setParentPosition() {
   const el = useCurrentElement(commonContainerRef);
   parentEl.value = el.value.parentElement;
 
-  useVideoStore().setPosition(parentEl.value);
+  videoStore.setPosition(parentEl.value);
 }
 
 onMounted(() => {
@@ -117,8 +119,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   console.log("I have unmounted");
-  useVideoStore().resetEmbed(parentEl.value);
-  useVideoStore().resetStyles();
+  videoStore.resetEmbed(parentEl.value);
+  videoStore.resetStyles();
   window.removeEventListener("contextmenu", disableContextMenu);
 });
 </script>
