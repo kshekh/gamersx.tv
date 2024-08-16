@@ -1,3 +1,84 @@
+<script setup>
+import { defineExpose, defineProps, onMounted, ref } from "vue";
+
+const embed = ref(null);
+const embedPlaying = ref(false);
+const isBuffering = ref(false);
+
+defineExpose({
+  startPlayer,
+  stopPlayer,
+});
+
+const { embedData, customBg, height, width } = defineProps({
+  embedData: Object,
+  customBg: Object,
+  height: [Number, String],
+  width: [Number, String],
+});
+
+function videoBuffered() {
+  startPlayer();
+}
+
+function startPlayer() {
+  if (!embedPlaying.value) {
+    embed.play();
+    setIsPlaying();
+  }
+}
+
+function stopPlayer() {
+  if (embedPlaying.value) {
+    embed.pause();
+    setIsNotPlaying();
+  }
+}
+
+function setIsPlaying() {
+  embedPlaying.value = true;
+}
+function setIsNotPlaying() {
+  embedPlaying.value = false;
+}
+
+function embedTwitch() {
+  embed.value = new Twitch.Embed(this.embedData.elementId, {
+    width: this.width || 540,
+    height: this.height || 300,
+    channel: this.embedData.channel,
+    video: this.embedData.video,
+    layout: "video",
+    autoplay: true,
+    muted: true,
+    controls: true,
+    parent: window.location.hostname,
+  });
+
+  embed.value.addEventListener(Twitch.Player.PLAY, this.setIsPlaying);
+  embed.value.addEventListener(Twitch.Player.PAUSE, this.setIsNotPlaying);
+  embed.value.addEventListener(Twitch.Player.ENDED, this.setIsNotPlaying);
+  embed.value.addEventListener(Twitch.Player.WAITING, () => {
+    isBuffering.value = true;
+  });
+  embed.value.addEventListener(Twitch.Player.PLAYING, () => {
+    isBuffering.value = false;
+  });
+  embed.value.addEventListener(Twitch.Player.OFFLINE, () => {
+    embedPlaying.value = false;
+    isBuffering.value = false;
+  });
+  embed.value.addEventListener(Twitch.Embed.VIDEO_READY, () => {
+    isBuffering.value = false;
+    videoBuffered();
+  });
+}
+
+onMounted(() => {
+  embedTwitch();
+});
+</script>
+
 <template>
   <div>
     <div v-if="isBuffering" :style="customBg"></div>
@@ -8,87 +89,3 @@
     ></div>
   </div>
 </template>
-
-<script>
-// We will use props to configure later
-export default {
-  name: "TwitchEmbed",
-  props: {
-    embedData: Object,
-    customBg: Object,
-    height: [Number, String],
-    width: [Number, String],
-  },
-  data: function () {
-    return {
-      embed: {},
-      embedPlaying: false,
-      isBuffering: true,
-    };
-  },
-  methods: {
-    videoBuffered: function () {
-      this.startPlayer();
-
-      this.$emit("video-buffered");
-    },
-    startPlayer: function () {
-      if (!this.isPlaying()) {
-        this.embed.play();
-        this.setIsPlaying();
-      }
-    },
-    stopPlayer: function () {
-      if (this.isPlaying) {
-        this.embed.pause();
-        this.setIsNotPlaying();
-      }
-    },
-    isPlaying: function () {
-      return this.embedPlaying;
-    },
-    setIsPlaying() {
-      this.$emit("set-is-playing", true);
-      this.embedPlaying = true;
-    },
-    setIsNotPlaying() {
-      this.$emit("set-is-playing", false);
-      this.embedPlaying = false;
-    },
-    embedTwitch() {
-      this.embed = new Twitch.Embed(this.embedData.elementId, {
-        width: this.width || 540,
-        height: this.height || 300,
-        channel: this.embedData.channel,
-        video: this.embedData.video,
-        layout: "video",
-        autoplay: true,
-        muted: true,
-        controls: true,
-        parent: window.location.hostname,
-      });
-
-      this.embed.addEventListener(Twitch.Player.PLAY, this.setIsPlaying);
-      this.embed.addEventListener(Twitch.Player.PAUSE, this.setIsNotPlaying);
-      this.embed.addEventListener(Twitch.Player.ENDED, this.setIsNotPlaying);
-      this.embed.addEventListener(Twitch.Player.WAITING, () => {
-        this.isBuffering = true;
-      });
-      this.embed.addEventListener(Twitch.Player.PLAYING, () => {
-        this.isBuffering = false;
-      });
-      this.embed.addEventListener(Twitch.Player.OFFLINE, () => {
-        this.embedPlaying = false;
-        this.isBuffering = false;
-      });
-      this.embed.addEventListener(Twitch.Embed.VIDEO_READY, () => {
-        this.isBuffering = false;
-        this.videoBuffered();
-      });
-    },
-  },
-  mounted: function () {
-    this.embedTwitch();
-  },
-};
-</script>

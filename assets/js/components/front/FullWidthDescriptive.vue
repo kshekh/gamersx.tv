@@ -49,10 +49,11 @@ const sliderDotRef = ref(null);
 const videoStore = useVideoStore();
 
 // Computed properties
-const currentChannelEmbed = computed(() => {
-  let selected = displayChannels.value && displayChannels.value[rowIndex.value];
-  return selected || "TwitchEmbed";
-});
+// const currentChannelEmbed = computed(() => {
+//   let selected = displayChannels.value && displayChannels.value[rowIndex.value];
+//   console.log("the current channel is ", selected);
+//   return selected || "TwitchEmbed";
+// });
 
 const currentChannelEmbedName = computed(() => {
   let selected = displayChannels.value[rowIndex.value];
@@ -138,12 +139,41 @@ watch(isScrolledIn, (scrollStatus) => {
   }
 });
 
-// Methods
-const { first, forward, backward } = useCarouselHelpers({
-  channelDivs,
-  displayChannels,
-  rowIndex,
+watch(rowIndex, (currentIndex) => {
+  console.log(rowIndex);
+  let selected = displayChannels.value && displayChannels.value[currentIndex];
+  console.log("the current channel ", selected);
 });
+
+// Methods
+// const { first, forward, backward } = useCarouselHelpers({
+//   channelDivs,
+//   displayChannels,
+//   rowIndex,
+// });
+
+function first() {
+  rowIndex.value = 0;
+  reorder();
+}
+
+function backward() {
+  rowIndex.value = (rowIndex.value - 1).mod(displayChannels.value.length);
+  reorder();
+}
+
+function forward() {
+  rowIndex.value = (rowIndex.value + 1).mod(displayChannels.value.length);
+  reorder();
+}
+
+function reorder() {
+  checkMouseActive();
+  for (let i = 0; i < channelDivs.value.length; i++) {
+    let j = (i - rowIndex.value).mod(channelDivs.value.length);
+    channelDivs.value[i].style.order = j + 1;
+  }
+}
 
 function handleEmbedUpdate() {
   videoStore.resetStyles();

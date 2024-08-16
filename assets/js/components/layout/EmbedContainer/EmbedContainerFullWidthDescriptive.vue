@@ -1,8 +1,9 @@
 <script setup>
-import { computed, ref, watch, defineProps } from "vue";
+import { computed, ref, watch, defineProps, nextTick } from "vue";
 import TwitchEmbed from "../../embeds/TwitchEmbedFullWidth.vue";
 import YouTubeEmbed from "../../embeds/YouTubeFullWidth.vue";
 import { useShowHelpers } from "../../utils/showHelpers";
+import { useVideoStore } from "../../stores/VideoStore";
 
 // Props
 const {
@@ -29,10 +30,10 @@ const {
   customBg,
 } = defineProps({
   title: String,
-  info: String,
+  info: Object,
   customArt: String,
   channelName: String,
-  showOnline: String,
+  showOnline: Boolean,
   onlineDisplay: Object,
   offlineDisplay: Object,
   rowName: String,
@@ -42,7 +43,7 @@ const {
   componentName: String,
   embedName: String,
   embedData: Object,
-  liveViewerCount: String,
+  liveViewerCount: Number,
   isAllowPlaying: Boolean,
   isRowFirst: Boolean,
   isFirstVideoLoaded: Boolean,
@@ -70,7 +71,7 @@ const decreaseInfoBoxSize = computed(
 );
 
 const isInfoBoxHidden = computed(() => isVideoPlaying.value);
-console.log("show online", overlay);
+
 const { showArt, showEmbed, showOverlay } = useShowHelpers({
   showOnline: showOnline,
   overlay: overlay,
@@ -93,7 +94,10 @@ function hideVideo() {
 }
 
 function playVideo() {
-  embed.value.startPlayer();
+  if (embed.value) {
+    isVideoPlaying.value = true;
+    embed.value.startPlayer();
+  }
 }
 
 function stopVideo() {
@@ -116,6 +120,7 @@ watch(
 
 <template>
   <div>
+    {{ isInfoBoxHidden }}
     <div
       class="cursor-default relative z-10 flex flex-col opacity-1 transform rounded-md transition-all duration-700 backdrop-filter backdrop-blur-xs shadow-smooth px-7 -mx-7"
       :class="[
@@ -178,7 +183,7 @@ watch(
         <!--Hero Element "Hide" Button-->
         <button
           v-if="showEmbed && embedData"
-          @click.stop="handlePlayVideo"
+          @click.stop="handleHideButtonClick"
           class="text-white p-1 transition-all duration-300 bg-opacity-30 hover:bg-opacity-100"
           :class="[
             bgColor,
@@ -279,8 +284,6 @@ watch(
           :customBg="customBg"
           :width="'100%'"
           :height="'100%'"
-          @video-buffered="videoBuffered"
-          @set-is-playing="updateIsPlaying"
         ></component>
       </div>
     </div>

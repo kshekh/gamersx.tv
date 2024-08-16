@@ -1,7 +1,6 @@
 import { computed } from "vue";
 
 export function useShowHelpers(props) {
-  console.log("show", props);
   const showArt = computed(
     () =>
       (props.showOnline && props.onlineDisplay.showArt) ||

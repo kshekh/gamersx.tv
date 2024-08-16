@@ -1,6 +1,3 @@
-import { useContainerStore } from "../components/stores/containerStore";
-import { mapStores } from "pinia";
-
 /*
 *********Description*********
 The provided code defines a Vue.js component that manages the display, interaction,
@@ -79,14 +76,12 @@ export default {
      * Called by: All embed containers except FullWidthImagery.
      */
     clickContainer(elementId, isFullWidth = false) {
-      console.log("element ID: ", elementId);
-      console.log("container ID: ", this.containerStore.containerId);
-      if (this.containerStore.containerId === elementId) {
+      if (this.$root.containerId === elementId) {
         return;
       }
 
-      if (!!this.videoStore.embedRef && this.containerStore.isPinnedContainer) {
-        const prevVideoContainer = this.containerStore.embedRef;
+      if (!!this.$root.embedRef && this.$root.isPinnedContainer) {
+        const prevVideoContainer = this.$root.embedRef;
         const preVideoContainerPosition =
           prevVideoContainer.getBoundingClientRect();
 
@@ -105,17 +100,14 @@ export default {
        *
        * NOTE: It only triggers if there is currently a running container.
        */
-      if (this.containerStore.containerId) {
-        this.$root.$emit(
-          "close-other-layouts",
-          this.containerStore.containerId,
-        );
+      if (this.$root.containerId) {
+        this.$root.$emit("close-other-layouts", this.$root.containerId);
       }
 
-      this.containerStore.containerId = elementId;
-      this.containerStore.embedRef = this.$refs.embedWrapper;
+      this.$root.containerId = elementId;
+      this.$root.embedRef = this.$refs.embedWrapper;
       this.isCursorHere = true; // only set as "true" here
-      this.containerStore.isVisibleVideoContainer = true; // only set as "true" here
+      this.$root.isVisibleVideoContainer = true; // only set as "true" here
 
       /*
        *
@@ -123,16 +115,13 @@ export default {
        * NOTE: isCursorHere and isVisibleVideoContainer are always true because we
        * set their values to true in this method.
        */
-      if (this.isCursorHere && this.containerStore.isVisibleVideoContainer) {
+      if (this.isCursorHere && this.$root.isVisibleVideoContainer) {
         setTimeout(() => {
           // Running the following event triggers the hideVideo method
-          this.$root.$emit(
-            "close-other-layouts",
-            this.containerStore.containerId,
-          );
+          this.$root.$emit("close-other-layouts", this.$root.containerId);
 
           this.position = { top: "", left: "" };
-          this.containerStore.isPinnedContainer = false;
+          this.$root.isPinnedContainer = false;
           this.isEmbedVisible = true;
           this.isShowTwitchEmbed = true;
 
@@ -152,14 +141,14 @@ export default {
     closeContainer(isButtonClick) {
       this.isPinned = false;
       this.isPinBtnActive = false;
-      this.containerStore.isVisibleVideoContainer = false;
-      this.containerStore.containerId = "";
+      this.$root.isVisibleVideoContainer = false;
+      this.$root.containerId = "";
       this.resetEmbedStyles();
 
       this.isEmbedVisible = false;
 
       if (isButtonClick) {
-        this.containerStore.isPinnedContainer = false;
+        this.$root.isPinnedContainer = false;
         // console.log('I reset on close when button clicked');
 
         if (this.$refs.embed && this.$refs.embed.isPlaying()) {
@@ -189,15 +178,15 @@ export default {
         /*
          * If the container is not pinned then reset embed styles
          */
-        if (!this.containerStore.isPinnedContainer) {
+        if (!this.$root.isPinnedContainer) {
           // console.log('I reset on hide');
           this.resetEmbedStyles();
         }
 
         this.isEmbedVisible = false;
         this.isPinBtnActive = false;
-        this.containerStore.isVisibleVideoContainer = false;
-        this.containerStore.isMoveContainer = false;
+        this.$root.isVisibleVideoContainer = false;
+        this.$root.isMoveContainer = false;
         // this.$root.containerId = ""; // NOTE: Maybe change this back
 
         if (this.$refs.embed) {
@@ -218,7 +207,7 @@ export default {
       /*
        * Ensures that the video remains in the same position if it is pinned
        */
-      if (this.containerStore.isPinnedContainer && !!this.position.top) {
+      if (this.$root.isPinnedContainer && !!this.position.top) {
         const videoContainer = this.$refs.embedWrapper;
         videoContainer.style.top = this.position.top + "px";
         videoContainer.style.left = this.position.left + "px";
@@ -315,7 +304,6 @@ export default {
      */
     unmountContainer(embedId) {
       const parentContainer = document.getElementById(embedId);
-
       if (parentContainer) {
         parentContainer.remove();
       }
@@ -338,8 +326,8 @@ export default {
         container.style.left = left + "px";
 
         this.isPinned = false;
-        this.containerStore.isPinBtnActive = false;
-        this.containerStore.isPinnedContainer = false;
+        this.isPinBtnActive = false;
+        this.$root.isPinnedContainer = false;
         return;
       }
 
@@ -352,7 +340,7 @@ export default {
 
       this.isPinned = true;
       this.isPinBtnActive = true;
-      this.containerStore.isPinnedContainer = true;
+      this.$root.isPinnedContainer = true;
     },
 
     // Method to handle mouse down event for dragging
@@ -360,12 +348,12 @@ export default {
       this.$refs.embedWrapper.style.transition = "none";
       if (this.isPinned) {
         this.isMoveBtnActive = false;
-        this.containerStore.isMoveContainer = false;
+        this.$root.isMoveContainer = false;
         return;
       }
 
       this.isMoveBtnActive = true;
-      this.containerStore.isMoveContainer = true;
+      this.$root.isMoveContainer = true;
 
       let shiftX =
         ev.clientX - this.$refs.embedWrapper.getBoundingClientRect().left;
@@ -404,7 +392,7 @@ export default {
       // this.$refs.embedWrapper !== undefined);
       if (this.$refs.itemWrapper) {
         if (
-          this.containerStore.isVisibleVideoContainer === false &&
+          this.$root.isVisibleVideoContainer === false &&
           this.$refs.embedWrapper !== undefined
         ) {
           const container = this.$refs.embedWrapper;
@@ -423,7 +411,7 @@ export default {
 
     // Method to start dragging
     startDragging(e) {
-      if (this.containerStore.isMoveContainer) {
+      if (this.$root.isMoveContainer) {
         return;
       }
 
@@ -443,7 +431,7 @@ export default {
     triggerDragging(e) {
       e.preventDefault();
 
-      if (this.containerStore.isMoveContainer) {
+      if (this.$root.isMoveContainer) {
         return;
       }
 
@@ -459,7 +447,6 @@ export default {
 
   // Computed properties for the component
   computed: {
-    ...mapStores(useContainerStore),
     // Computed property for the play button color
     playBtnColor() {
       return this.embedName === "TwitchEmbed" ? "twitch" : "youtube";
@@ -528,7 +515,7 @@ export default {
     this.resetEmbedStyles();
   },
 
-  unmounted() {
+  destroyed() {
     // Remove the "close-other-layouts" event listener and window resize listener
     this.$root.$off("close-other-layouts", this.hideVideo);
     window.removeEventListener("resize", this.setEmbedSizes);
