@@ -18,6 +18,7 @@ import SliderDot from "../helpers/SliderDot.vue";
 import SliderArrow from "../helpers/SliderArrow.vue";
 
 import "swiped-events";
+import { useContainerStore } from "../stores/containerStore";
 
 const props = defineProps({
   rowPosition: Number,
@@ -42,6 +43,7 @@ const isShowTwitchEmbed = ref(false);
 const rowIndex = ref(0);
 const sliderDotRef = ref(null);
 
+const containerStore = useContainerStore();
 const videoStore = useVideoStore();
 
 // Computed properties
@@ -213,6 +215,11 @@ function checkMouseActive() {
   }, 3000);
 }
 
+function handleCloseContainer() {
+  isEmbedVisible.value = false;
+  containerStore.clearContainerId();
+}
+
 function mouseEntered() {
   if (isScrolledIn.value) {
     isAllowPlaying.value = true;
@@ -241,6 +248,8 @@ function scrollOut() {
 
   videoStore.setVideoNotPlaying();
   videoStore.storeEmbed(currentChannel.value.embedData);
+
+  containerStore.setContainerId(currentChannel.value.embedData.elementId);
 
   clearTimeout(isMouseMovingTimeout.value);
 }
@@ -388,7 +397,8 @@ onBeforeUnmount(() => {
         showEmbed &&
         currentChannel &&
         currentChannel.embedData &&
-        isEmbedVisible
+        isEmbedVisible &&
+        containerStore.containerId === currentChannel.embedData.elementId
       "
       class="cut-edge__wrapper absolute z-30 transition-opacity-transform ease-linear duration-500"
       :class="[
@@ -401,7 +411,7 @@ onBeforeUnmount(() => {
     >
       <CommonContainer
         @on-pin="(ev) => onPinHandler(ev, true)"
-        @close-container="() => (isEmbedVisible = false)"
+        @close-container="handleCloseContainer"
         @on-mouse-down="(ev) => onMouseDownHandler(ev, true)"
       >
         <div class="flex-grow min-h-0 relative">

@@ -71,6 +71,8 @@ const handleClick = (embedData) => {
 
   startVideo.value = true;
   isEmbedVisible.value = true;
+
+  containerStore.setContainerId(embedData.elementId);
 };
 
 const computeGlowStyling = () => {
@@ -156,6 +158,11 @@ const showOverlay = computed(() => {
   );
 });
 
+function handleCloseContainer() {
+  isEmbedVisible.value = false;
+  containerStore.clearContainerId();
+}
+
 onMounted(() => {
   setIsMobileDevice();
   computeGlowStyling();
@@ -226,7 +233,12 @@ onMounted(() => {
     </div>
 
     <div
-      v-if="showEmbed && embedData && isEmbedVisible"
+      v-if="
+        showEmbed &&
+        embedData &&
+        isEmbedVisible &&
+        containerStore.containerId === embedData.elementId
+      "
       ref="containerWrapper"
       :style="embedSize"
       :class="[
@@ -243,7 +255,7 @@ onMounted(() => {
       ]"
     >
       <CommonContainer
-        @close-container="() => (isEmbedVisible = false)"
+        @close-container="handleCloseContainer"
         :innerWrapperClassNames="getOutline"
       >
         <div class="flex-grow min-h-0 relative">

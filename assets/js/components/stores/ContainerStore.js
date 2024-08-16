@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 
 export const useContainerStore = defineStore("container", {
   state: () => ({
+    activeContainerId: null,
     containerId: "",
     currentVisibleContainerPositionX: "",
     currentVisibleContainerPositionY: "",
@@ -44,4 +45,12 @@ export const useContainerStore = defineStore("container", {
       x: "",
     },
   }),
+  actions: {
+    setContainerId(containerId) {
+      this.containerId = containerId;
+    },
+    clearContainerId() {
+      this.containerId = null;
+    },
+  },
 });
