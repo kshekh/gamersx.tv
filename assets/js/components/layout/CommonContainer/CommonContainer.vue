@@ -112,15 +112,11 @@ function setParentPosition() {
 }
 
 onMounted(() => {
-  console.log("I have mounted");
   window.addEventListener("contextmenu", disableContextMenu);
   setParentPosition();
 });
 
 onUnmounted(() => {
-  console.log("I have unmounted");
-  videoStore.resetEmbed(parentEl.value);
-  videoStore.resetStyles();
   window.removeEventListener("contextmenu", disableContextMenu);
 });
 </script>
