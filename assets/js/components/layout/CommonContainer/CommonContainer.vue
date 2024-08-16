@@ -106,17 +106,19 @@ function setParentPosition() {
   const el = useCurrentElement(commonContainerRef);
   parentEl.value = el.value.parentElement;
 
-  useVideoStore().resetEmbed(parentEl.value);
-  useVideoStore().resetStyles();
   useVideoStore().setPosition(parentEl.value);
 }
 
 onMounted(() => {
+  console.log("I have mounted");
   window.addEventListener("contextmenu", disableContextMenu);
   setParentPosition();
 });
 
 onUnmounted(() => {
+  console.log("I have unmounted");
+  useVideoStore().resetEmbed(parentEl.value);
+  useVideoStore().resetStyles();
   window.removeEventListener("contextmenu", disableContextMenu);
 });
 </script>

@@ -17,6 +17,7 @@ const glowStyling = reactive({ glow: "", cornerCut: "" });
 const isEmbedVisible = ref(false);
 const isMobileDevice = ref(false);
 const isShowTwitchEmbed = ref(false);
+const startVideo = ref(false);
 
 const props = defineProps({
   channel: Object,
@@ -46,6 +47,7 @@ const handleClick = (embedData) => {
   videoStore.storeEmbed(embedData);
   videoStore.setStyles();
 
+  startVideo.value = true;
   isEmbedVisible.value = true;
 };
 
@@ -194,7 +196,7 @@ watch(props, computeGlowStyling);
     </div>
 
     <div
-      v-if="showEmbed && props.embedData"
+      v-if="showEmbed && props.embedData && isEmbedVisible"
       ref="containerWrapper"
       :style="embedSize"
       :class="[
