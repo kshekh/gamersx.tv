@@ -413,6 +413,7 @@ onBeforeUnmount(() => {
         @on-pin="(ev) => onPinHandler(ev, true)"
         @close-container="handleCloseContainer"
         @on-mouse-down="(ev) => onMouseDownHandler(ev, true)"
+        :isFullWidth="true"
       >
         <div class="flex-grow min-h-0 relative">
           <div class="absolute inset-0 bg-black overflow-hidden">

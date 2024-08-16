@@ -15,9 +15,13 @@ const videoStore = useVideoStore();
 
 const emit = defineEmits(["close-container"]);
 
-const props = defineProps({
+const { customStyles, innerWrapperClassNames, isFullWidth } = defineProps({
   customStyles: Array,
   innerWrapperClassNames: Array,
+  isFullWidth: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 function disableContextMenu(event) {
@@ -30,6 +34,7 @@ function handleCloseEvent() {
 }
 
 function handleMoveEvent(event) {
+  console.log("is full width", isFullWidth);
   containerStore.resetAllExceptContainerId(); // To prevent the container from closing
   const container = parentEl.value;
   container.style.transition = "none";
@@ -42,7 +47,7 @@ function handleMoveEvent(event) {
   const moveAt = (pageX, pageY) => {
     container.style.transform = "none";
     container.style.left = pageX - shiftX + "px";
-    container.style.top = false ? pageY - 115 + "px" : pageY - 15 + "px";
+    container.style.top = isFullWidth ? pageY - 115 + "px" : pageY - 15 + "px";
   };
 
   moveAt(event.pageX, event.pageY);
