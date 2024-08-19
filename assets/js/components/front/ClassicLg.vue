@@ -13,7 +13,7 @@ import embedMixin from "../../mixins/embedFrameMixin";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
 import "swiped-events";
-import { useContainerStore } from "../stores/containerStore";
+import { useContainerStore } from "../stores/ContainerStore";
 
 const props = defineProps({
   settings: {

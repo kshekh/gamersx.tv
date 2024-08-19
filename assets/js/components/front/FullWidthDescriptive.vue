@@ -18,7 +18,7 @@ import SliderDot from "../helpers/SliderDot.vue";
 import SliderArrow from "../helpers/SliderArrow.vue";
 
 import "swiped-events";
-import { useContainerStore } from "../stores/containerStore";
+import { useContainerStore } from "../stores/ContainerStore";
 
 const props = defineProps({
   rowPosition: Number,

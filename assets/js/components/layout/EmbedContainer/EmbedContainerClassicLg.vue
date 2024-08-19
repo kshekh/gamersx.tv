@@ -7,7 +7,7 @@ import {
   watch,
   reactive,
 } from "vue";
-import { useContainerStore } from "../../stores/containerStore";
+import { useContainerStore } from "../../stores/ContainerStore";
 import { useVideoStore } from "../../stores/VideoStore";
 import CommonContainer from "../CommonContainer/CommonContainer.vue";
 import PlayButton from "../../helpers/PlayButton.vue";
