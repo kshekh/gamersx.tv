@@ -123,7 +123,7 @@ class HomeRowItem implements PartneredInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $isPublishedEnd = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: 'datetime')]
     private ?DateTime $updatedAt = null;
 
     #[ORM\Column(options: ['default' => 0])]

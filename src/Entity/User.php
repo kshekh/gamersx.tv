@@ -32,10 +32,10 @@ class User extends BaseUser
     #[ORM\Column(length: 500, nullable: true)]
     private ?string $twitchRefreshToken = null;
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-    private ?DateTimeImmutable $createdAt;
+    #[ORM\Column(type: 'datetime')]
+    private ?DateTime $createdAt;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: 'datetime')]
     private ?DateTime $updatedAt;
 
 //    #[ORM\Column(type: "string", length: 255)]
@@ -180,12 +180,12 @@ class User extends BaseUser
     }
 
 
-    public function getCreatedAt(): ?DateTimeImmutable
+    public function getCreatedAt(): ?DateTime
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTimeImmutable $createdAt): self
+    public function setCreatedAt(DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
 

@@ -60,7 +60,7 @@ class Theme
     #[Vich\UploadableField(mapping: 'theme_art_background', fileNameProperty: 'artBackground')]
     private ?File $artBackgroundFile = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private ?DateTime $updatedAt = null;
 
     public function getId(): ?int
@@ -126,7 +126,7 @@ class Theme
         $this->bannerImageFile = $bannerImageFile;
 
         if (null !== $bannerImageFile ) {
-            $this->updatedAt = new DateTimeImmutable();
+            $this->updatedAt = new DateTime();
         }
 
         return $this;
@@ -154,7 +154,7 @@ class Theme
         $this->embedBackgroundFile = $embedBackgroundFile;
 
         if (null !== $embedBackgroundFile ) {
-            $this->updatedAt = new DateTimeImmutable();
+            $this->updatedAt = new DateTime();
         }
 
         return $this;
@@ -182,7 +182,7 @@ class Theme
         $this->customArtFile = $customArtFile;
 
         if (null !== $customArtFile ) {
-            $this->updatedAt = new DateTimeImmutable();
+            $this->updatedAt = new DateTime();
         }
 
         return $this;
@@ -210,7 +210,7 @@ class Theme
         $this->artBackgroundFile = $artBackgroundFile;
 
         if (null !== $artBackgroundFile ) {
-            $this->updatedAt = new DateTimeImmutable();
+            $this->updatedAt = new DateTime();
         }
 
         return $this;

@@ -58,7 +58,7 @@ class CacheHomePageContainers extends Command
         $containerizer = $this->containerizer;
 
         try {
-            $cache = new RedisAdapter(new Client(['host' => 'localhost']), 'namespace', 0);
+            $cache = new RedisAdapter(new Client(['host' => 'redis']), 'namespace', 0);
 
             // Deleting old cache
             $cache->delete('home_item');
