@@ -8,7 +8,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Table(name: 'master_theme')]
 #[ORM\Entity(repositoryClass: MasterThemeRepository::class)]
 class MasterTheme
 {
@@ -23,7 +22,7 @@ class MasterTheme
     #[ORM\OneToMany(mappedBy: 'master_theme', targetEntity: MasterSetting::class)]
     private Collection $masterSettings;
 
-    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    #[ORM\Column(type: Types::SMALLINT, nullable: true, options: ['default'=> 0, 'comment' => '0-inactive, 1-active'])]
     private ?int $status = null;
 
     public function __construct()

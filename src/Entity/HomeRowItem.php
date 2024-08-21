@@ -5,19 +5,14 @@ namespace App\Entity;
 use App\Model\PartneredInterface;
 use App\Repository\HomeRowItemRepository;
 use DateTime;
-use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
-/**
- * @ORM\Entity(repositoryClass=HomeRowItemRepository::class)
- * @Vich\Uploadable
- */
+
 #[Vich\Uploadable]
-#[ORM\Table(name: 'home_row_item')]
 #[ORM\Entity(repositoryClass: HomeRowItemRepository::class)]
 class HomeRowItem implements PartneredInterface
 {
@@ -29,6 +24,9 @@ class HomeRowItem implements PartneredInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $label = null;
 
+    /**
+     * The index of the item in the HomeRow
+     */
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $sortIndex = null;
 
@@ -52,12 +50,21 @@ class HomeRowItem implements PartneredInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $playlistId = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?array $topic = null;
+    /**
+     * Options to be passed into the container
+     */
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private array $topic = [];
 
-    #[ORM\Column(nullable: true)]
-    private ?array $sortAndTrimOptions = null;
+    /**
+     * Options to be passed into the container
+     */
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private array $sortAndTrimOptions = [];
 
+    /**
+     * Whether to always show box/profile art for this item
+     */
     #[ORM\Column]
     private ?bool $showArt = null;
 
@@ -88,6 +95,9 @@ class HomeRowItem implements PartneredInterface
     #[ORM\Column(length: 32)]
     private ?string $linkType = null;
 
+    /**
+     * The Home Row this item belongs to
+     */
     #[ORM\ManyToOne(targetEntity: HomeRow::class, inversedBy: 'items')]
     #[ORM\JoinColumn]
     private ?HomeRow $homeRow = null;
@@ -114,7 +124,7 @@ class HomeRowItem implements PartneredInterface
     private ?string $isPublishedEnd = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?DateTimeInterface $updatedAt = null;
+    private ?DateTime $updatedAt = null;
 
     #[ORM\Column(options: ['default' => 0])]
     private ?bool $isPartner = null;
@@ -431,9 +441,9 @@ class HomeRowItem implements PartneredInterface
     }
 
     /**
-     * @return DateTimeInterface
+     * @return DateTime
      */
-    public function getUpdatedAt(): DateTimeInterface
+    public function getUpdatedAt(): DateTime
     {
         return $this->updatedAt;
     }

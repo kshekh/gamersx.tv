@@ -3,14 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\ThemeRepository;
+use DateTime;
 use DateTimeImmutable;
-use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Table(name: 'theme')]
 #[ORM\Entity(repositoryClass: ThemeRepository::class)]
 #[Vich\Uploadable()]
 class Theme
@@ -62,7 +61,7 @@ class Theme
     private ?File $artBackgroundFile = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?DateTimeInterface $updatedAt = null;
+    private ?DateTime $updatedAt = null;
 
     public function getId(): ?int
     {
@@ -218,12 +217,12 @@ class Theme
     }
 
 
-    public function getUpdatedAt(): ?DateTimeInterface
+    public function getUpdatedAt(): ?DateTime
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?DateTimeInterface $updatedAt): self
+    public function setUpdatedAt(?DateTime $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
 

@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Repository\PartnerRoleRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Table(name: 'partner_role')]
 #[ORM\Entity(repositoryClass: PartnerRoleRepository::class)]
 class PartnerRole
 {
@@ -13,6 +12,10 @@ class PartnerRole
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\ManyToOne(inversedBy: 'partnerRoles')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'partnerRoles')]
     #[ORM\JoinColumn(nullable: false)]
@@ -24,10 +27,6 @@ class PartnerRole
 
     #[ORM\Column(length: 255)]
     private ?string $role = null;
-
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'partnerRoles')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
 
     public function getId(): ?int
     {

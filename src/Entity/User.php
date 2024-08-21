@@ -2,16 +2,17 @@
 
 namespace App\Entity;
 
-use App\Model\GroupInterface;
+use App\Repository\UserRepository;
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\User as BaseUser;
-use App\Repository\UserRepository;
-use Sonata\UserBundle\Model\UserInterface;
 
-#[ORM\Table(name: 'fos_user__user')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: "fos_user__user")]
 class User extends BaseUser
 {
     #[ORM\Id]
@@ -19,8 +20,8 @@ class User extends BaseUser
     #[ORM\Column(type: "integer")]
     protected $id;
 
-    #[ORM\OneToMany(targetEntity: PartnerRole::class, mappedBy: "user", orphanRemoval: true)]
-    private $partnerRoles;
+    #[ORM\OneToMany(mappedBy: "user", orphanRemoval: true)]
+    private ?PartnerRole $partnerRoles;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $twitchUserId = null;
@@ -31,11 +32,11 @@ class User extends BaseUser
     #[ORM\Column(length: 500, nullable: true)]
     private ?string $twitchRefreshToken = null;
 
-    #[ORM\Column(type: "datetime")]
-    private $createdAt;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private ?DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: "datetime")]
-    private $updatedAt;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?DateTime $updatedAt;
 
 //    #[ORM\Column(type: "string", length: 255)]
 //    protected $gender = UserInterface::GENDER_UNKNOWN; // set the default to unknown
@@ -186,12 +187,12 @@ class User extends BaseUser
     }
 
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
 
@@ -201,7 +202,7 @@ class User extends BaseUser
     /**
      * @return mixed
      */
-    public function getUpdatedAt(): \DateTimeInterface
+    public function getUpdatedAt(): DateTime
     {
         return $this->updatedAt;
     }
@@ -209,7 +210,7 @@ class User extends BaseUser
     /**
      * @param mixed $updatedAt
      */
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): void
+    public function setUpdatedAt(DateTime $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
     }

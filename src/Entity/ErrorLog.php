@@ -3,31 +3,31 @@
 namespace App\Entity;
 
 use App\Repository\ErrorLogRepository;
+use DateTimeImmutable;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use DateTimeInterface;
 
 #[ORM\Entity(repositoryClass: ErrorLogRepository::class)]
 class ErrorLog
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $error_message = null;
 
-    #[ORM\Column(type: "string", length: 255)]
+    #[ORM\Column(length: 255)]
     private ?string $error_type = null;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column]
     private int $status_code;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $container_id = null;
 
-    #[ORM\Column(type: "datetime")]
-    private DateTimeInterface $created_at;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private ?DateTimeImmutable $created_at = null;
 
     public function getId(): ?int
     {
@@ -82,12 +82,12 @@ class ErrorLog
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->created_at;
     }
 
-    public function setCreatedAt(\DateTimeInterface $created_at): self
+    public function setCreatedAt(DateTimeImmutable $created_at): self
     {
         $this->created_at = $created_at;
 

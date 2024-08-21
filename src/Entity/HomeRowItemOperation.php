@@ -8,13 +8,16 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: HomeRowItemOperationRepository::class)]
-
 class HomeRowItemOperation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\ManyToOne(inversedBy: 'homeRowItemOperations')]
+    #[MaxDepth(1)]
+    private ?HomeRowItem $homeRowItem = null;
 
     #[ORM\Column(length: 25)]
     private ?string $item_type = null;
@@ -48,10 +51,6 @@ class HomeRowItemOperation
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $user_id = null;
-
-    #[ORM\ManyToOne(inversedBy: 'homeRowItemOperations')]
-    #[MaxDepth(1)]
-    private ?HomeRowItem $homeRowItem = null;
 
     public function getId(): ?int
     {

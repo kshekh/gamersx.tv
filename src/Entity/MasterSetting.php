@@ -6,7 +6,6 @@ use App\Repository\MasterSettingRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Table(name: 'master_setting')]
 #[ORM\Entity(repositoryClass: MasterSettingRepository::class)]
 class MasterSetting
 {

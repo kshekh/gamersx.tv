@@ -4,13 +4,11 @@ namespace App\Entity;
 
 use App\Model\PartneredInterface;
 use App\Repository\HomeRowRepository;
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Table(name: 'home_rows')]
 #[ORM\Entity(repositoryClass: HomeRowRepository::class)]
 class HomeRow implements PartneredInterface
 {
@@ -25,7 +23,6 @@ class HomeRow implements PartneredInterface
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $sortIndex = null;
 
-
     #[ORM\Column(length: 32)]
     private ?string $layout = null;
 
@@ -34,9 +31,10 @@ class HomeRow implements PartneredInterface
     const SORT_FIXED = 'fixed';
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
-    private ?array $options = null;
+    private ?array $options = [];
 
     #[ORM\OneToMany(mappedBy: 'homeRow', targetEntity: HomeRowItem::class, orphanRemoval: true)]
+    #[ORM\OrderBy(['sortIndex' => 'ASC'])]
     private ?Collection $items;
 
     #[ORM\ManyToOne(targetEntity: Partner::class, inversedBy: 'homeRows')]

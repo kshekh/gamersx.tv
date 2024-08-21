@@ -3,9 +3,10 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Model\Group;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity]
-#[ORM\Table(name: "fos_user_user__group")]
+#[ORM\Table(name: "fos_user__group")]
 class UserGroup extends Group
 {
 
@@ -14,10 +15,10 @@ class UserGroup extends Group
     #[ORM\Column(type: "integer")]
     protected ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 180, nullable: true)] // Adjusted to nullable string
+    #[ORM\Column(length: 180, nullable: true)] // Adjusted to nullable string
     protected ?string $name = null;
 
-    #[ORM\Column(type: "json")]
+    #[ORM\Column(type: Types::JSON)]
     protected array $roles = [];
 
     public function __construct(?string $name = null, array $roles = [])
