@@ -20,8 +20,8 @@ class User extends BaseUser
     #[ORM\Column(type: "integer")]
     protected $id;
 
-    #[ORM\OneToMany(mappedBy: "user", orphanRemoval: true)]
-    private ?PartnerRole $partnerRoles;
+    #[ORM\OneToMany(targetEntity: PartnerRole::class, mappedBy: "user", orphanRemoval: true)]
+    private ?Collection $partnerRoles;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $twitchUserId = null;
@@ -102,17 +102,10 @@ class User extends BaseUser
     #[ORM\Column(type: "datetime", length: 255, nullable: true)]
     protected $dateOfBirth = null;
 
-    #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: "users")]
-    #[ORM\JoinTable(name: "fos_user_user_group")]
-    private Collection $groups;
-
     public function __construct()
     {
         parent::__construct();
         $this->partnerRoles = new ArrayCollection();
-        $this->createdAt = new \DateTime();
-        $this->updatedAt = new \DateTime();
-        $this->groups = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -451,31 +444,4 @@ class User extends BaseUser
     {
         return $this->dateOfBirth;
     }
-
-    /**
-     * @return Collection|Group[]
-     */
-    public function getGroups(): Collection
-    {
-        return $this->groups;
-    }
-
-    public function addGroup(Group $group): self
-    {
-        if (!$this->groups->contains($group)) {
-            $this->groups[] = $group;
-            $group->addUser($this);
-        }
-
-
-        return $this;
-    }
-
-    public function removeGroup(Group $group): self
-    {
-        $this->groups->removeElement($group);
-
-        return $this;
-    }
-
 }

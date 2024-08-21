@@ -12,6 +12,7 @@ class ErrorLog
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
+    #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]

@@ -9,7 +9,6 @@ use Doctrine\DBAL\Types\Types;
 #[ORM\Table(name: "fos_user__group")]
 class UserGroup extends Group
 {
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]

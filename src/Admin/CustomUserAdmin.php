@@ -26,7 +26,6 @@ use App\Model\SecurityRolesType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\LocaleType;
 use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
-use App\Entity\Group;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\LessThanOrEqual;
 
@@ -156,7 +155,7 @@ class CustomUserAdmin extends AbstractAdmin
             ->end()
             ->with('Group')
             ->add('groups', ModelType::class, [
-                'class' => Group::class,
+                'class' => UserGroup::class,
                 'property' => 'name',
                 'expanded' => true,
                 'multiple' => true,
