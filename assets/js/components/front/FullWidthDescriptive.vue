@@ -462,29 +462,6 @@ onBeforeUnmount(() => {
             ></component>
           </div>
         </div>
-        <a
-          :href="currentChannel.link"
-          class="cursor-default flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
-          :title="currentChannel.offlineDisplay.title"
-        >
-          <div class="cursor-default mr-2 overflow-hidden">
-            <h5
-              class="cursor-default text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
-            >
-              {{ currentChannel.offlineDisplay.title }}
-            </h5>
-            <h6
-              class="cursor-default text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
-            >
-              {{ currentChannel.embedData.channel }}
-            </h6>
-          </div>
-          <h6
-            class="cursor-default text-8 text-grey font-play whitespace-nowrap"
-          >
-            {{ currentChannel.liveViewerCount }} viewers
-          </h6>
-        </a>
       </CommonContainer>
     </div>
   </div>
