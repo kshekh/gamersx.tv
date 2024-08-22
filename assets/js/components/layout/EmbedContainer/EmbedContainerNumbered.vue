@@ -1,3 +1,246 @@
+<script setup>
+import {
+  computed,
+  defineAsyncComponent,
+  onMounted,
+  onUnmounted,
+  ref,
+} from "vue";
+import { useContainerStore } from "../../stores/ContainerStore";
+import { useVideoStore } from "../../stores/VideoStore";
+import CommonContainer from "../CommonContainer/CommonContainer.vue";
+import PlayButton from "../../helpers/PlayButton.vue";
+
+// Props
+const props = defineProps({
+  title: {
+    required: false,
+  },
+  info: {
+    required: false,
+  },
+  customArt: {
+    required: false,
+  },
+  channelName: {
+    required: false,
+  },
+  showOnline: {
+    required: false,
+  },
+  onlineDisplay: {
+    required: false,
+  },
+  offlineDisplay: {
+    required: false,
+  },
+  rowName: {
+    required: false,
+  },
+  image: {
+    required: false,
+  },
+  overlay: {
+    required: false,
+  },
+  link: {
+    required: false,
+  },
+  componentName: {
+    required: false,
+  },
+  embedName: {
+    required: false,
+  },
+  embedData: {
+    required: false,
+  },
+  liveViewerCount: {
+    required: false,
+  },
+  isGlowStyling: {
+    required: false,
+  },
+  isCornerCut: {
+    required: false,
+  },
+  broadcast: {
+    required: false,
+  },
+});
+
+console.log(props);
+
+const containerStore = useContainerStore();
+const videoStore = useVideoStore();
+
+// Data
+const cornerCutStyling = ref({
+  outline: "",
+  outlineBorder: "",
+});
+const embed = ref(null);
+const glowStyling = ref({
+  glow: "",
+});
+const isEmbedVisible = ref(false);
+const isMobileDevice = ref(false);
+const isOverlayVisible = ref(true);
+const isTitleVisible = ref(false);
+const isShowTwitchEmbed = ref(false);
+
+// Computed
+const embedContainerName = computed(() => {
+  return defineAsyncComponent(() =>
+    props.embedName === "TwitchEmbed"
+      ? import("../../embeds/TwitchEmbed.vue")
+      : import("../../embeds/YouTubeEmbed.vue"),
+  );
+});
+
+const embedSize = computed(() => {
+  let width = window.innerWidth > 1279 ? 400 : 355;
+  let height = window.innerWidth > 1279 ? 350 : 311;
+
+  return {
+    width: width + "px",
+    height: height + "px",
+  };
+});
+const showArt = computed(() => {
+  return props.onlineDisplay.showArt || props.offlineDisplay.showArt;
+});
+
+const showEmbed = computed(() => {
+  return props.onlineDisplay.showEmbed || props.offlineDisplay.showEmbed;
+});
+
+const showOverlay = computed(() => {
+  return props.onlineDisplay.showOverlay || props.offlineDisplay.showOverlay;
+});
+
+const getGlow = computed(() => {
+  if (props.isGlowStyling) {
+    return glowStyling.value.glow;
+  } else {
+    return "";
+  }
+});
+
+const getOutline = computed(() => {
+  if (props.isCornerCut) {
+    return cornerCutStyling.value.outline;
+  } else {
+    return "";
+  }
+});
+
+const getOutlineBorder = computed(() => {
+  computeGlowStyling();
+  return cornerCutStyling.value.outlineBorder;
+});
+
+const playBtnColor = computed(() => {
+  return props.embedName === "TwitchEmbed" ? "twitch" : "youtube";
+});
+
+// Methods
+function clickContainer(elementId) {
+  const container = document.getElementById(elementId);
+  container.click();
+}
+
+function computeGlowStyling() {
+  if (
+    props.isGlowStyling === "always_on" ||
+    (props.isGlowStyling === "enabled_if_live" && props.showOnline) ||
+    (props.isGlowStyling === "enabled_if_offline" && !props.showOnline)
+  ) {
+    if (props.embedName === "TwitchEmbed") {
+      glowStyling.value.glow = "cut-edge__wrapper--twitch";
+      cornerCutStyling.value.outlineBorder =
+        "cut-edge__clipped--twitch border-purple";
+    } else if (props.embedName === "YouTubeEmbed") {
+      glowStyling.value.glow = "cut-edge__wrapper--youtube";
+      cornerCutStyling.value.outlineBorder =
+        "cut-edge__clipped--youtube border-red";
+    }
+  }
+
+  if (
+    props.isCornerCut === "always_on" ||
+    (props.isCornerCut === "enabled_if_live" && props.showOnline) ||
+    (props.isCornerCut === "enabled_if_offline" && !props.showOnline)
+  ) {
+    if (props.embedName === "TwitchEmbed") {
+      cornerCutStyling.value.outline = "cut-edge__clipped--twitch";
+    } else if (props.embedName === "YouTubeEmbed") {
+      cornerCutStyling.value.outline = "cut-edge__clipped--youtube";
+    }
+  }
+}
+
+const handleClick = (embedData) => {
+  if (!videoStore.activeEmbedIsEmpty) {
+    videoStore.clearExistingEmbed();
+  }
+
+  containerStore.$reset();
+
+  videoStore.resetStyles();
+  videoStore.storeEmbed(embedData);
+  videoStore.setStyles();
+
+  startVideo.value = true;
+  isEmbedVisible.value = true;
+
+  containerStore.setContainerId(embedData.elementId);
+};
+
+function handleCloseContainer() {
+  isEmbedVisible.value = false;
+  containerStore.clearContainerId();
+}
+
+function playVideo() {
+  setTimeout(() => {
+    if (showOverlay.value || showArt.value) {
+      isOverlayVisible.value = false;
+      isEmbedVisible.value = true;
+    }
+  }, 0);
+
+  if (embed.value && embed.value.startPlayer) {
+    embed.value.startPlayer();
+  }
+}
+
+function setIsMobileDevice() {
+  const checkDeviceType = navigator.userAgent.toLowerCase().match(/mobile/i);
+  if (checkDeviceType) {
+    isMobileDevice.value = true;
+  } else {
+    isMobileDevice.value = false;
+  }
+}
+
+function scrollOut() {
+  if (containerStore.isVisibleVideoContainer) {
+    return;
+  }
+  if (showOverlay.value || showArt.value) {
+    isOverlayVisible.value = true;
+    isEmbedVisible.value = false;
+  }
+}
+
+// Lifecycle Hooks
+onMounted(() => {
+  setIsMobileDevice();
+  computeGlowStyling();
+});
+</script>
+
 <template>
   <div
     class="cursor-default lex items-center w-18 h-24 md:w-24 md:h-32 xl:w-30 xl:h-40 shrink-0"
@@ -16,13 +259,13 @@
       >
         <!-- Show the embed with overlay if there's an embed -->
         <div
-          v-if="showEmbed && embedData"
+          v-if="showEmbed && props.embedData"
           class="w-full h-full overflow-hidden"
-          @click="clickContainer(embedData.elementId)"
+          @click="handleClick(embedData.elementId)"
         >
           <img
-            v-if="showArt && image"
-            :src="image.url"
+            v-if="showArt && props.image"
+            :src="props.image.url"
             class="relative top-1/2 transform -translate-y-1/2 w-full"
             style="height: inherit"
           />
@@ -43,10 +286,10 @@
         </div>
 
         <!-- If there's no embed, show that instead with a link first -->
-        <div v-else-if="showArt && image" class="w-full h-full">
+        <div v-else-if="showArt && props.image" class="w-full h-full">
           <a :href="link" class="block w-full h-full overflow-hidden">
             <img
-              :src="image.url"
+              :src="props.image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
             />
           </a>
@@ -54,11 +297,11 @@
 
         <!-- If there's only an overlay and isn't art, show that instead with a link -->
         <div v-else-if="showOverlay" class="w-full h-full">
-          <a :href="link" class="block w-full h-full overflow-hidden">
+          <a :href="props.link" class="block w-full h-full overflow-hidden">
             <img
               class="relative top-1/2 transform -translate-y-1/2 w-full"
               alt="Embed's Custom Overlay"
-              :src="overlay"
+              :src="props.overlay"
             />
           </a>
         </div>
@@ -66,7 +309,7 @@
     </div>
 
     <div
-      v-if="showEmbed && embedData"
+      v-if="showEmbed && props.embedData"
       class="cut-edge__wrapper absolute z-30 transition-opacity-transform ease-linear duration-500"
       :class="[
         getGlow,
@@ -78,24 +321,20 @@
       :style="embedSize"
     >
       <CommonContainer
-        @on-pin="onPinHandler"
-        @close-container="() => closeContainer(true)"
-        @on-mouse-down="onMouseDownHandler"
-        :isPinActive="isPinBtnActive"
-        :isMoveActive="isMoveBtnActive"
+        @close-container="handleCloseContainer"
         :innerWrapperClassNames="getOutline"
       >
         <div class="flex-grow min-h-0 relative">
           <div class="absolute inset-0 bg-black overflow-hidden">
             <img
-              v-if="showArt && image"
-              :src="image.url"
+              v-if="showArt && props.image"
+              :src="props.image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
             />
             <img
               v-else-if="showOverlay"
               alt="Embed's Custom Overlay"
-              :src="overlay"
+              :src="props.overlay"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
             />
           </div>
@@ -105,19 +344,19 @@
           >
             <div class="absolute left-4 md:left-3 xl:left-6 top-2 w-2/3">
               <h5 class="cursor-default text-xxs text-white font-play truncate">
-                {{ offlineDisplay.title }}
+                {{ props.offlineDisplay.title }}
               </h5>
               <h6 class="cursor-default text-8 text-white font-play truncate">
-                {{ embedData.channel }}
+                {{ props.embedData.channel }}
               </h6>
             </div>
             <component
-              v-if="embedData"
+              v-if="props.embedData"
               ref="embed"
-              :is="embedName"
-              :embedData="embedData"
-              :overlay="overlay"
-              :image="image"
+              :is="props.embedName"
+              :embedData="props.embedData"
+              :overlay="props.overlay"
+              :image="props.image"
               :isShowTwitchEmbed="isShowTwitchEmbed"
               class="w-full h-full"
               :width="'100%'"
@@ -126,26 +365,26 @@
           </div>
         </div>
         <a
-          :href="link"
+          :href="props.link"
           class="cursor-default flex justify-between py-1 xl:pt-3 xl:pb-3 px-3 md:px-2 xl:px-4 bg-grey-900"
-          :title="offlineDisplay.title"
+          :title="props.offlineDisplay.title"
         >
           <div class="cursor-default mr-2 overflow-hidden">
             <h5
               class="cursor-default text-xxs text-white font-play overflow-hidden text-ellipsis whitespace-nowrap"
             >
-              {{ offlineDisplay.title }}
+              {{ props.offlineDisplay.title }}
             </h5>
             <h6
               class="cursor-default text-8 text-grey font-play overflow-hidden text-ellipsis whitespace-nowrap"
             >
-              {{ embedData.channel }}
+              {{ props.embedData.channel }}
             </h6>
           </div>
           <h6
             class="cursor-default text-8 text-grey font-play whitespace-nowrap"
           >
-            {{ liveViewerCount }} viewers
+            {{ props.liveViewerCount }} viewers
           </h6>
         </a>
       </CommonContainer>
@@ -168,19 +407,19 @@
         :class="{ getOutline: true, 'numbered-mobile': isMobileDevice }"
       >
         <img
-          v-if="showArt && image"
-          :src="image.url"
+          v-if="showArt && props.image"
+          :src="props.image.url"
           class="-translate-y-1/2 relative top-1/2 transform w-30p h-full object-cover"
         />
 
         <img
           v-else-if="showOverlay"
           alt="Embed's Custom Overlay"
-          :src="overlay"
+          :src="props.overlay"
           class="relative top-1/2 transform -translate-y-1/2 w-full h-full object-cover"
         />
         <play-button
-          v-if="showEmbed && embedData"
+          v-if="showEmbed && props.embedData"
           class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 h-12 md:h-16 xl:h-32 w-12 md:w-16 xl:w-32"
           svgClass="w-3 md:w-7 xl:w-12"
           wrapperClass="md:pl-1.5 xl:pl-3"
@@ -191,7 +430,7 @@
     </div>
 
     <!-- Show the embed with overlay if there's an embed -->
-    <div v-if="showEmbed && embedData">
+    <div v-if="showEmbed && props.embedData">
       <div
         class="cut-edge__wrapper flex-grow min-h-0 absolute inset-0 z-20 py-5 md:py-8 xl:py-12 px-4 md:px-18 xl:px-32 opacity-0 transition-opacity duration-300 ease-linear custom-embed-m"
         :class="[
@@ -216,18 +455,18 @@
           :class="{ 'relative w-full h-full main-parent': true }"
         >
           <component
-            v-if="embedData"
+            v-if="props.embedData"
             ref="embed"
-            :is="embedName"
-            :embedData="embedData"
-            :overlay="overlay"
-            :image="image"
+            :is="embedContainerName"
+            :embedData="props.embedData"
+            :overlay="props.overlay"
+            :image="props.image"
             :isShowTwitchEmbed="isShowTwitchEmbed"
             :isMobileDevice="isMobileDevice"
             class="h-full w-full border overflow-hidden bg-black"
             :class="{
-              'border-purple': embedName === 'TwitchEmbed',
-              'border-red': embedName === 'YouTubeEmbed',
+              'border-purple': props.embedName === 'TwitchEmbed',
+              'border-red': props.embedName === 'YouTubeEmbed',
             }"
             :width="'100%'"
             :height="'100%'"
@@ -237,173 +476,3 @@
     </div>
   </div>
 </template>
-
-<script>
-import TwitchEmbed from "../../embeds/TwitchEmbed.vue";
-import YouTubeEmbed from "../../embeds/YouTubeEmbed.vue";
-import CommonContainer from "../CommonContainer/CommonContainer.vue";
-import embedMixin from "../../../mixins/embedFrameMixin";
-import PlayButton from "../../helpers/PlayButton.vue";
-
-export default {
-  name: "EmbedContainerNumbered",
-  mixins: [embedMixin],
-  components: {
-    CommonContainer: CommonContainer,
-    TwitchEmbed: TwitchEmbed,
-    YouTubeEmbed: YouTubeEmbed,
-    "play-button": PlayButton,
-  },
-  props: [
-    "title",
-    "info",
-    "customArt",
-    "channelName",
-    "showOnline",
-    "onlineDisplay",
-    "offlineDisplay",
-    "rowName",
-    "image",
-    "overlay",
-    "link",
-    "componentName",
-    "embedName",
-    "embedData",
-    "liveViewerCount",
-    "isGlowStyling",
-    "isCornerCut",
-    "info",
-    "broadcast",
-  ],
-  data: function () {
-    return {
-      isOverlayVisible: true,
-      isEmbedVisible: false,
-      isTitleVisible: false,
-      glowStyling: {
-        glow: "",
-      },
-      cornerCutStyling: {
-        outline: "",
-        outlineBorder: "",
-      },
-      isShowTwitchEmbed: false,
-      isMobileDevice: false,
-    };
-  },
-  computed: {
-    playBtnColor() {
-      return this.embedName === "TwitchEmbed" ? "twitch" : "youtube";
-    },
-    showEmbed() {
-      return (
-        (this.showOnline && this.onlineDisplay.showEmbed) ||
-        (!this.showOnline && this.offlineDisplay.showEmbed)
-      );
-    },
-    showArt() {
-      return (
-        (this.showOnline && this.onlineDisplay.showArt) ||
-        (!this.showOnline && this.offlineDisplay.showArt)
-      );
-    },
-    showOverlay() {
-      return (
-        this.overlay &&
-        ((this.showOnline && this.onlineDisplay.showOverlay) ||
-          (!this.showOnline && this.offlineDisplay.showOverlay))
-      );
-    },
-    getOutline: function () {
-      this.computeGlowStyling();
-      return this.cornerCutStyling.outline;
-    },
-    getGlow: function () {
-      this.computeGlowStyling();
-      return this.glowStyling.glow;
-    },
-    getOutlineBorder: function () {
-      this.computeGlowStyling();
-      return this.cornerCutStyling.outlineBorder;
-    },
-  },
-  mounted() {
-    this.setIsMobileDevice();
-
-    this.$root.$on("close-other-layouts", this.scrollOut);
-    this.isOverlayVisible = this.showOverlay;
-    this.isEmbedVisible = this.showEmbed && !this.isOverlayVisible;
-  },
-  destroyed() {
-    this.$emit("show-controls");
-    this.$root.$off("close-other-layouts", this.scrollOut);
-  },
-  methods: {
-    setIsMobileDevice() {
-      const checkDeviceType = navigator.userAgent
-        .toLowerCase()
-        .match(/mobile/i);
-      if (checkDeviceType) {
-        this.isMobileDevice = true;
-      } else {
-        this.isMobileDevice = false;
-      }
-    },
-    computeGlowStyling: function () {
-      if (
-        this.isGlowStyling === "always_on" ||
-        (this.isGlowStyling === "enabled_if_live" && this.showOnline) ||
-        (this.isGlowStyling === "enabled_if_offline" && !this.showOnline)
-      ) {
-        if (this.embedName === "TwitchEmbed") {
-          this.glowStyling.glow = "cut-edge__wrapper--twitch";
-          this.cornerCutStyling.outlineBorder =
-            "cut-edge__clipped--twitch border-purple";
-        } else if (this.embedName === "YouTubeEmbed") {
-          this.glowStyling.glow = "cut-edge__wrapper--youtube";
-          this.cornerCutStyling.outlineBorder =
-            "cut-edge__clipped--youtube border-red";
-        }
-      }
-
-      if (
-        this.isCornerCut === "always_on" ||
-        (this.isCornerCut === "enabled_if_live" && this.showOnline) ||
-        (this.isCornerCut === "enabled_if_offline" && !this.showOnline)
-      ) {
-        if (this.embedName === "TwitchEmbed") {
-          this.cornerCutStyling.outline = "cut-edge__clipped--twitch";
-        } else if (this.embedName === "YouTubeEmbed") {
-          this.cornerCutStyling.outline = "cut-edge__clipped--youtube";
-        }
-      }
-    },
-    playVideo() {
-      this.$root.$emit("close-other-layouts");
-      setTimeout(() => {
-        if (this.showOverlay || this.showArt) {
-          this.isOverlayVisible = false;
-          this.isEmbedVisible = true;
-        }
-      }, 0);
-      window.addEventListener("scroll", this.checkIfBoxInViewPort);
-      this.$refs.embed.startPlayer();
-      this.$emit("hide-controls");
-    },
-    scrollOut() {
-      if (this.$root.isVisibleVideoContainer) {
-        return;
-      }
-      if (this.showOverlay || this.showArt) {
-        this.isOverlayVisible = true;
-        this.isEmbedVisible = false;
-      }
-      if (this.$refs?.embed?.isPlaying()) {
-        this.$refs.embed.stopPlayer();
-      }
-      window.removeEventListener("scroll", this.checkIfBoxInViewPort);
-      this.$emit("show-controls");
-    },
-  },
-};
-</script>
