@@ -57,8 +57,15 @@ class CacheHomePageContainers extends Command
         $message = '';
         $containerizer = $this->containerizer;
 
+        $redisHost = $_ENV['REDIS_HOST'] ?? 'localhost'; // Fallback to 'localhost' if not set
+        $redisPort = $_ENV['REDIS_PORT'] ?? 6379;       // Fallback to 6379 (default Redis port) if not set
+        
         try {
-            $cache = new RedisAdapter(new Client(['host' => 'redis']), 'namespace', 0);
+            $cache = new RedisAdapter(
+                new Client(['host' => $redisHost, 'port' => $redisPort]), 
+                'namespace', 
+                0
+            );
 
             // Deleting old cache
             $cache->delete('home_item');

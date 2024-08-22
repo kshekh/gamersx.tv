@@ -44,7 +44,14 @@ class HomeController extends AbstractController
     #[Route('/home/api', name: 'home_api')]
     public function apiHome(CacheInterface $gamersxCache, ContainerizerFactory $containerizer): Response
     {
-        $cache = new RedisAdapter(new Client(['host' => 'redis']), 'namespace', 0);
+        $redisHost = $_ENV['REDIS_HOST'] ?? 'localhost'; // Fallback to 'localhost' if not set
+        $redisPort = $_ENV['REDIS_PORT'] ?? 6379;       // Fallback to 6379 (default Redis port) if not set
+
+        $cache = new RedisAdapter(
+            new Client(['host' => $redisHost, 'port' => $redisPort]), 
+            'namespace', 
+            0
+        );
         
         $rowChannels = $cache->getItem('home');
         $home_container_refreshed_at = null;
@@ -68,7 +75,14 @@ class HomeController extends AbstractController
     #[Route('/home/rows/api', name: 'home_cache_api')]
     public function apiHomeRows(): Response
     {
-        $cache = new RedisAdapter(new Client(['host' => 'redis']), 'namespace', 0);
+        $redisHost = $_ENV['REDIS_HOST'] ?? 'localhost'; // Fallback to 'localhost' if not set
+        $redisPort = $_ENV['REDIS_PORT'] ?? 6379;       // Fallback to 6379 (default Redis port) if not set
+
+        $cache = new RedisAdapter(
+            new Client(['host' => $redisHost, 'port' => $redisPort]), 
+            'namespace', 
+            0
+        );
         $rowChannels = $cache->getItem('home');
         $rows = [];
         // get cache from new rows_data key
