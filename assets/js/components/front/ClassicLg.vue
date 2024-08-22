@@ -9,7 +9,6 @@ import {
   onUpdated,
 } from "vue";
 import SliderArrow from "../helpers/SliderArrow.vue";
-import embedMixin from "../../mixins/embedFrameMixin";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 
 import "swiped-events";
