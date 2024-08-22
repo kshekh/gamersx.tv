@@ -263,7 +263,7 @@ onMounted(() => {
         <div
           v-if="showEmbed && props.embedData"
           class="w-full h-full overflow-hidden"
-          @click="handleClick(embedData.elementId)"
+          @click="clickContainer(props.embedData.elementId)"
         >
           <img
             v-if="showArt && props.image"
@@ -274,14 +274,14 @@ onMounted(() => {
           <img
             v-else-if="showOverlay"
             alt="Embed's Custom Overlay"
-            :src="overlay"
+            :src="props.overlay"
             class="relative top-1/2 transform -translate-y-1/2 w-full h-full object-cover"
           />
           <!--          <img-->
           <!--            src="/images/live-icon.gif"-->
           <!--            class="" style="position: absolute;top: 0px;width: 75px;right: 0;"-->
           <!--          />-->
-          <play-button
+          <PlayButton
             :videoType="playBtnColor"
             class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none"
           />
@@ -355,7 +355,7 @@ onMounted(() => {
             <component
               v-if="props.embedData"
               ref="embed"
-              :is="props.embedName"
+              :is="embedContainerName"
               :embedData="props.embedData"
               :overlay="props.overlay"
               :image="props.image"
@@ -420,7 +420,7 @@ onMounted(() => {
           :src="props.overlay"
           class="relative top-1/2 transform -translate-y-1/2 w-full h-full object-cover"
         />
-        <play-button
+        <PlayButton
           v-if="showEmbed && props.embedData"
           class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 h-12 md:h-16 xl:h-32 w-12 md:w-16 xl:w-32"
           svgClass="w-3 md:w-7 xl:w-12"
@@ -459,7 +459,7 @@ onMounted(() => {
           <component
             v-if="props.embedData"
             ref="embed"
-            :is="embedContainerName"
+            :is="props.embedName"
             :embedData="props.embedData"
             :overlay="props.overlay"
             :image="props.image"

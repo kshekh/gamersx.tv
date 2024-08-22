@@ -1,10 +1,8 @@
 <script setup>
 import "swiped-events";
-import { computed, defineProps, onMounted, onUpdated, ref } from "vue";
+import { computed, onMounted, onUpdated, ref } from "vue";
 
 import { useContainerStore } from "../stores/ContainerStore";
-import EmbedContainer from "../layout/EmbedContainer/EmbedContainerParallax.vue";
-import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerParallax.vue";
 import SliderArrow from "../helpers/SliderArrow.vue";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 

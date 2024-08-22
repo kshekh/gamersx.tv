@@ -1,18 +1,15 @@
 <script setup>
 import {
   defineAsyncComponent,
-  defineProps,
   ref,
   onMounted,
   onBeforeUnmount,
   onUpdated,
   computed,
   watch,
-  nextTick,
   onBeforeMount,
 } from "vue";
 import { useVideoStore } from "../stores/VideoStore";
-import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
 import CommonContainer from "../layout/CommonContainer/CommonContainer.vue";
 import SliderDot from "../helpers/SliderDot.vue";
 import SliderArrow from "../helpers/SliderArrow.vue";

@@ -1,5 +1,5 @@
 <script setup>
-import { defineExpose, defineProps, onMounted, ref } from "vue";
+import { defineExpose, onMounted, ref } from "vue";
 import { useVideoStore } from "../stores/VideoStore";
 
 const embed = ref(null);

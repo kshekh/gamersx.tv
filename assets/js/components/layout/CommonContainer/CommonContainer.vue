@@ -1,5 +1,5 @@
 <script setup>
-import { defineEmits, defineProps, onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useCurrentElement } from "@vueuse/core/index.cjs";
 import { useContainerStore } from "../../stores/ContainerStore";
 import { useVideoStore } from "../../stores/VideoStore";
