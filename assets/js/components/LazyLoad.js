@@ -1,17 +1,20 @@
+import { h, defineAsyncComponent } from "vue";
+
 export default function lazyLoadComponent({
-                                            componentFactory,
-                                            loading,
-                                            loadingData,
-                                          }) {
+  componentFactory,
+  loading,
+  loadingData,
+}) {
   let resolveComponent;
 
-  return () => ({
-    component: new Promise((resolve) => {
-      resolveComponent = resolve;
-    }),
-    loading: {
+  return defineAsyncComponent({
+    loader: () =>
+      new Promise((resolve) => {
+        resolveComponent = resolve;
+      }),
+    loadingComponent: {
       mounted() {
-        if (!('IntersectionObserver' in window)) {
+        if (!("IntersectionObserver" in window)) {
           componentFactory().then(resolveComponent);
           return;
         }
@@ -24,9 +27,9 @@ export default function lazyLoadComponent({
         });
         observer.observe(this.$el);
       },
-      render(createElement) {
-        return createElement(loading, loadingData);
+      render() {
+        return h(loading, loadingData);
       },
-    }
+    },
   });
 }

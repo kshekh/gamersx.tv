@@ -1,3 +1,171 @@
+<script setup>
+import {
+  ref,
+  onMounted,
+  onUnmounted,
+  nextTick,
+  defineAsyncComponent,
+} from "vue";
+import axios from "axios";
+import Cookies from "js-cookie";
+
+import LazyLoadComponent from "./LazyLoad";
+import FullWidthDescriptiveSkeleton from "./skeletons/FullWidthDescriptiveSkeleton.vue";
+import ClassicSmSkeleton from "./skeletons/ClassicSmSkeleton.vue";
+import ClassicMdSkeleton from "./skeletons/ClassicMdSkeleton.vue";
+import ClassicLgSkeleton from "./skeletons/ClassicLgSkeleton.vue";
+import ClassicVerticalSkeleton from "./skeletons/ClassicVerticalSkeleton.vue";
+import NumberedRowSkeleton from "./skeletons/NumberedRowSkeleton.vue";
+import ParallaxSkeleton from "./skeletons/ParallaxSkeleton.vue";
+import FullWidthImagerySkeleton from "./skeletons/FullWidthImagerySkeleton.vue";
+import Modal from "./Modal.vue";
+
+// Lazy loaded components
+const FullWidthDescriptive = defineAsyncComponent({
+  loader: () => import("./front/FullWidthDescriptive.vue"),
+  loadingComponent: FullWidthDescriptiveSkeleton,
+});
+const Parallax = defineAsyncComponent({
+  loader: () => import("./front/Parallax.vue"),
+  loadingComponent: ParallaxSkeleton,
+});
+const NumberedRow = defineAsyncComponent({
+  loader: () => import("./front/NumberedRow.vue"),
+  loadingComponent: NumberedRowSkeleton,
+});
+const ClassicSm = defineAsyncComponent({
+  loader: () => import("./front/ClassicSm.vue"),
+  loadingComponent: ClassicSmSkeleton,
+  delay: 200,
+});
+const FullWidthImagery = defineAsyncComponent({
+  loader: () => import("./front/FullWidthImagery.vue"),
+  lloadingComponent: FullWidthImagerySkeleton,
+});
+const ClassicVertical = defineAsyncComponent({
+  loader: () => import("./front/ClassicVertical.vue"),
+  loadingComponent: ClassicVerticalSkeleton,
+});
+const ClassicMd = defineAsyncComponent({
+  loader: () => import("./front/ClassicMd.vue"),
+  loadingComponent: ClassicMdSkeleton,
+});
+const ClassicLg = defineAsyncComponent({
+  loader: () => import("./front/ClassicLg.vue"),
+  loadingComponent: ClassicLgSkeleton,
+});
+
+// Data
+const modal = ref(false); // State for modal visibility
+const settings = ref({
+  rows: [], // Settings for the rows
+});
+const defaultSkeleton = "FullWidthDescriptiveSkeleton";
+const cachedSkeletonRows = ref([]); // Cached skeleton rows from API
+const defaultSkeletonRows = ref([
+  "FullWidthDescriptiveSkeleton",
+  "ClassicSmSkeleton",
+  "NumberedRowSkeleton",
+  "ClassicMdSkeleton",
+  "ParallaxSkeleton",
+  "ClassicLgSkeleton",
+  "ClassicVerticalSkeleton",
+  "FullWidthImagerySkeleton",
+]); // List of default skeleton components
+const pollingApiData = ref(null); // Interval for polling API data
+const requestPollingDelay = ref(90000); // Delay for polling API requests
+
+// Methods
+async function requestHomeCachedRowsApi() {
+  return axios
+    .get("/home/rows/api")
+    .catch((e) => console.error(e))
+    .then((response) => {
+      if (response.data.settings.rows.length)
+        cachedSkeletonRows.value = response.data.settings.rows;
+    });
+}
+
+// Request home settings from API
+function requestHomeApi() {
+  axios
+    .get("/home/api")
+    .catch((e) => console.error(e))
+    .then((response) => {
+      settings.value = response.data.settings;
+    });
+}
+
+// Request session information from API
+function requestSessionsApi() {
+  return new Promise((resolve, reject) => {
+    if (!Cookies.get("twitch_")) {
+      axios
+        .get("/home/sessions/api")
+        .then((response) => {
+          if (
+            response.data.isLoggedIn &&
+            !response.data.isRequiredToLoginTwitch
+          ) {
+            modal.value = false;
+          } else {
+            nextTick(() => {
+              modal.value = false; // Disable the modal during development
+            });
+          }
+          resolve(response);
+        })
+        .catch((error) => {
+          console.error(error);
+          reject(error);
+        });
+    } else {
+      resolve();
+    }
+  });
+}
+
+// Handle modal update event
+function handleModalUpdate(val) {
+  if (!val) {
+    setTimeout(() => {
+      modal.value = false;
+    }, 500);
+  } else {
+    modal.value = true;
+  }
+}
+
+// Handle closing the modal
+function handleCloseModal() {
+  Cookies.set("twitch_", "demo", { expires: 1 });
+  modal.value = false;
+  handleModalUpdate(false);
+}
+
+// Handle Twitch login
+function handleTwitchLogin() {
+  Cookies.set("twitch_", "demo", { expires: 1 });
+  modal.value = false;
+  handleModalUpdate(false);
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  requestSessionsApi();
+  requestHomeCachedRowsApi().then(() => {
+    requestHomeApi();
+  });
+  pollingApiData.value = window.setInterval(() => {
+    requestHomeApi();
+  }, requestPollingDelay.value);
+});
+
+onUnmounted(() => {
+  window.clearInterval(pollingApiData.value);
+});
+</script>
+
 <template>
   <!-- Root div with temporary text-white class -->
   <div class="text-white">
@@ -14,7 +182,7 @@
       >
         <!-- Dynamically load and render the component specified in row.componentName -->
         <component
-          :is="row.componentName"
+          :is="() => import(`./front/${row.componentName}.vue`)"
           :settings="row"
           :rowPosition="index"
         ></component>
@@ -106,174 +274,3 @@
     </Modal>
   </div>
 </template>
-
-<script>
-import axios from "axios";
-import LazyLoadComponent from "./LazyLoad";
-import FullWidthDescriptiveSkeleton from "./skeletons/FullWidthDescriptiveSkeleton.vue";
-import ClassicSmSkeleton from "./skeletons/ClassicSmSkeleton.vue";
-import ClassicMdSkeleton from "./skeletons/ClassicMdSkeleton.vue";
-import ClassicLgSkeleton from "./skeletons/ClassicLgSkeleton.vue";
-import ClassicVerticalSkeleton from "./skeletons/ClassicVerticalSkeleton.vue";
-import NumberedRowSkeleton from "./skeletons/NumberedRowSkeleton.vue";
-import ParallaxSkeleton from "./skeletons/ParallaxSkeleton.vue";
-import FullWidthImagerySkeleton from "./skeletons/FullWidthImagerySkeleton.vue";
-import Modal from "./Modal.vue";
-import Cookies from "js-cookie";
-
-export default {
-  components: {
-    FullWidthDescriptiveSkeleton,
-    ClassicSmSkeleton,
-    ClassicMdSkeleton,
-    ClassicLgSkeleton,
-    NumberedRowSkeleton,
-    ParallaxSkeleton,
-    ClassicVerticalSkeleton,
-    FullWidthImagerySkeleton,
-    Modal,
-    FullWidthDescriptive: LazyLoadComponent({
-      componentFactory: () => import("./front/FullWidthDescriptive.vue"),
-      loading: FullWidthDescriptiveSkeleton,
-    }),
-    Parallax: LazyLoadComponent({
-      componentFactory: () => import("./front/Parallax.vue"),
-      loading: ParallaxSkeleton,
-    }),
-    NumberedRow: LazyLoadComponent({
-      componentFactory: () => import("./front/NumberedRow.vue"),
-      loading: NumberedRowSkeleton,
-    }),
-    ClassicSm: LazyLoadComponent({
-      componentFactory: () => import("./front/ClassicSm.vue"),
-      loading: ClassicSmSkeleton,
-      loadingData: 200,
-    }),
-    FullWidthImagery: LazyLoadComponent({
-      componentFactory: () => import("./front/FullWidthImagery.vue"),
-      loading: FullWidthImagerySkeleton,
-    }),
-    ClassicVertical: LazyLoadComponent({
-      componentFactory: () => import("./front/ClassicVertical.vue"),
-      loading: ClassicVerticalSkeleton,
-    }),
-    ClassicMd: LazyLoadComponent({
-      componentFactory: () => import("./front/ClassicMd.vue"),
-      loading: ClassicMdSkeleton,
-    }),
-    ClassicLg: LazyLoadComponent({
-      componentFactory: () => import("./front/ClassicLg.vue"),
-      loading: ClassicLgSkeleton,
-    }),
-  },
-  data: function () {
-    return {
-      modal: false, // State for modal visibility
-      settings: {
-        rows: [], // Settings for the rows
-      },
-      defaultSkeleton: "FullWidthDescriptiveSkeleton", // Default skeleton component
-      cachedSkeletonRows: [], // Cached skeleton rows from API
-      defaultSkeletonRows: [
-        "FullWidthDescriptiveSkeleton",
-        "ClassicSmSkeleton",
-        "NumberedRowSkeleton",
-        "ClassicMdSkeleton",
-        "ParallaxSkeleton",
-        "ClassicLgSkeleton",
-        "ClassicVerticalSkeleton",
-        "FullWidthImagerySkeleton",
-      ], // List of default skeleton components
-      pollingApiData: null, // Interval for polling API data
-      requestPollingDelay: 90000, // Delay for polling API requests
-    };
-  },
-  methods: {
-    // Request cached rows from API
-    requestHomeCachedRowsApi() {
-      return axios
-        .get("/home/rows/api")
-        .catch((e) => console.error(e))
-        .then((response) => {
-          if (response.data.settings.rows.length)
-            this.cachedSkeletonRows = response.data.settings.rows;
-        });
-    },
-    // Request home settings from API
-    requestHomeApi() {
-      axios
-        .get("/home/api")
-        .catch((e) => console.error(e))
-        .then((response) => {
-          this.settings = response.data.settings;
-        });
-    },
-    // Request session information from API
-    requestSessionsApi() {
-      return new Promise((resolve, reject) => {
-        if (!Cookies.get("twitch_")) {
-          axios
-            .get("/home/sessions/api")
-            .then((response) => {
-              if (
-                response.data.isLoggedIn &&
-                !response.data.isRequiredToLoginTwitch
-              ) {
-                this.modal = false;
-              } else {
-                this.$nextTick(() => {
-                  this.modal = false; // Disable the modal during development
-                });
-              }
-              resolve(response);
-            })
-            .catch((error) => {
-              console.error(error);
-              reject(error);
-            });
-        } else {
-          resolve();
-        }
-      });
-    },
-    // Handle modal update event
-    handleModalUpdate(val) {
-      if (!val) {
-        setTimeout(() => {
-          this.modal = false;
-        }, 500);
-      } else {
-        this.modal = true;
-      }
-    },
-    // Handle closing the modal
-    handleCloseModal() {
-      Cookies.set("twitch_", "demo", { expires: 1 });
-      this.modal = false;
-      this.handleModalUpdate(false);
-    },
-    // Handle Twitch login
-    handleTwitchLogin() {
-      Cookies.set("twitch_", "demo", { expires: 1 });
-      this.modal = false;
-      this.handleModalUpdate(false);
-    },
-  },
-  mounted: function () {
-    this.requestSessionsApi();
-    this.requestHomeCachedRowsApi().then(() => {
-      this.requestHomeApi();
-    });
-    this.pollingApiData = window.setInterval(() => {
-      this.requestHomeApi();
-    }, this.requestPollingDelay);
-  },
-  unmounted: function () {
-    window.clearInterval(this.pollingApiData);
-  },
-};
-/** We use this a lot for scrolling because JS % is remainder, not modulo **/
-Number.prototype.mod = function (n) {
-  return ((this % n) + n) % n;
-};
-</script>

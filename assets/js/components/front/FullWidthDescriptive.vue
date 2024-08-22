@@ -392,13 +392,6 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    {{
-      showEmbed &&
-      currentChannel &&
-      currentChannel.embedData &&
-      isEmbedVisible &&
-      containerStore.containerId === currentChannel.embedData.elementId
-    }}
     <div
       v-if="
         showEmbed &&

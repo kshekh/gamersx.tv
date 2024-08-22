@@ -119,7 +119,7 @@ onUnmounted(() => {
 
 <template>
   <div
-    :style="{ zIndex: '1000', ...customStyles }"
+    :style="{ zIndex: '1000', position: 'absolute', ...customStyles }"
     class="w-[500px] h-[350px] common-container"
     ref="commonContainerRef"
   >
@@ -164,6 +164,7 @@ onUnmounted(() => {
   background: none;
   outline: none;
   transition: 1s background ease-in;
+  z-index: 1000;
 }
 
 .common-container__actions {
