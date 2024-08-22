@@ -1,7 +1,8 @@
 <script setup>
 import "swiped-events";
-import { computed, defineProps, onMounted, onUpdated, ref } from "vue";
+import { computed, defineAsyncComponent, onMounted, onUpdated, ref } from "vue";
 
+import { useContainerStore } from "../stores/ContainerStore";
 import EmbedContainer from "../layout/EmbedContainer/EmbedContainerNumbered.vue";
 import NoEmbedContainer from "../layout/NoEmbedContainer/NoEmbedContainerNumbered.vue";
 import TitleAdditionalDescription from "../singletons/TitleAdditionalDescription.vue";
@@ -17,6 +18,8 @@ const props = defineProps({
   },
 });
 
+const containerStore = useContainerStore();
+
 // Data
 const allowScrolling = ref(false);
 const backArrow = ref(null);
@@ -29,6 +32,18 @@ const mouseDown = ref(false);
 const rowIndex = ref(0);
 const scrollLeft = ref(0);
 const startX = ref(0);
+
+// Computed
+
+const displayChannelNames = computed(() => {
+  return displayChannels.value.map((channel, index) => {
+    return defineAsyncComponent(() =>
+      channel.componentName === "EmbedContainer"
+        ? import("../layout/EmbedContainer/EmbedContainerNumbered.vue")
+        : import("../layout/NoEmbedContainer/NoEmbedContainerNumbered.vue"),
+    );
+  });
+});
 
 // Methods
 function showChannel(channel) {
@@ -85,7 +100,6 @@ function reorder() {
 }
 
 function hideArrows(left = true, right = true) {
-  // console.log(this.$refs)
   if (right) forwardArrow.value.classList.add("sliderArrowHide");
   if (left) backArrow.value.classList.add("sliderArrowHide");
 }
@@ -114,9 +128,46 @@ function setIsMobileDevice() {
   }
 }
 
+function startDragging(event) {
+  if (containerStore.isMoveContainer) {
+    return;
+  }
+
+  mouseDown.value = true;
+  startX.value = event.pageX - channelBox.value.offsetLeft;
+  scrollLeft.value = channelBox.value.scrollLeft;
+
+  triggerDragging(event);
+}
+
+// Method to stop dragging
+function stopDragging(event) {
+  mouseDown.value = false;
+}
+
+// Method to handle dragging
+function triggerDragging(event) {
+  event.preventDefault();
+
+  if (containerStore.isMoveContainer) {
+    return;
+  }
+
+  if (!mouseDown.value) {
+    return;
+  }
+
+  const x = event.pageX - channelBox.value.offsetLeft;
+  const scroll = x - startX.value;
+  channelBox.value.scrollLeft = scrollLeft.value - scroll;
+}
+
+// Lifecycle methods
+
 onMounted(() => {
+  console.log("channels", props.settings.channels);
   if (props.settings.channels.length) {
-    displayChannels.value = props.settings.channels.filter(showChannel.value);
+    displayChannels.value = props.settings.channels.filter(showChannel);
   }
   if (channelBox.value) {
     channelBox.value.addEventListener("scroll", handleScroll);
@@ -128,9 +179,9 @@ onMounted(() => {
 onUpdated(() => {
   if (
     JSON.stringify(displayChannels.value) !==
-    JSON.stringify(props.settings.channels.filter(showChannel.value))
+    JSON.stringify(props.settings.channels.filter(showChannel))
   ) {
-    displayChannels.value = props.settings.channels.filter(showChannel.value);
+    displayChannels.value = props.settings.channels.filter(showChannel);
   }
   allowScrolling.value =
     channelBox.value.scrollWidth > channelBox.value.clientWidth;
@@ -206,7 +257,7 @@ onUpdated(() => {
             {{ index + 1 }}
           </span>
           <component
-            :is="channel.componentName"
+            :is="displayChannelNames[index]"
             v-bind="{ ...channel }"
             class=""
           ></component>
