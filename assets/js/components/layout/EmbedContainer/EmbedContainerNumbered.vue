@@ -80,6 +80,7 @@ const cornerCutStyling = ref({
   outlineBorder: "",
 });
 const embed = ref(null);
+const embedWrapper = ref(null);
 const glowStyling = ref({
   glow: "",
 });
@@ -88,6 +89,7 @@ const isMobileDevice = ref(false);
 const isOverlayVisible = ref(true);
 const isTitleVisible = ref(false);
 const isShowTwitchEmbed = ref(false);
+const itemWrapper = ref(null);
 
 // Computed
 const embedContainerName = computed(() => {
@@ -287,7 +289,7 @@ onMounted(() => {
 
         <!-- If there's no embed, show that instead with a link first -->
         <div v-else-if="showArt && props.image" class="w-full h-full">
-          <a :href="link" class="block w-full h-full overflow-hidden">
+          <a :href="props.link" class="block w-full h-full overflow-hidden">
             <img
               :src="props.image.url"
               class="relative top-1/2 transform -translate-y-1/2 w-full"
